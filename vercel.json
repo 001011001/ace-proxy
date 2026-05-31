@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "projects": [
+    {
+      "name": "ace-proxy-web",
+      "framework": "nextjs",
+      "rootDirectory": "apps/web"
+    },
+    {
+      "name": "ace-proxy-server",
+      "framework": null,
+      "rootDirectory": "apps/server"
+    }
+  ]
+}
