@@ -66,6 +66,43 @@ export const ProductDetailScreen = ({ route }) => {
             <Text style={styles.savingSub}>Based on Jakarta market average</Text>
           </View>
 
+          <View style={styles.supplierCard}>
+            <View style={styles.supplierHeader}>
+              <View>
+                <Text style={styles.supplierLabel}>Elite Factory Source</Text>
+                <Text style={styles.supplierName}>Guangdong Elite Tech Co.</Text>
+              </View>
+              <View style={styles.supplierRatingBox}>
+                <Text style={styles.ratingVal}>98%</Text>
+                <Text style={styles.ratingLabel}>Perf.</Text>
+              </View>
+            </View>
+            <View style={styles.scorecardRow}>
+              <View style={styles.scoreItem}>
+                <Text style={styles.scoreVal}>48h</Text>
+                <Text style={styles.scoreLabel}>Lead Time</Text>
+              </View>
+              <View style={styles.scoreItem}>
+                <Text style={styles.scoreVal}>0.1%</Text>
+                <Text style={styles.scoreLabel}>Defect</Text>
+              </View>
+              <View style={styles.scoreItem}>
+                <Text style={styles.scoreVal}>1.2k</Text>
+                <Text style={styles.scoreLabel}>Orders</Text>
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.leaderNote}>
+            <View style={styles.leaderHeader}>
+              <View style={styles.leaderAvatar} />
+              <Text style={styles.leaderName}>Juna's Sourcing Note</Text>
+            </View>
+            <Text style={styles.noteText}>
+              "这款真空机在雅加达开斋节期间非常抢手，建议配合 10x15cm 的加厚袋子使用。实测物流压缩比高达 70%，能极大地降低平摊运费。"
+            </Text>
+          </View>
+
           <View style={styles.infoSection}>
             <View style={styles.infoItem}>
               <Text style={styles.infoLabel}>Delivery</Text>
@@ -114,6 +151,22 @@ const styles = StyleSheet.create({
   savingCard: { padding: 16, borderRadius: 20, borderWidth: 1, marginBottom: 32 },
   savingTitle: { fontSize: 15, fontWeight: '900', color: '#9A3412' },
   savingSub: { fontSize: 12, color: '#C2410C', marginTop: 2, fontWeight: '500' },
+  supplierCard: { backgroundColor: '#F8FAFC', padding: 20, borderRadius: 24, marginBottom: 20, borderWidth: 1, borderColor: '#F1F5F9' },
+  supplierHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
+  supplierLabel: { fontSize: 10, fontWeight: '800', color: '#94A3B8', textTransform: 'uppercase' },
+  supplierName: { fontSize: 15, fontWeight: '900', color: '#1E293B', marginTop: 2 },
+  supplierRatingBox: { backgroundColor: '#F0FDF4', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 10, alignItems: 'center' },
+  ratingVal: { fontSize: 14, fontWeight: '900', color: '#16A34A' },
+  ratingLabel: { fontSize: 8, fontWeight: '700', color: '#15803D' },
+  scorecardRow: { flexDirection: 'row', justifyContent: 'space-between', borderTopWidth: 1, borderTopColor: '#F1F5F9', paddingTop: 16 },
+  scoreItem: { alignItems: 'center' },
+  scoreVal: { fontSize: 14, fontWeight: '900', color: '#334155' },
+  scoreLabel: { fontSize: 9, fontWeight: '700', color: '#94A3B8', marginTop: 2 },
+  leaderNote: { backgroundColor: '#FDF2F8', padding: 16, borderRadius: 20, marginBottom: 32, borderLeftWidth: 4, borderLeftColor: '#DB2777' },
+  leaderHeader: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 8 },
+  leaderAvatar: { width: 24, height: 24, borderRadius: 12, backgroundColor: '#DB2777' },
+  leaderName: { fontSize: 13, fontWeight: '900', color: '#9D174D' },
+  noteText: { fontSize: 12, color: '#BE185D', lineHeight: 18, fontStyle: 'italic', fontWeight: '500' },
   infoSection: { flexDirection: 'row', justifyContent: 'space-between', borderTopWidth: 1, borderBottomWidth: 1, borderColor: '#F1F5F9', paddingVertical: 20, marginBottom: 24 },
   infoItem: { flex: 1 },
   infoLabel: { fontSize: 12, color: '#94A3B8', fontWeight: '600', marginBottom: 4 },

@@ -65,6 +65,14 @@ export const OrderListScreen = () => {
           </View>
         )}
       />
+
+      {/* WhatsApp Floating Service Ball */}
+      <TouchableOpacity 
+        style={[styles.waFab, SHADOWS.medium]}
+        onPress={() => console.log('Open WhatsApp Support')}
+      >
+        <Text style={{ fontSize: 24 }}>💬</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };
@@ -85,5 +93,18 @@ const styles = StyleSheet.create({
   actionBtn: { marginTop: 16, padding: 12, borderRadius: 12, alignItems: 'center' },
   actionBtnText: { color: COLORS.white, fontWeight: '800', fontSize: 14 },
   resellBtn: { marginTop: 16, padding: 12, borderRadius: 12, alignItems: 'center', backgroundColor: '#F8FAFC', borderWidth: 1, borderColor: '#E2E8F0' },
-  resellBtnText: { color: '#8B5CF6', fontWeight: '800', fontSize: 13 }
+  resellBtnText: { color: '#8B5CF6', fontWeight: '800', fontSize: 13 },
+  waFab: {
+    position: 'absolute',
+    bottom: 30,
+    right: 20,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#22C55E',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 3,
+    borderColor: '#FFF',
+  }
 });

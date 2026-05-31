@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [currentRole, setCurrentRole] = useState('God Mode');
 
   const menuItems = [
     { id: 'dashboard', label: 'Overview', icon: '📊' },
@@ -9,10 +10,13 @@ export default function Home() {
     { id: 'sourcing', label: 'Global Sourcing', icon: '🌍' },
     { id: 'vault', label: 'Vault & Finance', icon: '💰' },
     { id: 'logistics', label: 'L3 Logistics', icon: '✈️' },
-    { id: 'cms', label: 'CMS Management', icon: '🖼️' },
+    { id: 'cms', label: 'Marketing CMS', icon: '🖼️' },
     { id: 'membership', label: 'Membership', icon: '💎' },
+    { id: 'whatsapp', label: 'WhatsApp CRM', icon: '💬' },
     { id: 'partners', label: 'Partner Hub', icon: '🤝' },
   ];
+
+  const roles = ['God Mode', 'Financial', 'Station Manager', 'Logistics Admin'];
 
   const renderContent = () => {
     switch (activeTab) {
@@ -54,15 +58,19 @@ export default function Home() {
         return (
           <div style={{ padding: '24px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h2 style={{ color: '#F97316' }}>Marketing CMS</h2>
+              <h2 style={{ color: '#F97316' }}>Marketing CMS (Drag & Drop)</h2>
               <button style={{ backgroundColor: '#F97316', color: 'white', padding: '8px 16px', borderRadius: '8px', border: 'none', fontWeight: 'bold' }}>+ New Banner</button>
             </div>
-            <div style={{ marginTop: '20px', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
+            <div style={{ marginTop: '20px', border: '2px dashed #CBD5E1', borderRadius: '16px', padding: '40px', textAlign: 'center', backgroundColor: 'white' }}>
+              <p style={{ color: '#64748B', fontSize: '14px' }}>Drag and drop banner assets here to upload to Node: JKT-01</p>
+              <button style={{ marginTop: '12px', padding: '8px 24px', borderRadius: '8px', border: '1px solid #E2E8F0', backgroundColor: 'white', fontWeight: '600' }}>Select File</button>
+            </div>
+            <div style={{ marginTop: '30px', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
               {[
                 { id: 'B-001', station: 'JKT', title: 'Ramadan Special', active: true, img: 'https://placehold.co/600x200/F97316/white?text=Ramadan+Raya' },
                 { id: 'B-002', station: 'LDN', title: 'Summer Collection', active: false, img: 'https://placehold.co/600x200/0EA5E9/white?text=Summer+Vibes' },
               ].map(banner => (
-                <div key={banner.id} style={{ border: '1px solid #E5E7EB', borderRadius: '16px', overflow: 'hidden', background: 'white' }}>
+                <div key={banner.id} style={{ border: '1px solid #E5E7EB', borderRadius: '16px', overflow: 'hidden', background: 'white', cursor: 'grab' }}>
                   <img src={banner.img} style={{ width: '100%', height: '120px', objectFit: 'cover' }} />
                   <div style={{ padding: '16px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -80,6 +88,30 @@ export default function Home() {
                   </div>
                 </div>
               ))}
+            </div>
+          </div>
+        );
+      case 'whatsapp':
+        return (
+          <div style={{ padding: '24px' }}>
+            <h2 style={{ color: '#F97316' }}>WhatsApp CRM & Notifications</h2>
+            <div style={{ marginTop: '20px', backgroundColor: 'white', padding: '24px', borderRadius: '16px', border: '1px solid #E5E7EB' }}>
+              <h3>Integration Status: <span style={{ color: '#16A34A' }}>Connected</span></h3>
+              <p style={{ color: '#64748B', fontSize: '14px' }}>Webhooks active for JKT Node</p>
+              
+              <div style={{ marginTop: '24px' }}>
+                <h4 style={{ marginBottom: '12px' }}>Automated Message Templates</h4>
+                {[
+                  { name: 'Order Confirmation', status: 'Enabled' },
+                  { name: 'In Transit Alert', status: 'Enabled' },
+                  { name: 'Arrival at Hub', status: 'Enabled' },
+                ].map(t => (
+                  <div key={t.name} style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid #F3F4F6' }}>
+                    <span>{t.name}</span>
+                    <span style={{ color: '#16A34A', fontWeight: 'bold' }}>{t.status}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         );
@@ -244,7 +276,30 @@ export default function Home() {
       {/* Main Content */}
       <main style={{ flex: 1, overflowY: 'auto' }}>
         <header style={{ height: '70px', backgroundColor: 'white', borderBottom: '1px solid #E5E7EB', display: 'flex', alignItems: 'center', padding: '0 32px', justifyContent: 'space-between' }}>
-          <h3 style={{ margin: 0, fontSize: '16px' }}>{menuItems.find(i => i.id === activeTab)?.label}</h3>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+            <h3 style={{ margin: 0, fontSize: '16px' }}>{menuItems.find(i => i.id === activeTab)?.label}</h3>
+            <div style={{ background: '#F1F5F9', padding: '4px', borderRadius: '8px', display: 'flex', gap: '4px' }}>
+              {roles.map(role => (
+                <button 
+                  key={role}
+                  onClick={() => setCurrentRole(role)}
+                  style={{ 
+                    padding: '4px 12px', 
+                    fontSize: '11px', 
+                    border: 'none', 
+                    borderRadius: '6px', 
+                    backgroundColor: currentRole === role ? 'white' : 'transparent',
+                    color: currentRole === role ? '#F97316' : '#64748B',
+                    fontWeight: currentRole === role ? 'bold' : '500',
+                    cursor: 'pointer',
+                    boxShadow: currentRole === role ? '0 2px 4px rgba(0,0,0,0.05)' : 'none'
+                  }}
+                >
+                  {role}
+                </button>
+              ))}
+            </div>
+          </div>
           <div style={{ display: 'flex', gap: '12px' }}>
             <span style={{ color: '#16A34A', fontSize: '12px', fontWeight: 'bold' }}>● SYSTEM_NORMAL</span>
             <span style={{ color: '#4B5563', fontSize: '12px' }}>雅加达试点站 (JKT)</span>
