@@ -16,6 +16,7 @@ import { RegionService } from './modules/region/RegionService';
 import { CouponService } from './modules/marketing/CouponService';
 import { ResaleHubService } from './modules/resale/ResaleHubService';
 import { NotificationService } from './modules/notification/NotificationService';
+import { TradeService } from './modules/trade/TradeService';
 
 @Module({
   imports: [ScheduleModule.forRoot()],
@@ -35,6 +36,7 @@ import { NotificationService } from './modules/notification/NotificationService'
     CouponService,
     ResaleHubService,
     NotificationService,
+    TradeService,
   ],
 })
 export class AppModule {}

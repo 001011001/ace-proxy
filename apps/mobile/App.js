@@ -13,11 +13,12 @@ import { ArbiBotScanner } from './src/screens/ArbiBotScanner';
 import { PaymentScreen } from './src/screens/PaymentScreen';
 import { OrderListScreen } from './src/screens/OrderListScreen';
 import { WalletScreen } from './src/screens/WalletScreen';
+import { ResaleHubScreen } from './src/screens/ResaleHubScreen';
 import { COLORS, SHADOWS, SPACING } from './src/theme';
 
 /**
  * AceProxy Mobile - 核心入口 (工业级重塑版)
- * 演示版导航：支持 首页 (Home) / 套利 (Arbi) / 订单 (Orders) / 钱包 (Wallet)
+ * 演示版导航：支持 首页 (Home) / 转卖 (Resale) / 套利 (Arbi) / 订单 (Orders) / 钱包 (Wallet)
  */
 const MainNavigator = () => {
   const [currentScreen, setCurrentScreen] = useState('HOME');
@@ -33,6 +34,7 @@ const MainNavigator = () => {
   const renderScreen = () => {
     switch (currentScreen) {
       case 'HOME': return <HomeScreen stationData={mockStationData} />;
+      case 'RESALE': return <ResaleHubScreen />;
       case 'ARBI': return <ArbiBotScanner />;
       case 'ORDERS': return <OrderListScreen />;
       case 'WALLET': return <WalletScreen />;
@@ -51,6 +53,12 @@ const MainNavigator = () => {
           label="首页" 
           active={currentScreen === 'HOME'} 
           onPress={() => setCurrentScreen('HOME')}
+          activeColor={theme.primary}
+        />
+        <NavButton 
+          label="转卖" 
+          active={currentScreen === 'RESALE'} 
+          onPress={() => setCurrentScreen('RESALE')}
           activeColor={theme.primary}
         />
         <NavButton 
