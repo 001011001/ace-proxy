@@ -11,11 +11,11 @@ const MOCK_DATA = [
 ];
 
 export const ArbiWaterfall = () => {
-  const { theme } = useRole();
+  const { currentTheme: theme, t } = useRole();
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.title, { color: theme.primary }]}>AI 实时套利瀑布流</Text>
+      <Text style={[styles.title, { color: theme.primary }]}>{t.profitFlow}</Text>
       <FlatList
         data={MOCK_DATA}
         horizontal

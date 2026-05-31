@@ -1,64 +1,134 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  ScrollView, 
+  TouchableOpacity, 
+  SafeAreaView, 
+  StatusBar 
+} from 'react-native';
+import Animated, { FadeInDown } from 'react-native-reanimated';
+import { useRole } from '../context/RoleContext';
+import { COLORS, SPACING, TYPOGRAPHY, SHADOWS } from '../theme';
 
 /**
- * PaymentScreen - Xendit 支付收银台 (印尼站适配)
+ * PaymentScreen - Xendit 支付收银台 (工业级重塑版)
  * 支持 Bank Transfer, E-Wallet (OVO, DANA, Gopay) 等本地支付方式。
  */
 export const PaymentScreen = ({ orderTotal = '2,450,000' }) => {
+  const { currentTheme: theme } = useRole();
+
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.summary}>
-        <Text style={styles.label}>应付金额 (IDR)</Text>
-        <Text style={styles.amount}>Rp {orderTotal}</Text>
-        <Text style={styles.exchangeNote}>≈ ¥ 1,108.60 RMB (含 5% FX Buffer)</Text>
-      </View>
+    <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" />
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <Animated.View entering={FadeInDown.duration(600)} style={styles.summary}>
+          <Text style={styles.label}>应付金额 (IDR)</Text>
+          <Text style={styles.amount}>Rp {orderTotal}</Text>
+          <View style={styles.exchangeBadge}>
+            <Text style={styles.exchangeNote}>≈ ¥ 1,108.60 RMB (含 5% FX Buffer)</Text>
+          </View>
+        </Animated.View>
 
-      <Text style={styles.sectionTitle}>选择本地支付方式 (Xendit Gateway)</Text>
+        <View style={styles.content}>
+          <Text style={styles.sectionTitle}>选择本地支付方式 (Xendit Gateway)</Text>
 
-      {/* 虚拟账户 VA */}
-      <View style={styles.methodGroup}>
-        <Text style={styles.groupLabel}>Bank Transfer (Virtual Account)</Text>
-        <TouchableOpacity style={styles.method}><Text>Mandiri VA</Text></TouchableOpacity>
-        <TouchableOpacity style={styles.method}><Text>BCA VA</Text></TouchableOpacity>
-        <TouchableOpacity style={styles.method}><Text>BNI VA</Text></TouchableOpacity>
-      </View>
+          {/* Virtual Account */}
+          <View style={[styles.methodGroup, SHADOWS.soft]}>
+            <Text style={styles.groupLabel}>Bank Transfer (Virtual Account)</Text>
+            <PaymentMethod name="Mandiri VA" />
+            <PaymentMethod name="BCA VA" />
+            <PaymentMethod name="BNI VA" last />
+          </View>
 
-      {/* 电子钱包 */}
-      <View style={styles.methodGroup}>
-        <Text style={styles.groupLabel}>E-Wallet</Text>
-        <View style={styles.walletRow}>
-          <TouchableOpacity style={styles.walletBtn}><Text>Gopay</Text></TouchableOpacity>
-          <TouchableOpacity style={styles.walletBtn}><Text>OVO</Text></TouchableOpacity>
-          <TouchableOpacity style={styles.walletBtn}><Text>DANA</Text></TouchableOpacity>
+          {/* E-Wallet */}
+          <View style={[styles.methodGroup, SHADOWS.soft]}>
+            <Text style={styles.groupLabel}>E-Wallet (Local Mobile Pay)</Text>
+            <View style={styles.walletRow}>
+              <WalletButton name="Gopay" />
+              <WalletButton name="OVO" />
+              <WalletButton name="DANA" />
+            </View>
+          </View>
+
+          {/* OTC */}
+          <View style={[styles.methodGroup, SHADOWS.soft]}>
+            <Text style={styles.groupLabel}>Over-the-Counter</Text>
+            <PaymentMethod name="Alfamart / Indomaret" last />
+          </View>
+
+          <TouchableOpacity 
+            style={[styles.payButton, { backgroundColor: theme.primary }, SHADOWS.medium]}
+          >
+            <Text style={styles.payText}>确认并支付</Text>
+          </TouchableOpacity>
         </View>
-      </View>
-
-      {/* 便利店支付 */}
-      <View style={styles.methodGroup}>
-        <Text style={styles.groupLabel}>Over-the-Counter</Text>
-        <TouchableOpacity style={styles.method}><Text>Alfamart / Indomaret</Text></TouchableOpacity>
-      </View>
-
-      <TouchableOpacity style={styles.payButton}>
-        <Text style={styles.payText}>确认并支付</Text>
-      </TouchableOpacity>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
+const PaymentMethod = ({ name, last }: any) => (
+  <TouchableOpacity style={[styles.method, last && { borderBottomWidth: 0 }]}>
+    <View style={styles.methodCircle} />
+    <Text style={styles.methodName}>{name}</Text>
+  </TouchableOpacity>
+);
+
+const WalletButton = ({ name }: any) => (
+  <TouchableOpacity style={styles.walletBtn}>
+    <View style={styles.walletIconPlaceholder} />
+    <Text style={styles.walletText}>{name}</Text>
+  </TouchableOpacity>
+);
+
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#f8f9fa' },
-  summary: { padding: 30, backgroundColor: '#fff', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: '#eee' },
-  label: { fontSize: 14, color: '#888' },
-  amount: { fontSize: 32, fontWeight: 'bold', color: '#000', marginVertical: 10 },
-  exchangeNote: { fontSize: 12, color: '#ffa940' },
-  sectionTitle: { padding: 20, fontSize: 16, fontWeight: 'bold' },
-  methodGroup: { backgroundColor: '#fff', padding: 15, marginBottom: 10 },
-  groupLabel: { fontSize: 12, color: '#999', marginBottom: 10 },
-  method: { padding: 15, borderBottomWidth: 1, borderBottomColor: '#f0f0f0' },
-  walletRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 },
-  walletBtn: { width: '30%', padding: 12, borderWidth: 1, borderColor: '#ddd', alignItems: 'center', borderRadius: 4 },
-  payButton: { margin: 20, padding: 18, backgroundColor: '#000', borderRadius: 8, alignItems: 'center' },
-  payText: { color: '#fff', fontWeight: 'bold', fontSize: 16 }
+  container: { flex: 1, backgroundColor: COLORS.gray[50] },
+  summary: { 
+    padding: 40, 
+    backgroundColor: COLORS.white, 
+    alignItems: 'center', 
+    borderBottomLeftRadius: 32,
+    borderBottomRightRadius: 32,
+    ...SHADOWS.soft
+  },
+  label: { fontSize: 13, color: COLORS.gray[400], fontWeight: '600', textTransform: 'uppercase' },
+  amount: { ...TYPOGRAPHY.h1, fontSize: 36, color: COLORS.gray[900], marginVertical: 12 },
+  exchangeBadge: { backgroundColor: '#FFF7ED', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 12 },
+  exchangeNote: { fontSize: 11, color: '#F97316', fontWeight: '700' },
+  content: { padding: SPACING.md },
+  sectionTitle: { ...TYPOGRAPHY.h2, fontSize: 16, color: COLORS.gray[800], marginVertical: 20 },
+  methodGroup: { 
+    backgroundColor: COLORS.white, 
+    padding: SPACING.md, 
+    borderRadius: 20, 
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: COLORS.gray[100],
+  },
+  groupLabel: { fontSize: 11, color: COLORS.gray[400], fontWeight: '700', marginBottom: 16, textTransform: 'uppercase' },
+  method: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    paddingVertical: 16, 
+    borderBottomWidth: 1, 
+    borderBottomColor: COLORS.gray[50] 
+  },
+  methodCircle: { width: 20, height: 20, borderRadius: 10, borderWidth: 2, borderColor: COLORS.gray[200], marginRight: 16 },
+  methodName: { fontSize: 15, fontWeight: '600', color: COLORS.gray[800] },
+  walletRow: { flexDirection: 'row', justifyContent: 'space-between', gap: 10 },
+  walletBtn: { 
+    flex: 1, 
+    paddingVertical: 16, 
+    borderWidth: 1, 
+    borderColor: COLORS.gray[100], 
+    alignItems: 'center', 
+    borderRadius: 16,
+    backgroundColor: COLORS.gray[50]
+  },
+  walletIconPlaceholder: { width: 24, height: 24, backgroundColor: COLORS.gray[200], borderRadius: 6, marginBottom: 8 },
+  walletText: { fontSize: 12, fontWeight: '700', color: COLORS.gray[600] },
+  payButton: { marginTop: 20, height: 64, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
+  payText: { color: COLORS.white, fontWeight: '900', fontSize: 18 }
 });

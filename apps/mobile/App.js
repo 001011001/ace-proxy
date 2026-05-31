@@ -1,16 +1,25 @@
 import React, { useState } from 'react';
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
-import { RoleProvider } from './src/context/RoleContext';
+import { 
+  View, 
+  TouchableOpacity, 
+  Text, 
+  StyleSheet, 
+  SafeAreaView,
+  StatusBar
+} from 'react-native';
+import { RoleProvider, useRole } from './src/context/RoleContext';
 import { HomeScreen } from './src/screens/HomeScreen';
 import { ArbiBotScanner } from './src/screens/ArbiBotScanner';
 import { PaymentScreen } from './src/screens/PaymentScreen';
+import { COLORS, SHADOWS, SPACING } from './src/theme';
 
 /**
- * AceProxy Mobile - 核心入口
+ * AceProxy Mobile - 核心入口 (工业级重塑版)
  * 演示版导航：支持 首页 (Home) / 套利 (Arbi) / 支付 (Pay)
  */
-export default function App() {
+const MainNavigator = () => {
   const [currentScreen, setCurrentScreen] = useState('HOME');
+  const { currentTheme: theme } = useRole();
 
   // 模拟从后端获取的站点数据
   const mockStationData = {
@@ -19,32 +28,76 @@ export default function App() {
     trendingCategories: ['穆斯林服饰', '节日家居', '极简收纳'],
   };
 
+  const renderScreen = () => {
+    switch (currentScreen) {
+      case 'HOME': return <HomeScreen stationData={mockStationData} />;
+      case 'ARBI': return <ArbiBotScanner />;
+      case 'PAY': return <PaymentScreen />;
+      default: return <HomeScreen stationData={mockStationData} />;
+    }
+  };
+
+  return (
+    <View style={{ flex: 1, backgroundColor: COLORS.gray[50] }}>
+      <StatusBar barStyle="dark-content" />
+      {renderScreen()}
+
+      {/* 底部工业级导航栏 */}
+      <View style={[styles.navBar, SHADOWS.medium]}>
+        <NavButton 
+          label="首页" 
+          active={currentScreen === 'HOME'} 
+          onPress={() => setCurrentScreen('HOME')}
+          activeColor={theme.primary}
+        />
+        <NavButton 
+          label="套利" 
+          active={currentScreen === 'ARBI'} 
+          onPress={() => setCurrentScreen('ARBI')}
+          activeColor={theme.primary}
+        />
+        <NavButton 
+          label="支付" 
+          active={currentScreen === 'PAY'} 
+          onPress={() => setCurrentScreen('PAY')}
+          activeColor={theme.primary}
+        />
+      </View>
+    </View>
+  );
+};
+
+const NavButton = ({ label, active, onPress, activeColor }: any) => (
+  <TouchableOpacity onPress={onPress} style={styles.navBtn}>
+    <View style={[styles.navIconPlaceholder, { backgroundColor: active ? activeColor : COLORS.gray[200] }]} />
+    <Text style={[styles.navText, { color: active ? activeColor : COLORS.gray[400] }]}>{label}</Text>
+  </TouchableOpacity>
+);
+
+export default function App() {
   return (
     <RoleProvider>
-      <View style={{ flex: 1 }}>
-        {currentScreen === 'HOME' && <HomeScreen stationData={mockStationData} />}
-        {currentScreen === 'ARBI' && <ArbiBotScanner />}
-        {currentScreen === 'PAY' && <PaymentScreen />}
-
-        {/* 底部演示导航栏 */}
-        <View style={styles.navBar}>
-          <TouchableOpacity onPress={() => setCurrentScreen('HOME')}><Text>首页</Text></TouchableOpacity>
-          <TouchableOpacity onPress={() => setCurrentScreen('ARBI')}><Text>套利</Text></TouchableOpacity>
-          <TouchableOpacity onPress={() => setCurrentScreen('PAY')}><Text>支付</Text></TouchableOpacity>
-        </View>
-      </View>
+      <MainNavigator />
     </RoleProvider>
   );
 }
 
 const styles = StyleSheet.create({
   navBar: { 
-    height: 60, 
+    height: 85, 
     flexDirection: 'row', 
     justifyContent: 'space-around', 
     alignItems: 'center', 
-    backgroundColor: '#fff', 
+    backgroundColor: COLORS.white, 
     borderTopWidth: 1, 
-    borderTopColor: '#eee' 
-  }
+    borderTopColor: COLORS.gray[100],
+    paddingBottom: 20,
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0
+  },
+  navBtn: { alignItems: 'center', justifyContent: 'center' },
+  navIconPlaceholder: { width: 24, height: 24, borderRadius: 6, marginBottom: 4 },
+  navText: { fontSize: 11, fontWeight: '700' }
 });
