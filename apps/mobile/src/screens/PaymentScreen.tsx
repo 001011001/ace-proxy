@@ -74,13 +74,13 @@ export const PaymentScreen = ({ orderTotal = '2,450,000' }) => {
           {/* 温和的服务卡片 (Service Agreement Notice) */}
           <View style={styles.noticeCard}>
             <View style={styles.noticeHeader}>
-              <Text style={{ fontSize: 16 }}>💡</Text>
-              <Text style={styles.noticeTitle}>跨境代购特别说明</Text>
+              <Text style={{ fontSize: 16 }}>⚠️</Text>
+              <Text style={styles.noticeTitle}>Pengingat Jastip (Proxy Reminder)</Text>
             </View>
             <Text style={styles.noticeContent}>
-              AceProxy 作为代购平台，仅根据您的指令从 1688 原厂采购。跨境商品<Text style={styles.highlightText}>一旦发出概不退货</Text>。若有售后需求，请在收货后使用 <Text style={styles.boldText}>Resale Hub</Text> 变现。
+              Pembelian ini dilakukan atas instruksi Anda. Barang dikirim dari luar negeri dan <Text style={styles.highlightText}>tidak dapat diretur</Text>. Gunakan fitur Resale Hub jika Anda ingin melepas barang di kemudian hari.
             </Text>
-          </TouchableOpacity>
+          </View>
 
           {/* Agreement Checkbox */}
           <TouchableOpacity 
@@ -176,6 +176,18 @@ const styles = StyleSheet.create({
   },
   walletIconPlaceholder: { width: 24, height: 24, backgroundColor: COLORS.gray[200], borderRadius: 6, marginBottom: 8 },
   walletText: { fontSize: 12, fontWeight: '700', color: COLORS.gray[600] },
+  noticeCard: { 
+    backgroundColor: '#FFF7ED', 
+    padding: 20, 
+    borderRadius: 24, 
+    borderWidth: 1, 
+    borderColor: '#FFEDD5',
+    marginTop: 20
+  },
+  noticeHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 },
+  noticeTitle: { fontSize: 15, fontWeight: '800', color: '#9A3412' },
+  noticeContent: { fontSize: 13, lineHeight: 20, color: '#C2410C', fontWeight: '500' },
+  highlightText: { fontWeight: '900', textDecorationLine: 'underline' },
   agreementRow: { 
     flexDirection: 'row', 
     padding: 16, 
@@ -183,8 +195,9 @@ const styles = StyleSheet.create({
     borderRadius: 20, 
     borderWidth: 1, 
     borderColor: COLORS.gray[100],
-    marginTop: 20,
-    gap: 12
+    marginTop: 16,
+    gap: 12,
+    alignItems: 'center'
   },
   checkbox: { 
     width: 20, 
@@ -193,20 +206,11 @@ const styles = StyleSheet.create({
     borderWidth: 2, 
     borderColor: COLORS.gray[300], 
     justifyContent: 'center', 
-    alignItems: 'center',
-    marginTop: 2
+    alignItems: 'center'
   },
   checkInner: { width: 10, height: 10, backgroundColor: COLORS.white, borderRadius: 2 },
-  agreementTitle: { fontSize: 12, fontWeight: '800', color: COLORS.gray[800], marginBottom: 4 },
-  agreementText: { fontSize: 10, color: COLORS.gray[500], lineHeight: 14, fontWeight: '500' },
-  boldText: { fontWeight: '800', color: COLORS.gray[900] },
-  payButton: { marginTop: 20, height: 64, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
-  payText: { color: COLORS.white, fontWeight: '900', fontSize: 18 },
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.8)', justifyContent: 'center', alignItems: 'center', padding: 24 },
-  modalContent: { backgroundColor: COLORS.white, borderRadius: 32, padding: 32, width: '100%' },
-  modalTitle: { fontSize: 20, fontWeight: '900', color: COLORS.gray[900], marginBottom: 16 },
-  modalText: { fontSize: 14, lineHeight: 22, color: COLORS.gray[600], marginBottom: 32 },
-  highlight: { color: '#DC2626', fontWeight: '800' },
-  modalBtn: { height: 60, borderRadius: 16, justifyContent: 'center', alignItems: 'center' },
-  modalBtnText: { color: COLORS.white, fontWeight: '900', fontSize: 16 }
+  agreementText: { flex: 1, fontSize: 12, color: COLORS.gray[600], fontWeight: '600' },
+  boldText: { fontWeight: '800' },
+  payButton: { marginTop: 24, height: 64, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
+  payText: { color: COLORS.white, fontWeight: '900', fontSize: 18 }
 });

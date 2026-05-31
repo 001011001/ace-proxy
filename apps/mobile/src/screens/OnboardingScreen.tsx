@@ -27,22 +27,21 @@ export const OnboardingScreen = ({ onConfirm }) => {
         </Animated.View>
 
         <Animated.View entering={FadeInUp.delay(400).duration(800)} style={styles.textContainer}>
-          <Text style={styles.title}>Global Proxy Service</Text>
-          <Text style={styles.subtitle}>AceProxy 跨境代购服务说明</Text>
+          <Text style={styles.title}>Selamat Datang!</Text>
+          <Text style={styles.subtitle}>Welcome to AceProxy</Text>
           
           <View style={styles.infoCard}>
-            <View style={styles.infoRow}>
-              <Text style={styles.infoIcon}>✅</Text>
-              <Text style={styles.infoText}>我们是您的全球买手，根据您的指令从 1688 原厂采购。</Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.infoIcon}>🚫</Text>
-              <Text style={styles.infoText}>由于跨境物流特殊性，下单后<Text style={styles.bold}>不支持无理由退货</Text>。</Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.infoIcon}>♻️</Text>
-              <Text style={styles.infoText}>若收到货后不满意，您可以使用 <Text style={styles.brandText}>Resale Hub</Text> 快速转卖变现。</Text>
-            </View>
+            <Text style={styles.infoPara}>
+              Kami adalah asisten jasa titip internasional Anda. Semua produk dibeli langsung dari pabrik global pilihan sesuai instruksi Anda.
+            </Text>
+            <View style={styles.divider} />
+            <Text style={[styles.infoPara, { color: '#9A3412' }]}>
+              <Text style={styles.bold}>Catatan Jastip (Proxy Note):</Text> Karena barang dipesan khusus untuk Anda, kami <Text style={styles.boldText}>tidak dapat menerima retur</Text>.
+            </Text>
+            <View style={styles.divider} />
+            <Text style={styles.infoPara}>
+              Namun, jika barang tidak sesuai, Anda bisa langsung menjualnya di <Text style={styles.brandText}>Resale Hub</Text> kami untuk profit tambahan!
+            </Text>
           </View>
         </Animated.View>
 
@@ -68,18 +67,18 @@ const styles = StyleSheet.create({
   title: { fontSize: 28, fontWeight: '900', color: COLORS.gray[900] },
   subtitle: { fontSize: 16, color: COLORS.gray[500], marginTop: 8, fontWeight: '600' },
   infoCard: { 
-    backgroundColor: '#FDFCFB', 
+    backgroundColor: '#FFF7ED', 
     padding: 24, 
-    borderRadius: 24, 
+    borderRadius: 28, 
     marginTop: 32, 
     width: '100%',
     borderWidth: 1,
-    borderColor: '#FEE2E2'
+    borderColor: '#FFEDD5'
   },
-  infoRow: { flexDirection: 'row', gap: 12, marginBottom: 20 },
-  infoIcon: { fontSize: 18 },
-  infoText: { fontSize: 14, color: COLORS.gray[700], lineHeight: 22, flex: 1, fontWeight: '500' },
-  bold: { fontWeight: '800', color: '#DC2626' },
+  infoPara: { fontSize: 14, color: COLORS.gray[700], lineHeight: 22, textAlign: 'center', fontWeight: '500' },
+  divider: { height: 1, backgroundColor: '#FFEDD5', marginVertical: 16 },
+  bold: { fontWeight: '800' },
+  boldText: { fontWeight: '900', color: '#DC2626' },
   brandText: { fontWeight: '800', color: '#F97316' },
   footer: { marginTop: 48 },
   btn: { backgroundColor: '#F97316', paddingVertical: 18, borderRadius: 16, alignItems: 'center' },

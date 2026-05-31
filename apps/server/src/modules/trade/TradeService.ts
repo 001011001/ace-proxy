@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { VaultService } from '../vault/VaultService';
 import { SmartSplitterService } from '../splitter/SmartSplitterService';
 import { NotificationService } from '../notification/NotificationService';
+import { UserLevelService } from '../membership/UserLevelService';
 
 /**
  * TradeService - 核心交易协调层 (The Glue)
@@ -15,11 +16,26 @@ export class TradeService {
     private readonly vault: VaultService,
     private readonly splitter: SmartSplitterService,
     private readonly notification: NotificationService,
+    private readonly membership: UserLevelService,
   ) {}
+
+  /**
+   * 记录用户登录/新手引导时的合规确认
+   * 响应老板需求：登录时即让用户知悉代购模式。
+   */
+  async recordOnboardingConfirmation(userId: string, compliance: { ip: string, deviceId: string }) {
+    this.logger.log(`[Trade] User ${userId} confirmed onboarding proxy mode notice. IP: ${compliance.ip}`);
+    return {
+      success: true,
+      confirmed_at: new Date().toISOString(),
+      notice_version: 'GENTLE_COMPLIANCE_2.0'
+    };
+  }
 
   /**
    * 创建订单并记录合规协议存证
    * 响应老板需求：强制验证“不退货协议”，并记录毫秒级法律存证。
+   * 已升级为“温和型告知”存证。
    */
   async createOrder(orderData: any, compliance: { ip: string, deviceId: string, terms_accepted: boolean }) {
     if (!compliance.terms_accepted) {
@@ -33,8 +49,8 @@ export class TradeService {
       id: `ORD-${Date.now()}`,
       compliance: {
         terms_accepted: true,
-        disclaimer_version: 'V1.0_NO_RETURN_POLICY',
-        consent_timestamp: new Date().getTime(), // 毫秒级时间戳
+        disclaimer_version: 'V2.0_GENTLE_ONBOARDING',
+        consent_timestamp: new Date().getTime(),
         audit_trail: {
           ip: compliance.ip,
           device_id: compliance.deviceId,
@@ -44,8 +60,19 @@ export class TradeService {
       }
     };
 
-    // 存储至数据库，作为应对金融申诉的核弹级证据
     return order;
+  }
+
+  /**
+   * 计算带会员折扣的最终费用
+   */
+  async calculateFinalFees(userId: string, baseFee: number, totalSpend: number) {
+    const discountPct = await this.membership.getFeeDiscount(userId, totalSpend);
+    const discountAmount = baseFee * (discountPct / 100);
+    const finalFee = baseFee - discountAmount;
+    
+    this.logger.log(`[Trade] Fee calculation for ${userId}: Base ${baseFee} -> Final ${finalFee} (${discountPct}% disc)`);
+    return finalFee;
   }
 
   /**

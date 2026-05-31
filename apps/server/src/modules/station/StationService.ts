@@ -23,20 +23,30 @@ export class StationService {
   }
 
   /**
-   * 获取雅加达站点首页配置
+   * 动态获取站点首页配置 (支持全球多站点)
    */
-  async getJakartaHome() {
-    const activeCategories = await this.holiday.getActiveCategories('JKT');
+  async getStationHome(stationId: string) {
+    const activeCategories = await this.holiday.getActiveCategories(stationId);
     
+    // 区域配置字典
+    const stationConfigs: Record<string, any> = {
+      'JKT': { name: 'Jakarta', region: 'IDN', currency: 'IDR', lang: 'id' },
+      'LDN': { name: 'London', region: 'GBR', currency: 'GBP', lang: 'en' },
+      'TYO': { name: 'Tokyo', region: 'JPN', currency: 'JPY', lang: 'ja' },
+    };
+
+    const config = stationConfigs[stationId] || stationConfigs['JKT'];
+
     return {
-      stationName: 'AceProxy Jakarta (JKT)',
-      regionCode: 'IDN',
-      currency: 'IDR',
-      announcement: '🏮 开斋节备货季开启！1688 原厂货源利差高达 200%。',
+      stationName: `AceProxy ${config.name} (${stationId})`,
+      regionCode: config.region,
+      currency: config.currency,
+      language: config.lang,
+      announcement: `Global Sourcing Engine is live in ${config.name}!`,
       widgets: [
-        { type: 'HOLIDAY_BANNER', title: 'Ramadan Essentials', priority: 1 },
-        { type: 'ARBI_BOT_COMPARE', title: 'Amazon vs AceProxy 套利对冲', items: this.trendingProducts },
-        { type: 'PARTNER_HUB', title: '成为团长/骑手，收割邻里红利', cta: 'Join Now' }
+        { type: 'HOLIDAY_BANNER', title: 'Seasonal Essentials', priority: 1 },
+        { type: 'TRENDING_FEEDS', title: 'Global Smart Sourcing', items: this.trendingProducts },
+        { type: 'PARTNER_HUB', title: 'Join our local fulfillment network', cta: 'Apply' }
       ],
       trendingCategories: activeCategories,
       lossPreventionStatus: 'NORMAL',

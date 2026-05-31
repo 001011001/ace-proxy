@@ -17,6 +17,8 @@ import { CouponService } from './modules/marketing/CouponService';
 import { ResaleHubService } from './modules/resale/ResaleHubService';
 import { NotificationService } from './modules/notification/NotificationService';
 import { TradeService } from './modules/trade/TradeService';
+import { CMSService } from './modules/cms/CMSService';
+import { UserLevelService } from './modules/membership/UserLevelService';
 
 @Module({
   imports: [ScheduleModule.forRoot()],
@@ -37,6 +39,8 @@ import { TradeService } from './modules/trade/TradeService';
     ResaleHubService,
     NotificationService,
     TradeService,
+    CMSService,
+    UserLevelService,
   ],
 })
 export class AppModule {}

@@ -44,7 +44,7 @@ export const ArbiBotScanner = () => {
         >
           <Animated.View entering={FadeInDown.duration(600)} style={styles.inner}>
             <Text style={[styles.title, { color: theme.primary }]}>{t.arbiBot}</Text>
-            <Text style={styles.subtitle}>粘贴海外链接，AceProxy 自动为您匹配 1688 原厂货源并计算全球利差</Text>
+            <Text style={styles.subtitle}>粘贴海外链接，AceProxy 自动为您匹配全球源头货源并计算价格优势</Text>
             
             <View style={[styles.inputContainer, SHADOWS.soft]}>
               <TextInput
@@ -62,7 +62,7 @@ export const ArbiBotScanner = () => {
               style={[styles.scanButton, { backgroundColor: theme.primary }, SHADOWS.medium]} 
               onPress={handleArbiSearch}
             >
-              <Text style={styles.buttonText}>开始 AI 套利分析</Text>
+              <Text style={styles.buttonText}>开始 AI 价值分析</Text>
             </TouchableOpacity>
 
             <View style={styles.infoGrid}>
@@ -155,4 +155,6 @@ const styles = StyleSheet.create({
   tipText: { color: '#B45309', fontSize: 13, lineHeight: 18, opacity: 0.8 },
   footer: { position: 'absolute', bottom: 20, left: 0, right: 0, alignItems: 'center' },
   footerText: { color: COLORS.gray[300], fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1.5 }
+});
+ing: 1.5 }
 });
