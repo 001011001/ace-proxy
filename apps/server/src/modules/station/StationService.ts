@@ -8,10 +8,19 @@ import { IPFirewallService } from '../sentinel/IPFirewallService';
  */
 @Injectable()
 export class StationService {
+  private trendingProducts: any[] = [];
+
   constructor(
     private readonly holiday: HolidayPredictorService,
     private readonly sentinel: IPFirewallService
   ) {}
+
+  /**
+   * 灌入趋势爆款产品
+   */
+  async updateTrendingProducts(products: any[]) {
+    this.trendingProducts = products;
+  }
 
   /**
    * 获取雅加达站点首页配置
@@ -26,7 +35,7 @@ export class StationService {
       announcement: '🏮 开斋节备货季开启！1688 原厂货源利差高达 200%。',
       widgets: [
         { type: 'HOLIDAY_BANNER', title: 'Ramadan Essentials', priority: 1 },
-        { type: 'ARBI_BOT_COMPARE', title: 'Amazon vs AceProxy 套利对冲', items: [] },
+        { type: 'ARBI_BOT_COMPARE', title: 'Amazon vs AceProxy 套利对冲', items: this.trendingProducts },
         { type: 'PARTNER_HUB', title: '成为团长/骑手，收割邻里红利', cta: 'Join Now' }
       ],
       trendingCategories: activeCategories,

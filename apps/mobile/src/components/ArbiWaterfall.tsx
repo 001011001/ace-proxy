@@ -4,10 +4,10 @@ import { useRole } from '../context/RoleContext';
 import { COLORS, SPACING, TYPOGRAPHY, SHADOWS } from '../theme';
 
 const MOCK_DATA = [
-  { id: '1', item: 'Nike Air Max', margin: '+156%', price: '￥299', profit: '+$45' },
-  { id: '2', item: 'Vacuum Sealer', margin: '+210%', price: '￥89', profit: '+$22' },
-  { id: '3', item: 'Muslim Dress', margin: '+180%', price: '￥150', profit: '+$38' },
-  { id: '4', item: 'Smart Watch', margin: '+120%', price: '￥450', profit: '+$60' },
+  { id: '1', item: 'Muslim Dress (Raya Edition)', margin: '+210%', price: '￥150', profit: '+$55', tag: 'Hot' },
+  { id: '2', item: 'Vacuum Sealer Pro', margin: '+245%', price: '￥89', profit: '+$32', tag: 'New' },
+  { id: '3', item: 'LED Festive String Lights', margin: '+380%', price: '￥12', profit: '+$18', tag: 'Ramadan' },
+  { id: '4', item: 'Smart Watch Ultra', margin: '+115%', price: '￥450', profit: '+$65', tag: 'Tech' },
 ];
 
 export const ArbiWaterfall = () => {
@@ -15,7 +15,12 @@ export const ArbiWaterfall = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.title, { color: theme.primary }]}>{t.profitFlow}</Text>
+      <View style={styles.headerRow}>
+        <Text style={[styles.title, { color: theme.primary }]}>{t.profitFlow}</Text>
+        <TouchableOpacity>
+          <Text style={[styles.viewAll, { color: theme.primary }]}>View All →</Text>
+        </TouchableOpacity>
+      </View>
       <FlatList
         data={MOCK_DATA}
         horizontal
@@ -24,12 +29,20 @@ export const ArbiWaterfall = () => {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={[styles.card, SHADOWS.soft]}>
-            <Text style={styles.itemText}>{item.item}</Text>
+            <View style={[styles.tagBadge, { backgroundColor: theme.primary + '20' }]}>
+              <Text style={[styles.tagText, { color: theme.primary }]}>{item.tag}</Text>
+            </View>
+            <Text style={styles.itemText} numberOfLines={1}>{item.item}</Text>
             <View style={styles.row}>
               <Text style={styles.marginText}>{item.margin}</Text>
               <Text style={styles.profitText}>{item.profit}</Text>
             </View>
-            <Text style={styles.priceText}>进货价: {item.price}</Text>
+            <View style={styles.footerRow}>
+              <Text style={styles.priceText}>Cost: {item.price}</Text>
+              <View style={styles.arbiIndicator}>
+                <Text style={styles.arbiIcon}>⚡</Text>
+              </View>
+            </View>
           </View>
         )}
       />
@@ -41,11 +54,20 @@ const styles = StyleSheet.create({
   container: {
     marginVertical: SPACING.md,
   },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginHorizontal: SPACING.md,
+    marginBottom: SPACING.sm,
+  },
   title: {
     ...TYPOGRAPHY.h2,
     fontSize: 18,
-    marginHorizontal: SPACING.md,
-    marginBottom: SPACING.sm,
+  },
+  viewAll: {
+    fontSize: 12,
+    fontWeight: '700',
   },
   list: {
     paddingHorizontal: SPACING.md,
@@ -54,35 +76,70 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: COLORS.white,
     padding: SPACING.md,
-    borderRadius: 12,
+    borderRadius: 20,
     marginRight: SPACING.sm,
-    width: 160,
+    width: 170,
+    borderWidth: 1,
+    borderColor: COLORS.gray[100],
+  },
+  tagBadge: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 6,
+    marginBottom: 8,
+  },
+  tagText: {
+    fontSize: 10,
+    fontWeight: '800',
+    textTransform: 'uppercase',
   },
   itemText: {
     ...TYPOGRAPHY.body,
-    fontWeight: 'bold',
+    fontWeight: '800',
     fontSize: 14,
+    color: COLORS.gray[800],
   },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginVertical: SPACING.xs,
+    marginVertical: SPACING.sm,
   },
   marginText: {
-    color: COLORS.success,
-    fontWeight: 'bold',
-    fontSize: 16,
+    color: '#16A34A',
+    fontWeight: '900',
+    fontSize: 18,
   },
   profitText: {
-    backgroundColor: '#ECFDF5',
-    color: COLORS.success,
+    backgroundColor: '#F0FDF4',
+    color: '#16A34A',
     fontSize: 10,
-    paddingHorizontal: 4,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
     borderRadius: 4,
+    fontWeight: '700',
+  },
+  footerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 4,
   },
   priceText: {
-    color: COLORS.gray[500],
-    fontSize: 12,
+    color: COLORS.gray[400],
+    fontSize: 11,
+    fontWeight: '500',
   },
+  arbiIndicator: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    backgroundColor: '#FFF7ED',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  arbiIcon: {
+    fontSize: 10,
+  }
 });

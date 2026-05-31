@@ -133,7 +133,21 @@ export const HomeScreen = ({ stationData }: any) => {
             <ArbiWaterfall />
           </Animated.View>
 
-          {/* 5. 身份切换看板 (Identity Morphing) */}
+          {/* 5. 团长分享工具 (Partner Share Tools) */}
+          {(role === 'PARTNER' || role === 'RIDER') && (
+            <Animated.View 
+              entering={FadeInDown.delay(500).duration(800)}
+              style={styles.shareCard}
+            >
+              <Text style={styles.shareTitle}>📢 {role === 'PARTNER' ? '团长分销工具' : '骑手推广工具'}</Text>
+              <Text style={styles.shareDesc}>一键将当前开斋节货盘分享至 WhatsApp 群组，获取额外 2% 订单分润。</Text>
+              <TouchableOpacity style={styles.waButton}>
+                <Text style={styles.waText}>分享至 WhatsApp</Text>
+              </TouchableOpacity>
+            </Animated.View>
+          )}
+
+          {/* 6. 身份切换看板 (Identity Morphing) */}
           <View style={styles.roleSection}>
             <Text style={styles.sectionLabel}>{t.switchRole}</Text>
             <View style={styles.roleGrid}>
@@ -250,5 +264,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row'
   },
-  fabText: { color: COLORS.white, fontWeight: '900', fontSize: 14, letterSpacing: 0.5 }
+  fabText: { color: COLORS.white, fontWeight: '900', fontSize: 14, letterSpacing: 0.5 },
+  shareCard: {
+    margin: SPACING.md,
+    padding: SPACING.lg,
+    backgroundColor: '#DCFCE7',
+    borderRadius: 24,
+    borderWidth: 1,
+    borderColor: '#BBF7D0',
+  },
+  shareTitle: { fontSize: 16, fontWeight: '900', color: '#166534', marginBottom: 4 },
+  shareDesc: { fontSize: 12, color: '#15803d', lineHeight: 18, marginBottom: 16 },
+  waButton: { backgroundColor: '#22C55E', paddingVertical: 12, borderRadius: 14, alignItems: 'center' },
+  waText: { color: COLORS.white, fontWeight: '800', fontSize: 14 }
 });
