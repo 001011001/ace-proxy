@@ -1,15 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 export enum UserLevel {
-  BRONZE = 'BRONZE',
-  SILVER = 'SILVER',
-  GOLD = 'GOLD',
-  PLATINUM = 'PLATINUM'
+  EXPLORER = 'EXPLORER',
+  ELITE = 'ELITE',
+  GLOBAL_PARTNER = 'GLOBAL_PARTNER'
 }
 
 export interface LevelConfig {
   minSpend: number;
-  feeDiscount: number; // Percentage discount on service fees
+  serviceFeePct: number;
+  rebatePct: number;
   badge: string;
 }
 
@@ -18,20 +18,18 @@ export class UserLevelService {
   private readonly logger = new Logger(UserLevelService.name);
 
   private readonly levels: Record<UserLevel, LevelConfig> = {
-    [UserLevel.BRONZE]: { minSpend: 0, feeDiscount: 0, badge: '🥉' },
-    [UserLevel.SILVER]: { minSpend: 10000000, feeDiscount: 5, badge: '🥈' }, // 10M IDR
-    [UserLevel.GOLD]: { minSpend: 50000000, feeDiscount: 15, badge: '🥇' }, // 50M IDR
-    [UserLevel.PLATINUM]: { minSpend: 200000000, feeDiscount: 30, badge: '💎' }, // 200M IDR
+    [UserLevel.EXPLORER]: { minSpend: 0, serviceFeePct: 0.10, rebatePct: 0, badge: '🧭' },
+    [UserLevel.ELITE]: { minSpend: 50000000, serviceFeePct: 0.08, rebatePct: 0.005, badge: '🔥' }, // 50M IDR (~$3k)
+    [UserLevel.GLOBAL_PARTNER]: { minSpend: 200000000, serviceFeePct: 0.05, rebatePct: 0.01, badge: '👑' }, // 200M IDR (~$12k)
   };
 
   /**
-   * Calculate user level based on total spend
+   * Calculate user level and config based on total spend
    */
-  async calculateLevel(totalSpend: number): Promise<{ level: UserLevel; config: LevelConfig }> {
-    if (totalSpend >= this.levels.PLATINUM.minSpend) return { level: UserLevel.PLATINUM, config: this.levels.PLATINUM };
-    if (totalSpend >= this.levels.GOLD.minSpend) return { level: UserLevel.GOLD, config: this.levels.GOLD };
-    if (totalSpend >= this.levels.SILVER.minSpend) return { level: UserLevel.SILVER, config: this.levels.SILVER };
-    return { level: UserLevel.BRONZE, config: this.levels.BRONZE };
+  async getUserTier(totalSpend: number): Promise<{ level: UserLevel; config: LevelConfig }> {
+    if (totalSpend >= this.levels.GLOBAL_PARTNER.minSpend) return { level: UserLevel.GLOBAL_PARTNER, config: this.levels.GLOBAL_PARTNER };
+    if (totalSpend >= this.levels.ELITE.minSpend) return { level: UserLevel.ELITE, config: this.levels.ELITE };
+    return { level: UserLevel.EXPLORER, config: this.levels.EXPLORER };
   }
 
   /**

@@ -44,4 +44,10 @@ export class CMSService {
     this.logger.log(`[CMS] New banner created for station ${data.stationId}.`);
     return newBanner;
   }
+
+  async deleteBanner(bannerId: string) {
+    this.banners = this.banners.filter(b => b.id !== bannerId);
+    this.logger.log(`[CMS] Banner ${bannerId} removed.`);
+    return { success: true };
+  }
 }

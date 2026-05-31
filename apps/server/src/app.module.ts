@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
 import { IntelligenceService } from './modules/intelligence/IntelligenceService';
 import { SentinelScraper } from './modules/intelligence/SentinelScraper';
@@ -19,6 +19,9 @@ import { NotificationService } from './modules/notification/NotificationService'
 import { TradeService } from './modules/trade/TradeService';
 import { CMSService } from './modules/cms/CMSService';
 import { UserLevelService } from './modules/membership/UserLevelService';
+import { SupplierScoreService } from './modules/supplier/SupplierScoreService';
+import { RBACMiddleware } from './common/middlewares/RBACMiddleware';
+
 
 @Module({
   imports: [ScheduleModule.forRoot()],
@@ -41,6 +44,13 @@ import { UserLevelService } from './modules/membership/UserLevelService';
     TradeService,
     CMSService,
     UserLevelService,
+    SupplierScoreService,
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(RBACMiddleware)
+      .forRoutes('*');
+  }
+}
