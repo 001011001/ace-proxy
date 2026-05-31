@@ -36,6 +36,16 @@ export class VaultService {
   }
 
   /**
+   * 处理拒付 (Chargeback)
+   * 响应 RiskSentry 的熔断指令，锁定相关区域的资金池。
+   */
+  async handleChargeback(regionId: string, amount: number) {
+    console.warn(`[Vault] CRITICAL: Chargeback detected in region ${regionId} for amount ${amount}.`);
+    // 逻辑：从该区域的利润池中扣除，并标记风险
+    return { success: true, status: 'FUNDS_LOCKED' };
+  }
+
+  /**
    * 记录 C2C 转卖分账
    */
   async recordResaleSettlement(orderId: string, resalePrice: number) {

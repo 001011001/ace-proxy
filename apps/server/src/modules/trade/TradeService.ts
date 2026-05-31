@@ -58,8 +58,8 @@ export class TradeService {
     await this.vault.recordOrderLedger(orderId, payload.amounts);
 
     // 2. 自动拆单 (Smart Splitter)
-    const parcels = await this.splitter.splitOrder(orderId, payload.items);
-    this.logger.log(`[Trade] Order ${orderId} split into ${parcels.length} parcels.`);
+    const result = await this.splitter.splitOrder(orderId, payload.items);
+    this.logger.log(`[Trade] Order ${orderId} split into ${result.parcels.length} parcels.`);
 
     // 3. 推送通知 (Push Notification)
     await this.notification.sendLogisticUpdate(payload.userId, 'PAID_READY_TO_SHIP', orderId);
@@ -67,7 +67,7 @@ export class TradeService {
     return {
       success: true,
       orderId,
-      parcelsCount: parcels.length
+      parcelsCount: result.parcels.length
     };
   }
 }
