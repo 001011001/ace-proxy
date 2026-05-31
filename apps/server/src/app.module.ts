@@ -13,6 +13,9 @@ import { SmartSplitterService } from './modules/splitter/SmartSplitterService';
 import { VisionQCService } from './modules/wms/VisionQCService';
 import { ReferralService } from './modules/referral/ReferralService';
 import { RegionService } from './modules/region/RegionService';
+import { CouponService } from './modules/marketing/CouponService';
+import { ResaleHubService } from './modules/resale/ResaleHubService';
+import { NotificationService } from './modules/notification/NotificationService';
 
 @Module({
   imports: [ScheduleModule.forRoot()],
@@ -29,6 +32,9 @@ import { RegionService } from './modules/region/RegionService';
     VisionQCService,
     ReferralService,
     RegionService,
+    CouponService,
+    ResaleHubService,
+    NotificationService,
   ],
 })
 export class AppModule {}

@@ -22,6 +22,7 @@ import { useRole } from '../context/RoleContext';
 import { SPACING, TYPOGRAPHY, SHADOWS, COLORS } from '../theme';
 import { Skeleton } from '../components/Skeleton';
 import { ArbiWaterfall } from '../components/ArbiWaterfall';
+import { FlashSaleBanner } from '../components/FlashSaleBanner';
 
 const { width } = Dimensions.get('window');
 
@@ -114,19 +115,8 @@ export const HomeScreen = ({ stationData }: any) => {
             </View>
           </Animated.View>
 
-          {/* 3. 节日引擎 Banner (斋月特供) */}
-          <Animated.View 
-            entering={FadeInDown.delay(200).duration(800)}
-            style={[styles.holidayBanner, SHADOWS.soft]}
-          >
-            <View style={{ flex: 1 }}>
-              <Text style={styles.holidayTitle}>{t.ramadanSpecial}</Text>
-              <Text style={styles.holidayDesc}>{t.jakartaDesc}</Text>
-            </View>
-            <TouchableOpacity style={styles.holidayAction}>
-              <Text style={styles.holidayActionText}>View</Text>
-            </TouchableOpacity>
-          </Animated.View>
+          {/* 3. 营销引擎 (Flash Sale Banner) */}
+          <FlashSaleBanner />
 
           {/* 4. AI 实时瀑布流 */}
           <Animated.View entering={FadeInDown.delay(400).duration(800)}>
