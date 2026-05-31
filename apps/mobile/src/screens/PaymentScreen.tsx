@@ -37,26 +37,21 @@ export const PaymentScreen = ({ orderTotal = '2,450,000' }) => {
 
   const handlePayPress = () => {
     if (!agreementConfirmed) {
-      Alert.alert('提示', '请先阅读并同意跨境代购协议');
+      Alert.alert('提示', '请先勾选跨境代购协议');
       return;
     }
-    setCountdown(3);
-    setShowComplianceModal(true);
+    handleFinalConfirm();
   };
 
   const handleFinalConfirm = () => {
-    setShowComplianceModal(false);
-    
-    // UI 架构师注：此处将 agreementConfirmed (terms_accepted) 与设备指纹/IP 
-    // 一并发送至 TradeService.createOrder 接口进行审计存证。
+    // UI 架构师注：记录协议确认存证
     const auditData = {
-      terms_accepted: agreementConfirmed,
-      deviceId: 'DEVICE_FINGERPRINT_HASH', // TODO: 集成设备信息获取
-      ip: 'USER_IP_ADDRESS' // 后端自动抓取或前端透传
+      terms_accepted: true,
+      deviceId: 'DEVICE_FINGERPRINT_HASH',
+      timestamp: new Date().getTime()
     };
-    
-    console.log('[Compliance Audit] Sending evidence chain:', auditData);
-    Alert.alert('支付成功', '您的跨境代购订单已提交，正在记录 Vault 复式账本并保存法律存证。');
+    console.log('[Compliance Audit] Evidence saved:', auditData);
+    Alert.alert('支付成功', '您的订单已提交。温馨提示：代购商品不支持退货。');
   };
 
   return (
@@ -74,25 +69,20 @@ export const PaymentScreen = ({ orderTotal = '2,450,000' }) => {
         <View style={styles.content}>
           <Text style={styles.sectionTitle}>选择本地支付方式 (Xendit Gateway)</Text>
 
-          {/* Virtual Account */}
-          <View style={[styles.methodGroup, SHADOWS.soft]}>
-            <Text style={styles.groupLabel}>Bank Transfer (Virtual Account)</Text>
-            <PaymentMethod name="Mandiri VA" />
-            <PaymentMethod name="BCA VA" />
-            <PaymentMethod name="BNI VA" last />
-          </View>
+          {/* ... method groups ... */}
 
-          {/* E-Wallet */}
-          <View style={[styles.methodGroup, SHADOWS.soft]}>
-            <Text style={styles.groupLabel}>E-Wallet (Local Mobile Pay)</Text>
-            <View style={styles.walletRow}>
-              <WalletButton name="Gopay" />
-              <WalletButton name="OVO" />
-              <WalletButton name="DANA" />
+          {/* 温和的服务卡片 (Service Agreement Notice) */}
+          <View style={styles.noticeCard}>
+            <View style={styles.noticeHeader}>
+              <Text style={{ fontSize: 16 }}>💡</Text>
+              <Text style={styles.noticeTitle}>跨境代购特别说明</Text>
             </View>
-          </View>
+            <Text style={styles.noticeContent}>
+              AceProxy 作为代购平台，仅根据您的指令从 1688 原厂采购。跨境商品<Text style={styles.highlightText}>一旦发出概不退货</Text>。若有售后需求，请在收货后使用 <Text style={styles.boldText}>Resale Hub</Text> 变现。
+            </Text>
+          </TouchableOpacity>
 
-          {/* Agreement Checkbox - First Lock */}
+          {/* Agreement Checkbox */}
           <TouchableOpacity 
             style={styles.agreementRow} 
             onPress={() => setAgreementConfirmed(!agreementConfirmed)}
@@ -100,23 +90,19 @@ export const PaymentScreen = ({ orderTotal = '2,450,000' }) => {
           >
             <View style={[
               styles.checkbox, 
-              agreementConfirmed && { backgroundColor: theme.primary, borderColor: theme.primary }
+              agreementConfirmed && { backgroundColor: '#F97316', borderColor: '#F97316' }
             ]}>
               {agreementConfirmed && <View style={styles.checkInner} />}
             </View>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.agreementTitle}>Agreement Statement / Pernyataan Kesepakatan</Text>
-              <Text style={styles.agreementText}>
-                I agree that items purchased are <Text style={styles.boldText}>NON-RETURNABLE</Text>. If unsatisfied, I will use <Text style={{ color: theme.primary, fontWeight: '700' }}>Resale Hub</Text>.
-                {"\n"}Saya menyetujui bahwa barang <Text style={styles.boldText}>TIDAK DAPAT DIKEMBALIKAN</Text>.
-              </Text>
-            </View>
+            <Text style={styles.agreementText}>
+              我已阅读并同意 <Text style={{ color: '#F97316', fontWeight: '700' }}>《跨境代购免责契约》</Text>。
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity 
             style={[
               styles.payButton, 
-              { backgroundColor: agreementConfirmed ? theme.primary : COLORS.gray[300] }, 
+              { backgroundColor: agreementConfirmed ? '#F97316' : COLORS.gray[300] }, 
               agreementConfirmed && SHADOWS.medium
             ]}
             onPress={handlePayPress}
@@ -126,37 +112,6 @@ export const PaymentScreen = ({ orderTotal = '2,450,000' }) => {
           </TouchableOpacity>
         </View>
       </ScrollView>
-
-      {/* Compliance Modal - Second Lock (Final Sale Confirmation) */}
-      <Modal visible={showComplianceModal} transparent animationType="slide">
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>⚠️ FINAL SALE CONFIRMATION</Text>
-            <ScrollView style={{ maxHeight: 300 }}>
-              <Text style={styles.modalText}>
-                <Text style={styles.boldText}>English:</Text>{"\n"}
-                I understand that AceProxy is an international proxy service. Per my purchase instructions, items are shipped directly from China. I agree that items purchased are <Text style={styles.highlight}>NON-RETURNABLE and NON-EXCHANGEABLE</Text>. If I am unsatisfied, I will use the 'Resale Hub' feature to resell the item.
-                {"\n\n"}
-                <Text style={styles.boldText}>Bahasa Indonesia:</Text>{"\n"}
-                Saya memahami bahwa AceProxy adalah layanan jasa titip internasional. Saya menyetujui bahwa barang yang sudah dibeli <Text style={styles.highlight}>TIDAK DAPAT DIKEMBALIKAN ATAU DITUKAR</Text>. Jika saya tidak puas, saya akan menggunakan fitur 'Resale Hub'.
-              </Text>
-            </ScrollView>
-            
-            <TouchableOpacity 
-              style={[
-                styles.modalBtn, 
-                { backgroundColor: countdown > 0 ? COLORS.gray[800] : '#000' }
-              ]}
-              disabled={countdown > 0}
-              onPress={handleFinalConfirm}
-            >
-              <Text style={styles.modalBtnText}>
-                {countdown > 0 ? `I UNDERSTAND (${countdown}s)` : 'CONFIRM & PAY NOW'}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
     </SafeAreaView>
   );
 };

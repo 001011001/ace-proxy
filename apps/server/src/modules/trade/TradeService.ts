@@ -40,7 +40,7 @@ export class TradeService {
           device_id: compliance.deviceId,
           user_agent: 'AceProxy-Mobile-App',
         },
-        legal_notice_snapshot: "Saya memahami bahwa AceProxy adalah layanan jasa titip internasional... TIDAK DAPAT DIKEMBALIKAN ATAU DITUKAR."
+        legal_notice_snapshot: "AceProxy adalah layanan jasa titip internasional (Proxy Service). Barang dibeli sesuai instruksi Anda dan tidak dapat ditukar atau dikembalikan (Non-returnable). Silakan gunakan Resale Hub jika tidak puas."
       }
     };
 
