@@ -6,7 +6,10 @@ export default function Home() {
 
   const menuItems = [
     { id: 'dashboard', label: 'Overview', icon: '📊' },
+    { id: 'ai_sourcing', label: 'AI Sentinel', icon: '🤖' },
+    { id: 'vision_qc', label: 'VisionQC 2.0', icon: '👁️' },
     { id: 'orders', label: 'Orders & Fulfillment', icon: '📦' },
+
     { id: 'sourcing', label: 'Global Sourcing', icon: '🌍' },
     { id: 'vault', label: 'Vault & Finance', icon: '💰' },
     { id: 'logistics', label: 'L3 Logistics', icon: '✈️' },

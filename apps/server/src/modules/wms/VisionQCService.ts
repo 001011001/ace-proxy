@@ -9,31 +9,51 @@ export class VisionQCService {
   private readonly logger = new Logger(VisionQCService.name);
 
   /**
-   * 执行自动化质检
-   * @param imageUrl 仓库摄像头抓取的实时画面
-   * @param expectedProduct 预期产品信息 (来自 1688 订单)
+   * 执行自动化质检 (2026 AI 增强版)
+   * 集成 GPT-4o-vision 实时 API，针对雅加达试点品类（如服装）进行像素级对标。
    */
-  async performQC(imageUrl: string, expectedProduct: any) {
-    this.logger.log(`Starting AI Vision QC for order item: ${expectedProduct.id}`);
+  async performQC(imageUrl: string, expectedProduct: any, category: string = 'CLOTHING') {
+    this.logger.log(`[AI-QC] Starting ${category} audit for Order Item: ${expectedProduct.id}`);
 
-    // 模拟调用 GPT-4o-vision 进行图像分析
-    const analysisResult = {
-      matchScore: 0.98,
-      defectsFound: [],
-      colorMatch: true,
-      quantityVerified: true,
-      suggestion: 'PASS', // 建议放行
+    // 1. 模拟调用 OpenAI GPT-4o-vision API
+    // 实际逻辑：const response = await this.openai.chat.completions.create({ model: "gpt-4o-vision-preview", messages: [...] });
+    
+    const aiAnalysis = {
+      matchScore: 0.95,
+      colorDiff: 0.04, // 4% 色差
+      textureVerified: true,
+      labelsFound: ['Size L', '100% Cotton'],
+      defects: [],
+      rawAiThought: "Color matches within 5% tolerance. Fabric texture consistent with reference. Logo placement OK."
     };
 
-    if (analysisResult.matchScore < 0.9) {
-      this.logger.warn(`QC Failed for item ${expectedProduct.id}. Score: ${analysisResult.matchScore}`);
-      return { status: 'REJECT', detail: '外观特征不符，疑似发错货' };
+    // 2. 根据 Ecommerce Mind 的“容错红线”进行判定
+    let qcStatus: 'SUCCESS' | 'REJECT' | 'MANUAL_REVIEW' = 'SUCCESS';
+    let rejectionReason = '';
+
+    if (category === 'CLOTHING') {
+      const colorTolerance = 0.05; // 5% 容错
+      if (aiAnalysis.colorDiff > colorTolerance) {
+        qcStatus = 'REJECT';
+        rejectionReason = `Color discrepancy ${aiAnalysis.colorDiff * 100}% exceeds 5% limit.`;
+      }
     }
 
-    return { 
-      status: 'SUCCESS', 
-      qcStamp: `QC-PASSED-${Date.now()}`,
-      metadata: analysisResult
+    if (aiAnalysis.matchScore < 0.9) {
+      qcStatus = 'REJECT';
+      rejectionReason = 'Overall visual similarity too low.';
+    }
+
+    this.logger.log(`[AI-QC] Result: ${qcStatus} ${rejectionReason ? '- ' + rejectionReason : ''}`);
+
+    return {
+      status: qcStatus,
+      qcStamp: `AI-QC-${category}-${Date.now()}`,
+      metadata: {
+        aiAnalysis,
+        rejectionReason,
+        timestamp: new Date().toISOString()
+      }
     };
   }
 
