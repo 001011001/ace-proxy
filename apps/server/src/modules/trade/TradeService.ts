@@ -85,7 +85,8 @@ export class TradeService {
     await this.vault.recordOrderLedger(orderId, payload.amounts);
 
     // 2. 自动拆单 (Smart Splitter)
-    const result = await this.splitter.splitOrder(orderId, payload.items);
+    // 雅加达试点默认发往 JKT
+    const result = await this.splitter.splitOrder(payload.items, payload.destination || 'JKT');
     this.logger.log(`[Trade] Order ${orderId} split into ${result.parcels.length} parcels.`);
 
     // 3. 推送通知 (Push Notification)
