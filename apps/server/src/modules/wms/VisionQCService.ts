@@ -10,47 +10,63 @@ export class VisionQCService {
 
   /**
    * 执行自动化质检 (2026 AI 增强版)
-   * 集成 GPT-4o-vision 实时 API，针对雅加达试点品类（如服装）进行像素级对标。
+   * 集成 GPT-4o-vision 实时 API，针对雅加达试点品类进行像素级对标。
    */
-  async performQC(imageUrl: string, expectedProduct: any, category: string = 'CLOTHING') {
+  async performQC(imageUrl: string, expectedProduct: any, category: string = 'FASHION') {
     this.logger.log(`[AI-QC] Starting ${category} audit for Order Item: ${expectedProduct.id}`);
 
-    // 1. 模拟调用 OpenAI GPT-4o-vision API
-    // 实际逻辑：const response = await this.openai.chat.completions.create({ model: "gpt-4o-vision-preview", messages: [...] });
-    
-    const aiAnalysis = {
-      matchScore: 0.95,
-      colorDiff: 0.04, // 4% 色差
-      textureVerified: true,
-      labelsFound: ['Size L', '100% Cotton'],
-      defects: [],
-      rawAiThought: "Color matches within 5% tolerance. Fabric texture consistent with reference. Logo placement OK."
+    // 1. 获取 Ecommerce Mind 定义的阈值 (Delta E / Match Score)
+    const thresholds = {
+      FASHION: { colorDelta: 5.0, specsMatch: 0.98, checkDefects: true },
+      ELECTRONICS: { colorDelta: 2.0, specsMatch: 1.0, checkDefects: true },
+      GIFTS: { colorDelta: 3.5, specsMatch: 0.95, checkDefects: true },
+      AUTO_PARTS: { colorDelta: null, specsMatch: 1.0, checkDefects: true },
     };
 
-    // 2. 根据 Ecommerce Mind 的“容错红线”进行判定
+    const currentLimit = thresholds[category] || thresholds.FASHION;
+
+    // 2. 模拟调用 OpenAI GPT-4o-vision API 得到的分析数据
+    const aiAnalysis = {
+      matchScore: 0.96,
+      colorDiff: 0.035, // 相当于 Delta E ~ 3.5
+      specsMatchScore: 1.0,
+      defectsFound: [],
+      confidenceScore: 92, // 置信度
+      rawAiThought: `Audit for ${category}: Color within limits. Specs verified. No visible defects.`
+    };
+
+    // 3. 核心判定逻辑 (The Red Lines)
     let qcStatus: 'SUCCESS' | 'REJECT' | 'MANUAL_REVIEW' = 'SUCCESS';
     let rejectionReason = '';
 
-    if (category === 'CLOTHING') {
-      const colorTolerance = 0.05; // 5% 容错
-      if (aiAnalysis.colorDiff > colorTolerance) {
-        qcStatus = 'REJECT';
-        rejectionReason = `Color discrepancy ${aiAnalysis.colorDiff * 100}% exceeds 5% limit.`;
-      }
-    }
-
-    if (aiAnalysis.matchScore < 0.9) {
+    // 色差判定 (Delta E)
+    if (currentLimit.colorDelta && (aiAnalysis.colorDiff * 100) > currentLimit.colorDelta) {
       qcStatus = 'REJECT';
-      rejectionReason = 'Overall visual similarity too low.';
+      rejectionReason = `COLOR_FAILED: Delta E ${(aiAnalysis.colorDiff * 100).toFixed(1)} > ${currentLimit.colorDelta}`;
     }
 
-    this.logger.log(`[AI-QC] Result: ${qcStatus} ${rejectionReason ? '- ' + rejectionReason : ''}`);
+    // 规格匹配度判定
+    if (aiAnalysis.specsMatchScore < currentLimit.specsMatch) {
+      qcStatus = 'REJECT';
+      rejectionReason = `SPECS_MISMATCH: Match ${aiAnalysis.specsMatchScore * 100}% < ${currentLimit.specsMatch * 100}%`;
+    }
+
+    // 置信度预警 (满足 UI 架构师需求)
+    if (aiAnalysis.confidenceScore < 85) {
+      qcStatus = 'MANUAL_REVIEW';
+      rejectionReason = `LOW_CONFIDENCE: Score ${aiAnalysis.confidenceScore}. Human verification required.`;
+    }
+
+    this.logger.log(`[AI-QC] [${category}] Final Status: ${qcStatus} ${rejectionReason ? '(' + rejectionReason + ')' : ''}`);
 
     return {
       status: qcStatus,
+      confidenceScore: aiAnalysis.confidenceScore,
       qcStamp: `AI-QC-${category}-${Date.now()}`,
       metadata: {
+        category,
         aiAnalysis,
+        thresholds: currentLimit,
         rejectionReason,
         timestamp: new Date().toISOString()
       }

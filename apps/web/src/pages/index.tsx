@@ -23,7 +23,88 @@ export default function Home() {
 
   const renderContent = () => {
     switch (activeTab) {
+      case 'ai_sourcing':
+        return (
+          <div style={{ padding: '24px' }}>
+            <h2 style={{ color: '#F97316' }}>AI Sourcing Sentinel (Arbitrage Ops)</h2>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px', marginTop: '20px' }}>
+              {[
+                { name: 'Baju Koko (Ramadan Special)', jkt_price: 'Rp 450k', cn_price: 'Rp 85k', profit: '+429%', confidence: 'High' },
+                { name: 'LED Hanging Lights', jkt_price: 'Rp 120k', cn_price: 'Rp 15k', profit: '+700%', confidence: 'Medium' },
+                { name: 'Vacuum Sealer Pro', jkt_price: 'Rp 850k', cn_price: 'Rp 320k', profit: '+165%', confidence: 'High' },
+              ].map(op => (
+                <div key={op.name} style={{ background: 'white', padding: '20px', borderRadius: '16px', border: '1px solid #E2E8F0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#94A3B8' }}>{op.confidence} Confidence</span>
+                    <span style={{ background: '#F0FDF4', color: '#166534', fontSize: '11px', padding: '2px 8px', borderRadius: '4px', fontWeight: 'bold' }}>Active</span>
+                  </div>
+                  <h4 style={{ margin: '12px 0 8px' }}>{op.name}</h4>
+                  <div style={{ display: 'flex', gap: '16px', fontSize: '12px' }}>
+                    <div>
+                      <p style={{ color: '#94A3B8' }}>JKT Market</p>
+                      <p style={{ fontWeight: 'bold' }}>{op.jkt_price}</p>
+                    </div>
+                    <div>
+                      <p style={{ color: '#94A3B8' }}>Factory Cost</p>
+                      <p style={{ fontWeight: 'bold' }}>{op.cn_price}</p>
+                    </div>
+                    <div style={{ marginLeft: 'auto' }}>
+                      <p style={{ color: '#F97316', fontWeight: '900', fontSize: '16px' }}>{op.profit}</p>
+                    </div>
+                  </div>
+                  <button style={{ width: '100%', marginTop: '16px', padding: '8px', borderRadius: '8px', border: 'none', background: '#F97316', color: 'white', fontWeight: 'bold', cursor: 'pointer' }}>Unlock Sourcing Route</button>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      case 'vision_qc':
+        return (
+          <div style={{ padding: '24px' }}>
+            <h2 style={{ color: '#F97316' }}>VisionQC 2.0 (AI Inspection Wall)</h2>
+            <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              {[
+                { orderId: 'ORD-1002', product: 'Silk Hijab Emerald', status: 'Flagged', diff: 'Color Mismatch (7%)', score: 0.88, cn_img: '🖼️ 1688 Spec', warehouse_img: '📸 Real Photo' },
+                { orderId: 'ORD-1005', product: 'Vacuum Sealer Pro', status: 'Passed', diff: 'None', score: 0.99, cn_img: '🖼️ 1688 Spec', warehouse_img: '📸 Real Photo' },
+              ].map(item => (
+                <div key={item.orderId} style={{ background: 'white', borderRadius: '20px', border: '1px solid #E2E8F0', overflow: 'hidden' }}>
+                  <div style={{ padding: '16px', background: '#F8FAFC', borderBottom: '1px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div>
+                      <span style={{ fontWeight: '900', color: '#1E293B' }}>{item.orderId}</span>
+                      <span style={{ marginLeft: '12px', fontSize: '13px', color: '#64748B' }}>{item.product}</span>
+                    </div>
+                    <span style={{ background: item.status === 'Passed' ? '#DCFCE7' : '#FEE2E2', color: item.status === 'Passed' ? '#166534' : '#991B1B', padding: '4px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold' }}>
+                      {item.status} (Score: {item.score})
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', gap: '1px', background: '#E2E8F0' }}>
+                    <div style={{ flex: 1, height: '240px', background: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                      <div style={{ fontSize: '40px' }}>{item.cn_img.split(' ')[0]}</div>
+                      <p style={{ fontSize: '12px', color: '#94A3B8', marginTop: '10px' }}>1688 Reference</p>
+                    </div>
+                    <div style={{ flex: 1, height: '240px', background: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+                      <div style={{ fontSize: '40px' }}>{item.warehouse_img.split(' ')[0]}</div>
+                      <p style={{ fontSize: '12px', color: '#94A3B8', marginTop: '10px' }}>Warehouse Snapshot</p>
+                      {item.status === 'Flagged' && (
+                        <div style={{ position: 'absolute', border: '3px solid #EF4444', width: '100px', height: '100px', borderRadius: '8px' }}>
+                          <span style={{ position: 'absolute', top: '-25px', left: 0, background: '#EF4444', color: 'white', fontSize: '10px', padding: '2px 6px', borderRadius: '4px' }}>DIFF: {item.diff}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div style={{ padding: '16px', display: 'flex', gap: '12px' }}>
+                    <button style={{ flex: 1, padding: '10px', borderRadius: '8px', border: '1px solid #E2E8F0', background: 'white', fontWeight: 'bold' }}>Manual Review</button>
+                    <button style={{ flex: 1, padding: '10px', borderRadius: '8px', border: 'none', background: item.status === 'Passed' ? '#1E293B' : '#EF4444', color: 'white', fontWeight: 'bold' }}>
+                      {item.status === 'Passed' ? 'Release to Export' : 'Initiate 1688 Return'}
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
       case 'orders':
+
         return (
           <div style={{ padding: '24px' }}>
             <h2 style={{ color: '#F97316' }}>Order Management Center</h2>
