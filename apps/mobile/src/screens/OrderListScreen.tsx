@@ -17,8 +17,9 @@ const MOCK_ORDERS = [
   { id: '3', item: 'Vacuum Bag Set', status: 'PENDING', date: '2026-05-31', price: 'Rp 45,000', location: 'Shenzhen Warehouse' },
 ];
 
-export const OrderListScreen = () => {
+export const OrderListScreen = ({ onNavigate }: { onNavigate?: (screen: string) => void }) => {
   const { role, currentTheme: theme, t } = useRole();
+
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -66,13 +67,14 @@ export const OrderListScreen = () => {
         )}
       />
 
-      {/* WhatsApp Floating Service Ball */}
+      {/* WhatsApp Floating Service Ball -> Integrated AI Steward */}
       <TouchableOpacity 
         style={[styles.waFab, SHADOWS.medium]}
-        onPress={() => console.log('Open WhatsApp Support')}
+        onPress={() => onNavigate && onNavigate('CHAT')}
       >
         <Text style={{ fontSize: 24 }}>💬</Text>
       </TouchableOpacity>
+
     </SafeAreaView>
   );
 };

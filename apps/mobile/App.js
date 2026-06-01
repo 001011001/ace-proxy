@@ -16,7 +16,9 @@ import { ResaleHubScreen } from './src/screens/ResaleHubScreen';
 import { MemberCenterScreen } from './src/screens/MemberCenterScreen';
 import { ProductDetailScreen } from './src/screens/ProductDetailScreen';
 import { CartScreen } from './src/screens/CartScreen';
+import { StewardChatScreen } from './src/screens/StewardChatScreen';
 import { COLORS, SHADOWS } from './src/theme';
+
 
 /**
  * AceProxy Mobile - 核心入口 (工业级重塑版)
@@ -41,9 +43,12 @@ const MainNavigator = () => {
       case 'CART': return <CartScreen />;
       case 'PROFILE': return <MemberCenterScreen />;
       case 'PDP': return <ProductDetailScreen />; // 内部跳转用
-      case 'ORDERS': return <OrderListScreen />;
+      case 'ORDERS': return <OrderListScreen onNavigate={setCurrentScreen} />;
       case 'WALLET': return <WalletScreen />;
+
+      case 'CHAT': return <StewardChatScreen onBack={() => setCurrentScreen('HOME')} />;
       default: return <HomeScreen stationData={mockStationData} />;
+
     }
   };
 
