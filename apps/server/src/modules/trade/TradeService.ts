@@ -64,16 +64,25 @@ export class TradeService {
   }
 
   /**
-   * 计算带会员折扣的最终费用
+   * 计算带会员折扣的最终费用 (基于精算模型)
    */
-  async calculateFinalFees(userId: string, baseFee: number, totalSpend: number) {
-    const discountPct = await this.membership.getFeeDiscount(userId, totalSpend);
-    const discountAmount = baseFee * (discountPct / 100);
-    const finalFee = baseFee - discountAmount;
+  async calculateFinalFees(userId: string, baseOrderAmount: number, totalSpend: number) {
+    const { level, config } = await this.membership.getUserTier(totalSpend);
     
-    this.logger.log(`[Trade] Fee calculation for ${userId}: Base ${baseFee} -> Final ${finalFee} (${discountPct}% disc)`);
-    return finalFee;
+    // 基础费率基于用户等级 (10% / 8% / 5%)
+    const serviceFee = baseOrderAmount * config.serviceFeePct;
+    const rebateAmount = baseOrderAmount * config.rebatePct;
+    
+    this.logger.log(`[Trade] Fee calculation for ${userId} (${level}): Base Amt ${baseOrderAmount} -> Fee ${serviceFee}, Rebate ${rebateAmount}`);
+    
+    return {
+      serviceFee,
+      rebateAmount,
+      level,
+      badge: config.badge
+    };
   }
+
 
   /**
    * 处理支付成功后的全链路后续逻辑
@@ -98,4 +107,36 @@ export class TradeService {
       parcelsCount: result.parcels.length
     };
   }
+
+  /**
+   * 处理 AI 发现微瑕后的“降价确认流” (Salvage Flow)
+   * 响应 Ecommerce Mind 需求：将资损转化为用户忠诚度。
+   */
+  async handleSalvageAction(userId: string, orderId: string, action: 'ACCEPT_WITH_REBATE' | 'RESALE' | 'RETURN') {
+    this.logger.log(`[Trade] Salvage action for Order ${orderId}: ${action}`);
+
+    const SALVAGE_REBATE_PCT = 0.15; // 15% 积分补偿
+
+    switch (action) {
+      case 'ACCEPT_WITH_REBATE':
+        // 发放补偿积分，锁定复购
+        this.logger.log(`[Trade] Issuing ${SALVAGE_REBATE_PCT * 100}% rebate as Ace Credits for ${orderId}`);
+        await this.notification.sendWhatsAppMessage(userId, "Terima kasih! Kami telah menambahkan Ace Credits sebagai kompensasi ke dompet Anda.");
+        return { success: true, status: 'COMPENSATED_WITH_POINTS' };
+
+      case 'RESALE':
+        // 一键转入本地 Resale Hub
+        this.logger.log(`[Trade] Transferring item in ${orderId} to local Resale Hub at discount.`);
+        return { success: true, status: 'TRANSFERRED_TO_RESALE' };
+
+      case 'RETURN':
+        // 标准 1688 退货流程
+        this.logger.warn(`[Trade] User chose full return for ${orderId}. Initializing 1688 RMA...`);
+        return { success: true, status: 'RMA_INITIATED' };
+
+      default:
+        throw new Error('INVALID_SALVAGE_ACTION');
+    }
+  }
 }
+

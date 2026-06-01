@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
+import { PatentRiskChecker } from './PatentRiskChecker';
 
 /**
  * IntelligenceService - 全球电商情报中心
@@ -8,6 +9,8 @@ import { Cron } from '@nestjs/schedule';
 @Injectable()
 export class IntelligenceService {
   private readonly logger = new Logger(IntelligenceService.name);
+
+  constructor(private readonly patentChecker: PatentRiskChecker) {}
 
   @Cron('0 9 * * *') // 每天早上 9 点抓取情报
   async fetchIntelligence() {
@@ -24,6 +27,32 @@ export class IntelligenceService {
     
     this.logger.log('Daily Intelligence Brief sent to Commander.');
     return brief;
+  }
+
+  /**
+   * 哨兵监控 (Sentinel Monitoring)
+   * 响应产品经理需求：监控开斋节爆款的价格波动与库存风险
+   */
+  async monitorHeroProducts(products: any[]) {
+    this.logger.log(`[Sentinel] Monitoring ${products.length} hero products for price and patent anomalies...`);
+    
+    for (const product of products) {
+      // 1. 专利与品牌侵权先行审计 (Patent Sentry)
+      const risk = await this.patentChecker.checkRisk(product.name, product.category);
+      if (risk.isHighRisk) {
+        this.logger.error(`[Sentinel] PATENT_RISK_INTERCEPT: "${product.name}" blocked. Reason: ${risk.reason}`);
+        continue; // 立即拦截，不再进行后续价格监控或推送
+      }
+
+      // 2. 模拟 1688 反查价格波动
+      const currentPrice = product.sourcePriceCNY * (1 + (Math.random() * 0.2 - 0.1)); // 模拟波动
+      const drift = (currentPrice - product.sourcePriceCNY) / product.sourcePriceCNY;
+
+      if (Math.abs(drift) > 0.15) {
+        this.logger.warn(`[Sentinel] PRICE_ALERT: ${product.name} drift ${ (drift * 100).toFixed(1) }%! Triggering hot-standby supplier.`);
+        // 自动触发逻辑：更新供应商 ID，或推送预警
+      }
+    }
   }
 
   private async scrapeAMZ123() { return ['印尼海关突击查验预警', '中英空运价格下降 5%']; }

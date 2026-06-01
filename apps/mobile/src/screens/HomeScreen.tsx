@@ -23,6 +23,8 @@ import { SPACING, TYPOGRAPHY, SHADOWS, COLORS } from '../theme';
 import { Skeleton } from '../components/Skeleton';
 import { ArbiWaterfall } from '../components/ArbiWaterfall';
 import { FlashSaleBanner } from '../components/FlashSaleBanner';
+import { TradeService } from '../services/TradeService';
+import { HeroProduct } from '../../../server/src/modules/cms/CMSService';
 
 const { width } = Dimensions.get('window');
 
@@ -33,6 +35,7 @@ const { width } = Dimensions.get('window');
 export const HomeScreen = ({ stationData }: any) => {
   const { role, setRole, currentTheme: theme, t } = useRole();
   const [loading, setLoading] = React.useState(true);
+  const [heroProducts, setHeroProducts] = React.useState<HeroProduct[]>([]);
 
   // 1. 利润脉搏动画 (Reanimated Breathing)
   const pulseScale = useSharedValue(1);
@@ -47,9 +50,14 @@ export const HomeScreen = ({ stationData }: any) => {
       true
     );
 
-    // 模拟工业级骨架屏加载感
-    const timer = setTimeout(() => setLoading(false), 2000);
-    return () => clearTimeout(timer);
+    // 加载 Hero 商品与模拟加载状态
+    const initData = async () => {
+      const products = await TradeService.getHeroProducts();
+      setHeroProducts(products);
+      setLoading(false);
+    };
+    
+    initData();
   }, []);
 
   const pulseStyle = useAnimatedStyle(() => ({
@@ -106,6 +114,65 @@ export const HomeScreen = ({ stationData }: any) => {
         </Animated.View>
 
         <View style={styles.content}>
+          {/* 1.1 Eid 2026 Countdown & Flash Sale */}
+          <View style={[styles.eidFlashSection, SHADOWS.soft]}>
+            <View style={styles.eidHeader}>
+              <View>
+                <Text style={styles.eidTitle}>Eid Mubarak 2026</Text>
+                <Text style={styles.eidSub}>🔥 Flash Sourcing Active</Text>
+              </View>
+              <View style={styles.countdownBox}>
+                <Text style={styles.countdownText}>12:45:00</Text>
+              </View>
+            </View>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.hotScroll}>
+              {heroProducts.filter(p => ['HP-001', 'HP-002', 'HP-003', 'HP-004'].includes(p.id)).map(item => (
+                <TouchableOpacity key={item.id} style={styles.hotItemCard}>
+                  <View style={styles.hotImgBox}>
+                    <Text style={{fontSize: 24}}>
+                      {item.category === 'Apparel' ? '👗' : 
+                       item.category === 'Religious' ? '🕋' : 
+                       item.category === 'Electronics' ? '⌚' : '🎁'}
+                    </Text>
+                  </View>
+                  <Text style={styles.hotItemName} numberOfLines={2}>{item.name}</Text>
+                  <Text style={styles.hotItemPrice}>Rp {(item.targetPriceIDR / 1000).toFixed(0)}k</Text>
+                  <View style={styles.gainTag}><Text style={styles.gainText}>+{item.marginPct}%</Text></View>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+          </View>
+
+          {/* 1.2 Minimalist Lebaran Wave (Wave 2) */}
+          <View style={styles.minimalistSection}>
+            <View style={styles.minHeader}>
+              <Text style={styles.minTitle}>Modern Minimalism</Text>
+              <TouchableOpacity>
+                <Text style={styles.seeAll}>See Wave 2 →</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.minGrid}>
+              {heroProducts.filter(p => ['HP-006', 'HP-009', 'HP-010'].includes(p.id)).map(item => (
+                <TouchableOpacity key={item.id} style={styles.minCard}>
+                  <View style={styles.minImgPlaceholder}>
+                    <Text style={{fontSize: 32}}>
+                      {item.category === 'Apparel' ? '👔' : '🏮'}
+                    </Text>
+                  </View>
+                  <View style={styles.minInfo}>
+                    <Text style={styles.minName}>{item.name}</Text>
+                    <View style={styles.minBottom}>
+                      <Text style={styles.minPrice}>Rp {(item.targetPriceIDR / 1000).toFixed(0)}k</Text>
+                      <View style={styles.patentBadge}>
+                        <Text style={styles.patentText}>CLEAN IP</Text>
+                      </View>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </View>
+          </View>
+
           {/* 2. 利润脉搏统计卡片 (Profit Pulse Card) */}
           <Animated.View style={[styles.pulseCard, pulseStyle, SHADOWS.medium]}>
             <Text style={styles.pulseTitle}>{t.totalProfit} (IDR)</Text>
@@ -206,6 +273,40 @@ const styles = StyleSheet.create({
   fxText: { color: COLORS.white, fontSize: 10, fontWeight: '900' },
   headerStatus: { color: 'rgba(255,255,255,0.6)', fontSize: 11, marginTop: 12, fontWeight: '500' },
   content: { marginTop: -SPACING.xxl },
+  eidFlashSection: { 
+    marginHorizontal: SPACING.md, 
+    marginBottom: SPACING.lg, 
+    padding: SPACING.md, 
+    backgroundColor: '#FFF7ED', 
+    borderRadius: 28, 
+    borderWidth: 1, 
+    borderColor: '#FFEDD5' 
+  },
+  eidHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
+  eidTitle: { fontSize: 18, fontWeight: '900', color: '#9A3412' },
+  eidSub: { fontSize: 11, fontWeight: '700', color: '#C2410C', marginTop: 2 },
+  countdownBox: { backgroundColor: '#F97316', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 },
+  countdownText: { color: '#FFF', fontSize: 12, fontWeight: '900', fontFamily: 'Courier New' },
+  hotScroll: { flexDirection: 'row' },
+  hotItemCard: { width: 110, backgroundColor: '#FFF', borderRadius: 20, padding: 12, marginRight: 12, alignItems: 'center', borderWeight: 1, borderColor: '#F1F5F9' },
+  hotImgBox: { width: 50, height: 50, borderRadius: 12, backgroundColor: '#F8FAFC', alignItems: 'center', justifyContent: 'center', marginBottom: 8 },
+  hotItemName: { fontSize: 11, fontWeight: '800', color: '#1E293B', textAlign: 'center' },
+  hotItemPrice: { fontSize: 12, fontWeight: '900', color: '#F97316', marginTop: 4 },
+  gainTag: { backgroundColor: '#F0FDF4', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6, marginTop: 6 },
+  gainText: { fontSize: 9, fontWeight: '900', color: '#16A34A' },
+  minimalistSection: { marginHorizontal: SPACING.md, marginBottom: SPACING.xl },
+  minHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
+  minTitle: { fontSize: 16, fontWeight: '800', color: '#1E293B', letterSpacing: -0.5 },
+  seeAll: { fontSize: 12, fontWeight: '700', color: '#64748B' },
+  minGrid: { gap: 12 },
+  minCard: { flexDirection: 'row', backgroundColor: '#FFF', borderRadius: 24, padding: 12, borderWeight: 1, borderColor: '#F1F5F9' },
+  minImgPlaceholder: { width: 80, height: 80, borderRadius: 16, backgroundColor: '#F8FAFC', alignItems: 'center', justifyContent: 'center' },
+  minInfo: { flex: 1, marginLeft: 16, justifyContent: 'center' },
+  minName: { fontSize: 14, fontWeight: '800', color: '#1E293B' },
+  minBottom: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 },
+  minPrice: { fontSize: 15, fontWeight: '900', color: '#0F172A' },
+  patentBadge: { backgroundColor: '#F8FAFC', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, borderWeight: 1, borderColor: '#E2E8F0' },
+  patentText: { fontSize: 8, fontWeight: '900', color: '#64748B' },
   pulseCard: { 
     marginHorizontal: SPACING.md, 
     padding: SPACING.lg, 

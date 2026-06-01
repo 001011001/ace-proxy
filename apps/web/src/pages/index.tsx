@@ -7,6 +7,7 @@ export default function Home() {
   const menuItems = [
     { id: 'dashboard', label: 'Overview', icon: '📊' },
     { id: 'ai_sourcing', label: 'AI Sentinel', icon: '🤖' },
+    { id: 'hot_products', label: 'Hot List (Eid)', icon: '🔥' },
     { id: 'vision_qc', label: 'VisionQC 2.0', icon: '👁️' },
     { id: 'orders', label: 'Orders & Fulfillment', icon: '📦' },
 
@@ -58,6 +59,64 @@ export default function Home() {
             </div>
           </div>
         );
+      case 'hot_products':
+        return (
+          <div style={{ padding: '24px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <h2 style={{ color: '#F97316' }}>Eid 2026 Hot Products</h2>
+              <div style={{ display: 'flex', gap: '12px' }}>
+                <span style={{ background: '#FEE2E2', color: '#991B1B', padding: '6px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold' }}>Node: JKT-EID-2026</span>
+                <button style={{ background: '#1E293B', color: 'white', padding: '8px 16px', borderRadius: '8px', border: 'none', fontWeight: 'bold' }}>Broadcast to Partners</button>
+              </div>
+            </div>
+            <div style={{ marginTop: '24px', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
+              {[
+                { id: 'EID-001', name: 'Premium Silk Hijab', cost: '¥12', price: 'Rp 99k', gain: '+234%', stock: 5000, sentinel: 'SAFE' },
+                { id: 'EID-002', name: 'Travel Mukena Pro', cost: '¥45', price: 'Rp 280k', gain: '+148%', stock: 1200, sentinel: 'ALERT' },
+                { id: 'EID-003', name: 'Smart Zikr Ring', cost: '¥85', price: 'Rp 450k', gain: '+103%', stock: 800, sentinel: 'SAFE' },
+                { id: 'EID-004', name: 'LED Moon Decor', cost: '¥18', price: 'Rp 150k', gain: '+180%', stock: 3000, sentinel: 'SAFE' },
+              ].map(p => (
+                <div key={p.id} style={{ background: 'white', padding: '20px', borderRadius: '20px', border: p.sentinel === 'ALERT' ? '2px solid #EF4444' : '1px solid #E2E8F0', boxShadow: 'SHADOWS.soft', position: 'relative' }}>
+                  {p.sentinel === 'ALERT' && (
+                    <div style={{ position: 'absolute', top: -10, right: 10, background: '#EF4444', color: 'white', fontSize: '10px', padding: '4px 8px', borderRadius: '8px', fontWeight: '900', zIndex: 10 }}>
+                      ⚠️ SENTINEL ALERT
+                    </div>
+                  )}
+                  <div style={{ height: '140px', background: '#F8FAFC', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '40px' }}>
+                    {p.name.includes('Hijab') ? '👗' : p.name.includes('Mukena') ? '🕋' : p.name.includes('Ring') ? '⌚' : '🏮'}
+                  </div>
+                  <div style={{ marginTop: '16px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                      <span style={{ fontSize: '11px', fontWeight: '800', color: '#94A3B8' }}>{p.id}</span>
+                      <span style={{ color: '#16A34A', fontSize: '11px', fontWeight: '900' }}>{p.gain} PROFIT</span>
+                    </div>
+                    <h4 style={{ margin: '8px 0', fontSize: '15px' }}>{p.name}</h4>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+                      <div>
+                        <p style={{ fontSize: '10px', color: '#94A3B8', margin: 0 }}>Jakarta Price</p>
+                        <p style={{ fontSize: '16px', fontWeight: '900', color: '#F97316', margin: 0 }}>{p.price}</p>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <p style={{ fontSize: '10px', color: '#94A3B8', margin: 0 }}>Stock</p>
+                        <p style={{ fontSize: '12px', fontWeight: 'bold', margin: 0 }}>{p.stock} units</p>
+                      </div>
+                    </div>
+                    {p.sentinel === 'ALERT' && (
+                      <div style={{ marginTop: '12px', padding: '8px', background: '#FEF2F2', borderRadius: '8px', border: '1px solid #FEE2E2' }}>
+                        <p style={{ fontSize: '10px', color: '#991B1B', margin: 0, fontWeight: '700' }}>Price Drift: +18.4% (1688 Alert)</p>
+                        <p style={{ fontSize: '9px', color: '#B91C1C', margin: '2px 0 0 0' }}>Hot-standby supplier engaged.</p>
+                      </div>
+                    )}
+                  </div>
+                  <div style={{ marginTop: '16px', display: 'flex', gap: '8px' }}>
+                    <button style={{ flex: 1, padding: '8px', borderRadius: '8px', border: '1px solid #E2E8F0', background: 'white', fontSize: '12px', fontWeight: 'bold' }}>Edit CMS</button>
+                    <button style={{ flex: 1, padding: '8px', borderRadius: '8px', border: 'none', background: '#F97316', color: 'white', fontSize: '12px', fontWeight: 'bold' }}>Push Live</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
       case 'vision_qc':
         return (
           <div style={{ padding: '24px' }}>
@@ -74,19 +133,45 @@ export default function Home() {
                       <span style={{ marginLeft: '12px', fontSize: '13px', color: '#64748B' }}>{item.product}</span>
                     </div>
                     <span style={{ background: item.status === 'Passed' ? '#DCFCE7' : '#FEE2E2', color: item.status === 'Passed' ? '#166534' : '#991B1B', padding: '4px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold' }}>
-                      {item.status} (Score: {item.score})
+                      {item.status} (AI Score: {(item.score * 100).toFixed(0)})
                     </span>
                   </div>
+                  {item.score < 0.85 && (
+                    <div style={{ background: '#FFF7ED', padding: '12px 20px', borderBottom: '1px solid #FFEDD5', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <span style={{ fontSize: '18px' }}>⚠️</span>
+                      <p style={{ fontSize: '13px', color: '#9A3412', fontWeight: 'bold' }}>
+                        Low Confidence Alert: AI score below 85. Manual verification required per Jakarta Ops Policy.
+                      </p>
+                    </div>
+                  )}
                   <div style={{ display: 'flex', gap: '1px', background: '#E2E8F0' }}>
-                    <div style={{ flex: 1, height: '240px', background: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ flex: 1, height: '280px', background: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                       <div style={{ fontSize: '40px' }}>{item.cn_img.split(' ')[0]}</div>
                       <p style={{ fontSize: '12px', color: '#94A3B8', marginTop: '10px' }}>1688 Reference</p>
                     </div>
-                    <div style={{ flex: 1, height: '240px', background: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+                    <div style={{ flex: 1, height: '280px', background: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
                       <div style={{ fontSize: '40px' }}>{item.warehouse_img.split(' ')[0]}</div>
                       <p style={{ fontSize: '12px', color: '#94A3B8', marginTop: '10px' }}>Warehouse Snapshot</p>
+                      
+                      {/* Delta E Comparison Bar */}
+                      <div style={{ position: 'absolute', bottom: '20px', width: '80%', background: 'rgba(255,255,255,0.9)', padding: '12px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                          <span style={{ fontSize: '10px', fontWeight: '800', color: '#64748B' }}>COLOR DELTA (ΔE)</span>
+                          <span style={{ fontSize: '10px', fontWeight: '900', color: item.status === 'Passed' ? '#16A34A' : '#EF4444' }}>
+                            ACTUAL: {item.status === 'Passed' ? '1.2' : '6.8'} / MAX: 5.0
+                          </span>
+                        </div>
+                        <div style={{ height: '6px', background: '#F1F5F9', borderRadius: '3px', overflow: 'hidden' }}>
+                          <div style={{ 
+                            width: item.status === 'Passed' ? '24%' : '85%', 
+                            height: '100%', 
+                            background: item.status === 'Passed' ? '#10B981' : '#EF4444' 
+                          }} />
+                        </div>
+                      </div>
+
                       {item.status === 'Flagged' && (
-                        <div style={{ position: 'absolute', border: '3px solid #EF4444', width: '100px', height: '100px', borderRadius: '8px' }}>
+                        <div style={{ position: 'absolute', border: '3px solid #EF4444', width: '100px', height: '100px', borderRadius: '8px', top: '40px' }}>
                           <span style={{ position: 'absolute', top: '-25px', left: 0, background: '#EF4444', color: 'white', fontSize: '10px', padding: '2px 6px', borderRadius: '4px' }}>DIFF: {item.diff}</span>
                         </div>
                       )}
