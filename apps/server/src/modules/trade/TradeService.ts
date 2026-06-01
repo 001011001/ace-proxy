@@ -119,8 +119,14 @@ export class TradeService {
 
     switch (action) {
       case 'ACCEPT_WITH_REBATE':
-        // 发放补偿积分，锁定复购
+        // 1. 发放补偿积分，锁定复购
         this.logger.log(`[Trade] Issuing ${SALVAGE_REBATE_PCT * 100}% rebate as Ace Credits for ${orderId}`);
+        
+        // 2. 财务分账记录 (从平台利润中支出)
+        const rebateAmount = 100; // 模拟计算出的金额
+        await this.vault.recordSalvageRebate(orderId, rebateAmount);
+        
+        // 3. 通知用户
         await this.notification.sendWhatsAppMessage(userId, "Terima kasih! Kami telah menambahkan Ace Credits sebagai kompensasi ke dompet Anda.");
         return { success: true, status: 'COMPENSATED_WITH_POINTS' };
 

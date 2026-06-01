@@ -62,7 +62,6 @@ export class VaultService {
 
   /**
    * 记录 C2C 转卖分账
-
    */
   async recordResaleSettlement(orderId: string, resalePrice: number) {
     const platformFee = resalePrice * VaultService.RESALE_COMMISSION_PCT;
@@ -72,4 +71,21 @@ export class VaultService {
     // 记录转卖账本条目...
     return { platformFee, partnerReward, sellerReturn };
   }
+
+  /**
+   * 记录微瑕补偿分账 (Salvage Flow)
+   * 优先级：从平台净利中支出，不影响 RiskPool。
+   */
+  async recordSalvageRebate(orderId: string, rebateAmount: number) {
+    this.logger.log(`[Vault] Recording Salvage Rebate for ${orderId}: ${rebateAmount}`);
+    
+    // 逻辑：借记 PLATFORM_NET_PROFIT (利润减少)，贷记 ACE_POINTS_LEDGER (用户积分增加)
+    const entries = [
+      { account: 'PLATFORM_NET_PROFIT', amount: rebateAmount, type: 'DEBIT', desc: 'Salvage Compensation Cost' },
+      { account: 'ACE_POINTS_LEDGER', amount: -rebateAmount, type: 'CREDIT', desc: 'User Points Credit' }
+    ];
+
+    return { success: true, entries };
+  }
 }
+

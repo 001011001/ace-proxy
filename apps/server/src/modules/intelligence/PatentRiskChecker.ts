@@ -7,12 +7,15 @@ export class PatentRiskChecker {
   // 跨境电商高危专利与品牌黑名单 (由公司法务实时更新)
   private readonly BLACKLIST_KEYWORDS = [
     'LEGO', 'DISNEY', 'MARVEL', 'APPLE', 'NIKE', 'ADIDAS', 'ROLEX',
-    'POKEMON', 'HELLO KITTY', 'STAR WARS', 'BARBIE'
+    'POKEMON', 'HELLO KITTY', 'STAR WARS', 'BARBIE',
+    'MAGSAFE', 'CROCS', 'AIRPODS', 'GUCCI', 'CHANEL', 'LOUIS VUITTON'
   ];
 
-  // 高危设计特征关键词
+  // 高危设计特征与诱导性话术 (0 容错拦截)
   private readonly DESIGN_RISK_PATTERNS = [
-    'BUILDING BLOCKS', 'IP CHARACTER', 'DESIGNER INSPIRED', 'REPLICA'
+    'BUILDING BLOCKS', 'IP CHARACTER', 'DESIGNER INSPIRED', 'REPLICA',
+    'INSPIRED BY', 'DESIGNER-STYLE', 'HIGH-END CLONE', 'EXACT SAME AS',
+    'MAGSAFE COMPATIBLE', 'CROC-STYLE', 'BUILDING BRICKS COMPATIBLE'
   ];
 
   /**

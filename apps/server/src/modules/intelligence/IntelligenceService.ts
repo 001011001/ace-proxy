@@ -37,11 +37,14 @@ export class IntelligenceService {
     this.logger.log(`[Sentinel] Monitoring ${products.length} hero products for price and patent anomalies...`);
     
     for (const product of products) {
-      // 1. 专利与品牌侵权先行审计 (Patent Sentry)
+      // 1. 专利与品牌侵权先行审计 (Patent Sentry) - 最高优先级
       const risk = await this.patentChecker.checkRisk(product.name, product.category);
       if (risk.isHighRisk) {
-        this.logger.error(`[Sentinel] PATENT_RISK_INTERCEPT: "${product.name}" blocked. Reason: ${risk.reason}`);
-        continue; // 立即拦截，不再进行后续价格监控或推送
+        this.logger.error(`[Sentinel] CRITICAL_PATENT_INTERCEPT: "${product.name}" BLOCKED. Reason: ${risk.reason}`);
+        
+        // 自动下架逻辑 (Safe Harbor Protocol)
+        await this.stationService.setProductStatus(product.id, 'ARCHIVED');
+        continue; 
       }
 
       // 2. 模拟 1688 反查价格波动

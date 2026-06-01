@@ -71,19 +71,28 @@ export default function Home() {
             </div>
             <div style={{ marginTop: '24px', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
               {[
-                { id: 'EID-001', name: 'Premium Silk Hijab', cost: '¥12', price: 'Rp 99k', gain: '+234%', stock: 5000, sentinel: 'SAFE' },
-                { id: 'EID-002', name: 'Travel Mukena Pro', cost: '¥45', price: 'Rp 280k', gain: '+148%', stock: 1200, sentinel: 'ALERT' },
-                { id: 'EID-003', name: 'Smart Zikr Ring', cost: '¥85', price: 'Rp 450k', gain: '+103%', stock: 800, sentinel: 'SAFE' },
-                { id: 'EID-004', name: 'LED Moon Decor', cost: '¥18', price: 'Rp 150k', gain: '+180%', stock: 3000, sentinel: 'SAFE' },
+                { id: 'EID-001', name: 'Premium Silk Hijab', cost: '¥12', price: 'Rp 99k', gain: '+234%', stock: 5000, sentinel: 'SAFE', patent: 'CLEAN' },
+                { id: 'EID-002', name: 'Travel Mukena Pro', cost: '¥45', price: 'Rp 280k', gain: '+148%', stock: 1200, sentinel: 'ALERT', patent: 'CLEAN' },
+                { id: 'EID-003', name: 'Smart Zikr Ring Gen2', cost: '¥85', price: 'Rp 450k', gain: '+103%', stock: 800, sentinel: 'SAFE', patent: 'CLEAN' },
+                { id: 'EID-004', name: 'LED Moon Decor', cost: '¥18', price: 'Rp 150k', gain: '+180%', stock: 3000, sentinel: 'SAFE', patent: 'CLEAN' },
+                { id: 'EID-006', name: 'Modern Baju Koko', cost: '¥55', price: 'Rp 320k', gain: '+155%', stock: 2500, sentinel: 'SAFE', patent: 'CLEAN' },
+                { id: 'EID-009', name: 'Hakoba Eyelet Dress', cost: '¥85', price: 'Rp 420k', gain: '+210%', stock: 1500, sentinel: 'SAFE', patent: 'CLEAN' },
               ].map(p => (
-                <div key={p.id} style={{ background: 'white', padding: '20px', borderRadius: '20px', border: p.sentinel === 'ALERT' ? '2px solid #EF4444' : '1px solid #E2E8F0', boxShadow: 'SHADOWS.soft', position: 'relative' }}>
+                <div key={p.id} style={{ background: 'white', padding: '20px', borderRadius: '20px', border: p.sentinel === 'ALERT' ? '2px solid #EF4444' : '1px solid #E2E8F0', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', position: 'relative' }}>
+                  <div style={{ position: 'absolute', top: 10, left: 10, display: 'flex', gap: '6px' }}>
+                    {p.patent === 'CLEAN' && (
+                      <span style={{ background: '#F0FDF4', color: '#166534', fontSize: '9px', padding: '2px 6px', borderRadius: '4px', fontWeight: '900', border: '1px solid #BBF7D0' }}>
+                        🛡️ PATENT CLEAN
+                      </span>
+                    )}
+                  </div>
                   {p.sentinel === 'ALERT' && (
                     <div style={{ position: 'absolute', top: -10, right: 10, background: '#EF4444', color: 'white', fontSize: '10px', padding: '4px 8px', borderRadius: '8px', fontWeight: '900', zIndex: 10 }}>
                       ⚠️ SENTINEL ALERT
                     </div>
                   )}
                   <div style={{ height: '140px', background: '#F8FAFC', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '40px' }}>
-                    {p.name.includes('Hijab') ? '👗' : p.name.includes('Mukena') ? '🕋' : p.name.includes('Ring') ? '⌚' : '🏮'}
+                    {p.name.includes('Hijab') ? '👗' : p.name.includes('Mukena') ? '🕋' : p.name.includes('Ring') ? '⌚' : p.name.includes('Dress') ? '👗' : p.name.includes('Koko') ? '👔' : '🏮'}
                   </div>
                   <div style={{ marginTop: '16px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
