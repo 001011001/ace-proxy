@@ -3,6 +3,7 @@ import { VaultService } from '../vault/VaultService';
 import { SmartSplitterService } from '../splitter/SmartSplitterService';
 import { NotificationService } from '../notification/NotificationService';
 import { UserLevelService } from '../membership/UserLevelService';
+import { ReferralService } from '../referral/ReferralService';
 
 /**
  * TradeService - 核心交易协调层 (The Glue)
@@ -17,6 +18,7 @@ export class TradeService {
     private readonly splitter: SmartSplitterService,
     private readonly notification: NotificationService,
     private readonly membership: UserLevelService,
+    private readonly referral: ReferralService,
   ) {}
 
   /**
@@ -47,6 +49,7 @@ export class TradeService {
     const order = {
       ...orderData,
       id: `ORD-${Date.now()}`,
+      partner_id: orderData.partner_id || null, // 关联指挥官/团长
       compliance: {
         terms_accepted: true,
         disclaimer_version: 'V2.0_GENTLE_ONBOARDING',
@@ -91,7 +94,18 @@ export class TradeService {
     this.logger.log(`[Trade] Payment success for order ${orderId}. Initializing fulfillment...`);
 
     // 1. 记账 (Vault Ledger)
-    await this.vault.recordOrderLedger(orderId, payload.amounts);
+    // 增加：自动计算并划拨“指挥官”佣金
+    let partnerCommission = 0;
+    if (payload.partnerId) {
+      partnerCommission = await this.referral.calculateCommission(payload.amounts.total, 'PARTNER');
+      this.logger.log(`[Trade] Calculated partner commission: ${partnerCommission} for partner ${payload.partnerId}`);
+    }
+
+    await this.vault.recordOrderLedger(orderId, {
+      ...payload.amounts,
+      partnerCommission,
+      tierConfig: payload.tierConfig
+    });
 
     // 2. 自动拆单 (Smart Splitter)
     // 雅加达试点默认发往 JKT

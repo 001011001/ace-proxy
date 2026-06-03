@@ -73,19 +73,18 @@ export class VaultService {
   }
 
   /**
-   * 记录微瑕补偿分账 (Salvage Flow)
-   * 优先级：从平台净利中支出，不影响 RiskPool。
+   * 最终结算 (Payout)
+   * 当用户确认收货后，将冻结资金正式转入团长/骑手账户。
    */
-  async recordSalvageRebate(orderId: string, rebateAmount: number) {
-    this.logger.log(`[Vault] Recording Salvage Rebate for ${orderId}: ${rebateAmount}`);
+  async finalizeSettlement(orderId: string, partnerId: string, amount: number) {
+    this.logger.log(`[Vault] Finalizing payout for Order ${orderId} to Partner ${partnerId}: ${amount}`);
     
-    // 逻辑：借记 PLATFORM_NET_PROFIT (利润减少)，贷记 ACE_POINTS_LEDGER (用户积分增加)
     const entries = [
-      { account: 'PLATFORM_NET_PROFIT', amount: rebateAmount, type: 'DEBIT', desc: 'Salvage Compensation Cost' },
-      { account: 'ACE_POINTS_LEDGER', amount: -rebateAmount, type: 'CREDIT', desc: 'User Points Credit' }
+      { account: 'PARTNER_COMMISSION', amount: amount, type: 'DEBIT', desc: 'Commission Release' },
+      { account: 'PARTNER_WALLET', amount: -amount, type: 'CREDIT', desc: 'Partner Payout' }
     ];
 
-    return { success: true, entries };
+    return { success: true, settled_at: new Date().toISOString() };
   }
 }
 

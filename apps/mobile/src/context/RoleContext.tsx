@@ -17,7 +17,9 @@ const RoleContext = createContext<RoleContextType | undefined>(undefined);
 
 export const RoleProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [role, setRole] = useState<Role>('USER');
-  const [language, setLanguage] = useState<Language>('zh');
+  // 核心原则：移动端（消费者/团长/骑手）默认使用印尼语 (id)
+  // 管理后台（老板端）独立使用中文 (zh)
+  const [language, setLanguage] = useState<Language>('id');
 
   // 根据角色动态切换 UI 风格
   const currentTheme = theme[role];

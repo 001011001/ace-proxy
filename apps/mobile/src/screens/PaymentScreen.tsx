@@ -15,43 +15,31 @@ import { useRole } from '../context/RoleContext';
 import { COLORS, SPACING, TYPOGRAPHY, SHADOWS } from '../theme';
 
 /**
- * PaymentScreen - Xendit 支付收银台 (工业级重塑版)
- * 支持 Bank Transfer, E-Wallet (OVO, DANA, Gopay) 等本地支付方式。
- * 包含强制性的“跨境代购协议”确认。
+ * PaymentScreen - 万里汇 (WorldFirst) 收银台 (试点期唯一路径)
+ * 支持 Bank Transfer - Local Bank (IDR)。
+ * 用户需上传支付凭证 (Proof of Payment) 以供后台核销。
  */
 export const PaymentScreen = ({ orderTotal = '2,450,000' }) => {
   const { currentTheme: theme } = useRole();
   const [agreementConfirmed, setAgreementConfirmed] = useState(false);
-  const [showComplianceModal, setShowComplianceModal] = useState(false);
-  const [countdown, setCountdown] = useState(3);
-
-  useEffect(() => {
-    let timer;
-    if (showComplianceModal && countdown > 0) {
-      timer = setInterval(() => {
-        setCountdown(prev => prev - 1);
-      }, 1000);
-    }
-    return () => clearInterval(timer);
-  }, [showComplianceModal, countdown]);
+  const [paymentMethod, setPaymentMethod] = useState('BANK_TRANSFER');
+  const [proofUploaded, setProofUploaded] = useState(false);
 
   const handlePayPress = () => {
     if (!agreementConfirmed) {
       Alert.alert('提示', '请先勾选跨境代购协议');
       return;
     }
+    if (!proofUploaded) {
+      Alert.alert('提示', '请先上传支付凭证 (Bukti Transfer)');
+      return;
+    }
     handleFinalConfirm();
   };
 
   const handleFinalConfirm = () => {
-    // UI 架构师注：记录协议确认存证
-    const auditData = {
-      terms_accepted: true,
-      deviceId: 'DEVICE_FINGERPRINT_HASH',
-      timestamp: new Date().getTime()
-    };
-    console.log('[Compliance Audit] Evidence saved:', auditData);
-    Alert.alert('支付成功', '您的订单已提交。温馨提示：代购商品不支持退货。');
+    // 逻辑：提交订单并进入 AWAITING_PAYMENT_VERIFICATION 状态
+    Alert.alert('提交成功', '支付凭证已上传，请等待后台核销。');
   };
 
   return (
@@ -62,23 +50,41 @@ export const PaymentScreen = ({ orderTotal = '2,450,000' }) => {
           <Text style={styles.label}>应付金额 (IDR)</Text>
           <Text style={styles.amount}>Rp {orderTotal}</Text>
           <View style={styles.exchangeBadge}>
-            <Text style={styles.exchangeNote}>≈ ¥ 1,108.60 RMB (含 5% FX Buffer)</Text>
+            <Text style={styles.exchangeNote}>≈ ¥ 1,108.60 RMB (WorldFirst 结汇预估)</Text>
           </View>
         </Animated.View>
 
         <View style={styles.content}>
-          <Text style={styles.sectionTitle}>选择本地支付方式 (Xendit Gateway)</Text>
+          <Text style={styles.sectionTitle}>支付方式: 万里汇本地转账</Text>
 
-          {/* ... method groups ... */}
+          <View style={styles.methodGroup}>
+             <View style={styles.bankDetailCard}>
+                <Text style={styles.bankName}>CITIBANK INDONESIA</Text>
+                <Text style={styles.bankAccount}>8829 **** **** 1022</Text>
+                <Text style={styles.beneficiary}>Name: ACEPROXY STEWARD</Text>
+                <TouchableOpacity onPress={() => Alert.alert('已复制', '账号已复制到剪贴板')}>
+                   <Text style={styles.copyText}>Salin Nomor Rekening (复制账号)</Text>
+                </TouchableOpacity>
+             </View>
+          </View>
 
-          {/* 温和的服务卡片 (Service Agreement Notice) */}
+          <Text style={styles.sectionTitle}>上传凭证 (Bukti Transfer)</Text>
+          <TouchableOpacity 
+            style={styles.uploadArea} 
+            onPress={() => setProofUploaded(true)}
+          >
+            <Text style={styles.uploadText}>
+               {proofUploaded ? '✅ Bukti Terunggah (凭证已上传)' : '📸 Upload Bukti Transfer'}
+            </Text>
+          </TouchableOpacity>
+
           <View style={styles.noticeCard}>
             <View style={styles.noticeHeader}>
               <Text style={{ fontSize: 16 }}>⚠️</Text>
               <Text style={styles.noticeTitle}>Pengingat Jastip (Proxy Reminder)</Text>
             </View>
             <Text style={styles.noticeContent}>
-              Pembelian ini dilakukan atas instruksi Anda. Barang dikirim dari luar negeri dan <Text style={styles.highlightText}>tidak dapat diretur</Text>. Gunakan fitur Resale Hub jika Anda ingin melepas barang di kemudian hari.
+              Pesanan akan diproses setelah verifikasi pembayaran manual oleh admin.
             </Text>
           </View>
 
@@ -102,33 +108,19 @@ export const PaymentScreen = ({ orderTotal = '2,450,000' }) => {
           <TouchableOpacity 
             style={[
               styles.payButton, 
-              { backgroundColor: agreementConfirmed ? '#F97316' : COLORS.gray[300] }, 
+              { backgroundColor: (agreementConfirmed && proofUploaded) ? '#F97316' : COLORS.gray[300] }, 
               agreementConfirmed && SHADOWS.medium
             ]}
             onPress={handlePayPress}
-            disabled={!agreementConfirmed}
+            disabled={!agreementConfirmed || !proofUploaded}
           >
-            <Text style={styles.payText}>确认并支付</Text>
+            <Text style={styles.payText}>提交核销 (Konfirmasi)</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 };
-
-const PaymentMethod = ({ name, last }: any) => (
-  <TouchableOpacity style={[styles.method, last && { borderBottomWidth: 0 }]}>
-    <View style={styles.methodCircle} />
-    <Text style={styles.methodName}>{name}</Text>
-  </TouchableOpacity>
-);
-
-const WalletButton = ({ name }: any) => (
-  <TouchableOpacity style={styles.walletBtn}>
-    <View style={styles.walletIconPlaceholder} />
-    <Text style={styles.walletText}>{name}</Text>
-  </TouchableOpacity>
-);
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.gray[50] },
@@ -154,28 +146,30 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.gray[100],
   },
-  groupLabel: { fontSize: 11, color: COLORS.gray[400], fontWeight: '700', marginBottom: 16, textTransform: 'uppercase' },
-  method: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    paddingVertical: 16, 
-    borderBottomWidth: 1, 
-    borderBottomColor: COLORS.gray[50] 
+  bankDetailCard: {
+    padding: 16,
+    backgroundColor: COLORS.gray[50],
+    borderRadius: 12,
+    borderWidth: 1,
+    borderStyle: 'dashed',
+    borderColor: COLORS.gray[300],
   },
-  methodCircle: { width: 20, height: 20, borderRadius: 10, borderWidth: 2, borderColor: COLORS.gray[200], marginRight: 16 },
-  methodName: { fontSize: 15, fontWeight: '600', color: COLORS.gray[800] },
-  walletRow: { flexDirection: 'row', justifyContent: 'space-between', gap: 10 },
-  walletBtn: { 
-    flex: 1, 
-    paddingVertical: 16, 
-    borderWidth: 1, 
-    borderColor: COLORS.gray[100], 
-    alignItems: 'center', 
-    borderRadius: 16,
-    backgroundColor: COLORS.gray[50]
+  bankName: { fontSize: 16, fontWeight: '900', color: COLORS.gray[900], marginBottom: 8 },
+  bankAccount: { fontSize: 20, fontWeight: '700', color: '#F97316', marginBottom: 4, letterSpacing: 1 },
+  beneficiary: { fontSize: 12, color: COLORS.gray[600], marginBottom: 12 },
+  copyText: { fontSize: 12, color: '#F97316', fontWeight: '800', textDecorationLine: 'underline' },
+  uploadArea: {
+    height: 120,
+    backgroundColor: COLORS.white,
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: COLORS.gray[200],
+    borderStyle: 'dashed',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
   },
-  walletIconPlaceholder: { width: 24, height: 24, backgroundColor: COLORS.gray[200], borderRadius: 6, marginBottom: 8 },
-  walletText: { fontSize: 12, fontWeight: '700', color: COLORS.gray[600] },
+  uploadText: { fontSize: 14, fontWeight: '700', color: COLORS.gray[400] },
   noticeCard: { 
     backgroundColor: '#FFF7ED', 
     padding: 20, 
@@ -187,7 +181,6 @@ const styles = StyleSheet.create({
   noticeHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 },
   noticeTitle: { fontSize: 15, fontWeight: '800', color: '#9A3412' },
   noticeContent: { fontSize: 13, lineHeight: 20, color: '#C2410C', fontWeight: '500' },
-  highlightText: { fontWeight: '900', textDecorationLine: 'underline' },
   agreementRow: { 
     flexDirection: 'row', 
     padding: 16, 
@@ -210,7 +203,7 @@ const styles = StyleSheet.create({
   },
   checkInner: { width: 10, height: 10, backgroundColor: COLORS.white, borderRadius: 2 },
   agreementText: { flex: 1, fontSize: 12, color: COLORS.gray[600], fontWeight: '600' },
-  boldText: { fontWeight: '800' },
   payButton: { marginTop: 24, height: 64, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
   payText: { color: COLORS.white, fontWeight: '900', fontSize: 18 }
 });
+

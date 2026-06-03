@@ -9,7 +9,7 @@ import {
   Image
 } from 'react-native';
 import Animated, { FadeInDown, FadeInUp } from 'react-native-reanimated';
-import { COLORS, SPACING, TYPOGRAPHY, SHADOWS } from '../theme';
+import { COLORS, SPACING, TYPOGRAPHY, SHADOWS, BORDERS } from '../theme';
 
 /**
  * OnboardingScreen - 用户初次登入知悉页面
@@ -21,7 +21,7 @@ export const OnboardingScreen = ({ onConfirm }) => {
       <StatusBar barStyle="dark-content" />
       <View style={styles.content}>
         <Animated.View entering={FadeInDown.delay(200).duration(800)} style={styles.imageContainer}>
-          <View style={[styles.iconCircle, { backgroundColor: '#FFF7ED' }]}>
+          <View style={[styles.iconBox, { backgroundColor: '#FFF7ED' }]}>
             <Text style={{ fontSize: 60 }}>📦</Text>
           </View>
         </Animated.View>
@@ -47,7 +47,7 @@ export const OnboardingScreen = ({ onConfirm }) => {
 
         <Animated.View entering={FadeInUp.delay(600).duration(800)} style={styles.footer}>
           <TouchableOpacity 
-            style={[styles.btn, SHADOWS.medium]} 
+            style={[styles.btn, SHADOWS.brutalist]} 
             onPress={onConfirm}
           >
             <Text style={styles.btnText}>我已了解代购模式</Text>
@@ -62,25 +62,26 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.white },
   content: { flex: 1, padding: SPACING.xl, justifyContent: 'center' },
   imageContainer: { alignItems: 'center', marginBottom: 40 },
-  iconCircle: { width: 120, height: 120, borderRadius: 60, alignItems: 'center', justifyContent: 'center' },
+  iconBox: { width: 120, height: 120, borderRadius: 12, alignItems: 'center', justifyContent: 'center', ...BORDERS.brutalist },
   textContainer: { alignItems: 'center' },
-  title: { fontSize: 28, fontWeight: '900', color: COLORS.gray[900] },
-  subtitle: { fontSize: 16, color: COLORS.gray[500], marginTop: 8, fontWeight: '600' },
+  title: { fontSize: 32, fontWeight: '900', color: COLORS.gray[900], textTransform: 'uppercase' },
+  subtitle: { fontSize: 16, color: COLORS.gray[500], marginTop: 8, fontWeight: '900', textTransform: 'uppercase' },
   infoCard: { 
     backgroundColor: '#FFF7ED', 
     padding: 24, 
-    borderRadius: 28, 
+    borderRadius: 8, 
     marginTop: 32, 
     width: '100%',
-    borderWidth: 1,
-    borderColor: '#FFEDD5'
+    ...BORDERS.brutalist,
+    ...SHADOWS.brutalist,
   },
-  infoPara: { fontSize: 14, color: COLORS.gray[700], lineHeight: 22, textAlign: 'center', fontWeight: '500' },
-  divider: { height: 1, backgroundColor: '#FFEDD5', marginVertical: 16 },
-  bold: { fontWeight: '800' },
+  infoPara: { fontSize: 14, color: COLORS.gray[700], lineHeight: 22, textAlign: 'center', fontWeight: '800' },
+  divider: { height: 2, backgroundColor: '#000', marginVertical: 16 },
+  bold: { fontWeight: '900' },
   boldText: { fontWeight: '900', color: '#DC2626' },
-  brandText: { fontWeight: '800', color: '#F97316' },
+  brandText: { fontWeight: '900', color: '#F97316' },
   footer: { marginTop: 48 },
-  btn: { backgroundColor: '#F97316', paddingVertical: 18, borderRadius: 16, alignItems: 'center' },
-  btnText: { color: COLORS.white, fontSize: 16, fontWeight: '900' }
+  btn: { backgroundColor: '#F97316', paddingVertical: 18, borderRadius: 8, alignItems: 'center', ...BORDERS.brutalist },
+  btnText: { color: '#000', fontSize: 16, fontWeight: '900' }
 });
+

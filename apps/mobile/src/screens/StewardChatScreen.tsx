@@ -11,7 +11,7 @@ import {
   Image,
   SafeAreaView
 } from 'react-native';
-import { COLORS, SHADOWS, SPACING } from '../theme';
+import { COLORS, SHADOWS, SPACING, BORDERS } from '../theme';
 
 interface Message {
   id: string;
@@ -146,60 +146,64 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     backgroundColor: '#FFF',
-    borderBottomWidth: 1,
-    borderBottomColor: '#F1F5F9'
+    ...BORDERS.brutalist,
   },
   backBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
-  backText: { fontSize: 24, color: '#1E293B', fontWeight: '300' },
+  backText: { fontSize: 24, color: '#1E293B', fontWeight: '900' },
   stewardInfo: { flexDirection: 'row', alignItems: 'center', marginLeft: 8 },
   avatarBox: {
     width: 40,
     height: 40,
-    borderRadius: 20,
+    borderRadius: 8,
     backgroundColor: '#F1F5F9',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12
+    marginRight: 12,
+    ...BORDERS.brutalist,
   },
-  stewardName: { fontSize: 15, fontWeight: '800', color: '#1E293B' },
-  stewardStatus: { fontSize: 10, color: '#16A34A', fontWeight: '700' },
+  stewardName: { fontSize: 15, fontWeight: '900', color: '#1E293B', textTransform: 'uppercase' },
+  stewardStatus: { fontSize: 10, color: '#16A34A', fontWeight: '900' },
   chatArea: { flex: 1 },
   chatContent: { padding: 16, paddingBottom: 32 },
-  messageWrapper: { marginBottom: 16, maxWidth: '80%' },
+  messageWrapper: { marginBottom: 20, maxWidth: '85%' },
   userWrapper: { alignSelf: 'flex-end', alignItems: 'flex-end' },
   stewardWrapper: { alignSelf: 'flex-start', alignItems: 'flex-start' },
-  messageBubble: { padding: 12, borderRadius: 20, minWidth: 60 },
-  userBubble: { backgroundColor: '#1E293B', borderBottomRightRadius: 4 },
-  stewardBubble: { backgroundColor: '#FFF', borderBottomLeftRadius: 4, borderWidth: 1, borderColor: '#F1F5F9' },
-  messageText: { fontSize: 14, lineHeight: 20 },
-  userText: { color: '#FFF' },
+  messageBubble: { padding: 12, borderRadius: 12, minWidth: 80, ...BORDERS.brutalist, ...SHADOWS.brutalist },
+  userBubble: { backgroundColor: '#F97316' },
+  stewardBubble: { backgroundColor: '#FFF' },
+  messageText: { fontSize: 14, lineHeight: 20, fontWeight: '700' },
+  userText: { color: '#000' },
   stewardText: { color: '#1E293B' },
-  timestamp: { fontSize: 9, color: '#94A3B8', marginTop: 4, fontWeight: '600' },
+  timestamp: { fontSize: 9, color: '#000', marginTop: 8, fontWeight: '900' },
   inputArea: {
     flexDirection: 'row',
-    padding: 12,
-    paddingBottom: Platform.OS === 'ios' ? 24 : 12,
+    padding: 16,
+    paddingBottom: Platform.OS === 'ios' ? 32 : 16,
     backgroundColor: '#FFF',
     alignItems: 'center',
-    borderTopWidth: 1,
-    borderTopColor: '#F1F5F9'
+    ...BORDERS.brutalist,
+    borderTopWidth: 2.5,
   },
   input: {
     flex: 1,
     backgroundColor: '#F1F5F9',
-    borderRadius: 20,
+    borderRadius: 8,
     paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingVertical: 12,
     fontSize: 14,
-    maxHeight: 100
+    maxHeight: 100,
+    ...BORDERS.brutalist,
+    fontWeight: '700',
   },
   sendBtn: { marginLeft: 12 },
   sendIconBox: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#1E293B',
+    width: 48,
+    height: 48,
+    borderRadius: 8,
+    backgroundColor: '#F97316',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    ...BORDERS.brutalist,
+    ...SHADOWS.brutalist,
   }
 });

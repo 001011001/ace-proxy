@@ -1,133 +1,90 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   View, 
   Text, 
   StyleSheet, 
-  SafeAreaView, 
   ScrollView, 
-  TouchableOpacity,
+  TouchableOpacity, 
   Image,
+  SafeAreaView,
+  StatusBar,
   Dimensions
 } from 'react-native';
-import { useRole } from '../context/RoleContext';
-import { COLORS, SPACING, TYPOGRAPHY, SHADOWS } from '../theme';
+import { COLORS, SPACING, TYPOGRAPHY, BORDERS, SHADOWS } from '../theme';
 
 const { width } = Dimensions.get('window');
 
-/**
- * ProductDetailScreen - 高转化率商品详情页
- * 核心：直观对比“采购价”与“市场价”，可视化“采购优势”
- */
-export const ProductDetailScreen = ({ route }) => {
-  const { currentTheme: theme } = useRole();
-  const product = {
-    name: 'Industrial Grade Vacuum Sealer - Elite Edition',
-    sourcingPrice: 'Rp 450,000',
-    marketPrice: 'Rp 850,000',
-    advantage: 'Rp 400,000',
-    advantagePct: '47%',
-    rating: 4.9,
-    reviews: 128,
-    estimatedDelivery: '5-7 Days',
-    source: 'Factory Direct'
-  };
+export const ProductDetailScreen = () => {
+  const [selectedSku, setSelectedSku] = useState('XL');
 
   return (
     <SafeAreaView style={styles.container}>
+      <StatusBar barStyle="dark-content" />
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.imageContainer}>
-          <View style={styles.placeholderImg} />
-          <TouchableOpacity style={styles.backBtn}>
-            <Text style={{ fontSize: 20 }}>⬅️</Text>
-          </TouchableOpacity>
+        {/* Product Image Gallery */}
+        <View style={styles.imageGallery}>
+          <View style={styles.imagePlaceholder}>
+            <Text style={styles.placeholderText}>PREMIUM_ABAYA_IMAGE</Text>
+          </View>
         </View>
 
         <View style={styles.content}>
-          <View style={styles.advantageBadge}>
-            <Text style={styles.advantageText}>🔥 Sourcing Advantage: {product.advantagePct} OFF</Text>
-          </View>
-          
-          <Text style={styles.title}>{product.name}</Text>
-          
-          <View style={styles.priceRow}>
+          <View style={styles.headerRow}>
             <View>
-              <Text style={styles.priceLabel}>Your Direct Price</Text>
-              <Text style={styles.sourcingPrice}>{product.sourcingPrice}</Text>
+              <Text style={styles.category}>MODEST FASHION</Text>
+              <Text style={styles.productName}>Premium Silk Abaya - Raya Edition</Text>
             </View>
-            <View style={styles.divider} />
-            <View>
-              <Text style={styles.priceLabel}>Shopee Price</Text>
-              <Text style={styles.marketPrice}>{product.marketPrice}</Text>
+            <TouchableOpacity style={styles.shareBtn}>
+              <Text>🔗</Text>
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.priceContainer}>
+            <Text style={styles.priceLabel}>HARGA JAKARTA (IDR)</Text>
+            <Text style={styles.price}>Rp 1,250,000</Text>
+            <View style={styles.priceComparison}>
+              <Text style={styles.comparisonText}>≈ ¥ 565.00 (Source: 1688)</Text>
             </View>
           </View>
 
-          <View style={[styles.savingCard, { backgroundColor: '#FFF7ED', borderColor: '#FFEDD5' }]}>
-            <Text style={styles.savingTitle}>You Save {product.advantage} per unit</Text>
-            <Text style={styles.savingSub}>Based on Jakarta market average</Text>
+          <Text style={styles.sectionTitle}>PILIH UKURAN (SIZE)</Text>
+          <View style={styles.skuRow}>
+            {['M', 'L', 'XL', 'XXL'].map(size => (
+              <TouchableOpacity 
+                key={size}
+                style={[styles.skuItem, selectedSku === size && styles.skuItemSelected]}
+                onPress={() => setSelectedSku(size)}
+              >
+                <Text style={[styles.skuText, selectedSku === size && styles.skuTextSelected]}>{size}</Text>
+              </TouchableOpacity>
+            ))}
           </View>
 
-          <View style={styles.supplierCard}>
-            <View style={styles.supplierHeader}>
-              <View>
-                <Text style={styles.supplierLabel}>Elite Factory Source</Text>
-                <Text style={styles.supplierName}>Guangdong Elite Tech Co.</Text>
-              </View>
-              <View style={styles.supplierRatingBox}>
-                <Text style={styles.ratingVal}>98%</Text>
-                <Text style={styles.ratingLabel}>Perf.</Text>
-              </View>
-            </View>
-            <View style={styles.scorecardRow}>
-              <View style={styles.scoreItem}>
-                <Text style={styles.scoreVal}>48h</Text>
-                <Text style={styles.scoreLabel}>Lead Time</Text>
-              </View>
-              <View style={styles.scoreItem}>
-                <Text style={styles.scoreVal}>0.1%</Text>
-                <Text style={styles.scoreLabel}>Defect</Text>
-              </View>
-              <View style={styles.scoreItem}>
-                <Text style={styles.scoreVal}>1.2k</Text>
-                <Text style={styles.scoreLabel}>Orders</Text>
-              </View>
-            </View>
-          </View>
+          <Text style={styles.sectionTitle}>DESKRIPSI PRODUK</Text>
+          <Text style={styles.description}>
+            Abaya sutra premium dengan jahitan tangan yang halus. Cocok untuk perayaan Idul Fitri 2026. 
+            Bahan dingin, tidak menerawang, dan memberikan kesan mewah.
+          </Text>
 
-          <View style={styles.leaderNote}>
-            <View style={styles.leaderHeader}>
-              <View style={styles.leaderAvatar} />
-              <Text style={styles.leaderName}>Juna's Sourcing Note</Text>
-            </View>
-            <Text style={styles.noteText}>
-              "这款真空机在雅加达开斋节期间非常抢手，建议配合 10x15cm 的加厚袋子使用。实测物流压缩比高达 70%，能极大地降低平摊运费。"
+          <View style={styles.trustCard}>
+            <Text style={styles.trustTitle}>🛡️ JAMINAN ACEPROXY</Text>
+            <Text style={styles.trustContent}>
+              • QC Visual oleh Agent kami di China.{"\n"}
+              • Harga sudah termasuk pajak impor.{"\n"}
+              • Pengiriman Cluster Logistics (Cepat & Murah).
             </Text>
           </View>
-
-          <View style={styles.infoSection}>
-            <View style={styles.infoItem}>
-              <Text style={styles.infoLabel}>Delivery</Text>
-              <Text style={styles.infoValue}>{product.estimatedDelivery}</Text>
-            </View>
-            <View style={styles.infoItem}>
-              <Text style={styles.infoLabel}>Rating</Text>
-              <Text style={styles.infoValue}>⭐ {product.rating} ({product.reviews} reviews)</Text>
-            </View>
-          </View>
-
-          <Text style={styles.sectionHeader}>Description</Text>
-          <Text style={styles.description}>
-            This professional-grade vacuum sealer is sourced directly from specialized factories. 
-            Perfect for bulk food storage and reducing logistics volume (vacuum compression arbitrage).
-          </Text>
         </View>
       </ScrollView>
 
-      <View style={[styles.footer, SHADOWS.medium]}>
-        <TouchableOpacity style={styles.wishlistBtn}>
-          <Text style={{ fontSize: 24 }}>🤍</Text>
+      {/* Action Bar */}
+      <View style={styles.actionBar}>
+        <TouchableOpacity style={styles.cartIcon}>
+          <Text style={{ fontSize: 24 }}>🛒</Text>
+          <View style={styles.badge}><Text style={styles.badgeText}>3</Text></View>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.buyBtn, { backgroundColor: '#F97316' }]}>
-          <Text style={styles.buyBtnText}>Confirm Order</Text>
+        <TouchableOpacity style={styles.addToCartBtn}>
+          <Text style={styles.btnText}>TAMBAH KE KERANJANG</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -135,46 +92,62 @@ export const ProductDetailScreen = ({ route }) => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#FFF' },
-  imageContainer: { width: width, height: width, backgroundColor: '#F1F5F9', position: 'relative' },
-  placeholderImg: { flex: 1 },
-  backBtn: { position: 'absolute', top: 50, left: 20, width: 44, height: 44, borderRadius: 22, backgroundColor: 'rgba(255,255,255,0.8)', alignItems: 'center', justifyContent: 'center' },
+  container: { flex: 1, backgroundColor: '#fff' },
+  imageGallery: { width: width, height: width, backgroundColor: COLORS.gray[50] },
+  imagePlaceholder: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  placeholderText: { fontSize: 18, fontWeight: '900', color: COLORS.gray[300] },
   content: { padding: SPACING.lg },
-  advantageBadge: { backgroundColor: '#FEF2F2', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, alignSelf: 'flex-start', marginBottom: 12 },
-  advantageText: { color: '#EF4444', fontSize: 12, fontWeight: '800' },
-  title: { fontSize: 22, fontWeight: '900', color: '#1E293B', marginBottom: 24 },
-  priceRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 24 },
-  priceLabel: { fontSize: 11, color: '#64748B', fontWeight: '600', marginBottom: 4 },
-  sourcingPrice: { fontSize: 24, fontWeight: '900', color: '#F97316' },
-  divider: { width: 1, height: 40, backgroundColor: '#E2E8F0', mx: 24, marginHorizontal: 24 },
-  marketPrice: { fontSize: 18, fontWeight: '700', color: '#94A3B8', textDecorationLine: 'line-through' },
-  savingCard: { padding: 16, borderRadius: 20, borderWidth: 1, marginBottom: 32 },
-  savingTitle: { fontSize: 15, fontWeight: '900', color: '#9A3412' },
-  savingSub: { fontSize: 12, color: '#C2410C', marginTop: 2, fontWeight: '500' },
-  supplierCard: { backgroundColor: '#F8FAFC', padding: 20, borderRadius: 24, marginBottom: 20, borderWidth: 1, borderColor: '#F1F5F9' },
-  supplierHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
-  supplierLabel: { fontSize: 10, fontWeight: '800', color: '#94A3B8', textTransform: 'uppercase' },
-  supplierName: { fontSize: 15, fontWeight: '900', color: '#1E293B', marginTop: 2 },
-  supplierRatingBox: { backgroundColor: '#F0FDF4', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 10, alignItems: 'center' },
-  ratingVal: { fontSize: 14, fontWeight: '900', color: '#16A34A' },
-  ratingLabel: { fontSize: 8, fontWeight: '700', color: '#15803D' },
-  scorecardRow: { flexDirection: 'row', justifyContent: 'space-between', borderTopWidth: 1, borderTopColor: '#F1F5F9', paddingTop: 16 },
-  scoreItem: { alignItems: 'center' },
-  scoreVal: { fontSize: 14, fontWeight: '900', color: '#334155' },
-  scoreLabel: { fontSize: 9, fontWeight: '700', color: '#94A3B8', marginTop: 2 },
-  leaderNote: { backgroundColor: '#FDF2F8', padding: 16, borderRadius: 20, marginBottom: 32, borderLeftWidth: 4, borderLeftColor: '#DB2777' },
-  leaderHeader: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 8 },
-  leaderAvatar: { width: 24, height: 24, borderRadius: 12, backgroundColor: '#DB2777' },
-  leaderName: { fontSize: 13, fontWeight: '900', color: '#9D174D' },
-  noteText: { fontSize: 12, color: '#BE185D', lineHeight: 18, fontStyle: 'italic', fontWeight: '500' },
-  infoSection: { flexDirection: 'row', justifyContent: 'space-between', borderTopWidth: 1, borderBottomWidth: 1, borderColor: '#F1F5F9', paddingVertical: 20, marginBottom: 24 },
-  infoItem: { flex: 1 },
-  infoLabel: { fontSize: 12, color: '#94A3B8', fontWeight: '600', marginBottom: 4 },
-  infoValue: { fontSize: 14, fontWeight: '800', color: '#334155' },
-  sectionHeader: { fontSize: 16, fontWeight: '800', color: '#1E293B', marginBottom: 12 },
-  description: { fontSize: 14, color: '#64748B', lineHeight: 22, fontWeight: '500' },
-  footer: { padding: SPACING.lg, paddingBottom: 40, flexDirection: 'row', gap: 16, borderTopWidth: 1, borderTopColor: '#F1F5F9' },
-  wishlistBtn: { width: 60, height: 60, borderRadius: 20, borderWidth: 2, borderColor: '#F1F5F9', alignItems: 'center', justifyContent: 'center' },
-  buyBtn: { flex: 1, height: 60, borderRadius: 20, alignItems: 'center', justifyContent: 'center' },
-  buyBtnText: { color: '#FFF', fontSize: 16, fontWeight: '900' }
+  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 },
+  category: { fontSize: 10, fontWeight: '900', color: '#F97316', marginBottom: 4 },
+  productName: { fontSize: 24, fontWeight: '900', color: '#000', flex: 1, marginRight: 16 },
+  shareBtn: { width: 44, height: 44, ...BORDERS.brutalist, justifyContent: 'center', alignItems: 'center' },
+  priceContainer: { marginBottom: 24, padding: 16, backgroundColor: '#F8FAFC', ...BORDERS.brutalist },
+  priceLabel: { fontSize: 10, fontWeight: '900', color: COLORS.gray[400], marginBottom: 4 },
+  price: { fontSize: 32, fontWeight: '900', color: '#000' },
+  priceComparison: { marginTop: 4 },
+  comparisonText: { fontSize: 11, color: '#10B981', fontWeight: '700' },
+  sectionTitle: { fontSize: 13, fontWeight: '900', color: '#000', marginTop: 20, marginBottom: 12, textTransform: 'uppercase' },
+  skuRow: { flexDirection: 'row', gap: 10 },
+  skuItem: { paddingHorizontal: 20, paddingVertical: 10, ...BORDERS.brutalist, backgroundColor: '#fff' },
+  skuItemSelected: { backgroundColor: '#000' },
+  skuText: { fontSize: 14, fontWeight: '900', color: '#000' },
+  skuTextSelected: { color: '#fff' },
+  description: { fontSize: 14, lineHeight: 22, color: COLORS.gray[600], fontWeight: '500' },
+  trustCard: { marginTop: 30, padding: 20, backgroundColor: '#F0FDFA', borderLeftWidth: 8, borderColor: '#10B981' },
+  trustTitle: { fontSize: 14, fontWeight: '900', color: '#0F766E', marginBottom: 8 },
+  trustContent: { fontSize: 13, color: '#115E59', lineHeight: 20, fontWeight: '500' },
+  actionBar: { 
+    flexDirection: 'row', 
+    padding: 16, 
+    borderTopWidth: 4, 
+    borderColor: '#000', 
+    backgroundColor: '#fff', 
+    alignItems: 'center',
+    gap: 16
+  },
+  cartIcon: { width: 60, height: 60, ...BORDERS.brutalist, justifyContent: 'center', alignItems: 'center' },
+  badge: { 
+    position: 'absolute', 
+    top: -5, 
+    right: -5, 
+    backgroundColor: '#F97316', 
+    width: 24, 
+    height: 24, 
+    borderRadius: 12, 
+    justifyContent: 'center', 
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#000'
+  },
+  badgeText: { color: '#fff', fontSize: 10, fontWeight: '900' },
+  addToCartBtn: { 
+    flex: 1, 
+    height: 60, 
+    backgroundColor: '#F97316', 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    ...BORDERS.brutalist,
+    ...SHADOWS.brutalist
+  },
+  btnText: { color: '#fff', fontSize: 16, fontWeight: '900' }
 });

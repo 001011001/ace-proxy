@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { PatentRiskChecker } from './PatentRiskChecker';
+import { StationService } from '../station/StationService';
 
 /**
  * IntelligenceService - 全球电商情报中心
@@ -10,7 +11,10 @@ import { PatentRiskChecker } from './PatentRiskChecker';
 export class IntelligenceService {
   private readonly logger = new Logger(IntelligenceService.name);
 
-  constructor(private readonly patentChecker: PatentRiskChecker) {}
+  constructor(
+    private readonly patentChecker: PatentRiskChecker,
+    private readonly stationService: StationService
+  ) {}
 
   @Cron('0 9 * * *') // 每天早上 9 点抓取情报
   async fetchIntelligence() {

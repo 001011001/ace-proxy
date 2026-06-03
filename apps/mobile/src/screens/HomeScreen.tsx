@@ -7,7 +7,8 @@ import {
   TouchableOpacity, 
   Dimensions, 
   SafeAreaView,
-  StatusBar
+  StatusBar,
+  Alert
 } from 'react-native';
 import Animated, { 
   useSharedValue, 
@@ -19,10 +20,12 @@ import Animated, {
   Layout
 } from 'react-native-reanimated';
 import { useRole } from '../context/RoleContext';
-import { SPACING, TYPOGRAPHY, SHADOWS, COLORS } from '../theme';
+import { SPACING, TYPOGRAPHY, SHADOWS, COLORS, BORDERS, getActiveFestival } from '../theme';
 import { Skeleton } from '../components/Skeleton';
 import { ArbiWaterfall } from '../components/ArbiWaterfall';
 import { FlashSaleBanner } from '../components/FlashSaleBanner';
+import { HubProgressBar } from '../components/HubProgressBar';
+import { EidViralPopup } from '../components/EidViralPopup';
 import { TradeService } from '../services/TradeService';
 import { HeroProduct } from '../../../server/src/modules/cms/CMSService';
 
@@ -30,14 +33,16 @@ const { width } = Dimensions.get('window');
 
 /**
  * HomeScreen - AceProxy 移动端首页 (工业级重塑版)
- * 包含“利润脉搏”动画、大厂级身份切换、及多语言适配。
+ * 包含“全球选品脉搏”动画、大厂级身份切换、及多语言适配。
  */
 export const HomeScreen = ({ stationData }: any) => {
   const { role, setRole, currentTheme: theme, t } = useRole();
   const [loading, setLoading] = React.useState(true);
   const [heroProducts, setHeroProducts] = React.useState<HeroProduct[]>([]);
+  const [showEidPopup, setShowEidPopup] = React.useState(false);
+  const festival = React.useMemo(() => getActiveFestival('ID'), []); // Assume ID for Jakarta pilot
 
-  // 1. 利润脉搏动画 (Reanimated Breathing)
+  // 1. 全球选品脉搏动画 (Reanimated Breathing)
   const pulseScale = useSharedValue(1);
 
   useEffect(() => {
@@ -55,6 +60,11 @@ export const HomeScreen = ({ stationData }: any) => {
       const products = await TradeService.getHeroProducts();
       setHeroProducts(products);
       setLoading(false);
+      
+      // Trigger Eid Viral Popup for Jakarta pilot after a short delay
+      if (festival.id === 'EID_PREMIUM') {
+        setTimeout(() => setShowEidPopup(true), 1500);
+      }
     };
     
     initData();
@@ -85,21 +95,21 @@ export const HomeScreen = ({ stationData }: any) => {
   }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: COLORS.gray[50] }]}>
+    <SafeAreaView style={[styles.container, { backgroundColor: festival.background }]}>
       <StatusBar barStyle="light-content" />
       <ScrollView 
         stickyHeaderIndices={[0]} 
         showsVerticalScrollIndicator={false}
         layout={Layout.springify()}
       >
-        {/* 1. 沉浸式 Header (带身份变色龙效果) */}
+        {/* 1. 沉浸式 Header (带节日变色龙效果) */}
         <Animated.View 
           entering={FadeInDown.duration(600)}
-          style={[styles.header, { backgroundColor: theme.primary }]}
+          style={[styles.header, { backgroundColor: festival.primary }]}
         >
           <View style={styles.headerTop}>
             <View>
-              <Text style={styles.stationLabel}>{t.currentStation}</Text>
+              <Text style={styles.stationLabel}>{festival.bannerText}</Text>
               <Text style={styles.stationName}>{stationData?.stationName || 'AceProxy Jakarta'}</Text>
             </View>
             <View style={styles.badgeContainer}>
@@ -109,25 +119,39 @@ export const HomeScreen = ({ stationData }: any) => {
             </View>
           </View>
           <Text style={styles.headerStatus}>
-            {role === 'USER' ? '正在探索全球利差...' : '站点运行正常 • 安全审计已通过'}
+            {role === 'USER' ? '正在为您智能选品...' : '站点运行正常 • 安全审计已通过'}
           </Text>
         </Animated.View>
 
         <View style={styles.content}>
-          {/* 1.1 Eid 2026 Countdown & Flash Sale */}
-          <View style={[styles.eidFlashSection, SHADOWS.soft]}>
+          {/* 1.0 Stock-up Alert Banner (Dynamic) */}
+          {festival.showStockAlert && (
+            <Animated.View 
+              entering={FadeInDown.delay(200)}
+              style={styles.stockAlert}
+            >
+              <Text style={styles.stockAlertText}>⚠️ 备货提醒: 距离节日仅剩 30 天，请提前锁货避免延误！</Text>
+            </Animated.View>
+          )}
+
+          {/* 1.1 Lebaran 2026 Countdown & Flash Sale */}
+          <View style={[styles.eidFlashSection, SHADOWS.soft, { backgroundColor: festival.background === '#064E3B' ? '#065F46' : festival.background }]}>
             <View style={styles.eidHeader}>
               <View>
-                <Text style={styles.eidTitle}>Eid Mubarak 2026</Text>
-                <Text style={styles.eidSub}>🔥 Flash Sourcing Active</Text>
+                <Text style={[styles.eidTitle, { color: festival.primary }]}>{festival.id === 'EID_PREMIUM' ? 'LEBARAN 2026: ELITE ACCESS' : 'Eid Mubarak 2026'}</Text>
+                <Text style={[styles.eidSub, { color: festival.secondary }]}>🏆 Premium Sourcing Active</Text>
               </View>
-              <View style={styles.countdownBox}>
+              <View style={[styles.countdownBox, { backgroundColor: festival.primary }]}>
                 <Text style={styles.countdownText}>12:45:00</Text>
               </View>
             </View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.hotScroll}>
-              {heroProducts.filter(p => ['HP-001', 'HP-002', 'HP-003', 'HP-004'].includes(p.id)).map(item => (
-                <TouchableOpacity key={item.id} style={styles.hotItemCard}>
+              {heroProducts.filter(p => p.id.startsWith('EP-2026')).map(item => (
+                <TouchableOpacity 
+                  key={item.id} 
+                  style={styles.hotItemCard}
+                  onPress={() => Alert.alert('Elite Sourcing', `Navigating to ${item.name}...`)}
+                >
                   <View style={styles.hotImgBox}>
                     <Text style={{fontSize: 24}}>
                       {item.category === 'Apparel' ? '👗' : 
@@ -147,31 +171,50 @@ export const HomeScreen = ({ stationData }: any) => {
           <View style={styles.minimalistSection}>
             <View style={styles.minHeader}>
               <Text style={styles.minTitle}>Modern Minimalism</Text>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={() => Alert.alert('Wave 2', 'Loading exclusive Wave 2 curated list...')}>
                 <Text style={styles.seeAll}>See Wave 2 →</Text>
               </TouchableOpacity>
             </View>
             <View style={styles.minGrid}>
-              {heroProducts.filter(p => ['HP-006', 'HP-009', 'HP-010'].includes(p.id)).map(item => (
-                <TouchableOpacity key={item.id} style={styles.minCard}>
-                  <View style={styles.minImgPlaceholder}>
-                    <Text style={{fontSize: 32}}>
-                      {item.category === 'Apparel' ? '👔' : '🏮'}
-                    </Text>
-                  </View>
-                  <View style={styles.minInfo}>
-                    <Text style={styles.minName}>{item.name}</Text>
-                    <View style={styles.minBottom}>
-                      <Text style={styles.minPrice}>Rp {(item.targetPriceIDR / 1000).toFixed(0)}k</Text>
-                      <View style={styles.patentBadge}>
-                        <Text style={styles.patentText}>CLEAN IP</Text>
-                      </View>
+              {heroProducts.filter(p => !p.id.startsWith('EP-2026')).slice(0, 3).map(item => (
+                <TouchableOpacity 
+                  key={item.id} 
+                  style={styles.minCard}
+                  onPress={() => Alert.alert('Elite Sourcing', `Navigating to ${item.name}...`)}
+                >
+                  <View style={styles.minCardHeader}>
+                    <Text style={styles.minCardTitle} numberOfLines={2}>{item.name}</Text>
+                    <View style={styles.minIconBox}>
+                      <Text style={{fontSize: 32}}>
+                        {item.category === 'Apparel' ? '👔' : '🏮'}
+                      </Text>
                     </View>
+                  </View>
+                  <View style={styles.minDetailsRow}>
+                    <View style={styles.minDetailItem}>
+                      <Text style={styles.minDetailLabel}>Cost</Text>
+                      <Text style={styles.minDetailValue}>￥{item.costCNY}</Text>
+                    </View>
+                    <View style={styles.minDetailItem}>
+                      <Text style={styles.minDetailLabel}>Price (IDR)</Text>
+                      <Text style={styles.minDetailValue}>Rp {(item.targetPriceIDR / 1000).toFixed(0)}k</Text>
+                    </View>
+                  </View>
+                  <View style={styles.minActionBtn}>
+                    <Text style={styles.minActionText}>Explore Quality</Text>
                   </View>
                 </TouchableOpacity>
               ))}
             </View>
           </View>
+
+          {/* 1.3 物流脉搏 (Jakarta Logistics Pulse) */}
+          <HubProgressBar 
+            hubName="JAKARTA UTARA"
+            current={42.5}
+            target={50}
+            unit="kg"
+          />
 
           {/* 2. 利润脉搏统计卡片 (Profit Pulse Card) */}
           <Animated.View style={[styles.pulseCard, pulseStyle, SHADOWS.medium]}>
@@ -183,59 +226,20 @@ export const HomeScreen = ({ stationData }: any) => {
           </Animated.View>
 
           {/* 3. 营销引擎 (Flash Sale Banner) */}
-          <FlashSaleBanner />
-
-          {/* 4. AI 实时瀑布流 */}
-          <Animated.View entering={FadeInDown.delay(400).duration(800)}>
-            <ArbiWaterfall />
-          </Animated.View>
-
-          {/* 5. 团长分享工具 (Partner Share Tools) */}
-          {(role === 'PARTNER' || role === 'RIDER') && (
-            <Animated.View 
-              entering={FadeInDown.delay(500).duration(800)}
-              style={styles.shareCard}
-            >
-              <Text style={styles.shareTitle}>📢 {role === 'PARTNER' ? '团长分销工具' : '骑手推广工具'}</Text>
-              <Text style={styles.shareDesc}>一键将当前开斋节货盘分享至 WhatsApp 群组，获取额外 2% 订单分润。</Text>
-              <TouchableOpacity style={styles.waButton}>
-                <Text style={styles.waText}>分享至 WhatsApp</Text>
-              </TouchableOpacity>
-            </Animated.View>
-          )}
-
-          {/* 6. 身份切换看板 (Identity Morphing) */}
-          <View style={styles.roleSection}>
-            <Text style={styles.sectionLabel}>{t.switchRole}</Text>
-            <View style={styles.roleGrid}>
-              <RoleButton 
-                label={t.shopper} 
-                active={role === 'USER'} 
-                onPress={() => setRole('USER')} 
-                color={COLORS.user.primary} 
-              />
-              <RoleButton 
-                label={t.partner} 
-                active={role === 'PARTNER'} 
-                onPress={() => setRole('PARTNER')} 
-                color={COLORS.partner.primary} 
-              />
-              <RoleButton 
-                label={t.rider} 
-                active={role === 'RIDER'} 
-                onPress={() => setRole('RIDER')} 
-                color={COLORS.rider.primary} 
-              />
-            </View>
-          </View>
+          <FlashSaleBanner 
+            festival={festival} 
+            onPress={() => Alert.alert('Elite Access', 'Accessing premium Lebaran 2026 catalog...')}
+          />
         </View>
       </ScrollView>
 
-      {/* 底部悬浮功能球 (Haptic ARBI Button) */}
-      <TouchableOpacity style={[styles.fab, { backgroundColor: theme.primary }, SHADOWS.medium]}>
-        <Text style={styles.fabText}>{t.arbiBot}</Text>
-      </TouchableOpacity>
+      {/* 4. 开斋节大促裂变弹窗 */}
+      <EidViralPopup 
+        visible={showEidPopup} 
+        onClose={() => setShowEidPopup(false)} 
+      />
     </SafeAreaView>
+
   );
 };
 
@@ -278,40 +282,59 @@ const styles = StyleSheet.create({
     marginBottom: SPACING.lg, 
     padding: SPACING.md, 
     backgroundColor: '#FFF7ED', 
-    borderRadius: 28, 
-    borderWidth: 1, 
-    borderColor: '#FFEDD5' 
+    borderRadius: 12, 
+    ...BORDERS.brutalist,
+    ...SHADOWS.brutalist,
   },
   eidHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 },
   eidTitle: { fontSize: 18, fontWeight: '900', color: '#9A3412' },
   eidSub: { fontSize: 11, fontWeight: '700', color: '#C2410C', marginTop: 2 },
-  countdownBox: { backgroundColor: '#F97316', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 },
+  countdownBox: { backgroundColor: '#F97316', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 4, ...BORDERS.brutalist },
   countdownText: { color: '#FFF', fontSize: 12, fontWeight: '900', fontFamily: 'Courier New' },
   hotScroll: { flexDirection: 'row' },
-  hotItemCard: { width: 110, backgroundColor: '#FFF', borderRadius: 20, padding: 12, marginRight: 12, alignItems: 'center', borderWeight: 1, borderColor: '#F1F5F9' },
-  hotImgBox: { width: 50, height: 50, borderRadius: 12, backgroundColor: '#F8FAFC', alignItems: 'center', justifyContent: 'center', marginBottom: 8 },
+  hotItemCard: { width: 110, backgroundColor: '#FFF', borderRadius: 8, padding: 12, marginRight: 12, alignItems: 'center', ...BORDERS.brutalist },
+  hotImgBox: { width: 50, height: 50, borderRadius: 4, backgroundColor: '#F8FAFC', alignItems: 'center', justifyContent: 'center', marginBottom: 8, ...BORDERS.brutalist },
   hotItemName: { fontSize: 11, fontWeight: '800', color: '#1E293B', textAlign: 'center' },
   hotItemPrice: { fontSize: 12, fontWeight: '900', color: '#F97316', marginTop: 4 },
-  gainTag: { backgroundColor: '#F0FDF4', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 6, marginTop: 6 },
+  gainTag: { backgroundColor: '#F0FDF4', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4, marginTop: 6, ...BORDERS.brutalist },
   gainText: { fontSize: 9, fontWeight: '900', color: '#16A34A' },
   minimalistSection: { marginHorizontal: SPACING.md, marginBottom: SPACING.xl },
   minHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
   minTitle: { fontSize: 16, fontWeight: '800', color: '#1E293B', letterSpacing: -0.5 },
   seeAll: { fontSize: 12, fontWeight: '700', color: '#64748B' },
-  minGrid: { gap: 12 },
-  minCard: { flexDirection: 'row', backgroundColor: '#FFF', borderRadius: 24, padding: 12, borderWeight: 1, borderColor: '#F1F5F9' },
-  minImgPlaceholder: { width: 80, height: 80, borderRadius: 16, backgroundColor: '#F8FAFC', alignItems: 'center', justifyContent: 'center' },
-  minInfo: { flex: 1, marginLeft: 16, justifyContent: 'center' },
-  minName: { fontSize: 14, fontWeight: '800', color: '#1E293B' },
-  minBottom: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 8 },
-  minPrice: { fontSize: 15, fontWeight: '900', color: '#0F172A' },
-  patentBadge: { backgroundColor: '#F8FAFC', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, borderWeight: 1, borderColor: '#E2E8F0' },
+  minCard: { 
+    backgroundColor: '#FFF', 
+    borderRadius: 4, 
+    padding: 20, 
+    marginBottom: 20,
+    ...BORDERS.brutalist, 
+    ...SHADOWS.brutalist 
+  },
+  minCardHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 16 },
+  minCardTitle: { fontSize: 24, fontWeight: '900', color: '#000', width: '70%', textTransform: 'uppercase', lineHeight: 28 },
+  minIconBox: { width: 50, height: 50, alignItems: 'center', justifyContent: 'center' },
+  minDetailsRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 20 },
+  minDetailItem: { flex: 1 },
+  minDetailLabel: { fontSize: 10, fontWeight: '900', color: '#000', textTransform: 'uppercase', marginBottom: 4 },
+  minDetailValue: { fontSize: 16, fontWeight: '900', color: '#000' },
+  minActionBtn: { 
+    backgroundColor: '#F97316', 
+    paddingVertical: 14, 
+    alignItems: 'center', 
+    borderRadius: 4,
+    ...BORDERS.brutalist,
+  },
+  minActionText: { color: '#000', fontWeight: '900', fontSize: 16, textTransform: 'uppercase' },
+  minImgPlaceholder: { width: 80, height: 80, borderRadius: 0, backgroundColor: '#F8FAFC', alignItems: 'center', justifyContent: 'center', ...BORDERS.brutalist },
+  patentBadge: { backgroundColor: '#F8FAFC', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 4, ...BORDERS.brutalist },
   patentText: { fontSize: 8, fontWeight: '900', color: '#64748B' },
   pulseCard: { 
     marginHorizontal: SPACING.md, 
     padding: SPACING.lg, 
     backgroundColor: COLORS.white, 
-    borderRadius: 28,
+    borderRadius: 16,
+    ...BORDERS.brutalist,
+    ...SHADOWS.brutalist,
   },
   pulseTitle: { color: COLORS.gray[400], fontSize: 11, fontWeight: '600', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 6 },
   pulseAmount: { ...TYPOGRAPHY.h1, color: COLORS.gray[900], fontSize: 30, fontWeight: '900' },
@@ -324,6 +347,16 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start' 
   },
   trendText: { color: '#16A34A', fontSize: 10, fontWeight: '800' },
+  stockAlert: {
+    marginHorizontal: SPACING.md,
+    marginBottom: SPACING.md,
+    padding: 12,
+    backgroundColor: '#000',
+    borderRadius: 8,
+    ...BORDERS.brutalist,
+    ...SHADOWS.brutalist,
+  },
+  stockAlertText: { color: '#FFF', fontSize: 12, fontWeight: '900', textAlign: 'center' },
   holidayBanner: { 
     margin: SPACING.md, 
     padding: SPACING.lg, 
@@ -342,7 +375,7 @@ const styles = StyleSheet.create({
   roleSection: { padding: SPACING.md, paddingBottom: 120 },
   sectionLabel: { ...TYPOGRAPHY.caption, color: COLORS.gray[400], marginBottom: SPACING.md, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1 },
   roleGrid: { flexDirection: 'row', justifyContent: 'space-between' },
-  roleBtn: { width: width * 0.29, paddingVertical: 15, borderWidth: 2, borderRadius: 18, alignItems: 'center', ...SHADOWS.soft },
+  roleBtn: { width: width * 0.29, paddingVertical: 15, borderRadius: 12, alignItems: 'center', ...BORDERS.brutalist, ...SHADOWS.brutalist },
   roleBtnText: { fontWeight: '800', fontSize: 13 },
   fab: { 
     position: 'absolute', 
@@ -350,19 +383,21 @@ const styles = StyleSheet.create({
     right: 20, 
     paddingHorizontal: 24, 
     height: 60, 
-    borderRadius: 30, 
+    borderRadius: 12, 
     justifyContent: 'center', 
     alignItems: 'center',
-    flexDirection: 'row'
+    flexDirection: 'row',
+    ...BORDERS.brutalist,
+    ...SHADOWS.brutalist,
   },
   fabText: { color: COLORS.white, fontWeight: '900', fontSize: 14, letterSpacing: 0.5 },
   shareCard: {
     margin: SPACING.md,
     padding: SPACING.lg,
     backgroundColor: '#DCFCE7',
-    borderRadius: 24,
-    borderWidth: 1,
-    borderColor: '#BBF7D0',
+    borderRadius: 12,
+    ...BORDERS.brutalist,
+    ...SHADOWS.brutalist,
   },
   shareTitle: { fontSize: 16, fontWeight: '900', color: '#166534', marginBottom: 4 },
   shareDesc: { fontSize: 12, color: '#15803d', lineHeight: 18, marginBottom: 16 },

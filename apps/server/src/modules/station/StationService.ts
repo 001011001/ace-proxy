@@ -52,4 +52,20 @@ export class StationService {
       lossPreventionStatus: 'NORMAL',
     };
   }
+
+  /**
+   * 捷径：直接获取雅加达首页数据
+   */
+  async getJakartaHome() {
+    return this.getStationHome('JKT');
+  }
+
+  /**
+   * 更新产品状态
+   */
+  async setProductStatus(productId: string, status: 'NORMAL' | 'ARCHIVED' | 'HOT_SALE') {
+    // 逻辑：更新数据库或内存状态
+    console.log(`[StationService] Product ${productId} status set to ${status}`);
+    return { success: true };
+  }
 }

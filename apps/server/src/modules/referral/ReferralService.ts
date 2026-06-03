@@ -28,6 +28,15 @@ export class ReferralService {
   }
 
   /**
+   * 为“雅加达指挥官”生成唯一邀请码
+   */
+  async generatePartnerInviteCode(partnerName: string) {
+    const prefix = partnerName.substring(0, 3).toUpperCase();
+    const random = Math.floor(1000 + Math.random() * 9000);
+    return `ACE-${prefix}-${random}`;
+  }
+
+  /**
    * 触发“门缝照 (POD)”社交分享奖励
    */
   async triggerPodShareReward(userId: string, orderId: string) {

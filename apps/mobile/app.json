@@ -9,28 +9,28 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#F97316"
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.aceproxy.app"
+      "bundleIdentifier": "com.aceproxy.app",
+      "icon": "./assets/icon.png"
     },
     "android": {
+      "package": "com.aceproxy.app",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "package": "com.aceproxy.app"
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#F97316"
+      }
     },
     "web": {
-      "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "dc00dbda-7e3c-4bba-9385-44d4d1e6895c"
+        "projectId": "96efe513-0cf1-4e10-b050-cebfe97d4c32"
       }
     }
   }

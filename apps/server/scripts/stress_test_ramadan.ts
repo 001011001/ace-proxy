@@ -20,7 +20,7 @@ async function runRamadanStressTest() {
 
     try {
       const order = await trade.createOrder(
-        { total: orderAmount, cost, shipping, commission },
+        { total: orderAmount, cost, shipping, partnerCommission: commission },
         { ip: '127.0.0.1', deviceId: `STRESS-DEVICE-${i}`, terms_accepted: true }
       );
 
@@ -28,7 +28,8 @@ async function runRamadanStressTest() {
         total: orderAmount, 
         cost, 
         shipping, 
-        commission 
+        partnerCommission: commission,
+        tierConfig: { serviceFeePct: 0.05, rebatePct: 0.01 }
       });
 
       const profitEntry = result.entries.find(e => e.account === 'PLATFORM_NET_PROFIT');

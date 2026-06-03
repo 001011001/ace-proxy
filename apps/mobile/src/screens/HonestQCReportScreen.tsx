@@ -62,25 +62,25 @@ export const HonestQCReportScreen = ({ route, navigation }) => {
         </View>
 
         <View style={styles.salvageSection}>
-          <Text style={styles.salvageTitle}>AceProxy "Salvage" Options</Text>
+          <Text style={styles.salvageTitle}>AceProxy "Quality Care" Options</Text>
           <Text style={styles.salvageSub}>Choose how you want to proceed:</Text>
 
           <TouchableOpacity style={[styles.optionCard, { borderColor: '#DB2777' }]}>
             <View style={styles.optionHeader}>
-              <Text style={styles.optionTitle}>Accept & Compensate</Text>
+              <Text style={styles.optionTitle}>Accept & Quality Shield</Text>
               <View style={styles.rebateBadge}><Text style={styles.rebateText}>+15% Credits</Text></View>
             </View>
-            <Text style={styles.optionDesc}>Keep the item. Receive 15% service fee rebate in Ace Credits instantly.</Text>
+            <Text style={styles.optionDesc}>Keep the item. Receive 15% service fee rebate in Ace Credits instantly via our Quality Shield program.</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={[styles.optionCard, { borderColor: '#8B5CF6' }]}>
-            <Text style={styles.optionTitle}>Transfer to Resale Hub</Text>
-            <Text style={styles.optionDesc}>Automatically list this item in the local Resale Hub at a 20% "Outlet" discount.</Text>
+            <Text style={styles.optionTitle}>Transfer to Outlet Hub</Text>
+            <Text style={styles.optionDesc}>Automatically list this item in the local Outlet Hub at a 20% discount for immediate clearance.</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={[styles.optionCard, { borderColor: '#94A3B8' }]}>
             <Text style={styles.optionTitle}>Request Full Return</Text>
-            <Text style={styles.optionDesc}>Return to 1688 factory. Note: This may take 7-10 business days.</Text>
+            <Text style={styles.optionDesc}>Return to Manufacturing Center. Note: This may take 7-10 business days.</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

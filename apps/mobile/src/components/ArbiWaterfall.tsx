@@ -1,7 +1,6 @@
-import React from 'react';
-import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { useRole } from '../context/RoleContext';
-import { COLORS, SPACING, TYPOGRAPHY, SHADOWS } from '../theme';
+import { COLORS, SPACING, TYPOGRAPHY, SHADOWS, BORDERS } from '../theme';
 
 const MOCK_DATA = [
   { id: '1', item: 'Muslim Dress (Raya Edition)', margin: '+210%', price: '￥150', profit: '+$55', tag: 'Hot' },
@@ -16,9 +15,9 @@ export const ArbiWaterfall = () => {
   return (
     <View style={styles.container}>
       <View style={styles.headerRow}>
-        <Text style={[styles.title, { color: theme.primary }]}>{t.profitFlow}</Text>
+        <Text style={[styles.title, { color: COLORS.black }]}>{t.profitFlow}</Text>
         <TouchableOpacity>
-          <Text style={[styles.viewAll, { color: theme.primary }]}>View All →</Text>
+          <Text style={[styles.viewAll, { color: COLORS.gray[500] }]}>View All →</Text>
         </TouchableOpacity>
       </View>
       <FlatList
@@ -28,9 +27,9 @@ export const ArbiWaterfall = () => {
         contentContainerStyle={styles.list}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={[styles.card, SHADOWS.soft]}>
-            <View style={[styles.tagBadge, { backgroundColor: theme.primary + '20' }]}>
-              <Text style={[styles.tagText, { color: theme.primary }]}>{item.tag}</Text>
+          <View style={[styles.card, SHADOWS.brutalist]}>
+            <View style={[styles.tagBadge, { backgroundColor: COLORS.black }]}>
+              <Text style={[styles.tagText, { color: COLORS.white }]}>{item.tag}</Text>
             </View>
             <Text style={styles.itemText} numberOfLines={1}>{item.item}</Text>
             <View style={styles.row}>
@@ -39,8 +38,8 @@ export const ArbiWaterfall = () => {
             </View>
             <View style={styles.footerRow}>
               <Text style={styles.priceText}>Cost: {item.price}</Text>
-              <View style={styles.arbiIndicator}>
-                <Text style={styles.arbiIcon}>⚡</Text>
+              <View style={styles.selectionIndicator}>
+                <Text style={styles.selectionIcon}>⚡</Text>
               </View>
             </View>
           </View>
@@ -64,41 +63,42 @@ const styles = StyleSheet.create({
   title: {
     ...TYPOGRAPHY.h2,
     fontSize: 18,
+    textTransform: 'uppercase',
   },
   viewAll: {
     fontSize: 12,
-    fontWeight: '700',
+    fontWeight: '900',
   },
   list: {
     paddingHorizontal: SPACING.md,
-    paddingBottom: SPACING.sm,
+    paddingBottom: SPACING.lg,
   },
   card: {
     backgroundColor: COLORS.white,
     padding: SPACING.md,
-    borderRadius: 20,
-    marginRight: SPACING.sm,
-    width: 170,
-    borderWidth: 1,
-    borderColor: COLORS.gray[100],
+    borderRadius: 12,
+    marginRight: SPACING.md,
+    width: 180,
+    ...BORDERS.brutalist,
   },
   tagBadge: {
     alignSelf: 'flex-start',
     paddingHorizontal: 8,
     paddingVertical: 2,
-    borderRadius: 6,
+    borderRadius: 4,
     marginBottom: 8,
   },
   tagText: {
     fontSize: 10,
-    fontWeight: '800',
+    fontWeight: '900',
     textTransform: 'uppercase',
   },
   itemText: {
     ...TYPOGRAPHY.body,
-    fontWeight: '800',
+    fontWeight: '900',
     fontSize: 14,
-    color: COLORS.gray[800],
+    color: COLORS.gray[900],
+    textTransform: 'uppercase',
   },
   row: {
     flexDirection: 'row',
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
   marginText: {
     color: '#16A34A',
     fontWeight: '900',
-    fontSize: 18,
+    fontSize: 20,
   },
   profitText: {
     backgroundColor: '#F0FDF4',
@@ -118,7 +118,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: 4,
-    fontWeight: '700',
+    fontWeight: '900',
+    ...BORDERS.brutalist,
+    borderWidth: 1,
   },
   footerRow: {
     flexDirection: 'row',
@@ -127,19 +129,21 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   priceText: {
-    color: COLORS.gray[400],
+    color: COLORS.gray[500],
     fontSize: 11,
-    fontWeight: '500',
+    fontWeight: '800',
   },
-  arbiIndicator: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+  selectionIndicator: {
+    width: 24,
+    height: 24,
+    borderRadius: 4,
     backgroundColor: '#FFF7ED',
     alignItems: 'center',
     justifyContent: 'center',
+    ...BORDERS.brutalist,
+    borderWidth: 1.5,
   },
-  arbiIcon: {
-    fontSize: 10,
+  selectionIcon: {
+    fontSize: 12,
   }
 });
