@@ -4,3 +4,6 @@ dist/
 *.log
 .env
 .DS_Store
+apps/server/NUL
+deploy/nul
+apps/server/NUL

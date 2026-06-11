@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html><body><script>
+try {
+  var fs = require('fs');
+  // Read just the L object and test
+  var code = fs.readFileSync('D:/raw_js_only.js', 'utf8');
+  
+  // Try wrapping in async function to see if that helps
+  // Actually, try parsing as module
+  var acorn;
+  try { acorn = require('acorn'); } catch(e) {}
+  if (acorn) {
+    try {
+      acorn.parse(code, { ecmaVersion: 2022, sourceType: 'script' });
+      console.log('ACORN: OK');
+    } catch(e) {
+      console.log('ACORN ERR:', e.message);
+      console.log('POS:', e.pos, 'line:', e.loc?.line, 'col:', e.loc?.column);
+      console.log('Context:', code.substring(Math.max(0,e.pos-50), e.pos+50));
+    }
+  } else {
+    console.log('acorn not available');
+  }
+} catch(e) {
+  console.log('ERR:', e.message);
+}
+</script></body></html>

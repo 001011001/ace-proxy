@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException, BadRequestException } from '@nestjs/common';
 
 export interface Coupon {
   id: string;
@@ -40,9 +40,9 @@ export class CouponService {
    */
   async applyCoupon(code: string, orderAmount: number) {
     const coupon = this.coupons.get(code);
-    if (!coupon) throw new Error('COUPON_NOT_FOUND');
-    if (new Date() > coupon.expiresAt) throw new Error('COUPON_EXPIRED');
-    if (orderAmount < coupon.minSpend) throw new Error('MIN_SPEND_NOT_MET');
+    if (!coupon) throw new NotFoundException('COUPON_NOT_FOUND');
+    if (new Date() > coupon.expiresAt) throw new BadRequestException('COUPON_EXPIRED');
+    if (orderAmount < coupon.minSpend) throw new BadRequestException('MIN_SPEND_NOT_MET');
 
     const discount = coupon.type === 'FIXED' 
       ? coupon.value 

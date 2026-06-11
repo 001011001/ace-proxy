@@ -19,18 +19,19 @@ import { ProductDetailScreen } from './src/screens/ProductDetailScreen';
 import { CartScreen } from './src/screens/CartScreen';
 import { StewardChatScreen } from './src/screens/StewardChatScreen';
 import { OnboardingScreen } from './src/screens/OnboardingScreen';
+import { HonestQCReportScreen } from './src/screens/HonestQCReportScreen';
 import { COLORS, SHADOWS } from './src/theme';
-
+import { api } from './src/services/APIService';
 
 import { LoginScreen } from './src/screens/LoginScreen';
 
 /**
  * AceProxy Mobile - 核心入口 (工业级重塑版)
- * 演示版导航：支持 首页 (Home) / 发现 (Discovery) / 助手 (Arbi) / 清单 (Cart) / 我的 (Profile)
+ * 支持：首页/发现/助手/清单/我的
  */
 const MainNavigator = () => {
   const [currentScreen, setCurrentScreen] = useState('LOGIN');
-
+  const [authUser, setAuthUser] = useState(null);
   const [hasChatNotification, setHasChatNotification] = useState(true);
   const { currentTheme: theme } = useRole();
 
@@ -41,19 +42,34 @@ const MainNavigator = () => {
     return () => clearTimeout(timer);
   }, []);
 
+  // Auto-login if token exists
+  useEffect(() => {
+    const checkAuth = async () => {
+      const token = await api.loadToken();
+      if (token) {
+        try {
+          const user = await api.getMe();
+          setAuthUser(user);
+          setCurrentScreen('ONBOARDING');
+        } catch {
+          await api.clearToken();
+          setCurrentScreen('LOGIN');
+        }
+      }
+    };
+    checkAuth();
+  }, []);
 
-  // 模拟从后端获取的站点数据
-  const mockStationData = {
-    stationName: 'AceProxy Jakarta (JKT)',
-    announcement: '🏮 开斋节备货季开启！全球源头货源价格优势高达 200%。',
-    trendingCategories: ['穆斯林服饰', '节日家居', '极简收纳'],
+  const handleLogin = (token: string, user: any) => {
+    setAuthUser(user);
+    setCurrentScreen('ONBOARDING');
   };
 
   const renderScreen = () => {
     switch (currentScreen) {
-      case 'LOGIN': return <LoginScreen onLogin={() => setCurrentScreen('ONBOARDING')} />;
+      case 'LOGIN': return <LoginScreen onLogin={handleLogin} />;
       case 'ONBOARDING': return <OnboardingScreen onConfirm={() => setCurrentScreen('HOME')} />;
-      case 'HOME': return <HomeScreen stationData={mockStationData} />;
+      case 'HOME': return <HomeScreen />;
       case 'DISCOVERY': return <ResaleHubScreen />;
       case 'ARBI': return <ArbiBotScanner />;
       case 'CART': return <CartScreen />;
@@ -64,7 +80,7 @@ const MainNavigator = () => {
       case 'WALLET': return <WalletScreen />;
 
       case 'CHAT': return <StewardChatScreen onBack={() => setCurrentScreen('HOME')} />;
-      default: return <HomeScreen stationData={mockStationData} />;
+      default: return <HomeScreen />;
     }
   };
 
@@ -79,7 +95,7 @@ const MainNavigator = () => {
       {currentScreen !== 'ONBOARDING' && currentScreen !== 'LOGIN' && (
         <View style={[styles.navBar, SHADOWS.medium]}>
           <NavButton 
-            label={t.home} 
+            label="Home" 
             active={currentScreen === 'HOME'} 
             onPress={() => setCurrentScreen('HOME')}
             activeColor={theme.primary}

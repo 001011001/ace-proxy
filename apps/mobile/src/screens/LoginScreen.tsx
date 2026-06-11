@@ -7,14 +7,37 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
-  Image,
+  Alert,
 } from 'react-native';
 import { COLORS, SPACING, TYPOGRAPHY, SHADOWS, BORDERS } from '../theme';
+import { api } from '../services/APIService';
 
-export const LoginScreen = ({ onLogin }) => {
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [code, setCode] = useState('');
-  const [isCodeSent, setIsCodeSent] = useState(false);
+export const LoginScreen = ({ onLogin }: { onLogin: (token: string, user: any) => void }) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isRegister, setIsRegister] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async () => {
+    if (!email || !password) {
+      Alert.alert('Error', 'Please enter email and password');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const result = isRegister
+        ? await api.register(email, password)
+        : await api.login(email, password);
+
+      await api.setToken(result.accessToken);
+      onLogin(result.accessToken, result.user);
+    } catch (error: any) {
+      Alert.alert('Error', error.message || 'Login failed');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <KeyboardAvoidingView
@@ -28,62 +51,42 @@ export const LoginScreen = ({ onLogin }) => {
         </View>
 
         <View style={styles.form}>
-          {!isCodeSent ? (
-            <>
-              <Text style={styles.label}>WHATSAPP NUMBER</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="+62 812..."
-                keyboardType="phone-pad"
-                value={phoneNumber}
-                onChangeText={setPhoneNumber}
-              />
-              <TouchableOpacity
-                style={styles.primaryBtn}
-                onPress={() => setIsCodeSent(true)}
-              >
-                <Text style={styles.primaryBtnText}>SEND VERIFICATION CODE</Text>
-              </TouchableOpacity>
-            </>
-          ) : (
-            <>
-              <Text style={styles.label}>ENTER VERIFICATION CODE</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="000000"
-                keyboardType="number-pad"
-                maxLength={6}
-                value={code}
-                onChangeText={setCode}
-              />
-              <TouchableOpacity
-                style={styles.primaryBtn}
-                onPress={onLogin}
-              >
-                <Text style={styles.primaryBtnText}>LOGIN & START SOURCING</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.secondaryBtn}
-                onPress={() => setIsCodeSent(false)}
-              >
-                <Text style={styles.secondaryBtnText}>BACK TO PHONE</Text>
-              </TouchableOpacity>
-            </>
-          )}
-        </View>
+          <Text style={styles.label}>EMAIL</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="you@email.com"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            value={email}
+            onChangeText={setEmail}
+          />
 
-        <View style={styles.dividerBox}>
-          <View style={styles.divider} />
-          <Text style={styles.dividerText}>OR LOGIN WITH</Text>
-          <View style={styles.divider} />
-        </View>
+          <Text style={styles.label}>PASSWORD</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Min. 6 characters"
+            secureTextEntry
+            value={password}
+            onChangeText={setPassword}
+          />
 
-        <View style={styles.socialGrid}>
-          <TouchableOpacity style={styles.socialBtn}>
-            <Text style={styles.socialIcon}>G</Text>
+          <TouchableOpacity
+            style={[styles.primaryBtn, loading && { opacity: 0.6 }]}
+            onPress={handleSubmit}
+            disabled={loading}
+          >
+            <Text style={styles.primaryBtnText}>
+              {loading ? 'PLEASE WAIT...' : isRegister ? 'CREATE ACCOUNT' : 'LOGIN & START'}
+            </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.socialBtn}>
-            <Text style={styles.socialIcon}>F</Text>
+
+          <TouchableOpacity
+            style={styles.secondaryBtn}
+            onPress={() => setIsRegister(!isRegister)}
+          >
+            <Text style={styles.secondaryBtnText}>
+              {isRegister ? 'Already have an account? Login' : "Don't have an account? Register"}
+            </Text>
           </TouchableOpacity>
         </View>
 
@@ -134,6 +137,7 @@ const styles = StyleSheet.create({
     fontWeight: '900',
     color: '#000',
     marginBottom: 8,
+    textTransform: 'uppercase',
   },
   input: {
     height: 56,
@@ -168,45 +172,8 @@ const styles = StyleSheet.create({
   },
   secondaryBtnText: {
     fontSize: 12,
-    fontWeight: '900',
+    fontWeight: '700',
     color: '#64748B',
-    textDecorationLine: 'underline',
-  },
-  dividerBox: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: SPACING.lg,
-  },
-  divider: {
-    flex: 1,
-    height: 2,
-    backgroundColor: '#000',
-  },
-  dividerText: {
-    paddingHorizontal: 16,
-    fontSize: 10,
-    fontWeight: '900',
-    color: '#000',
-  },
-  socialGrid: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 16,
-    marginBottom: SPACING.lg,
-  },
-  socialBtn: {
-    width: 56,
-    height: 56,
-    backgroundColor: '#FFF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    ...BORDERS.brutalist,
-    ...SHADOWS.brutalist,
-    shadowOffset: { width: 4, height: 4 },
-  },
-  socialIcon: {
-    fontSize: 20,
-    fontWeight: '900',
   },
   footerText: {
     fontSize: 10,

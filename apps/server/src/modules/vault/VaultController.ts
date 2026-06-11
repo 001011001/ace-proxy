@@ -1,6 +1,8 @@
 import { Controller, Post, Body, Get, UseGuards, Param, Query } from '@nestjs/common';
 import { VaultService } from './VaultService';
 import { XenditWebhookGuard } from './XenditWebhookGuard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RecordLedgerDto } from '../../dto/vault.dto';
 
 /**
  * VaultController - 金融接口层
@@ -13,10 +15,11 @@ export class VaultController {
   /**
    * 记录订单账本 (内部调用或受限调用)
    */
+  @UseGuards(JwtAuthGuard)
   @Post('ledger/:orderId')
   async recordLedger(
     @Param('orderId') orderId: string,
-    @Body() data: any
+    @Body() data: RecordLedgerDto
   ) {
     return await this.vaultService.recordOrderLedger(orderId, data);
   }
@@ -43,6 +46,7 @@ export class VaultController {
   /**
    * 账户健康审计接口 (供后台看板使用)
    */
+  @UseGuards(JwtAuthGuard)
   @Get('audit/:regionId')
   async getRegionAudit(@Param('regionId') regionId: string) {
     // 返回该区域的资损率、利润统计等

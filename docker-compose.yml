@@ -6,10 +6,8 @@ services:
     restart: always
     environment:
       POSTGRES_USER: aceproxy_admin
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-AceProxy2026!}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme}
       POSTGRES_DB: aceproxy_vault
-    ports:
-      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
@@ -21,8 +19,8 @@ services:
     ports:
       - "3000:3000"
     environment:
-      DATABASE_URL: postgresql://aceproxy_admin:${DB_PASSWORD:-AceProxy2026!}@db:5432/aceproxy_vault
-      JWT_SECRET: ${JWT_SECRET:-AceProxySecret2026}
+      DATABASE_URL: postgresql://aceproxy_admin:${DB_PASSWORD:-changeme}@db:5432/aceproxy_vault
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}
       XENDIT_API_KEY: ${XENDIT_API_KEY}
     depends_on:
       - db

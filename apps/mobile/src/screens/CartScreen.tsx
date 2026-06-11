@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   View, 
   Text, 
@@ -7,20 +7,44 @@ import {
   TouchableOpacity, 
   SafeAreaView,
   StatusBar,
-  Alert
+  Alert,
+  ActivityIndicator
 } from 'react-native';
 import { COLORS, SPACING, TYPOGRAPHY, BORDERS, SHADOWS } from '../theme';
 import { HubProgressBar } from '../components/HubProgressBar';
+import { api } from '../services/APIService';
 
-const MOCK_CART = [
-  { id: '1', name: 'Premium Silk Abaya', size: 'XL', price: 1250000, qty: 1 },
-  { id: '2', name: 'Smart Prayer Mat V2', size: 'Default', price: 450000, qty: 2 },
-];
+export const CartScreen = ({ navigation }: any) => {
+  const [cartItems, setCartItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-export const CartScreen = () => {
-  const [items, setItems] = useState(MOCK_CART);
+  useEffect(() => {
+    loadCart();
+  }, []);
 
-  const total = items.reduce((sum, item) => sum + item.price * item.qty, 0);
+  const loadCart = async () => {
+    try {
+      setLoading(true);
+      const data = await api.getCart();
+      setCartItems(data?.items || []);
+    } catch (error) {
+      console.error('Failed to load cart:', error);
+      setCartItems([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateQuantity = (id: string, delta: number) => {
+    setCartItems(prev =>
+      prev.map(item =>
+        item.id === id ? { ...item, qty: Math.max(1, item.qty + delta) } : item
+      )
+    );
+    // TODO: Sync with backend when cart update API is ready
+  };
+
+  const total = cartItems.reduce((sum, item) => sum + item.price * item.qty, 0);
 
   const handleCheckout = () => {
     Alert.alert('Konfirmasi Checkout', 'Lanjut ke pembayaran via WorldFirst?');
@@ -31,7 +55,7 @@ export const CartScreen = () => {
       <StatusBar barStyle="dark-content" />
       <View style={styles.header}>
         <Text style={styles.headerTitle}>KERANJANG (CART)</Text>
-        <Text style={styles.headerSub}>{items.length} ITEMS READY FOR SHIPPING</Text>
+        <Text style={styles.headerSub}>{cartItems.length} ITEMS READY FOR SHIPPING</Text>
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
@@ -43,21 +67,30 @@ export const CartScreen = () => {
         />
 
         <View style={styles.cartList}>
-          {items.map(item => (
-            <View key={item.id} style={styles.cartItem}>
-              <View style={styles.itemImage} />
-              <View style={styles.itemInfo}>
-                <Text style={styles.itemName}>{item.name}</Text>
-                <Text style={styles.itemMeta}>Size: {item.size}</Text>
-                <Text style={styles.itemPrice}>Rp {(item.price * item.qty).toLocaleString()}</Text>
-              </View>
-              <View style={styles.qtyControls}>
-                <TouchableOpacity style={styles.qtyBtn}><Text>-</Text></TouchableOpacity>
-                <Text style={styles.qtyText}>{item.qty}</Text>
-                <TouchableOpacity style={styles.qtyBtn}><Text>+</Text></TouchableOpacity>
-              </View>
+          {loading ? (
+            <ActivityIndicator size="large" color="#F97316" style={{ marginTop: 40 }} />
+          ) : cartItems.length === 0 ? (
+            <View style={styles.emptyCart}>
+              <Text style={styles.emptyCartText}>Keranjang kosong (Cart is empty)</Text>
+              <Text style={styles.emptyCartSub}>Start shopping to add items here</Text>
             </View>
-          ))}
+          ) : (
+            cartItems.map(item => (
+              <View key={item.id} style={styles.cartItem}>
+                <View style={styles.itemImage} />
+                <View style={styles.itemInfo}>
+                  <Text style={styles.itemName}>{item.name}</Text>
+                  <Text style={styles.itemMeta}>Size: {item.size}</Text>
+                  <Text style={styles.itemPrice}>Rp {(item.price * item.qty).toLocaleString()}</Text>
+                </View>
+                <View style={styles.qtyControls}>
+                  <TouchableOpacity style={styles.qtyBtn} onPress={() => updateQuantity(item.id, -1)}><Text>-</Text></TouchableOpacity>
+                  <Text style={styles.qtyText}>{item.qty}</Text>
+                  <TouchableOpacity style={styles.qtyBtn} onPress={() => updateQuantity(item.id, 1)}><Text>+</Text></TouchableOpacity>
+                </View>
+              </View>
+            ))
+          )}
         </View>
 
         <View style={styles.summaryCard}>
@@ -129,5 +162,8 @@ const styles = StyleSheet.create({
     ...BORDERS.brutalist,
     ...SHADOWS.brutalist
   },
-  checkoutText: { color: '#fff', fontSize: 18, fontWeight: '900' }
+  checkoutText: { color: '#fff', fontSize: 18, fontWeight: '900' },
+  emptyCart: { padding: 40, alignItems: 'center' },
+  emptyCartText: { fontSize: 16, fontWeight: '900', color: COLORS.gray[400], marginBottom: 8 },
+  emptyCartSub: { fontSize: 13, color: COLORS.gray[300], fontWeight: '600' }
 });

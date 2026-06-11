@@ -33,6 +33,11 @@ export class UserLevelService {
     return { level: UserLevel.EXPLORER, config: this.levels.EXPLORER };
   }
 
+  /** Alias for TradeService compatibility */
+  async getUserTier(totalSpend: number): Promise<{ level: UserLevel; config: LevelConfig }> {
+    return this.calculateLevel(totalSpend);
+  }
+
   /**
    * Get applicable fee discount
    */

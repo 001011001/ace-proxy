@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { PrismaService } from '../../prisma/prisma.service';
 
 /**
  * VaultService (Audit-Grade Ledger for AceProxy)
@@ -8,6 +9,8 @@ import { Injectable, Logger } from '@nestjs/common';
 @Injectable()
 export class VaultService {
   private readonly logger = new Logger(VaultService.name);
+
+  constructor(private readonly prisma: PrismaService) {}
 
   // 核心财务参数 (由 Ecommerce Mind 审计)
   public static readonly RESALE_COMMISSION_PCT = 0.05;    // 转卖平台抽成 5%
@@ -46,8 +49,40 @@ export class VaultService {
       throw new Error(`LEDGER_IMBALANCE: Off by ${balance}. Audit required.`);
     }
 
+    // Persist to database (atomic transaction)
+    await this.prisma.$transaction(
+      entries.map(entry =>
+        this.prisma.aceVaultLedger.create({
+          data: {
+            orderId,
+            account: entry.account,
+            amount: entry.amount,
+            entryType: entry.type,
+            description: entry.desc,
+          },
+        })
+      )
+    );
+
     this.logger.log(`[Vault] Order ${orderId} settled. Profit: ${platformNetProfit}, RiskPool: ${riskPoolAmount}`);
     return { success: true, orderId, entries };
+  }
+
+  /**
+   * 记录 Salvage 补偿积分 (TradeService 调用)
+   */
+  async recordSalvageRebate(orderId: string, amount: number) {
+    await this.prisma.aceVaultLedger.create({
+      data: {
+        orderId,
+        account: 'SALVAGE_REBATE',
+        amount: -amount,
+        entryType: 'CREDIT',
+        description: `Salvage rebate compensation for order ${orderId}`,
+      },
+    });
+    this.logger.log(`[Vault] Salvage rebate recorded: Order ${orderId}, Amount ${amount}`);
+    return { success: true };
   }
 
   /**
@@ -56,8 +91,19 @@ export class VaultService {
    */
   async handleChargeback(regionId: string, amount: number) {
     this.logger.warn(`[Vault] CRITICAL: Chargeback detected in region ${regionId} for amount ${amount}.`);
-    // 逻辑：从该区域的利润池中扣除，并标记风险
-    return { success: true, status: 'FUNDS_LOCKED' };
+
+    // 记录拒付锁定条目
+    await this.prisma.aceVaultLedger.create({
+      data: {
+        orderId: `CHARGEBACK-${regionId}-${Date.now()}`,
+        account: 'CHARGEBACK_LOCK',
+        amount: amount,
+        entryType: 'DEBIT',
+        description: `Chargeback lock for region ${regionId}`,
+      },
+    });
+
+    return { success: true, status: 'FUNDS_LOCKED', lockedAmount: amount };
   }
 
   /**
@@ -78,11 +124,32 @@ export class VaultService {
    */
   async finalizeSettlement(orderId: string, partnerId: string, amount: number) {
     this.logger.log(`[Vault] Finalizing payout for Order ${orderId} to Partner ${partnerId}: ${amount}`);
-    
+
     const entries = [
       { account: 'PARTNER_COMMISSION', amount: amount, type: 'DEBIT', desc: 'Commission Release' },
-      { account: 'PARTNER_WALLET', amount: -amount, type: 'CREDIT', desc: 'Partner Payout' }
+      { account: 'PARTNER_WALLET', amount: -amount, type: 'CREDIT', desc: 'Partner Payout' },
     ];
+
+    await this.prisma.$transaction([
+      ...entries.map(entry =>
+        this.prisma.aceVaultLedger.create({
+          data: {
+            orderId,
+            account: entry.account,
+            amount: entry.amount,
+            entryType: entry.type,
+            description: entry.desc,
+          },
+        })
+      ),
+      this.prisma.acePartner.update({
+        where: { id: partnerId },
+        data: {
+          balance: { increment: amount },
+          pendingSettlement: { decrement: amount },
+        },
+      }),
+    ]);
 
     return { success: true, settled_at: new Date().toISOString() };
   }

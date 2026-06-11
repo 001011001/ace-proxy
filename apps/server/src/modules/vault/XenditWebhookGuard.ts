@@ -1,4 +1,4 @@
-import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, ServiceUnavailableException } from '@nestjs/common';
 
 /**
  * XenditWebhookGuard - Xendit 回调安全卫士
@@ -6,9 +6,13 @@ import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from
  */
 @Injectable()
 export class XenditWebhookGuard implements CanActivate {
-  private readonly XENDIT_CALLBACK_TOKEN = process.env.XENDIT_CALLBACK_TOKEN || 'aceproxy_test_token_2026';
+  private readonly XENDIT_CALLBACK_TOKEN = process.env.XENDIT_CALLBACK_TOKEN;
 
   canActivate(context: ExecutionContext): boolean {
+    if (!this.XENDIT_CALLBACK_TOKEN) {
+      throw new ServiceUnavailableException('XENDIT_CALLBACK_TOKEN not configured');
+    }
+
     const request = context.switchToHttp().getRequest();
     const token = request.headers['x-callback-token'];
 

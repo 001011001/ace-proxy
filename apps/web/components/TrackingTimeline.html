@@ -1,0 +1,180 @@
+<!--
+  AceProxy Order Tracking Timeline
+  用途：订单详情页展示 15 节点物流时间线
+  符合 DESIGN.md 规范：Pill 标签 + 三色节点 + 响应式
+-->
+<style>
+  .ace-tracking {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    padding: 20px;
+    max-width: 600px;
+  }
+  .ace-tracking__title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin-bottom: 20px;
+  }
+  .ace-tracking__timeline {
+    position: relative;
+    padding-left: 28px;
+  }
+  .ace-tracking__line {
+    position: absolute;
+    left: 12px;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    background: #e8e8ef;
+  }
+  .ace-tracking__line--active {
+    background: linear-gradient(to bottom, #d45d3a 60%, #e8e8ef 100%);
+  }
+  .ace-tracking__node {
+    position: relative;
+    padding-bottom: 24px;
+  }
+  .ace-tracking__node:last-child { padding-bottom: 0; }
+  .ace-tracking__dot {
+    position: absolute;
+    left: -28px;
+    top: 4px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #e8e8ef;
+    border: 2px solid #fff;
+    z-index: 1;
+  }
+  .ace-tracking__dot--completed { background: #1ea366; }
+  .ace-tracking__dot--active { background: #d45d3a; box-shadow: 0 0 0 4px rgba(212,93,58,0.15); }
+  .ace-tracking__dot--failed { background: #d14343; }
+  .ace-tracking__node-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 2px;
+  }
+  .ace-tracking__node-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #1a1a2e;
+  }
+  .ace-tracking__node-label--muted {
+    color: #6b6b80;
+    font-weight: 400;
+  }
+  .ace-tracking__node-time {
+    font-size: 12px;
+    color: #6b6b80;
+  }
+  .ace-tracking__node-location {
+    font-size: 12px;
+    color: #3d3d5c;
+    margin-bottom: 2px;
+  }
+  .ace-tracking__node-note {
+    font-size: 12px;
+    color: #6b6b80;
+    font-style: italic;
+  }
+  .ace-tracking__qc-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .ace-tracking__qc-actions button {
+    padding: 6px 16px;
+    border-radius: 9999px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+  }
+  .ace-tracking__qc-pass {
+    background: #1ea366;
+    color: #fff;
+  }
+  .ace-tracking__qc-fail {
+    background: transparent;
+    color: #d14343;
+    border: 1.5px solid #d14343;
+  }
+
+  @media (max-width: 767px) {
+    .ace-tracking { padding: 16px; }
+    .ace-tracking__node-label { font-size: 13px; }
+  }
+</style>
+
+<div class="ace-tracking" id="ace-tracking-root">
+  <div class="ace-tracking__title" id="ace-tracking-title">📦 Order Tracking</div>
+  <div class="ace-tracking__timeline" id="ace-tracking-timeline">
+    <!-- ISO day rendering via JS -->
+  </div>
+</div>
+
+<script>
+const NODE_ICONS = {
+  CREATED:    '🛒', PAID: '💰', MATCHING: '🔍', MATCHED: '✅',
+  PURCHASING: '🏪', PURCHASED: '📦', WAREHOUSE_RECEIVED: '🏭',
+  QC_PASSED:  '✔️', QC_FAILED: '❌', CONSOLIDATING: '📮',
+  CONSOLIDATED: '📬', SHIPPED: '🚢', CUSTOMS: '🛃',
+  IN_TRANSIT:  '✈️', DELIVERED: '🏠', DISPUTED: '⚠️', REFUNDING: '💸', REFUNDED: '🔄'
+};
+
+function renderTimeline(nodes, lang = 'EN') {
+  if (!nodes || !nodes.length) {
+    document.getElementById('ace-tracking-timeline').innerHTML =
+      '<div style="color:#6b6b80;font-size:13px;padding:16px">No tracking data yet</div>';
+    return;
+  }
+
+  // Find active node (last one)
+  const activeIndex = nodes.length - 1;
+
+  let html = `<div class="ace-tracking__line ace-tracking__line--active"></div>`;
+
+  nodes.forEach((node, i) => {
+    const isActive = i === activeIndex;
+    const isCompleted = i < activeIndex && node.node !== 'QC_FAILED' && node.node !== 'DISPUTED';
+    const isFailed = node.node === 'QC_FAILED';
+    const dotClass = isFailed ? 'ace-tracking__dot--failed' : isActive ? 'ace-tracking__dot--active' : isCompleted ? 'ace-tracking__dot--completed' : '';
+    const labelClass = !isActive && !isFailed && isCompleted ? 'ace-tracking__node-label--muted' : '';
+
+    const label = node.translation?.[lang] || node.node;
+    const icon = NODE_ICONS[node.node] || '📍';
+    const time = node.timestamp ? new Date(node.timestamp).toLocaleString('en-US', { month:'short', day:'numeric', hour:'2-digit', minute:'2-digit' }) : '';
+    const location = node.location || '';
+    const note = node.note || '';
+
+    html += `
+      <div class="ace-tracking__node">
+        <div class="ace-tracking__dot ${dotClass}"></div>
+        <div class="ace-tracking__node-header">
+          <span class="ace-tracking__node-label ${labelClass}">${icon} ${label}</span>
+        </div>
+        ${time ? `<div class="ace-tracking__node-time">${time}</div>` : ''}
+        ${location ? `<div class="ace-tracking__node-location">📍 ${location}</div>` : ''}
+        ${note ? `<div class="ace-tracking__node-note">${note}</div>` : ''}
+        ${node.node === 'WAREHOUSE_RECEIVED' && isActive ? `
+          <div class="ace-tracking__qc-actions">
+            <button class="ace-tracking__qc-pass" onclick="window.AceTracking.qcAction(true)">✓ Pass QC</button>
+            <button class="ace-tracking__qc-fail" onclick="window.AceTracking.qcAction(false)">✗ Fail</button>
+          </div>
+        ` : ''}
+      </div>`;
+  });
+
+  document.getElementById('ace-tracking-timeline').innerHTML = html;
+}
+
+window.AceTracking = {
+  render: renderTimeline,
+  qcAction: (passed) => {
+    // Parent app handles actual QC API call
+    document.dispatchEvent(new CustomEvent('ace-qc-action', { detail: { passed } }));
+  }
+};
+</script>

@@ -1,0 +1,395 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// 1. 用户表
+model AceUser {
+  id         String         @id @default(uuid())
+  email      String         @unique
+  password   String         @map("password_hash")
+  role       String         @default("USER")
+  totalSpend Decimal        @default(0) @map("total_spend")
+  credits    Decimal        @default(0)
+  level      String         @default("EXPLORER")
+  lastLoginAt DateTime?     @map("last_login_at")
+  referredBy  String?       @map("referred_by")
+  createdAt  DateTime       @default(now()) @map("created_at")
+  orders     AceOrder[]
+  partners   AcePartner[]
+  chats      AceOrderChat[]
+  cartItems  AceCartItem[]
+  addresses  AceUserAddress[]
+  reviews    AceProductReview[]
+
+  @@map("ace_users")
+}
+
+// 2. 供应商表
+model AceSupplier {
+  id          String   @id
+  name        String
+  avgLeadTime Float?   @map("avg_lead_time_hrs")
+  defectRate  Float?   @map("defect_rate")
+  status      String   @default("ACTIVE")
+  updatedAt   DateTime @default(now()) @map("updated_at")
+
+  @@map("ace_suppliers")
+}
+
+// 3. 订单主表
+model AceOrder {
+  id               String           @id
+  userId           String           @map("user_id")
+  partnerId        String?          @map("partner_id")
+  status           String           @default("PENDING")
+  country          String?          @map("country")
+  warehouseId      String?          @map("warehouse_id")
+  totalAmount      Decimal          @map("total_amount")
+  sourceCost       Decimal?         @map("source_cost")
+  shippingFee      Decimal?         @map("shipping_fee")
+  serviceFee       Decimal?         @map("service_fee")
+  commissionAmount Decimal          @default(0) @map("commission_amount")
+  riskPoolAmount   Decimal?         @map("risk_pool_amount")
+  lossAmount       Decimal?         @map("loss_amount")
+  complianceAudit  String?          @map("compliance_audit_log")
+  createdAt        DateTime         @default(now()) @map("created_at")
+  user             AceUser          @relation(fields: [userId], references: [id])
+  partner          AcePartner?      @relation(fields: [partnerId], references: [id])
+  ledger           AceVaultLedger[]
+  chats            AceOrderChat[]
+  items            AceOrderItem[]
+  logisticsNodes   AceLogisticsNode[]
+  parcels          AceParcel[]
+  refunds          AceRefund[]
+
+  @@index([userId])
+  @@index([status])
+  @@index([partnerId])
+  @@map("ace_orders")
+}
+
+// 4. 团长/指挥官表
+model AcePartner {
+  id                String     @id @default(uuid())
+  userId            String     @map("user_id")
+  name              String
+  inviteCode        String     @unique @map("invite_code")
+  commissionRate    Decimal    @default(0.05) @map("commission_rate")
+  balance           Decimal    @default(0)
+  pendingSettlement Decimal    @default(0) @map("pending_settlement")
+  status            String     @default("ACTIVE")
+  createdAt         DateTime   @default(now()) @map("created_at")
+  user              AceUser    @relation(fields: [userId], references: [id])
+  orders            AceOrder[]
+
+  @@map("ace_partners")
+}
+
+// 5. 财务审计账本
+model AceVaultLedger {
+  id          String   @id @default(uuid())
+  orderId     String   @map("order_id")
+  account     String
+  amount      Decimal
+  entryType   String   @map("entry_type")
+  lossType    String?  @map("loss_type")
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at")
+  order       AceOrder @relation(fields: [orderId], references: [id])
+
+  @@index([account])
+  @@map("ace_vault_ledger")
+}
+
+// 6. AI 管家聊天存证
+model AceOrderChat {
+  id                String   @id @default(uuid())
+  orderId           String   @map("order_id")
+  userId            String   @map("user_id")
+  role              String
+  contentOriginal   String   @map("content_original")
+  contentTranslated String?  @map("content_translated")
+  createdAt         DateTime @default(now()) @map("created_at")
+  user              AceUser  @relation(fields: [userId], references: [id])
+  order             AceOrder @relation(fields: [orderId], references: [id])
+
+  @@map("ace_order_chat")
+}
+
+// 7. CMS 爆款库
+model AceHeroProduct {
+  id              String   @id
+  name            String
+  category        String?
+  sourcePriceCny  Decimal? @map("source_price_cny")
+  localPriceIdr   Decimal? @map("local_price_idr")
+  arbitrageGapPct Decimal? @map("arbitrage_gap_pct")
+  status          String   @default("ACTIVE")
+  patentStatus    String   @default("CLEAN") @map("patent_status")
+  lastAuditAt     DateTime @default(now()) @map("last_audit_at")
+
+  products AceProduct[]
+
+  @@index([status])
+  @@index([category])
+  @@map("ace_hero_products")
+}
+
+// 8. 节日引擎配置
+model AceHolidayConfig {
+  id              Int      @id @default(autoincrement())
+  stationId       String   @map("station_id")
+  festivalName    String   @map("festival_name")
+  themeId         String   @map("theme_id")
+  reminderDays    Int      @default(30) @map("reminder_days")
+  reminderMessage String?  @map("reminder_message")
+  isActive        Boolean  @default(false) @map("is_active")
+  updatedAt       DateTime @default(now()) @map("updated_at")
+
+  @@index([stationId])
+  @@map("ace_holiday_config")
+}
+
+// 9. 全球收款配置
+model AcePaymentConfig {
+  id              String   @id @default(uuid())
+  regionCode      String   @map("region_code")
+  providerName    String   @map("provider_name")
+  bankName        String?  @map("bank_name")
+  accountNumber   String?  @map("account_number")
+  beneficiaryName String?  @map("beneficiary_name")
+  status          String   @default("ACTIVE")
+  isDefault       Boolean  @default(false) @map("is_default")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  @@unique([regionCode, providerName])
+  @@map("ace_payment_configs")
+}
+
+// 10. 商品目录（通用电商商品表，区别于 CMS 爆款库）
+model AceProduct {
+  id              String     @id @default(uuid())
+  heroProductId   String?    @unique @map("hero_product_id")  // 关联爆款库（可选）
+  name            String
+  description     String?
+  category        String?
+  sourceUrl       String?    @unique @map("source_url")
+  supplierId      String?    @map("supplier_id")
+  priceIdr        Decimal     @map("price_idr")
+  costCny         Decimal?    @map("cost_cny")
+  imageUrls       String?   @map("image_urls")  // JSON array string
+  stock           Int         @default(0)
+  status          String      @default("ACTIVE")
+  ratingAvg        Decimal     @default(0) @map("rating_avg")
+  ratingCount     Int         @default(0) @map("rating_count")
+  createdAt       DateTime   @default(now()) @map("created_at")
+  updatedAt       DateTime   @updatedAt @map("updated_at")
+
+  heroProduct     AceHeroProduct? @relation(fields: [heroProductId], references: [id])
+  cartItems       AceCartItem[]
+  reviews         AceProductReview[]
+  orderItems      AceOrderItem[]
+  localizations   AceProductLocalization[]
+
+  @@index([status])
+  @@index([category])
+  @@index([heroProductId])
+  @@map("ace_products")
+}
+
+// 11. 订单明细表（一个订单含多个商品）
+model AceOrderItem {
+  id         String   @id @default(uuid())
+  orderId    String   @map("order_id")
+  productId  String   @map("product_id")
+  quantity   Int      @default(1)
+  unitPrice  Decimal  @map("unit_price")
+
+  order     AceOrder     @relation(fields: [orderId], references: [id])
+  product   AceProduct  @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+  @@index([productId])
+  @@map("ace_order_items")
+}
+
+// 12. 购物车
+model AceCartItem {
+  id         String   @id @default(uuid())
+  userId     String   @map("user_id")
+  productId  String   @map("product_id")
+  quantity   Int      @default(1)
+  selected   Boolean  @default(true)
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user     AceUser     @relation(fields: [userId], references: [id])
+  product  AceProduct  @relation(fields: [productId], references: [id])
+
+  @@index([userId])
+  @@index([productId])
+  @@map("ace_cart_items")
+}
+
+// 13. 用户地址簿
+model AceUserAddress {
+  id           String   @id @default(uuid())
+  userId       String   @map("user_id")
+  label        String?   // "Home", "Office"
+  recipientName String   @map("recipient_name")
+  phone        String
+  province     String?
+  city         String?
+  district     String?   @map("district")
+  postalCode   String?   @map("postal_code")
+  detail       String?   // 详细地址
+  isDefault    Boolean  @default(false) @map("is_default")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  user AceUser @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@map("ace_user_addresses")
+}
+
+// 14. 商品评价
+model AceProductReview {
+  id         String   @id @default(uuid())
+  userId     String   @map("user_id")
+  productId  String   @map("product_id")
+  rating     Int      // 1-5
+  content    String?
+  images     String?   // JSON array string
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user     AceUser     @relation(fields: [userId], references: [id])
+  product  AceProduct  @relation(fields: [productId], references: [id])
+
+  @@index([productId])
+  @@map("ace_product_reviews")
+}
+
+// 15. 优惠券
+model AceCoupon {
+  id           String   @id @default(uuid())
+  code         String   @unique
+  type         String   // "FIXED" | "PERCENT"
+  value        Decimal  // 固定金额或折扣百分比
+  minSpend     Decimal  @default(0) @map("min_spend")
+  maxDiscount  Decimal? @map("max_discount")
+  country      String?  @map("country")
+  startDate    DateTime @map("start_date")
+  endDate      DateTime @map("end_date")
+  usageLimit   Int      @default(1) @map("usage_limit")
+  usedCount    Int      @default(0) @map("used_count")
+  status       String   @default("ACTIVE")
+  claimedAt    DateTime? @map("claimed_at")
+  usedAt       DateTime? @map("used_at")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@index([status])
+  @@map("ace_coupons")
+}
+
+// 16. 商品各国本地化
+model AceProductLocalization {
+  id           String   @id @default(uuid())
+  productId    String   @map("product_id")
+  country      String
+  name         String
+  description  String?
+  priceLocal   Decimal  @map("price_local")
+  currency     String
+  shippingCost Decimal  @map("shipping_cost")
+  orderCount   Int      @default(0) @map("order_count")
+  ratingAvg    Float    @default(0) @map("rating_avg")
+  isActive     Boolean  @default(false) @map("is_active")
+
+  product      AceProduct @relation(fields: [productId], references: [id])
+  @@index([country])
+  @@map("ace_product_localizations")
+}
+
+// 17. 物流追踪节点（15节点状态机）
+model AceLogisticsNode {
+  id         String   @id @default(uuid())
+  orderId    String   @map("order_id")
+  node       String
+  timestamp  DateTime @default(now())
+  location   String?
+  note       String?
+
+  order      AceOrder @relation(fields: [orderId], references: [id])
+  @@index([orderId])
+  @@map("ace_logistics_nodes")
+}
+
+// 18. 包裹管理
+model AceParcel {
+  id              String    @id @default(uuid())
+  orderId         String    @map("order_id")
+  orderItemId     String?   @map("order_item_id")
+  weight          Float
+  status          String    @default("IN_TRANSIT_TO_WAREHOUSE")
+  arrivedAt       DateTime? @map("arrived_at")
+  qcStatus        String?   @map("qc_status")
+  qcImages        String?   @map("qc_images")
+  warehouseEntryAt DateTime? @map("warehouse_entry_at")
+  warehouseExitAt DateTime? @map("warehouse_exit_at")
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  order           AceOrder  @relation(fields: [orderId], references: [id])
+  @@index([orderId])
+  @@index([status])
+  @@map("ace_parcels")
+}
+
+// 19. 质检报告
+model AceQcReport {
+  id         String   @id @default(uuid())
+  parcelId   String   @map("parcel_id")
+  result     String   @default("PENDING")
+  defects    String?  // JSON array
+  images     String?  // JSON array
+  operatorId String?  @map("operator_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  @@index([parcelId])
+  @@map("ace_qc_reports")
+}
+
+// 20. 退款记录
+model AceRefund {
+  id         String   @id @default(uuid())
+  orderId    String   @map("order_id")
+  amount     Decimal
+  reason     String?
+  status     String   @default("PENDING")
+  approverId String?  @map("approver_id")
+  approvedAt DateTime? @map("approved_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  order      AceOrder @relation(fields: [orderId], references: [id])
+  @@index([orderId])
+  @@map("ace_refunds")
+}
+
+// 21. 集运订单
+model AceConsolidationOrder {
+  id            String   @id @default(uuid())
+  parcelIds     String   @map("parcel_ids")  // JSON array
+  destination   String
+  routeId       String?  @map("route_id")
+  boxNumber     String   @unique @map("box_number")
+  totalWeight   Float?   @map("total_weight")
+  totalVolume   Float?   @map("total_volume")
+  status        String   @default("CREATED")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  @@index([status])
+  @@map("ace_consolidation_orders")
+}

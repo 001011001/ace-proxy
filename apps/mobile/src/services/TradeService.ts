@@ -1,143 +1,69 @@
-import { HeroProduct } from '../../../server/src/modules/cms/CMSService';
+import { api } from './APIService';
 
-// 模拟 API 基础路径
-const BASE_URL = 'https://api.aceproxy.com/v1';
+export interface HeroProduct {
+  id: string;
+  name: string;
+  category: string;
+  sourcePriceCNY: number;
+  targetPriceIDR: number;
+  marginPct: number;
+  imageUrl: string;
+  status: 'ACTIVE' | 'ARCHIVED';
+  lastScrapedAt: string;
+}
 
-/**
- * TradeService - 处理利差交易、商品获取及套利引擎交互
- * 对接 Coder 实现的 Sentinel 哨兵与 CMS 一键铺货系统
- */
+export interface StationHome {
+  stationName: string;
+  regionCode: string;
+  currency: string;
+  language: string;
+  activeHoliday: any;
+  announcement: string;
+  products: {
+    id: string;
+    name: string;
+    category: string;
+    sourcePriceCny: number;
+    localPriceIdr: number;
+    arbitrageGapPct: number;
+    status: string;
+    patentStatus: string;
+    lastAuditAt: string;
+  }[];
+  trendingCategories: string[];
+  lossPreventionStatus: string;
+}
+
 export class TradeService {
   /**
-   * 获取“开斋节 2026”专题爆款列表
-   * 包含 Coder 预留的利差数据与哨兵监控状态
+   * Get the full Jakarta station home with live product data from the backend
+   */
+  static async getStationHome(): Promise<StationHome> {
+    try {
+      return await api.getJakartaHome();
+    } catch (error) {
+      console.error('[TradeService] Failed to fetch station home:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get hero products from the backend (used by HomeScreen)
    */
   static async getHeroProducts(): Promise<HeroProduct[]> {
     try {
-      // 在实际生产中，这里会调用 fetch(BASE_URL + '/cms/hero-products')
-      // 目前返回模拟数据，但结构严丝合缝对接后端定义
-      return [
-        {
-          id: 'EP-2026-HJ01',
-          name: 'Premium Silk Hijab - Emerald Green',
-          category: 'Premium Hijabs',
-          sourcePriceCNY: 35.0,
-          targetPriceIDR: 195000,
-          marginPct: 153,
-          imageUrl: 'https://cdn.aceproxy.com/products/hijab-emerald.jpg',
-          status: 'ACTIVE',
-          patentStatus: 'CLEAN',
-          lastScrapedAt: new Date().toISOString()
-        },
-        {
-          id: 'EP-2026-HJ02',
-          name: 'Lace-Trimmed Gamis - Midnight Blue',
-          category: 'Premium Hijabs',
-          sourcePriceCNY: 88.0,
-          targetPriceIDR: 485000,
-          marginPct: 150,
-          imageUrl: 'https://cdn.aceproxy.com/products/gamis-blue.jpg',
-          status: 'ACTIVE',
-          patentStatus: 'CLEAN',
-          lastScrapedAt: new Date().toISOString()
-        },
-        {
-          id: 'EP-2026-SH01',
-          name: 'Smart Aroma Diffuser V2',
-          category: 'Smart Home',
-          sourcePriceCNY: 42.0,
-          targetPriceIDR: 285000,
-          marginPct: 208,
-          imageUrl: 'https://cdn.aceproxy.com/products/diffuser-v2.jpg',
-          status: 'ACTIVE',
-          patentStatus: 'CLEAN',
-          lastScrapedAt: new Date().toISOString()
-        },
-        {
-          id: 'EP-2026-SH02',
-          name: 'UV-C Handheld Vacuum',
-          category: 'Smart Home',
-          sourcePriceCNY: 125.0,
-          targetPriceIDR: 850000,
-          marginPct: 209,
-          imageUrl: 'https://cdn.aceproxy.com/products/uv-vacuum.jpg',
-          status: 'ACTIVE',
-          patentStatus: 'CLEAN',
-          lastScrapedAt: new Date().toISOString()
-        },
-        {
-          id: 'EP-2026-GB01',
-          name: 'Lux Eid Gift Box - Velvet',
-          category: 'Gifts',
-          sourcePriceCNY: 15.0,
-          targetPriceIDR: 125000,
-          marginPct: 279,
-          imageUrl: 'https://cdn.aceproxy.com/products/giftbox-velvet.jpg',
-          status: 'ACTIVE',
-          patentStatus: 'CLEAN',
-          lastScrapedAt: new Date().toISOString()
-        },
-        {
-          id: 'EP-2026-HJ03',
-          name: 'Hand-Embroidered Pashmina',
-          category: 'Premium Hijabs',
-          sourcePriceCNY: 45.0,
-          targetPriceIDR: 250000,
-          marginPct: 153,
-          imageUrl: 'https://cdn.aceproxy.com/products/pashmina-gold.jpg',
-          status: 'ACTIVE',
-          patentStatus: 'CLEAN',
-          lastScrapedAt: new Date().toISOString()
-        },
-        {
-          id: 'EP-2026-SH03',
-          name: 'Automatic Pet Feeder - Lite',
-          category: 'Smart Home',
-          sourcePriceCNY: 95.0,
-          targetPriceIDR: 650000,
-          marginPct: 211,
-          imageUrl: 'https://cdn.aceproxy.com/products/pet-feeder.jpg',
-          status: 'ACTIVE',
-          patentStatus: 'CLEAN',
-          lastScrapedAt: new Date().toISOString()
-        },
-        {
-          id: 'EP-2026-GB02',
-          name: 'Gold-Foiled Hamper Basket',
-          category: 'Gifts',
-          sourcePriceCNY: 22.0,
-          targetPriceIDR: 185000,
-          marginPct: 282,
-          imageUrl: 'https://cdn.aceproxy.com/products/hamper-gold.jpg',
-          status: 'ACTIVE',
-          patentStatus: 'CLEAN',
-          lastScrapedAt: new Date().toISOString()
-        },
-        {
-          id: 'EP-2026-HJ04',
-          name: 'Linen Blend Abaya',
-          category: 'Premium Hijabs',
-          sourcePriceCNY: 75.0,
-          targetPriceIDR: 420000,
-          marginPct: 154,
-          imageUrl: 'https://cdn.aceproxy.com/products/abaya-linen.jpg',
-          status: 'ACTIVE',
-          patentStatus: 'CLEAN',
-          lastScrapedAt: new Date().toISOString()
-        },
-        {
-          id: 'EP-2026-GB03',
-          name: 'Festive Gift Bag Set (10pcs)',
-          category: 'Gifts',
-          sourcePriceCNY: 8.5,
-          targetPriceIDR: 75000,
-          marginPct: 301,
-          imageUrl: 'https://cdn.aceproxy.com/products/bag-set.jpg',
-          status: 'ACTIVE',
-          patentStatus: 'CLEAN',
-          lastScrapedAt: new Date().toISOString()
-        }
-      ];
+      const home = await TradeService.getStationHome();
+      return home.products.map((p) => ({
+        id: p.id,
+        name: p.name,
+        category: p.category || 'General',
+        sourcePriceCNY: p.sourcePriceCny,
+        targetPriceIDR: p.localPriceIdr,
+        marginPct: p.arbitrageGapPct ? Math.round(p.arbitrageGapPct * 100) : 0,
+        imageUrl: `https://placehold.co/400x400/F97316/FFFFFF?text=${encodeURIComponent(p.name.substring(0, 12))}`,
+        status: p.status as 'ACTIVE',
+        lastScrapedAt: p.lastAuditAt,
+      }));
     } catch (error) {
       console.error('[TradeService] Failed to fetch hero products:', error);
       return [];
@@ -145,10 +71,28 @@ export class TradeService {
   }
 
   /**
-   * 执行“一键套利”指令
+   * Execute an arbitrage order
    */
-  static async executeArbitrage(productId: string) {
-    // 逻辑：向后端发送下单请求，锁定利差
-    return { success: true, orderId: `ORD-${Math.random().toString(36).substr(2, 5).toUpperCase()}` };
+  static async executeArbitrage(
+    productId: string,
+    productData: { total: number; cost: number; shipping: number; serviceFee: number }
+  ): Promise<{ success: boolean; orderId: string }> {
+    try {
+      const result = await api.createOrder({
+        items: [{ productId, quantity: 1 }],
+        amounts: {
+          total: productData.total,
+          cost: productData.cost,
+          shipping: productData.shipping,
+          serviceFee: productData.serviceFee,
+        },
+        destination: 'JKT',
+        terms_accepted: true,
+      });
+      return { success: true, orderId: result.id || `ORD-${Date.now()}` };
+    } catch (error) {
+      console.error('[TradeService] Order failed:', error);
+      throw error;
+    }
   }
 }

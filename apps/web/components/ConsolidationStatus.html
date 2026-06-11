@@ -1,0 +1,288 @@
+<!--
+  AceProxy 集运实时状态组件
+  用途：首页展示用户深圳仓包裹集运进度
+  适用于 Consumer Track (warm theme)，符合 DESIGN.md 规范
+-->
+<style>
+  .ace-consolidation {
+    background: var(--ace-canvas, #ffffff);
+    border: 1px solid var(--ace-hairline, #e8e8ef);
+    border-radius: 16px;
+    padding: 20px;
+    margin: 16px;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+  .ace-consolidation__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+  .ace-consolidation__title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: #1a1a2e;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .ace-consolidation__title-icon {
+    width: 28px;
+    height: 28px;
+    background: #e0f4f7;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+  .ace-consolidation__status {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    color: #0f7b8c;
+    background: #e0f4f7;
+  }
+  .ace-consolidation__status--ready {
+    color: #1ea366;
+    background: #e6f7ee;
+  }
+  .ace-consolidation__summary {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .ace-consolidation__stat {
+    text-align: center;
+    padding: 12px 8px;
+    background: #fefaf7;
+    border-radius: 12px;
+    border: 1px solid #fce8e2;
+  }
+  .ace-consolidation__stat-value {
+    font-family: 'Inter', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: #1a1a2e;
+    font-variant-numeric: tabular-nums;
+  }
+  .ace-consolidation__stat-label {
+    font-size: 11px;
+    color: #6b6b80;
+    margin-top: 2px;
+  }
+  .ace-consolidation__stat--highlight {
+    background: #fce8e2;
+    border-color: #d45d3a;
+  }
+  .ace-consolidation__progress {
+    margin-bottom: 16px;
+  }
+  .ace-consolidation__progress-bar {
+    height: 8px;
+    background: #f5f5f8;
+    border-radius: 9999px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .ace-consolidation__progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #d45d3a, #e8a020);
+    border-radius: 9999px;
+    transition: width 0.6s ease;
+  }
+  .ace-consolidation__progress-hint {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #6b6b80;
+  }
+  .ace-consolidation__tip {
+    padding: 12px 16px;
+    background: #fef7e6;
+    border: 1px solid #f5c4b3;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .ace-consolidation__tip-text {
+    font-size: 13px;
+    color: #1a1a2e;
+    line-height: 1.4;
+  }
+  .ace-consolidation__tip-text strong {
+    color: #d45d3a;
+    font-weight: 600;
+  }
+  .ace-consolidation__tip-action {
+    padding: 8px 20px;
+    border-radius: 9999px;
+    background: #d45d3a;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    border: none;
+  }
+  .ace-consolidation__tip-action--outline {
+    background: transparent;
+    color: #d45d3a;
+    border: 1.5px solid #d45d3a;
+  }
+  .ace-consolidation__parcels {
+    margin-top: 12px;
+  }
+  .ace-consolidation__parcel {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f5f5f8;
+  }
+  .ace-consolidation__parcel-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .ace-consolidation__parcel-dot--arrived { background: #1ea366; }
+  .ace-consolidation__parcel-dot--transit { background: #e8a020; }
+  .ace-consolidation__parcel-dot--pending { background: #e8e8ef; border: 1.5px solid #c4c4d0; }
+  .ace-consolidation__parcel-name {
+    flex: 1;
+    font-size: 13px;
+    color: #1a1a2e;
+  }
+  .ace-consolidation__parcel-weight {
+    font-size: 12px;
+    color: #6b6b80;
+  }
+</style>
+
+<div class="ace-consolidation" id="ace-consolidation-root">
+  <div class="ace-consolidation__header">
+    <div class="ace-consolidation__title">
+      <span class="ace-consolidation__title-icon">📦</span>
+      Shenzhen Hub
+    </div>
+    <span class="ace-consolidation__status" id="ace-cs-status">Consolidating</span>
+  </div>
+
+  <div class="ace-consolidation__summary">
+    <div class="ace-consolidation__stat">
+      <div class="ace-consolidation__stat-value" id="ace-cs-count">3</div>
+      <div class="ace-consolidation__stat-label">Items arrived</div>
+    </div>
+    <div class="ace-consolidation__stat">
+      <div class="ace-consolidation__stat-value" id="ace-cs-weight">1.8</div>
+      <div class="ace-consolidation__stat-label">Total kg</div>
+    </div>
+    <div class="ace-consolidation__stat ace-consolidation__stat--highlight">
+      <div class="ace-consolidation__stat-value" id="ace-cs-shipping">Rp 234k</div>
+      <div class="ace-consolidation__stat-label">Current shipping</div>
+    </div>
+  </div>
+
+  <div class="ace-consolidation__progress">
+    <div class="ace-consolidation__progress-bar">
+      <div class="ace-consolidation__progress-fill" id="ace-cs-progress" style="width:45%"></div>
+    </div>
+    <div class="ace-consolidation__progress-hint">
+      <span id="ace-cs-weight-current">1.8kg</span>
+      <span id="ace-cs-weight-target">🎯 5.0kg to unlock ¥9/kg rate</span>
+    </div>
+  </div>
+
+  <div class="ace-consolidation__tip" id="ace-cs-tip">
+    <span class="ace-consolidation__tip-text" id="ace-cs-tip-text">
+      Add <strong>3.2kg</strong> more to save <strong>12%</strong> on shipping
+    </span>
+    <button class="ace-consolidation__tip-action" id="ace-cs-browse-btn">Browse Deals</button>
+  </div>
+
+  <div class="ace-consolidation__parcels" id="ace-cs-parcels">
+    <div class="ace-consolidation__parcel">
+      <div class="ace-consolidation__parcel-dot ace-consolidation__parcel-dot--arrived"></div>
+      <span class="ace-consolidation__parcel-name">Wireless Earbuds Pro</span>
+      <span class="ace-consolidation__parcel-weight">0.2kg</span>
+    </div>
+    <div class="ace-consolidation__parcel">
+      <div class="ace-consolidation__parcel-dot ace-consolidation__parcel-dot--arrived"></div>
+      <span class="ace-consolidation__parcel-name">Cotton T-Shirt (3-pack)</span>
+      <span class="ace-consolidation__parcel-weight">0.9kg</span>
+    </div>
+    <div class="ace-consolidation__parcel">
+      <div class="ace-consolidation__parcel-dot ace-consolidation__parcel-dot--arrived"></div>
+      <span class="ace-consolidation__parcel-name">Phone Case</span>
+      <span class="ace-consolidation__parcel-weight">0.7kg</span>
+    </div>
+    <div class="ace-consolidation__parcel">
+      <div class="ace-consolidation__parcel-dot ace-consolidation__parcel-dot--pending"></div>
+      <span class="ace-consolidation__parcel-name">Running Shoes</span>
+      <span class="ace-consolidation__parcel-weight">1.0kg · <span style="color:#e8a020">In transit</span></span>
+    </div>
+  </div>
+</div>
+
+<script>
+/**
+ * AceProxy Consolidation Status
+ * 绑定到真实 API — GET /api/shipping/estimate
+ *
+ * 数据结构：
+ * {
+ *   count: number;          // 已入库件数
+ *   totalWeightKg: number;  // 总重
+ *   targetWeightKg: number; // 下一档目标重量
+ *   currentRate: number;    // 当前单价/kg
+ *   targetRate: number;     // 下一档单价/kg
+ *   shippingCostIdr: number; // 当前运费(IDR)
+ *   ready: boolean;         // 是否已满可发
+ *   daysLeft: number;       // 剩余等待天数(14天限制)
+ *   parcels: { name: string; weightKg: number; status: 'ARRIVED'|'IN_TRANSIT' }[]
+ * }
+ */
+function updateConsolidation(data) {
+  const pct = Math.min(100, (data.totalWeightKg / data.targetWeightKg) * 100);
+  document.getElementById('ace-cs-count').textContent = data.count;
+  document.getElementById('ace-cs-weight').textContent = data.totalWeightKg.toFixed(1);
+  document.getElementById('ace-cs-shipping').textContent = `Rp ${(data.shippingCostIdr / 1000).toFixed(0)}k`;
+  document.getElementById('ace-cs-progress').style.width = pct + '%';
+  document.getElementById('ace-cs-weight-current').textContent = data.totalWeightKg.toFixed(1) + 'kg';
+  document.getElementById('ace-cs-weight-target').textContent = '🎯 ' + data.targetWeightKg.toFixed(1) + 'kg to unlock better rate';
+
+  const gap = data.targetWeightKg - data.totalWeightKg;
+  const savePct = Math.round((1 - data.targetRate / data.currentRate) * 100);
+
+  if (data.ready) {
+    document.getElementById('ace-cs-status').textContent = 'Ready to ship!';
+    document.getElementById('ace-cs-status').className = 'ace-consolidation__status ace-consolidation__status--ready';
+    document.getElementById('ace-cs-tip-text').innerHTML = `Your parcel is ready! <strong>${data.daysLeft} days</strong> left before auto-ship.`;
+    document.getElementById('ace-cs-browse-btn').textContent = 'Ship Now';
+    document.getElementById('ace-cs-browse-btn').className = 'ace-consolidation__tip-action';
+  } else if (gap > 0) {
+    document.getElementById('ace-cs-tip-text').innerHTML = `Add <strong>${gap.toFixed(1)}kg</strong> more to save <strong>${savePct}%</strong> on shipping`;
+    document.getElementById('ace-cs-browse-btn').textContent = 'Browse Deals';
+    document.getElementById('ace-cs-browse-btn').className = 'ace-consolidation__tip-action';
+  }
+
+  // Render parcels
+  const parcelsEl = document.getElementById('ace-cs-parcels');
+  parcelsEl.innerHTML = data.parcels.map(p => `
+    <div class="ace-consolidation__parcel">
+      <div class="ace-consolidation__parcel-dot ace-consolidation__parcel-dot--${p.status === 'ARRIVED' ? 'arrived' : 'transit'}"></div>
+      <span class="ace-consolidation__parcel-name">${p.name}</span>
+      <span class="ace-consolidation__parcel-weight">${p.weightKg}kg · <span style="color:#e8a020">${p.status === 'ARRIVED' ? 'Arrived' : 'In transit'}</span></span>
+    </div>
+  `).join('');
+}
+
+// Expose to parent
+window.AceConsolidation = { update: updateConsolidation };
+</script>

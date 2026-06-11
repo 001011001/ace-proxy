@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 export default function Home() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [currentRole, setCurrentRole] = useState('God Mode');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showMoreMenu, setShowMoreMenu] = useState(false);
 
   const menuItems = [
     { id: 'dashboard', label: 'Overview', icon: '📊' },
@@ -21,6 +23,18 @@ export default function Home() {
   ];
 
   const roles = ['God Mode', 'Financial', 'Station Manager', 'Logistics Admin'];
+
+  const bottomTabs = [
+    { id: 'dashboard', label: 'Overview', icon: '📊' },
+    { id: 'hot_products', label: 'Products', icon: '🔥' },
+    { id: 'orders', label: 'Orders', icon: '📦' },
+    { id: 'vault', label: 'Vault', icon: '💰' },
+    { id: 'more', label: 'More', icon: '⋮' },
+  ];
+
+  const moreItems = menuItems.filter(
+    mi => !bottomTabs.slice(0, -1).some(t => t.id === mi.id)
+  );
 
   const renderContent = () => {
     switch (activeTab) {
@@ -410,81 +424,321 @@ export default function Home() {
     }
   };
 
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const getActiveLabel = () => {
+    const found = menuItems.find(i => i.id === activeTab);
+    if (found) return found.label;
+    const inBottom = bottomTabs.slice(0, -1).find(t => t.id === activeTab);
+    return inBottom ? inBottom.label : 'Overview';
+  };
+
   return (
-    <div style={{ display: 'flex', height: '100vh', fontFamily: 'system-ui', backgroundColor: '#F9FAFB' }}>
-      {/* Sidebar */}
-      <div style={{ width: '260px', backgroundColor: 'white', borderRight: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column' }}>
-        <div style={{ padding: '24px', borderBottom: '1px solid #F3F4F6' }}>
-          <h1 style={{ fontSize: '20px', fontWeight: '900', color: '#F97316', margin: 0 }}>AceProxy</h1>
-          <p style={{ fontSize: '10px', color: '#9CA3AF', margin: '4px 0 0' }}>COMMAND CENTER v1.0</p>
-        </div>
-        <nav style={{ flex: 1, padding: '16px' }}>
-          {menuItems.map((item) => (
-            <div
-              key={item.id}
-              onClick={() => setActiveTab(item.id)}
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                padding: '12px 16px',
-                borderRadius: '10px',
-                cursor: 'pointer',
-                marginBottom: '4px',
-                backgroundColor: activeTab === item.id ? '#FFF7ED' : 'transparent',
-                color: activeTab === item.id ? '#C2410C' : '#4B5563',
-                fontWeight: activeTab === item.id ? 'bold' : '500',
-              }}
-            >
-              <span style={{ marginRight: '12px', fontSize: '18px' }}>{item.icon}</span>
-              {item.label}
-            </div>
-          ))}
-        </nav>
-        <div style={{ padding: '24px', borderTop: '1px solid #F3F4F6' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', fontFamily: 'system-ui', backgroundColor: '#F9FAFB' }}>
+      {/* Header with Search */}
+      <header style={{ 
+        backgroundColor: 'white', 
+        borderBottom: '1px solid #E5E7EB',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+        zIndex: 20,
+      }}>
+        {/* Top row: Logo + Status */}
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'space-between',
+          padding: '10px 20px',
+        }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ width: '32px', height: '32px', backgroundColor: '#F97316', borderRadius: '50%' }}></div>
-            <div>
-              <p style={{ fontSize: '12px', fontWeight: 'bold', margin: 0 }}>Commander Boss</p>
-              <p style={{ fontSize: '10px', color: '#9CA3AF', margin: 0 }}>Root Admin</p>
+            <h1 style={{ fontSize: '18px', fontWeight: '900', color: '#F97316', margin: 0 }}>AceProxy</h1>
+            <span style={{ fontSize: '10px', color: '#9CA3AF', background: '#F1F5F9', padding: '2px 8px', borderRadius: '4px' }}>COMMAND CENTER</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <span style={{ color: '#16A34A', fontSize: '12px', fontWeight: 'bold' }}>● SYSTEM_NORMAL</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div style={{ width: '28px', height: '28px', backgroundColor: '#F97316', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '12px', fontWeight: 'bold' }}>CB</div>
+              <span style={{ fontSize: '11px', color: '#64748B' }}>雅加达试点站 (JKT)</span>
             </div>
           </div>
         </div>
-      </div>
+
+        {/* Search Bar */}
+        <div style={{ padding: '0 20px 12px' }}>
+          <div style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            background: '#F1F5F9', 
+            borderRadius: '12px',
+            padding: '0 16px',
+            border: '2px solid transparent',
+            transition: 'border-color 0.2s',
+          }}>
+            <span style={{ fontSize: '16px', marginRight: '10px', color: '#94A3B8' }}>🔍</span>
+            <input 
+              type="text"
+              placeholder="Search products, orders, modules..."
+              value={searchQuery}
+              onChange={handleSearch}
+              style={{
+                flex: 1,
+                padding: '12px 0',
+                border: 'none',
+                background: 'transparent',
+                fontSize: '14px',
+                color: '#1E293B',
+                outline: 'none',
+              }}
+            />
+            {searchQuery && (
+              <button 
+                onClick={() => setSearchQuery('')}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px', color: '#94A3B8', padding: '4px' }}
+              >
+                ✕
+              </button>
+            )}
+          </div>
+          {searchQuery && searchQuery.length >= 2 && (
+            <div style={{ 
+              marginTop: '8px', 
+              background: 'white', 
+              borderRadius: '12px', 
+              border: '1px solid #E5E7EB',
+              boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
+              maxHeight: '280px',
+              overflowY: 'auto',
+            }}>
+              {(() => {
+                const q = searchQuery.toLowerCase();
+                const results: { label: string; icon: string; tab: string; desc: string }[] = [];
+                
+                // Search through menu items
+                menuItems.forEach(mi => {
+                  if (mi.label.toLowerCase().includes(q)) {
+                    results.push({ label: mi.label, icon: mi.icon, tab: mi.id, desc: 'Module' });
+                  }
+                });
+
+                // Search through product data
+                const products = [
+                  { name: 'Baju Koko (Ramadan Special)', tab: 'ai_sourcing' },
+                  { name: 'LED Hanging Lights', tab: 'ai_sourcing' },
+                  { name: 'Vacuum Sealer Pro', tab: 'ai_sourcing' },
+                  { name: 'Premium Silk Hijab', tab: 'hot_products' },
+                  { name: 'Travel Mukena Pro', tab: 'hot_products' },
+                  { name: 'Smart Zikr Ring Gen2', tab: 'hot_products' },
+                  { name: 'LED Moon Decor', tab: 'hot_products' },
+                  { name: 'Modern Baju Koko', tab: 'hot_products' },
+                  { name: 'Hakoba Eyelet Dress', tab: 'hot_products' },
+                ];
+                products.forEach(p => {
+                  if (p.name.toLowerCase().includes(q)) {
+                    results.push({ label: p.name, icon: '📦', tab: p.tab, desc: 'Product' });
+                  }
+                });
+
+                // Search orders
+                const orders = ['ORD-9921', 'ORD-9920', 'ORD-9919', 'ORD-1002', 'ORD-1005'];
+                orders.forEach(o => {
+                  if (o.toLowerCase().includes(q)) {
+                    results.push({ label: o, icon: '📋', tab: 'orders', desc: 'Order' });
+                  }
+                });
+
+                if (results.length === 0) {
+                  return (
+                    <div style={{ padding: '20px', textAlign: 'center', color: '#94A3B8' }}>
+                      <p style={{ margin: 0, fontSize: '14px' }}>No results for &ldquo;{searchQuery}&rdquo;</p>
+                    </div>
+                  );
+                }
+
+                return results.slice(0, 8).map((r, i) => (
+                  <div 
+                    key={i}
+                    onClick={() => { setActiveTab(r.tab); setSearchQuery(''); }}
+                    style={{ 
+                      padding: '12px 16px', 
+                      cursor: 'pointer', 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '10px',
+                      borderBottom: i < results.length - 1 ? '1px solid #F1F5F9' : 'none',
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.background = '#FFF7ED')}
+                    onMouseLeave={(e) => (e.currentTarget.style.background = 'white')}
+                  >
+                    <span style={{ fontSize: '18px' }}>{r.icon}</span>
+                    <div style={{ flex: 1 }}>
+                      <span style={{ fontSize: '13px', fontWeight: '600' }}>{r.label}</span>
+                      <span style={{ fontSize: '10px', color: '#94A3B8', marginLeft: '8px' }}>{r.desc}</span>
+                    </div>
+                    <span style={{ color: '#94A3B8', fontSize: '12px' }}>→</span>
+                  </div>
+                ));
+              })()}
+            </div>
+          )}
+        </div>
+      </header>
 
       {/* Main Content */}
-      <main style={{ flex: 1, overflowY: 'auto' }}>
-        <header style={{ height: '70px', backgroundColor: 'white', borderBottom: '1px solid #E5E7EB', display: 'flex', alignItems: 'center', padding: '0 32px', justifyContent: 'space-between' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-            <h3 style={{ margin: 0, fontSize: '16px' }}>{menuItems.find(i => i.id === activeTab)?.label}</h3>
-            <div style={{ background: '#F1F5F9', padding: '4px', borderRadius: '8px', display: 'flex', gap: '4px' }}>
-              {roles.map(role => (
-                <button 
-                  key={role}
-                  onClick={() => setCurrentRole(role)}
-                  style={{ 
-                    padding: '4px 12px', 
-                    fontSize: '11px', 
-                    border: 'none', 
-                    borderRadius: '6px', 
-                    backgroundColor: currentRole === role ? 'white' : 'transparent',
-                    color: currentRole === role ? '#F97316' : '#64748B',
-                    fontWeight: currentRole === role ? 'bold' : '500',
-                    cursor: 'pointer',
-                    boxShadow: currentRole === role ? '0 2px 4px rgba(0,0,0,0.05)' : 'none'
-                  }}
-                >
-                  {role}
-                </button>
-              ))}
-            </div>
+      <main style={{ flex: 1, overflowY: 'auto', paddingBottom: '16px' }}>
+        {/* Sub-header: Page title + Role switcher */}
+        <div style={{ 
+          padding: '12px 20px', 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'space-between',
+          borderBottom: '1px solid #F1F5F9',
+          flexWrap: 'wrap',
+          gap: '8px',
+        }}>
+          <h3 style={{ margin: 0, fontSize: '15px', color: '#1E293B' }}>{getActiveLabel()}</h3>
+          <div style={{ background: '#F1F5F9', padding: '3px', borderRadius: '8px', display: 'flex', gap: '2px' }}>
+            {roles.map(role => (
+              <button 
+                key={role}
+                onClick={() => setCurrentRole(role)}
+                style={{ 
+                  padding: '4px 10px', 
+                  fontSize: '11px', 
+                  border: 'none', 
+                  borderRadius: '6px', 
+                  backgroundColor: currentRole === role ? 'white' : 'transparent',
+                  color: currentRole === role ? '#F97316' : '#64748B',
+                  fontWeight: currentRole === role ? 'bold' : '500',
+                  cursor: 'pointer',
+                  boxShadow: currentRole === role ? '0 2px 4px rgba(0,0,0,0.05)' : 'none'
+                }}
+              >
+                {role}
+              </button>
+            ))}
           </div>
-          <div style={{ display: 'flex', gap: '12px' }}>
-            <span style={{ color: '#16A34A', fontSize: '12px', fontWeight: 'bold' }}>● SYSTEM_NORMAL</span>
-            <span style={{ color: '#4B5563', fontSize: '12px' }}>雅加达试点站 (JKT)</span>
-          </div>
-        </header>
+        </div>
         {renderContent()}
       </main>
+
+      {/* Bottom Navigation */}
+      <nav style={{ 
+        display: 'flex',
+        backgroundColor: 'white',
+        borderTop: '1px solid #E5E7EB',
+        boxShadow: '0 -4px 20px rgba(0,0,0,0.06)',
+        padding: '6px 12px 8px',
+        justifyContent: 'space-around',
+        alignItems: 'flex-start',
+        zIndex: 30,
+        position: 'relative',
+      }}>
+        {bottomTabs.map((tab) => {
+          const isActive = tab.id === 'more' ? showMoreMenu : activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => {
+                if (tab.id === 'more') {
+                  setShowMoreMenu(!showMoreMenu);
+                } else {
+                  setActiveTab(tab.id);
+                  setShowMoreMenu(false);
+                }
+              }}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '2px',
+                padding: '8px 16px',
+                border: 'none',
+                background: 'transparent',
+                cursor: 'pointer',
+                borderRadius: '12px',
+                color: isActive ? '#F97316' : '#94A3B8',
+                fontWeight: isActive ? '700' : '500',
+                transition: 'all 0.15s',
+                minWidth: '60px',
+                position: 'relative',
+              }}
+            >
+              <span style={{ fontSize: '22px', lineHeight: '1' }}>{tab.icon}</span>
+              <span style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>{tab.label}</span>
+              {isActive && tab.id !== 'more' && (
+                <div style={{ 
+                  position: 'absolute', 
+                  top: '-6px', 
+                  width: '32px', 
+                  height: '3px', 
+                  background: '#F97316', 
+                  borderRadius: '0 0 4px 4px' 
+                }} />
+              )}
+            </button>
+          );
+        })}
+      </nav>
+
+      {/* More Menu Overlay */}
+      {showMoreMenu && (
+        <>
+          <div 
+            onClick={() => setShowMoreMenu(false)}
+            style={{ 
+              position: 'fixed', 
+              inset: 0, 
+              background: 'rgba(0,0,0,0.3)', 
+              zIndex: 40 
+            }} 
+          />
+          <div style={{ 
+            position: 'fixed',
+            bottom: '90px',
+            left: '16px',
+            right: '16px',
+            zIndex: 50,
+            background: 'white',
+            borderRadius: '20px',
+            boxShadow: '0 -8px 40px rgba(0,0,0,0.15)',
+            padding: '8px',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(3, 1fr)',
+            gap: '6px',
+            maxWidth: '500px',
+            margin: '0 auto',
+          }}>
+              {moreItems.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    setActiveTab(item.id);
+                    setShowMoreMenu(false);
+                  }}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '6px',
+                    padding: '16px 8px',
+                    border: 'none',
+                    background: activeTab === item.id ? '#FFF7ED' : 'transparent',
+                    borderRadius: '14px',
+                    cursor: 'pointer',
+                    color: activeTab === item.id ? '#F97316' : '#4B5563',
+                    fontWeight: activeTab === item.id ? '700' : '500',
+                    transition: 'all 0.15s',
+                  }}
+                >
+                  <span style={{ fontSize: '26px' }}>{item.icon}</span>
+                  <span style={{ fontSize: '10px', textAlign: 'center', lineHeight: '1.2' }}>{item.label.replace(/ \(.*\)/, '')}</span>
+                </button>
+              ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }

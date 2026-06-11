@@ -1,18 +1,66 @@
 import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
+import { ApiResponseInterceptor } from './common/interceptors/ApiResponseInterceptor';
+import { ThrottlerGuard } from './common/guards/ThrottlerGuard';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   
-  // 启用跨域，支持移动端和 Web 管理端访问
-  app.enableCors();
+  // CORS — 生产模式白名单，开发模式宽松
+  const prodWhitelist = [
+    'https://aceproxy.id',
+    'https://www.aceproxy.id',
+    'https://aceproxy.co.th',
+    'https://aceproxy.ph',
+    'https://admin.aceproxy.id',
+    'https://app.codebuddy.work',
+  ];
+  const isDev = process.env.NODE_ENV !== 'production';
+
+  app.enableCors({
+    origin: (origin, callback) => {
+      if (isDev) {
+        // 开发模式：仅允许 localhost 和 127.0.0.1
+        const allowed = !origin
+          || origin.startsWith('http://localhost')
+          || origin.startsWith('http://127.0.0.1')
+          || origin.startsWith('http://10.0.');
+        callback(null, allowed);
+      } else {
+        // 生产模式：严格白名单 — 禁止 file://、禁止任意域名
+        const allowed = prodWhitelist.some(h => origin.startsWith(h));
+        if (!allowed) {
+          console.warn(`[CORS] Blocked origin: ${origin}`);
+        }
+        callback(null, allowed);
+      }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Country', 'X-Callback-Token', 'Idempotency-Key'],
+  });
   
   // 设置全局前缀
   app.setGlobalPrefix('api/v1');
+
+  // 启用全局请求验证管道
+  app.useGlobalPipes(new ValidationPipe({
+    whitelist: true,
+    forbidNonWhitelisted: true,
+    transform: true,
+  }));
+
+  // 全局限流守卫
+  app.useGlobalGuards(new ThrottlerGuard());
+
+  // 注册统一 API 响应拦截器
+  app.useGlobalInterceptors(new ApiResponseInterceptor());
   
   const port = process.env.PORT || 3000;
-  await app.listen(port);
+  await app.listen(port, '0.0.0.0');
   
-  console.log(`🚀 AceProxy Server is running on: http://localhost:${port}/api/v1`);
+  const host = process.env.HOST || '0.0.0.0';
+  console.log(`🚀 AceProxy Server is running on: http://${host}:${port}/api/v1`);
 }
 bootstrap();

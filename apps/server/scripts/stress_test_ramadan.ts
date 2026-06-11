@@ -1,12 +1,15 @@
 import { VaultService } from '../src/modules/vault/VaultService';
 import { TradeService } from '../src/modules/trade/TradeService';
+import { PrismaService } from '../src/prisma/prisma.service';
 
 async function runRamadanStressTest() {
   console.log('🚀 Starting Ramadan Stress Test Simulation (10,000 orders)...');
   
-  const vault = new VaultService();
+  // Mock PrismaService for standalone test
+  const mockPrisma = { aceOrder: { create: async (data: any) => data.data }, aceUser: { update: async (data: any) => data } } as any;
+  const vault = new VaultService(mockPrisma);
   // Mock services for TradeService
-  const trade = new TradeService(vault, {} as any, {} as any);
+  const trade = new TradeService(mockPrisma, vault, {} as any, {} as any, {} as any, {} as any);
   
   let totalVolume = 0;
   let successCount = 0;

@@ -37,12 +37,14 @@ export class ArbiBotService {
     // 2. 专利审计 (Patent Sentry)
     const patentRisk = await this.patentChecker.checkRisk("Sample Product", "General");
     
-    // 3. 全包价计算 (All-in Pricing Engine)
-    // 汇率假设: 1 CNY = 2200 IDR
+    // 3. 全包价计算 (All-in Pricing Engine) — 已接入云途物流真实定价
+    // 汇率: 1 CNY ≈ 2200 IDR
     const EXCHANGE_RATE = 2200;
-    const shippingEstimate = 15; // 假设每公斤 15 CNY
-    const serviceFeePct = 0.10;  // 默认 10% 服务费
-    const riskPoolPct = 0.015;   // 1.5% 风险金
+    // 云途印尼特惠带电 0.5kg: (0.5×130)+20 = ¥85 (Jabodetabek) / (0.5×150)+30 = ¥105 (其他)
+    // 取中值 ¥95 作为估算基准
+    const shippingEstimate = 95;
+    const serviceFeePct = 0.10;
+    const riskPoolPct = 0.015;
 
     const sourceCost = sourcePriceCNY;
     const serviceFee = sourceCost * serviceFeePct;

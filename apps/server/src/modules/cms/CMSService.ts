@@ -1,13 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-
-export interface Banner {
-  id: string;
-  stationId: string;
-  imageUrl: string;
-  targetUrl: string;
-  priority: number;
-  active: boolean;
-}
+import { PrismaService } from '../../prisma/prisma.service';
 
 export interface HeroProduct {
   id: string;
@@ -24,67 +16,47 @@ export interface HeroProduct {
 @Injectable()
 export class CMSService {
   private readonly logger = new Logger(CMSService.name);
-  private banners: Banner[] = [
-    {
-      id: 'B-001',
-      stationId: 'JKT',
-      imageUrl: 'https://cdn.aceproxy.com/banners/ramadan-raya.jpg',
-      targetUrl: '/promo/ramadan',
-      priority: 1,
-      active: true
-    }
-  ];
 
-  private heroProducts: HeroProduct[] = [];
-
-  /**
-   * 一键铺货 (Bulk Publish Hero Products)
-   * 响应产品经理需求：快速上线雅加达开斋节爆款
-   */
-  async bulkPublishProducts(products: Omit<HeroProduct, 'id' | 'status' | 'lastScrapedAt'>[]) {
-    // 强制执行法律审计状态检查
-    const newItems = products.map(p => ({
-      ...p,
-      id: `HP-${Math.random().toString(36).substr(2, 9)}`,
-      status: 'ACTIVE' as const,
-      lastScrapedAt: new Date().toISOString()
-    }));
-    
-    this.heroProducts.push(...newItems);
-    this.logger.log(`[CMS] Bulk published ${newItems.length} products. Audit Status: Verified Clean.`);
-    return { success: true, count: newItems.length };
-  }
+  constructor(private readonly prisma: PrismaService) {}
 
   async getHeroProducts(): Promise<HeroProduct[]> {
-    return this.heroProducts.filter(p => p.status === 'ACTIVE');
+    const products = await this.prisma.aceHeroProduct.findMany({
+      where: { status: 'ACTIVE' },
+      orderBy: { arbitrageGapPct: 'desc' },
+    });
+
+    return products.map((p) => ({
+      id: p.id,
+      name: p.name,
+      category: p.category || 'General',
+      sourcePriceCNY: Number(p.sourcePriceCny) || 0,
+      targetPriceIDR: Number(p.localPriceIdr) || 0,
+      marginPct: p.arbitrageGapPct ? Number(p.arbitrageGapPct) * 100 : 0,
+      imageUrl: `https://placehold.co/400x400/F97316/FFFFFF?text=${encodeURIComponent(p.name.substring(0, 10))}`,
+      status: 'ACTIVE' as const,
+      lastScrapedAt: p.lastAuditAt?.toISOString() || new Date().toISOString(),
+    }));
   }
 
-  async getBanners(stationId: string): Promise<Banner[]> {
-
-    return this.banners.filter(b => b.stationId === stationId && b.active)
-      .sort((a, b) => b.priority - a.priority);
-  }
-
-  async updateBanner(bannerId: string, data: Partial<Banner>) {
-    const index = this.banners.findIndex(b => b.id === bannerId);
-    if (index !== -1) {
-      this.banners[index] = { ...this.banners[index], ...data };
-      this.logger.log(`[CMS] Banner ${bannerId} updated by Admin.`);
-      return this.banners[index];
+  async bulkPublishProducts(products: Omit<HeroProduct, 'id' | 'status' | 'lastScrapedAt'>[]) {
+    let count = 0;
+    for (const p of products) {
+      await this.prisma.aceHeroProduct.upsert({
+        where: { id: `HP-${Date.now()}-${count}` },
+        update: {},
+        create: {
+          id: `HP-${Date.now()}-${count}`,
+          name: p.name,
+          category: p.category,
+          sourcePriceCny: p.sourcePriceCNY,
+          localPriceIdr: p.targetPriceIDR,
+          arbitrageGapPct: p.marginPct / 100,
+          status: 'ACTIVE',
+        },
+      });
+      count++;
     }
-    throw new Error('Banner not found');
-  }
-
-  async createBanner(data: Omit<Banner, 'id'>) {
-    const newBanner = { ...data, id: `B-${Date.now()}` };
-    this.banners.push(newBanner);
-    this.logger.log(`[CMS] New banner created for station ${data.stationId}.`);
-    return newBanner;
-  }
-
-  async deleteBanner(bannerId: string) {
-    this.banners = this.banners.filter(b => b.id !== bannerId);
-    this.logger.log(`[CMS] Banner ${bannerId} removed.`);
-    return { success: true };
+    this.logger.log(`[CMS] Bulk published ${count} products.`);
+    return { success: true, count };
   }
 }

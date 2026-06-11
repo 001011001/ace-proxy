@@ -26,8 +26,8 @@ import { ArbiWaterfall } from '../components/ArbiWaterfall';
 import { FlashSaleBanner } from '../components/FlashSaleBanner';
 import { HubProgressBar } from '../components/HubProgressBar';
 import { EidViralPopup } from '../components/EidViralPopup';
-import { TradeService } from '../services/TradeService';
-import { HeroProduct } from '../../../server/src/modules/cms/CMSService';
+import { TradeService, StationHome } from '../services/TradeService';
+import { api } from '../services/APIService';
 
 const { width } = Dimensions.get('window');
 
@@ -38,8 +38,10 @@ const { width } = Dimensions.get('window');
 export const HomeScreen = ({ stationData }: any) => {
   const { role, setRole, currentTheme: theme, t } = useRole();
   const [loading, setLoading] = React.useState(true);
-  const [heroProducts, setHeroProducts] = React.useState<HeroProduct[]>([]);
+  const [heroProducts, setHeroProducts] = React.useState<any[]>([]);
+  const [stationData, setLocalStationData] = React.useState<StationHome | null>(null);
   const [showEidPopup, setShowEidPopup] = React.useState(false);
+  const [profitData, setProfitData] = React.useState<{ amount: string; trend: string } | null>(null);
   const festival = React.useMemo(() => getActiveFestival('ID'), []); // Assume ID for Jakarta pilot
 
   // 1. 全球选品脉搏动画 (Reanimated Breathing)
@@ -55,11 +57,24 @@ export const HomeScreen = ({ stationData }: any) => {
       true
     );
 
-    // 加载 Hero 商品与模拟加载状态
+    // 加载 Hero 商品与站数据（真实 API）
     const initData = async () => {
-      const products = await TradeService.getHeroProducts();
-      setHeroProducts(products);
+      try {
+        const home = await TradeService.getStationHome();
+        setLocalStationData(home);
+        setHeroProducts(home.products || []);
+      } catch (err) {
+        console.error('[HomeScreen] Failed to load station data:', err);
+      }
+      try {
+        const profit = await api.getProfitPulse();
+        setProfitData(profit);
+      } catch (err) {
+        console.error('[HomeScreen] Failed to load profit data:', err);
+        setProfitData(null);
+      }
       setLoading(false);
+    };
       
       // Trigger Eid Viral Popup for Jakarta pilot after a short delay
       if (festival.id === 'EID_PREMIUM') {
@@ -110,7 +125,7 @@ export const HomeScreen = ({ stationData }: any) => {
           <View style={styles.headerTop}>
             <View>
               <Text style={styles.stationLabel}>{festival.bannerText}</Text>
-              <Text style={styles.stationName}>{stationData?.stationName || 'AceProxy Jakarta'}</Text>
+              <Text style={styles.stationName}>{stationData?.stationName || stationData?.stationName || 'AceProxy Jakarta'}</Text>
             </View>
             <View style={styles.badgeContainer}>
               <View style={styles.fxBadge}>
@@ -146,22 +161,23 @@ export const HomeScreen = ({ stationData }: any) => {
               </View>
             </View>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.hotScroll}>
-              {heroProducts.filter(p => p.id.startsWith('EP-2026')).map(item => (
+              {heroProducts.slice(0, 6).map((item: any) => (
                 <TouchableOpacity 
                   key={item.id} 
                   style={styles.hotItemCard}
-                  onPress={() => Alert.alert('Elite Sourcing', `Navigating to ${item.name}...`)}
+                  onPress={() => Alert.alert(item.name, `Harga: Rp ${(item.localPriceIdr / 1000).toFixed(0)}k\nMargin: +${Math.round((item.arbitrageGapPct || 0) * 100)}%`)}
                 >
                   <View style={styles.hotImgBox}>
                     <Text style={{fontSize: 24}}>
-                      {item.category === 'Apparel' ? '👗' : 
-                       item.category === 'Religious' ? '🕋' : 
-                       item.category === 'Electronics' ? '⌚' : '🎁'}
+                      {item.category === 'Fashion' ? '👗' : 
+                       item.category === 'Travel' ? '🧳' : 
+                       item.category === 'Electronics' ? '⌚' : 
+                       item.category === 'Home' ? '🏠' : '🎁'}
                     </Text>
                   </View>
                   <Text style={styles.hotItemName} numberOfLines={2}>{item.name}</Text>
-                  <Text style={styles.hotItemPrice}>Rp {(item.targetPriceIDR / 1000).toFixed(0)}k</Text>
-                  <View style={styles.gainTag}><Text style={styles.gainText}>+{item.marginPct}%</Text></View>
+                  <Text style={styles.hotItemPrice}>Rp {(item.localPriceIdr / 1000).toFixed(0)}k</Text>
+                  <View style={styles.gainTag}><Text style={styles.gainText}>+{Math.round((item.arbitrageGapPct || 0) * 100)}%</Text></View>
                 </TouchableOpacity>
               ))}
             </ScrollView>
@@ -176,7 +192,7 @@ export const HomeScreen = ({ stationData }: any) => {
               </TouchableOpacity>
             </View>
             <View style={styles.minGrid}>
-              {heroProducts.filter(p => !p.id.startsWith('EP-2026')).slice(0, 3).map(item => (
+              {heroProducts.slice(3, 6).map((item: any) => (
                 <TouchableOpacity 
                   key={item.id} 
                   style={styles.minCard}
@@ -186,18 +202,18 @@ export const HomeScreen = ({ stationData }: any) => {
                     <Text style={styles.minCardTitle} numberOfLines={2}>{item.name}</Text>
                     <View style={styles.minIconBox}>
                       <Text style={{fontSize: 32}}>
-                        {item.category === 'Apparel' ? '👔' : '🏮'}
+                        {item.category === 'Fashion' ? '👔' : '🏮'}
                       </Text>
                     </View>
                   </View>
                   <View style={styles.minDetailsRow}>
                     <View style={styles.minDetailItem}>
-                      <Text style={styles.minDetailLabel}>Cost</Text>
-                      <Text style={styles.minDetailValue}>￥{item.costCNY}</Text>
+                      <Text style={styles.minDetailLabel}>Cost (CNY)</Text>
+                      <Text style={styles.minDetailValue}>¥{item.sourcePriceCny}</Text>
                     </View>
                     <View style={styles.minDetailItem}>
                       <Text style={styles.minDetailLabel}>Price (IDR)</Text>
-                      <Text style={styles.minDetailValue}>Rp {(item.targetPriceIDR / 1000).toFixed(0)}k</Text>
+                      <Text style={styles.minDetailValue}>Rp {(item.localPriceIdr / 1000).toFixed(0)}k</Text>
                     </View>
                   </View>
                   <View style={styles.minActionBtn}>
@@ -219,10 +235,21 @@ export const HomeScreen = ({ stationData }: any) => {
           {/* 2. 利润脉搏统计卡片 (Profit Pulse Card) */}
           <Animated.View style={[styles.pulseCard, pulseStyle, SHADOWS.medium]}>
             <Text style={styles.pulseTitle}>{t.totalProfit} (IDR)</Text>
-            <Text style={styles.pulseAmount}>Rp 12,450,000</Text>
-            <View style={styles.pulseTrend}>
-              <Text style={styles.trendText}>▲ 12.4% vs last week</Text>
-            </View>
+            {profitData ? (
+              <>
+                <Text style={styles.pulseAmount}>{profitData.amount}</Text>
+                <View style={styles.pulseTrend}>
+                  <Text style={styles.trendText}>{profitData.trend}</Text>
+                </View>
+              </>
+            ) : (
+              <>
+                <Text style={styles.pulseAmount}>Rp ---</Text>
+                <View style={styles.pulseTrend}>
+                  <Text style={styles.trendText}>Loading...</Text>
+                </View>
+              </>
+            )}
           </Animated.View>
 
           {/* 3. 营销引擎 (Flash Sale Banner) */}

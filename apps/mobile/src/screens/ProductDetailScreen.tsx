@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   View, 
   Text, 
@@ -8,14 +8,79 @@ import {
   Image,
   SafeAreaView,
   StatusBar,
-  Dimensions
+  Dimensions,
+  Alert,
+  ActivityIndicator
 } from 'react-native';
 import { COLORS, SPACING, TYPOGRAPHY, BORDERS, SHADOWS } from '../theme';
+import { api } from '../services/APIService';
 
 const { width } = Dimensions.get('window');
 
-export const ProductDetailScreen = () => {
+export const ProductDetailScreen = ({ route, navigation }: any) => {
+  const { productId } = route?.params || {};
+  const [product, setProduct] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const [selectedSku, setSelectedSku] = useState('XL');
+  const [quantity, setQuantity] = useState(1);
+
+  useEffect(() => {
+    if (productId) {
+      loadProduct();
+    } else {
+      setLoading(false);
+    }
+  }, [productId]);
+
+  const loadProduct = async () => {
+    try {
+      setLoading(true);
+      const data = await api.getProduct(productId);
+      setProduct(data);
+    } catch (error) {
+      console.error('Failed to load product:', error);
+      setProduct(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleAddToCart = async () => {
+    if (!product) return;
+    try {
+      // TODO: Call actual addToCart API when available
+      Alert.alert('Added', `${product.name || 'Item'} x${quantity} added to cart`);
+    } catch (error) {
+      Alert.alert('Error', 'Failed to add to cart');
+    }
+  };
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <StatusBar barStyle="dark-content" />
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <ActivityIndicator size="large" color="#F97316" />
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  if (!product) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <StatusBar barStyle="dark-content" />
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 40 }}>
+          <Text style={{ fontSize: 16, fontWeight: '900', color: COLORS.gray[400], marginBottom: 8 }}>
+            Product not found
+          </Text>
+          <Text style={{ fontSize: 13, color: COLORS.gray[300] }}>
+            This product may no longer be available
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -31,8 +96,8 @@ export const ProductDetailScreen = () => {
         <View style={styles.content}>
           <View style={styles.headerRow}>
             <View>
-              <Text style={styles.category}>MODEST FASHION</Text>
-              <Text style={styles.productName}>Premium Silk Abaya - Raya Edition</Text>
+              <Text style={styles.category}>{product.category?.toUpperCase() || 'PRODUCT'}</Text>
+              <Text style={styles.productName}>{product.name || 'Product Details'}</Text>
             </View>
             <TouchableOpacity style={styles.shareBtn}>
               <Text>🔗</Text>
@@ -41,9 +106,9 @@ export const ProductDetailScreen = () => {
 
           <View style={styles.priceContainer}>
             <Text style={styles.priceLabel}>HARGA JAKARTA (IDR)</Text>
-            <Text style={styles.price}>Rp 1,250,000</Text>
+            <Text style={styles.price}>Rp {(product.localPriceIdr || 0).toLocaleString()}</Text>
             <View style={styles.priceComparison}>
-              <Text style={styles.comparisonText}>≈ ¥ 565.00 (Source: 1688)</Text>
+              <Text style={styles.comparisonText}>≈ ¥ {(product.sourcePriceCny || 0).toFixed(2)} (Source: 1688)</Text>
             </View>
           </View>
 
@@ -62,8 +127,7 @@ export const ProductDetailScreen = () => {
 
           <Text style={styles.sectionTitle}>DESKRIPSI PRODUK</Text>
           <Text style={styles.description}>
-            Abaya sutra premium dengan jahitan tangan yang halus. Cocok untuk perayaan Idul Fitri 2026. 
-            Bahan dingin, tidak menerawang, dan memberikan kesan mewah.
+            {product.description || 'Product description not available.'}
           </Text>
 
           <View style={styles.trustCard}>
@@ -83,7 +147,7 @@ export const ProductDetailScreen = () => {
           <Text style={{ fontSize: 24 }}>🛒</Text>
           <View style={styles.badge}><Text style={styles.badgeText}>3</Text></View>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.addToCartBtn}>
+        <TouchableOpacity style={styles.addToCartBtn} onPress={handleAddToCart}>
           <Text style={styles.btnText}>TAMBAH KE KERANJANG</Text>
         </TouchableOpacity>
       </View>

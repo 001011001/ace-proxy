@@ -1,0 +1,33 @@
+version: '3.8'
+services:
+  aceproxy-server:
+    build: .
+    container_name: aceproxy-api
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - DATABASE_URL=file:/app/prisma/ace_proxy.db
+      - JWT_SECRET=${JWT_SECRET:-change-me-in-production}
+      - JWT_EXPIRATION=7d
+      - XENDIT_API_KEY=${XENDIT_API_KEY}
+      - XENDIT_CALLBACK_TOKEN=${XENDIT_CALLBACK_TOKEN}
+      - XENDIT_WEBHOOK_SECRET=${XENDIT_WEBHOOK_SECRET}
+      - XENDIT_ENV=${XENDIT_ENV:-sandbox}
+      - ALIBABA_APP_KEY=${ALIBABA_APP_KEY}
+      - ALIBABA_APP_SECRET=${ALIBABA_APP_SECRET}
+      - ALIBABA_ACCESS_TOKEN=${ALIBABA_ACCESS_TOKEN}
+      - OLLAMA_URL=${OLLAMA_URL:-http://host.docker.internal:11434}
+      - CORS_ORIGINS=${CORS_ORIGINS:-https://aceproxy.id,https://d019ff30096a420ca632cabf74b4c5f6.app.codebuddy.work}
+    volumes:
+      - aceproxy_data:/app/prisma
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3001/api/v1/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  aceproxy_data:

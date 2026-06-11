@@ -1,0 +1,2142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>AceProxy — Premium Global Sourcing</title>
+<meta name="description" content="Premium cross-border curated marketplace. AI quality inspection. Global factory to Jakarta.">
+<meta name="theme-color" content="#F97316">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AceProxy">
+<link rel="manifest" href="./manifest.json">
+<style>
+:root{--o:#F97316;--b:#000;--w:#fff;--g:#16A34A;--r:#EF4444;--bl:#3B82F6;--y:#EAB308;--p:#8B5CF6;
+--g50:#F8FAFC;--g100:#F1F5F9;--g200:#E2E8F0;--g300:#CBD5E1;--g500:#64748B;--g700:#334155;--g900:#0F172A;--r2:12px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:var(--g50);color:var(--g900)}
+
+.top-bar{background:var(--b);color:var(--w);padding:10px 20px;display:flex;justify-content:center;align-items:center;gap:12px;font-size:12px;font-weight:700;cursor:pointer;position:sticky;top:0;z-index:200;flex-wrap:wrap}
+.top-bar:hover{background:#1a1a1a}.top-badge{background:var(--o);color:var(--b);padding:3px 10px;font-size:10px;font-weight:900;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+
+.tab-bar{display:flex;background:var(--w);border-top:1px solid var(--g200);position:fixed;bottom:0;left:0;right:0;z-index:1000;overflow-x:auto;box-shadow:0 -1px 3px rgba(0,0,0,.08);padding-bottom:env(safe-area-inset-bottom)}
+.tab-btn{flex:1;min-width:56px;padding:8px 4px 10px;border:none;background:none;font-weight:600;font-size:10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--g500);transition:.15s;white-space:nowrap;position:relative}
+.tab-btn::after{content:'';position:absolute;bottom:0;left:20%;right:20%;height:2px;background:var(--o);transition:.15s;transform:scaleX(0)}
+.tab-btn.active{color:var(--o);font-weight:700}.tab-btn.active::after{transform:scaleX(1)}
+.tab-icon{font-size:22px;line-height:1;margin-bottom:1px}.cart-badge{position:absolute;top:0px;right:6px;background:var(--o);color:var(--w);min-width:16px;height:16px;border-radius:8px;font-size:9px;display:flex;align-items:center;justify-content:center;font-weight:900}
+
+.page{display:none;padding-bottom:90px}.page.active{display:block}
+
+.countdown{background:linear-gradient(90deg,var(--o),#EA580C);text-align:center;padding:8px;font-weight:800;font-size:12px;color:var(--w);display:flex;justify-content:center;gap:8px;flex-wrap:wrap;align-items:center}
+.countdown-t{background:rgba(0,0,0,.3);padding:2px 10px;border-radius:4px;font-family:monospace;font-size:13px}
+
+.hero{background:linear-gradient(135deg,#FFF7ED,#FEE2E2);text-align:center;padding:40px 16px}
+.hero-tag{font-size:11px;font-weight:700;letter-spacing:2px;color:var(--g500);margin-bottom:8px;text-transform:uppercase}
+.hero-title{font-size:clamp(22px,5vw,44px);font-weight:900;letter-spacing:-1px;line-height:1.1;margin-bottom:8px}
+.hero-sub{font-size:13px;max-width:600px;margin:0 auto 16px;color:var(--g700);line-height:1.5}
+.hero-stats{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.hero-stat{background:var(--w);padding:10px 16px;border-radius:8px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.hero-stat-num{font-size:20px;font-weight:900;color:var(--o)}.hero-stat-label{font-size:10px;color:var(--g500);font-weight:600;margin-top:2px}
+
+.sec{padding:24px 0}.sec-title{font-size:18px;font-weight:800;margin-bottom:4px}.sec-sub{font-size:12px;color:var(--g500);margin-bottom:16px;font-weight:500}
+.controls{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+.filter-btn{padding:6px 14px;border-radius:20px;border:1.5px solid var(--g300);font-weight:600;font-size:11px;cursor:pointer;background:var(--w);transition:.15s;color:var(--g700)}
+.filter-btn.active{background:var(--o);color:var(--w);border-color:var(--o)}
+.search-wrap{display:flex;border:1.5px solid var(--g300);border-radius:8px;background:var(--w);overflow:hidden;flex:1;min-width:120px}
+.search-wrap input{border:none;padding:8px 12px;font-size:12px;outline:none;flex:1;font-weight:500}
+.search-wrap button{background:var(--o);color:var(--w);border:none;padding:8px 16px;font-weight:700;cursor:pointer;font-size:12px}
+.sort-pick{border:1.5px solid var(--g300);border-radius:8px;padding:8px 10px;font-size:11px;font-weight:600;background:var(--w);color:var(--g700)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.pcard{background:var(--w);border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08);transition:.2s;cursor:pointer;position:relative;border:1px solid var(--g100)}
+.pcard:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.12)}
+.pbadge{position:absolute;top:8px;left:8px;padding:2px 8px;border-radius:4px;font-size:9px;font-weight:800;z-index:1;color:var(--w)}.bhot{background:var(--r)}.bnew{background:var(--bl)}.bbest{background:var(--o)}
+.pimg{width:100%;aspect-ratio:1;background:var(--g50);display:flex;align-items:center;justify-content:center;font-size:44px;position:relative}
+.pimg-hover{position:absolute;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;opacity:0;transition:.2s;color:var(--w);font-weight:700;font-size:12px}
+.pcard:hover .pimg-hover{opacity:1}
+.pbody{padding:12px}.pcat{font-size:10px;color:var(--o);font-weight:700;margin-bottom:2px}.pname{font-size:13px;font-weight:700;margin-bottom:6px;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pstars{font-size:11px;color:var(--y);margin-bottom:4px}.pstars span{color:var(--g500);font-size:10px;margin-left:3px}
+.pft-row{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:4px}
+.pprice{font-size:16px;font-weight:800;color:var(--r)}.pcost{font-size:10px;color:var(--g500)}
+.pmargin{display:inline-block;background:#F0FDF4;color:var(--g);padding:2px 6px;border-radius:4px;font-size:9px;font-weight:800;margin-bottom:8px}
+.pcart-btn{width:100%;padding:8px;border-radius:8px;font-weight:700;font-size:11px;cursor:pointer;border:1.5px solid var(--o);background:var(--w);color:var(--o);transition:.15s}
+.pcart-btn:hover{background:var(--o);color:var(--w)}.pcart-btn.incart{background:var(--g);color:var(--w);border-color:var(--g)}
+
+/* TRUST */
+.trust-bar{display:flex;justify-content:center;gap:16px;padding:16px 16px;background:var(--w);border-bottom:1px solid var(--g100);flex-wrap:wrap}
+.trust-item{text-align:center}.trust-icon{font-size:20px}.trust-label{font-size:10px;color:var(--g500);font-weight:600}.trust-value{font-size:11px;font-weight:700}
+
+/* PROMO */
+.promo-bar{background:linear-gradient(135deg,#FFF7ED,#FEE2E2);padding:20px;border-radius:12px;text-align:center;margin:0 16px 20px}
+.promo-title{font-size:16px;font-weight:800;margin-bottom:4px}.promo-desc{font-size:12px;color:var(--g500);margin-bottom:10px}.promo-code{display:inline-block;background:var(--b);color:var(--w);padding:6px 16px;border-radius:6px;font-size:14px;font-weight:800;font-family:monospace;letter-spacing:1px}
+
+/* DISCOVERY */
+.d-section{margin:12px 0}.d-section-title{font-size:14px;font-weight:800;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.d-card{background:var(--w);border-radius:10px;padding:16px;display:flex;gap:12px;align-items:center;cursor:pointer;transition:.15s;border:1px solid var(--g100);margin-bottom:8px}
+.d-card:hover{box-shadow:0 2px 8px rgba(0,0,0,.1)}.d-icon{font-size:32px;min-width:44px;text-align:center}.d-info{flex:1}.d-title{font-size:13px;font-weight:700}.d-desc{font-size:11px;color:var(--g500);margin-top:2px}.d-stat{font-size:11px;color:var(--o);font-weight:700;margin-top:4px}
+
+/* ASSISTANT */
+.chat-box{background:var(--w);border-radius:12px;border:1px solid var(--g100);margin-bottom:12px;max-height:350px;overflow-y:auto;padding:8px}
+.chat-msg{display:flex;gap:8px;padding:10px;align-items:flex-start}.chat-msg.ai{flex-direction:row}.chat-msg.user{flex-direction:row-reverse}
+.chat-avatar{width:32px;height:32px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;font-weight:700}.chat-avatar.ai{background:#FFF7ED;color:var(--o)}.chat-avatar.user{background:var(--g200);color:var(--g700)}
+.chat-bubble{max-width:75%;padding:10px 14px;border-radius:12px;font-size:12px;line-height:1.5}.chat-msg.ai .chat-bubble{background:var(--w);border:1px solid var(--g200);border-top-left-radius:4px}.chat-msg.user .chat-bubble{background:var(--o);color:var(--w);border-top-right-radius:4px}
+.chat-time{font-size:9px;color:var(--g500);margin-top:4px}.chat-msg.user .chat-time{text-align:right}
+.quick-btns{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.quick-btn{padding:6px 14px;border-radius:16px;border:1.5px solid var(--g300);background:var(--w);font-size:11px;font-weight:600;cursor:pointer;transition:.15s;white-space:nowrap}
+.quick-btn:hover{background:var(--o);color:var(--w);border-color:var(--o)}
+.chat-input-row{display:flex;gap:6px;align-items:center}.chat-input{flex:1;padding:10px 14px;border:1.5px solid var(--g300);border-radius:24px;font-size:12px;outline:none}.chat-input:focus{border-color:var(--o)}.chat-send{width:36px;height:36px;border-radius:18px;background:var(--o);color:var(--w);border:none;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.chat-mic{width:36px;height:36px;border-radius:18px;background:var(--g100);color:var(--g700);border:1.5px solid var(--g300);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;flex-shrink:0}.chat-mic:hover{background:var(--o);color:var(--w);border-color:var(--o)}.chat-mic.listening{background:var(--r);color:var(--w);border-color:var(--r);animation:pulse-mic 1s infinite}
+@keyframes pulse-mic{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+.chat-loading{text-align:center;padding:12px 0;color:var(--g500);font-size:11px}.chat-loading span{display:inline-block;animation:bounce .6s infinite alternate}.chat-loading span:nth-child(2){animation-delay:.1s}.chat-loading span:nth-child(3){animation-delay:.2s}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-5px)}}
+.ai-prod-card{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#FFF7ED,#FEE2E2);border:1.5px solid var(--o);border-radius:10px;padding:8px 12px;margin:4px 0;cursor:pointer;transition:.15s;max-width:280px}.ai-prod-card:hover{transform:translateX(4px);box-shadow:0 2px 8px rgba(249,115,22,.2)}.ai-prod-icon{font-size:22px}.ai-prod-info{flex:1}.ai-prod-name{font-weight:700;font-size:11px;color:var(--g900)}.ai-prod-price{font-size:13px;font-weight:800;color:var(--o)}.ai-prod-arrow{font-size:14px;color:var(--g400)}
+.chat-bubble pre{white-space:pre-wrap;margin:4px 0;font-family:inherit}
+
+/* WALLET */
+.w-balance-card{background:linear-gradient(135deg,#1a1a2e,#16213e);color:var(--w);border-radius:16px;padding:24px;text-align:center;margin-bottom:16px}
+.w-bal-label{font-size:12px;opacity:.7;font-weight:600;margin-bottom:6px}.w-bal-amount{font-size:36px;font-weight:900}.w-bal-sub{font-size:11px;opacity:.6;margin-top:4px}
+.w-stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.w-stat{background:var(--w);border-radius:10px;padding:14px;border:1px solid var(--g100)}.w-stat-label{font-size:10px;color:var(--g500);font-weight:600;margin-bottom:4px}.w-stat-val{font-size:16px;font-weight:800}.w-stat-green{color:var(--g)}.w-stat-red{color:var(--r)}
+.txn-list{background:var(--w);border-radius:12px;border:1px solid var(--g100);overflow:hidden}
+.txn-item{display:flex;align-items:center;gap:10px;padding:12px;border-bottom:1px solid var(--g50)}.txn-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}.txn-icon.credit{background:#F0FDF4}.txn-icon.debit{background:#FEF2F2}
+.txn-info{flex:1}.txn-desc{font-size:12px;font-weight:600}.txn-date{font-size:10px;color:var(--g500)}.txn-amt{font-weight:700;font-size:13px}.txn-amt.credit{color:var(--g)}.txn-amt.debit{color:var(--r)}
+
+/* PROFILE */
+.profile-top{background:linear-gradient(135deg,#FFF7ED,#FED7AA);border-radius:16px;padding:24px;text-align:center;margin-bottom:16px}
+.profile-avatar{width:56px;height:56px;border-radius:28px;background:var(--o);color:var(--w);display:inline-flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;margin-bottom:8px}
+.profile-name{font-size:18px;font-weight:800}.profile-level{font-size:12px;color:var(--o);font-weight:700;margin-top:2px}
+.progress-bar{height:4px;background:var(--g200);border-radius:2px;margin:10px 0 4px;overflow:hidden}.progress-fill{height:100%;background:var(--o);border-radius:2px;transition:.5s}
+.progress-text{font-size:10px;color:var(--g500)}
+.quick-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.qs-item{background:var(--w);border-radius:10px;padding:12px 8px;text-align:center;border:1px solid var(--g100);cursor:pointer;transition:.15s}.qs-item:hover{background:var(--g50)}.qs-icon{font-size:20px}.qs-num{font-size:14px;font-weight:800;margin-top:2px}.qs-label{font-size:10px;color:var(--g500);font-weight:600}
+.order-tabs{display:flex;gap:4px;margin-bottom:12px;overflow-x:auto}.otab{flex:1;min-width:60px;padding:8px;text-align:center;font-size:11px;font-weight:600;border:none;background:var(--w);border-radius:8px;cursor:pointer;border:1px solid var(--g100);white-space:nowrap}.otab.active{background:var(--o);color:var(--w);border-color:var(--o)}
+.order-card{background:var(--w);border-radius:10px;padding:12px;border:1px solid var(--g100);margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.oc-icon{font-size:28px}.oc-info{flex:1}.oc-id{font-size:10px;color:var(--g500)}.oc-product{font-size:12px;font-weight:700}.oc-date{font-size:10px;color:var(--g500)}
+.oc-status{font-size:10px;font-weight:700;padding:4px 8px;border-radius:4px}.os-paid{background:#F0FDF4;color:var(--g)}.os-shipped{background:#EFF6FF;color:var(--bl)}.os-pending{background:#FFF7ED;color:var(--o)}.os-delivered{background:#F5F3FF;color:var(--p)}
+
+/* RESALE HUB */
+.resale-hero{background:linear-gradient(135deg,#F5F3FF,#EDE9FE);border-radius:16px;padding:24px;text-align:center;margin-bottom:16px}
+.resale-hero-icon{font-size:40px;margin-bottom:8px}
+.resale-hero-title{font-size:18px;font-weight:800;margin-bottom:4px}.resale-hero-desc{font-size:12px;color:var(--g500);margin-bottom:12px;line-height:1.5}
+.resale-hero-btn{display:inline-block;padding:10px 24px;border-radius:8px;background:var(--p);color:var(--w);font-weight:700;font-size:13px;cursor:pointer;border:none}
+.resale-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.rlisting{background:var(--w);border-radius:10px;overflow:hidden;border:1px solid var(--g100);transition:.15s;cursor:pointer}
+.rlisting:hover{box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.rl-body{padding:12px}.rl-name{font-size:13px;font-weight:700}.rl-price{font-size:14px;font-weight:800;color:var(--p);margin-top:4px}.rl-meta{font-size:10px;color:var(--g500);margin-top:4px}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:400;align-items:flex-end;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--w);border-radius:16px 16px 0 0;max-width:480px;width:100%;max-height:85vh;overflow-y:auto}
+.modal-hdr{padding:12px 16px;display:flex;align-items:center;gap:12px}.modal-hdr-bar{width:36px;height:4px;background:var(--g300);border-radius:2px;margin:0 auto}
+.modal-close{font-size:20px;cursor:pointer;background:none;border:none;font-weight:700;color:var(--g500)}
+.modal-img{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:72px;background:var(--g50)}
+.modal-body{padding:20px}.modal-cat{font-size:11px;color:var(--o);font-weight:700;margin-bottom:4px}.modal-name{font-size:20px;font-weight:800;margin-bottom:8px}
+.modal-price-row{display:flex;gap:8px;align-items:baseline}.modal-price{font-size:22px;font-weight:800;color:var(--r)}.modal-orig{font-size:12px;color:var(--g500);text-decoration:line-through}.modal-margin{display:inline-block;background:#F0FDF4;color:var(--g);padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700;margin:8px 0}
+.modal-desc{font-size:12px;line-height:1.6;color:var(--g700);margin-bottom:10px}
+.modal-specs{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px}.modal-spec{background:var(--g50);padding:10px;border-radius:8px}.modal-spec-label{font-size:9px;color:var(--g500);font-weight:600;text-transform:uppercase}.modal-spec-val{font-size:11px;font-weight:700}
+.modal-btn{width:100%;padding:14px;border-radius:10px;background:var(--o);color:var(--w);font-weight:800;font-size:14px;border:none;cursor:pointer}
+
+/* ONBOARDING MODAL */
+.onboard-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:600;align-items:center;justify-content:center}
+.onboard-overlay.open{display:flex}
+.onboard-modal{background:var(--w);border-radius:20px;max-width:520px;width:92%;max-height:88vh;overflow-y:auto;padding:32px 24px;position:relative}
+.onboard-close{position:absolute;top:12px;right:12px;font-size:20px;cursor:pointer;background:none;border:none;font-weight:700;color:var(--g500)}
+.onboard-logo{text-align:center;margin-bottom:16px}.onboard-logo span{font-size:22px;font-weight:900;background:var(--o);padding:4px 14px;border-radius:4px;color:var(--b)}
+.onboard-title{font-size:20px;font-weight:800;text-align:center;margin-bottom:4px}.onboard-sub{font-size:12px;color:var(--g500);text-align:center;margin-bottom:20px}
+.onboard-features{display:grid;gap:12px;margin-bottom:20px}
+.onboard-feat{display:flex;gap:12px;align-items:flex-start;padding:14px;background:var(--g50);border-radius:12px}
+.onboard-feat-icon{font-size:28px;min-width:36px;text-align:center}.onboard-feat-info{flex:1}.onboard-feat-title{font-size:13px;font-weight:700;margin-bottom:2px}.onboard-feat-desc{font-size:11px;color:var(--g500);line-height:1.5}
+.onboard-cta{width:100%;padding:14px;border-radius:10px;background:var(--o);color:var(--w);font-weight:800;font-size:14px;border:none;cursor:pointer}
+.onboard-skip{text-align:center;margin-top:10px;font-size:11px;color:var(--g500);cursor:pointer;font-weight:600}
+
+/* WHY ACEPROXY section */
+.why-ace{background:var(--w);border-radius:16px;padding:24px;margin:16px 20px;border:1px solid var(--g100)}
+.why-ace-title{font-size:16px;font-weight:800;margin-bottom:4px;text-align:center}
+.why-ace-sub{font-size:12px;color:var(--g500);margin-bottom:16px;text-align:center}
+.why-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.why-card{padding:16px;background:var(--g50);border-radius:10px;text-align:center}
+.why-card-icon{font-size:24px;margin-bottom:4px}.why-card-title{font-size:12px;font-weight:700;margin-bottom:2px}.why-card-desc{font-size:10px;color:var(--g500);line-height:1.4}
+
+/* APK MODAL */
+.apk-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:500;align-items:center;justify-content:center}
+.apk-overlay.open{display:flex}
+.apk-modal{background:var(--w);border-radius:20px;max-width:400px;width:90%;padding:32px;text-align:center;position:relative}
+.apk-close{position:absolute;top:12px;right:12px;font-size:20px;cursor:pointer;background:none;border:none;font-weight:700}
+.apk-icon{font-size:52px;margin-bottom:8px}.apk-title{font-size:20px;font-weight:800;margin-bottom:4px}.apk-sub{font-size:12px;color:var(--g500);margin-bottom:20px}
+.apk-features{text-align:left;margin-bottom:20px}.apk-feat{display:flex;gap:8px;padding:6px 0;font-size:12px;font-weight:600}.apk-qr-row{display:flex;gap:16px;align-items:center;justify-content:center;margin-bottom:16px;flex-wrap:wrap}
+.apk-qr{width:120px;height:120px}.apk-dl{display:inline-block;padding:12px 28px;background:var(--o);color:var(--w);font-weight:800;font-size:14px;border-radius:10px;text-decoration:none;cursor:pointer}
+
+/* CART */
+.cart-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:300}.cart-overlay.open{display:block}
+.cart-panel{position:fixed;top:0;right:-360px;width:340px;max-width:100vw;height:100vh;background:var(--w);z-index:301;transition:.3s;display:flex;flex-direction:column;box-shadow:-2px 0 12px rgba(0,0,0,.1)}
+.cart-panel.open{right:0}
+.cart-hdr{padding:16px;border-bottom:1px solid var(--g100);display:flex;justify-content:space-between;align-items:center;font-weight:800}
+.cart-list{flex:1;overflow-y:auto;padding:12px}.cart-item{display:flex;gap:8px;padding:8px 0;border-bottom:1px solid var(--g50);align-items:center;font-size:11px;font-weight:600}.cart-item-name{flex:1}.cart-item-price{color:var(--o);font-weight:700}.cart-item-rm{background:none;border:1px solid var(--g300);border-radius:50%;width:24px;height:24px;cursor:pointer;font-weight:700;color:var(--g500)}
+.cart-footer{padding:16px;border-top:1px solid var(--g100)}.cart-total{font-size:16px;font-weight:800;margin-bottom:10px}.cart-checkout{width:100%;padding:14px;border-radius:10px;background:var(--o);color:var(--w);font-weight:800;font-size:13px;border:none;cursor:pointer}
+.cart-empty{padding:24px;text-align:center;color:var(--g500);font-size:12px}
+
+/* RATINGS */
+.rev-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.rev-card{background:var(--w);border-radius:10px;padding:16px;border:1px solid var(--g100)}.rev-stars{color:var(--y);font-size:13px;margin-bottom:4px}.rev-text{font-size:11px;line-height:1.5;color:var(--g700);margin-bottom:6px}.rev-author{font-size:10px;color:var(--g500);font-weight:600}
+.faq-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}
+.faq-item{background:var(--w);border-radius:10px;padding:16px;border:1px solid var(--g100)}.faq-q{font-size:13px;font-weight:700;margin-bottom:4px}.faq-a{font-size:11px;color:var(--g500);line-height:1.5}
+
+/* FOOTER */
+.footer{background:var(--b);color:var(--w);padding:32px 20px;max-width:520px;margin:0 auto}.footer-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:20px;margin-bottom:20px}
+.ft-title{font-size:11px;font-weight:800;color:var(--o);margin-bottom:8px}.ft a,.ft p{display:block;color:rgba(255,255,255,.6);font-size:11px;text-decoration:none;margin-bottom:4px}.ft-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:16px;display:flex;justify-content:space-between;font-size:11px;opacity:.6;flex-wrap:wrap;gap:8px}
+.wabtn{position:fixed;bottom:20px;right:20px;z-index:250;width:48px;height:48px;border-radius:24px;background:#25D366;color:var(--w);display:flex;align-items:center;justify-content:center;font-size:22px;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.2);transition:.15s}.wabtn:hover{transform:scale(1.05)}
+
+@media(min-width:768px){.grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}.sec{padding:32px 40px}.hero{padding:48px 40px}}
+
+/* Coupons & Favorites */
+.coupon-card{background:linear-gradient(135deg,#FFF7ED,#FEE2E2);border-radius:12px;padding:16px;border:1.5px dashed var(--o);margin-bottom:10px;display:flex;gap:10px;align-items:center;cursor:pointer;transition:.15s}
+.coupon-card:hover{box-shadow:0 2px 8px rgba(249,115,22,.15);transform:translateY(-1px)}
+.coupon-card.used{opacity:.5;pointer-events:none;border-color:var(--g300);background:var(--g50)}
+.co-page{padding:24px 16px 120px}.co-title{font-size:22px;font-weight:900;margin-bottom:20px}.co-section{margin-bottom:20px}.co-section h3{font-size:14px;font-weight:700;margin-bottom:10px;color:var(--g900)}.co-input{width:100%;padding:12px 14px;border:1.5px solid var(--g300);border-radius:10px;font-size:13px;font-weight:500;outline:none;margin-bottom:10px;background:var(--w)}.co-input:focus{border-color:var(--o)}.co-row{display:flex;gap:10px}.co-payment{display:grid;grid-template-columns:1fr 1fr;gap:8px}.co-pay-opt{padding:14px 12px;border:1.5px solid var(--g200);border-radius:10px;text-align:center;cursor:pointer;font-size:13px;font-weight:600;background:var(--w);transition:.15s}.co-pay-opt.active{border-color:var(--o);background:#FFF7ED}.co-summary{background:var(--w);border-radius:12px;padding:16px;border:1px solid var(--g100)}.co-sum-line{display:flex;justify-content:space-between;font-size:12px;font-weight:500;padding:6px 0;color:var(--g700)}.co-sum-total{border-top:1.5px solid var(--g200);padding-top:10px;margin-top:6px;font-size:16px;font-weight:800;color:var(--g900)}.co-submit{width:100%;padding:16px;border-radius:12px;background:var(--o);color:var(--w);font-weight:800;font-size:15px;border:none;cursor:pointer;margin-top:16px}.co-submit:hover{background:#EA580C}
+.policy-page{max-width:680px;margin:0 auto;padding:32px 20px 120px;font-size:13px;line-height:1.7;color:var(--g700)}.policy-page h2{font-size:20px;font-weight:800;color:var(--g900);margin-bottom:4px}.policy-page h3{font-size:14px;font-weight:700;color:var(--g900);margin:20px 0 8px}.policy-page p{margin-bottom:10px}.policy-page .lang-tabs{display:flex;gap:8px;margin-bottom:20px}.policy-lang-btn{padding:6px 16px;border-radius:20px;border:1.5px solid var(--g300);font-size:12px;font-weight:600;cursor:pointer;background:var(--w)}.policy-lang-btn.active{background:var(--o);color:var(--w);border-color:var(--o)}
+.coupon-icon{font-size:28px;min-width:40px;text-align:center}
+.coupon-info{flex:1}.coupon-code{font-size:15px;font-weight:800;font-family:monospace;letter-spacing:1px;color:var(--o)}.coupon-desc{font-size:11px;color:var(--g500);margin-top:2px}.coupon-exp{font-size:10px;color:var(--g500);margin-top:1px}
+.coupon-action{font-size:11px;font-weight:700;color:var(--o);white-space:nowrap}
+.fav-item{display:flex;gap:10px;align-items:center;padding:10px;background:var(--w);border-radius:10px;border:1px solid var(--g100);margin-bottom:8px;cursor:pointer;transition:.15s}
+.fav-item:hover{box-shadow:0 2px 8px rgba(0,0,0,.08)}.fav-icon{font-size:24px;min-width:36px;text-align:center}.fav-info{flex:1}.fav-name{font-size:12px;font-weight:700}.fav-price{font-size:13px;font-weight:800;color:var(--o);margin-top:2px}.fav-remove{background:none;border:1px solid var(--g300);border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:14px;color:var(--g500);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pfav-btn{position:absolute;top:8px;right:8px;z-index:2;width:32px;height:32px;border-radius:16px;border:none;background:rgba(255,255,255,.9);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:.15s;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.pfav-btn:hover{transform:scale(1.15)}.pfav-btn.liked{color:var(--r);background:rgba(255,255,255,.95)}
+.profile-section-tabs{display:flex;gap:4px;margin-bottom:12px}
+.ps-tab{flex:1;padding:8px 6px;text-align:center;font-size:11px;font-weight:600;border:none;background:var(--w);border-radius:8px;cursor:pointer;border:1px solid var(--g100);white-space:nowrap;transition:.15s}
+.ps-tab.active{background:var(--o);color:var(--w);border-color:var(--o)}
+.empty-state{padding:24px;text-align:center;color:var(--g500)}
+.empty-state-icon{font-size:36px;margin-bottom:8px}.empty-state-title{font-size:14px;font-weight:700;margin-bottom:4px}.empty-state-desc{font-size:11px;line-height:1.5}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:999;background:var(--g900);color:var(--w);padding:10px 24px;border-radius:24px;font-size:12px;font-weight:700;animation:toastIn .3s ease-out,toastOut .3s ease-in 2s forwards;pointer-events:none}
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(-10px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+@keyframes toastOut{from{opacity:1}to{opacity:0}}
+
+/* APP HEADER — global sticky, sits below top promo bar */
+.app-header{background:var(--w);padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:34px;z-index:199;border-bottom:1px solid var(--g100);gap:12px}
+.app-logo{font-size:16px;font-weight:900;color:var(--o);letter-spacing:-.5px}
+.app-actions{display:flex;gap:12px;align-items:center}
+.app-icon-btn{width:36px;height:36px;border-radius:18px;border:none;background:var(--g50);display:flex;align-items:center;justify-content:center;font-size:18px;cursor:pointer;position:relative}
+.app-icon-btn .dot{position:absolute;top:2px;right:2px;width:8px;height:8px;background:var(--r);border-radius:50%;border:2px solid var(--w)}
+
+/* NOTIFICATION PANEL */
+.notif-panel{position:fixed;top:0;right:0;bottom:0;width:100%;max-width:380px;background:var(--w);z-index:1001;transform:translateX(100%);transition:.3s;box-shadow:-4px 0 20px rgba(0,0,0,.15);display:flex;flex-direction:column}
+.notif-panel.open{transform:translateX(0)}
+.notif-hdr{padding:16px;border-bottom:1px solid var(--g100);display:flex;align-items:center;gap:12px}
+.notif-hdr-title{flex:1;font-size:16px;font-weight:800}
+.notif-close{background:none;border:none;font-size:20px;cursor:pointer;width:32px;height:32px;display:flex;align-items:center;justify-content:center}
+.notif-list{flex:1;overflow-y:auto;padding:12px}
+.notif-item{display:flex;gap:10px;padding:12px;border-radius:10px;background:var(--g50);margin-bottom:8px;cursor:pointer;transition:.15s}
+.notif-item:hover{background:var(--g100)}
+.notif-item.unread{border-left:3px solid var(--o);background:#FFF7ED}
+.notif-icon{font-size:24px;min-width:32px;text-align:center}
+.notif-info{flex:1}.notif-title{font-size:12px;font-weight:700}.notif-desc{font-size:11px;color:var(--g500);margin-top:2px}.notif-time{font-size:10px;color:var(--g500);margin-top:4px}
+
+/* SETTINGS */
+.settings-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1001;opacity:0;visibility:hidden;transition:.2s}
+.settings-overlay.open{opacity:1;visibility:visible}
+.settings-panel{position:fixed;top:0;right:0;bottom:0;width:100%;max-width:400px;background:var(--w);z-index:1002;transform:translateX(100%);transition:.3s;overflow-y:auto}
+.settings-panel.open{transform:translateX(0)}
+.settings-hdr{padding:16px;border-bottom:1px solid var(--g100);display:flex;align-items:center;gap:12px;position:sticky;top:0;background:var(--w);z-index:10}
+.settings-hdr-title{flex:1;font-size:16px;font-weight:800}
+.settings-group{padding:16px;border-bottom:1px solid var(--g100)}
+.settings-group-title{font-size:11px;font-weight:700;color:var(--g500);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px}
+.settings-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--g50);cursor:pointer;transition:.15s}
+.settings-item:last-child{border-bottom:none}
+.settings-item:hover{background:var(--g50);margin:0 -16px;padding:12px 16px;border-radius:8px}
+.settings-item-icon{width:32px;height:32px;border-radius:8px;background:var(--g50);display:flex;align-items:center;justify-content:center;font-size:16px}
+.settings-item-info{flex:1}.settings-item-label{font-size:13px;font-weight:600}.settings-item-desc{font-size:11px;color:var(--g500);margin-top:1px}
+.settings-item-arrow{color:var(--g300);font-size:14px}
+.settings-item-value{font-size:12px;color:var(--g500);font-weight:500}
+
+/* ADDRESS */
+.addr-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1003;opacity:0;visibility:hidden;transition:.2s}
+.addr-overlay.open{opacity:1;visibility:visible}
+.addr-panel{position:fixed;bottom:0;left:0;right:0;background:var(--w);border-radius:20px 20px 0 0;z-index:1004;transform:translateY(100%);transition:.3s;max-height:85vh;overflow-y:auto;padding:20px}
+.addr-panel.open{transform:translateY(0)}
+.addr-hdr{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.addr-hdr-title{flex:1;font-size:16px;font-weight:800}
+.addr-close{background:none;border:none;font-size:20px;cursor:pointer}
+.addr-list{margin-bottom:16px}
+.addr-card{padding:14px;border:1px.5px solid var(--g200);border-radius:12px;margin-bottom:10px;cursor:pointer;position:relative;transition:.15s}
+.addr-card:hover{border-color:var(--o);box-shadow:0 2px 8px rgba(249,115,22,.1)}
+.addr-card.default{border-color:var(--o);background:#FFF7ED}
+.addr-default-tag{position:absolute;top:8px;right:8px;font-size:9px;font-weight:800;background:var(--o);color:var(--w);padding:2px 8px;border-radius:4px}
+.addr-name{font-size:13px;font-weight:700}.addr-phone{font-size:11px;color:var(--g500);margin-left:6px}.addr-detail{font-size:12px;color:var(--g700);margin-top:4px;line-height:1.4}
+.addr-actions{display:flex;gap:8px;margin-top:8px}
+.addr-action-btn{font-size:11px;padding:4px 10px;border-radius:6px;border:1px solid var(--g300);background:var(--w);cursor:pointer;font-weight:600}
+.addr-form{display:none}.addr-form.show{display:block}
+.addr-input{width:100%;padding:10px 12px;border:1.5px solid var(--g200);border-radius:8px;font-size:13px;margin-bottom:10px;outline:none;font-family:inherit}
+.addr-input:focus{border-color:var(--o)}
+.addr-label{font-size:11px;font-weight:600;color:var(--g500);margin-bottom:4px;display:block}
+.addr-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.addr-save-btn{width:100%;padding:12px;background:var(--o);color:var(--w);border:none;border-radius:10px;font-weight:700;font-size:14px;cursor:pointer;margin-top:8px}
+.addr-add-btn{width:100%;padding:12px;border:1.5px dashed var(--o);background:#FFF7ED;color:var(--o);border-radius:10px;font-weight:700;font-size:13px;cursor:pointer}
+
+/* REVIEWS */
+.review-summary{display:flex;align-items:center;gap:16px;padding:16px;background:var(--w);border-radius:12px;margin-bottom:12px;border:1px solid var(--g100)}
+.review-score{font-size:36px;font-weight:900;color:var(--o)}.review-count{font-size:11px;color:var(--g500)}
+.review-bars{flex:1}.review-bar-row{display:flex;align-items:center;gap:6px;font-size:10px;margin-bottom:3px}
+.review-bar-bg{flex:1;height:6px;background:var(--g100);border-radius:3px;overflow:hidden}
+.review-bar-fill{height:100%;background:var(--y);border-radius:3px}
+.review-item{padding:12px 0;border-bottom:1px solid var(--g50)}
+.review-item:last-child{border-bottom:none}
+.review-header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.review-avatar{width:28px;height:28px;border-radius:14px;background:var(--o);color:var(--w);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.review-author{font-size:12px;font-weight:700}.review-date{font-size:10px;color:var(--g500);margin-left:auto}
+.review-stars{color:var(--y);font-size:11px;margin-bottom:4px}
+.review-text{font-size:12px;color:var(--g700);line-height:1.5}
+.review-tag{display:inline-block;padding:2px 8px;background:var(--g50);border-radius:4px;font-size:10px;color:var(--g500);margin-top:4px;margin-right:4px}
+.review-photo{width:60px;height:60px;border-radius:8px;object-fit:cover;margin-top:6px;margin-right:4px;border:1px solid var(--g100)}
+
+/* TIMELINE */
+.timeline{position:relative;padding-left:24px}.timeline::before{content:'';position:absolute;left:8px;top:4px;bottom:4px;width:2px;background:var(--g200)}
+.timeline-item{position:relative;padding-bottom:16px}.timeline-item:last-child{padding-bottom:0}
+.timeline-dot{position:absolute;left:-20px;top:2px;width:12px;height:12px;border-radius:50%;background:var(--g300);border:2px solid var(--w)}
+.timeline-dot.active{background:var(--o)}.timeline-dot.done{background:var(--g)}
+.timeline-title{font-size:12px;font-weight:700}.timeline-desc{font-size:11px;color:var(--g500);margin-top:2px}.timeline-time{font-size:10px;color:var(--g500);margin-top:2px}
+
+/* CATEGORY */
+.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;padding:12px 0}
+.cat-item{text-align:center;cursor:pointer;padding:8px;border-radius:12px;transition:.15s}
+.cat-item:hover{background:var(--g50)}.cat-icon{font-size:28px;margin-bottom:4px}.cat-label{font-size:11px;font-weight:600;color:var(--g700)}
+
+/* SEARCH */
+.search-page{position:fixed;inset:0;background:var(--w);z-index:1002;transform:translateY(100%);transition:.3s;display:flex;flex-direction:column}
+.search-page.open{transform:translateY(0)}
+.search-hdr{padding:12px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--g100)}
+.search-input-wrap{flex:1;display:flex;align-items:center;background:var(--g50);border-radius:8px;padding:8px 12px;gap:8px}
+.search-input-wrap input{border:none;background:none;flex:1;font-size:14px;outline:none;font-family:inherit}
+.search-cancel{font-size:14px;font-weight:600;color:var(--g500);cursor:pointer;border:none;background:none}
+.search-section{padding:16px}.search-section-title{font-size:12px;font-weight:700;color:var(--g500);margin-bottom:10px;display:flex;align-items:center;justify-content:space-between}
+.search-tags{display:flex;flex-wrap:wrap;gap:8px}.search-tag{padding:6px 12px;background:var(--g50);border-radius:16px;font-size:12px;cursor:pointer;border:none;font-weight:500;color:var(--g700)}
+.search-tag:hover{background:var(--g100)}.search-tag.hot{background:#FFF7ED;color:var(--o)}
+.search-history-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--g50);cursor:pointer}
+.search-history-item:hover{background:var(--g50);margin:0 -16px;padding:10px 16px;border-radius:8px}
+.search-clear-all{font-size:11px;color:var(--o);cursor:pointer;background:none;border:none;font-weight:600}
+
+/* SHARE MODAL */
+.share-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1003;opacity:0;visibility:hidden;transition:.2s}
+.share-overlay.open{opacity:1;visibility:visible}
+.share-panel{position:fixed;bottom:0;left:0;right:0;background:var(--w);border-radius:20px 20px 0 0;z-index:1004;transform:translateY(100%);transition:.3s;padding:20px;text-align:center}
+.share-panel.open{transform:translateY(0)}
+.share-title{font-size:16px;font-weight:800;margin-bottom:16px}.share-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px}
+.share-btn{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;border:none;background:none}
+.share-icon{width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--g50);transition:.15s}
+.share-btn:hover .share-icon{transform:scale(1.1)}.share-label{font-size:11px;font-weight:600;color:var(--g700)}
+.share-link-box{display:flex;gap:8px;background:var(--g50);padding:10px;border-radius:8px;margin-bottom:16px}
+.share-link-box input{flex:1;border:none;background:none;font-size:12px;outline:none;font-family:inherit}
+.share-copy-btn{padding:6px 14px;background:var(--o);color:var(--w);border:none;border-radius:6px;font-size:12px;font-weight:700;cursor:pointer}
+
+/* HELP */
+.help-cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.help-cat-item{text-align:center;padding:14px 8px;background:var(--w);border-radius:12px;border:1px solid var(--g100);cursor:pointer;transition:.15s}
+.help-cat-item:hover{border-color:var(--o);box-shadow:0 2px 8px rgba(249,115,22,.1)}
+.help-cat-icon{font-size:24px;margin-bottom:6px}.help-cat-label{font-size:11px;font-weight:600}
+.help-article{padding:12px 0;border-bottom:1px solid var(--g50);cursor:pointer}
+.help-article-title{font-size:13px;font-weight:700;margin-bottom:2px}.help-article-desc{font-size:11px;color:var(--g500)}
+.help-contact-card{background:linear-gradient(135deg,#FFF7ED,#FEE2E2);border-radius:12px;padding:16px;text-align:center;margin-top:16px}
+.help-contact-btn{display:inline-block;padding:10px 24px;background:var(--o);color:var(--w);border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;margin-top:8px}
+
+/* SCROLL TOP */
+.scroll-top{position:fixed;bottom:100px;right:16px;width:40px;height:40px;border-radius:20px;background:var(--w);border:1px solid var(--g200);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.1);z-index:500;opacity:0;visibility:hidden;transition:.2s}
+.scroll-top.show{opacity:1;visibility:visible}
+
+/* INVITE */
+.invite-card{background:linear-gradient(135deg,#FFF7ED,#FEE2E2);border-radius:16px;padding:20px;text-align:center;margin:16px 0}
+.invite-code{display:inline-block;background:var(--b);color:var(--w);padding:8px 20px;border-radius:8px;font-size:16px;font-weight:800;font-family:monospace;letter-spacing:2px;margin:8px 0}
+.invite-reward{font-size:13px;font-weight:700;color:var(--o);margin-bottom:8px}
+.invite-stats{display:flex;justify-content:center;gap:24px;margin-top:12px}
+.invite-stat{text-align:center}.invite-stat-num{font-size:20px;font-weight:900;color:var(--o)}.invite-stat-label{font-size:10px;color:var(--g500)}
+
+
+
+/* === HEADER SEARCH BAR === */
+.header-search-wrap{display:flex;flex:1;border:2px solid var(--g200);border-radius:24px;background:var(--w);overflow:hidden;transition:.2s}
+.header-search-wrap:focus-within{border-color:var(--o);box-shadow:0 0 0 3px rgba(249,115,22,.12)}
+.header-search-input{flex:1;border:none;padding:10px 18px;font-size:14px;outline:none;background:transparent;font-weight:500;min-width:0}
+.header-search-btn{background:none;border:none;padding:8px 16px;font-size:16px;cursor:pointer;color:var(--g500);transition:.15s}
+.header-search-btn:hover{color:var(--o)}
+
+/* === CENTERED LAYOUT (Desktop) === */
+/* === WEB LAYOUT (Full Width) === */
+.page-inner{width:100%;margin:0 auto;padding:0 16px 90px 16px}
+@media(min-width:540px){
+  .page-inner{padding-left:32px;padding-right:32px}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+  .hero{padding:60px 32px}
+  .hero-title{font-size:clamp(28px,4vw,48px)}
+  .sec{padding:32px 0}
+  .d-card{padding:20px}
+}
+@media(min-width:800px){
+  .page-inner{padding:0 32px 90px 32px}
+  .grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}
+  .hero{padding:80px 48px}
+  .chat-box{max-height:500px}
+  .d-card{gap:16px}
+}
+
+
+/* SOURCING */
+.sourcing-section{background:linear-gradient(135deg,#FFF7ED,#FEF3C7);border-radius:16px;padding:24px;margin:20px 0;border:1.5px dashed var(--o)}
+.sourcing-title{font-size:16px;font-weight:800;margin-bottom:4px;color:var(--g900)}
+.sourcing-sub{font-size:12px;color:var(--g500);margin-bottom:16px}
+.sourcing-input-wrap{display:flex;gap:8px;flex-wrap:wrap}
+.sourcing-input{flex:1;min-width:200px;padding:12px 16px;border:2px solid var(--g200);border-radius:12px;font-size:13px;outline:none;background:var(--w);font-family:inherit}
+.sourcing-input:focus{border-color:var(--o)}
+.sourcing-btn{padding:12px 24px;background:var(--o);color:var(--w);border:none;border-radius:12px;font-weight:700;font-size:13px;cursor:pointer;transition:.15s}
+.sourcing-btn:hover{background:#EA580C;transform:translateY(-1px)}
+.sourcing-platforms{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.sourcing-platform-tag{background:var(--w);padding:4px 10px;border-radius:16px;font-size:10px;font-weight:600;color:var(--g500);border:1px solid var(--g200)}
+
+/* Sourcing Results */
+.sourcing-result-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px}
+.sourcing-result-overlay.active{display:flex}
+.sourcing-result-panel{background:var(--w);border-radius:16px;max-width:900px;width:100%;max-height:90vh;overflow-y:auto;padding:24px;position:relative}
+.sourcing-result-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.sourcing-result-title{font-size:18px;font-weight:800}
+.sourcing-close-btn{background:none;border:none;font-size:24px;cursor:pointer;color:var(--g500)}
+.sourcing-source-info{background:var(--g50);padding:12px 16px;border-radius:10px;margin-bottom:16px;font-size:12px}
+.sourcing-source-info strong{color:var(--o)}
+.sourcing-matches-title{font-size:14px;font-weight:700;margin-bottom:12px}
+.sourcing-match-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.sourcing-match-card{background:var(--w);border-radius:12px;border:1.5px solid var(--g200);overflow:hidden;cursor:pointer;transition:.15s}
+.sourcing-match-card:hover{border-color:var(--o);box-shadow:0 4px 12px rgba(249,115,22,.15)}
+.sourcing-match-img{width:100%;aspect-ratio:1;background:var(--g50);display:flex;align-items:center;justify-content:center;font-size:36px}
+.sourcing-match-body{padding:12px}
+.sourcing-match-name{font-size:12px;font-weight:700;margin-bottom:4px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.sourcing-match-price{font-size:15px;font-weight:800;color:var(--r);margin-bottom:2px}
+.sourcing-match-source{font-size:10px;color:var(--g500)}
+.sourcing-match-seller{font-size:10px;color:var(--o);font-weight:600;margin-top:2px}
+.sourcing-list-btn{width:100%;padding:8px;background:var(--o);color:var(--w);border:none;font-weight:700;font-size:11px;cursor:pointer;margin-top:8px;border-radius:0 0 10px 10px}
+
+/* Listing Animation */
+.listing-overlay{position:fixed;inset:0;background:rgba(15,23,42,.9);z-index:3000;display:none;flex-direction:column;align-items:center;justify-content:center;color:var(--w)}
+.listing-overlay.active{display:flex}
+.listing-anim-icon{font-size:64px;margin-bottom:20px;animation:bounce-anim 1s infinite}
+@keyframes bounce-anim{0%,100%{transform:translateY(0)}50%{transform:translateY(-15px)}}
+.listing-anim-text{font-size:18px;font-weight:800;margin-bottom:8px}
+.listing-anim-sub{font-size:13px;opacity:.7;margin-bottom:32px}
+.listing-steps{display:flex;flex-direction:column;gap:16px;max-width:400px;width:100%;padding:0 24px}
+.listing-step{display:flex;align-items:center;gap:12px;opacity:.4;transition:.3s}
+.listing-step.active{opacity:1}.listing-step.done{opacity:.6}
+.listing-step-icon{width:32px;height:32px;border-radius:16px;background:var(--g500);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.listing-step.active .listing-step-icon{background:var(--o)}
+.listing-step.done .listing-step-icon{background:var(--g)}
+.listing-step-text{font-size:13px;font-weight:600}
+
+
+/* SMART COLLECTION */
+.smart-collect-section{background:linear-gradient(135deg,#FFF7ED,#FEF3C7);border-radius:16px;padding:24px;margin-bottom:20px;border:1.5px dashed var(--o)}
+.smart-collect-title{font-size:18px;font-weight:800;margin-bottom:4px;color:var(--g900)}
+.smart-collect-sub{font-size:12px;color:var(--g500);margin-bottom:16px;line-height:1.5}
+.smart-collect-input-wrap{display:flex;gap:8px;flex-wrap:wrap}
+.smart-collect-input{flex:1;min-width:200px;padding:12px 16px;border:2px solid var(--g200);border-radius:12px;font-size:13px;outline:none;background:var(--w);font-family:inherit}
+.smart-collect-input:focus{border-color:var(--o)}
+.smart-collect-btn{padding:12px 24px;background:var(--o);color:var(--w);border:none;border-radius:12px;font-weight:700;font-size:13px;cursor:pointer;transition:.15s;white-space:nowrap}
+.smart-collect-btn:hover{background:#EA580C;transform:translateY(-1px)}
+.smart-collect-notice{margin-top:16px;background:var(--w);border-radius:12px;padding:16px;border:1px solid var(--g200);display:flex;gap:12px;align-items:flex-start}
+.smart-collect-notice .sc-notice-icon{font-size:28px;flex-shrink:0}
+.smart-collect-notice .sc-notice-text{flex:1}
+.smart-collect-notice .sc-notice-title{font-size:13px;font-weight:700;margin-bottom:8px;color:var(--g900)}
+.smart-collect-notice .sc-notice-body{font-size:11px;color:var(--g700);line-height:1.7}
+.smart-collect-notice .sc-notice-body div{margin-bottom:4px}
+
+/* Smart Collect Results */
+.sc-results-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:2000;display:none;align-items:center;justify-content:center;padding:20px}
+.sc-results-overlay.active{display:flex}
+.sc-results-panel{background:var(--w);border-radius:16px;max-width:900px;width:100%;max-height:90vh;overflow-y:auto;padding:24px;position:relative}
+.sc-results-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.sc-results-title{font-size:18px;font-weight:800}
+.sc-results-close{background:none;border:none;font-size:24px;cursor:pointer;color:var(--g500)}
+.sc-results-info{background:var(--g50);padding:12px 16px;border-radius:10px;margin-bottom:16px;font-size:12px}
+.sc-match-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.sc-match-card{background:var(--w);border-radius:12px;border:1.5px solid var(--g200);overflow:hidden;cursor:pointer;transition:.15s;position:relative}
+.sc-match-card:hover{border-color:var(--o);box-shadow:0 4px 12px rgba(249,115,22,.15)}
+.sc-match-img{width:100%;aspect-ratio:1;background:var(--g50);display:flex;align-items:center;justify-content:center;font-size:36px}
+.sc-match-body{padding:12px}
+.sc-match-name{font-size:12px;font-weight:700;margin-bottom:4px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.sc-match-price{font-size:15px;font-weight:800;color:var(--r);margin-bottom:2px}
+.sc-match-original{font-size:10px;color:var(--g500);text-decoration:line-through}
+.sc-match-saving{display:inline-block;background:#F0FDF4;color:var(--g);padding:2px 6px;border-radius:4px;font-size:9px;font-weight:800;margin-top:4px}
+.sc-match-btn{width:100%;padding:8px;background:var(--o);color:var(--w);border:none;font-weight:700;font-size:11px;cursor:pointer;margin-top:8px;border-radius:0 0 10px 10px}
+
+/* Logistics Tags */
+.logistics-tags{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.logistics-tag{padding:2px 8px;border-radius:8px;font-size:9px;font-weight:600}
+.lt-can{background:#F0FDF4;color:var(--g)}
+.lt-extra{background:#FEF3C7;color:#B45309}
+.lt-cant{background:#FEE2E2;color:var(--r)}
+
+/* ====== NEW: E-commerce optimized styles ====== */
+
+/* SKELETON LOADING */
+.skeleton{background:linear-gradient(90deg,var(--g100) 25%,var(--g50) 50%,var(--g100) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.skel-card{background:var(--w);border-radius:12px;overflow:hidden;border:1px solid var(--g100)}
+.skel-img{width:100%;aspect-ratio:1;margin-bottom:8px}
+.skel-line{height:12px;margin:8px 12px}.skel-line.short{width:60%}
+.skel-price{height:18px;width:40%;margin:8px 12px 12px}
+
+/* BANNER CAROUSEL */
+.banner-wrap{position:relative;border-radius:12px;overflow:hidden;margin:12px 16px;height:160px}
+.banner-track{display:flex;height:100%;transition:transform .5s cubic-bezier(.25,.8,.25,1)}
+.banner-slide{min-width:100%;height:100%;display:flex;align-items:center;justify-content:center;position:relative;cursor:pointer}
+.banner-slide:nth-child(1){background:linear-gradient(135deg,#667eea,#764ba2)}
+.banner-slide:nth-child(2){background:linear-gradient(135deg,#f093fb,#f5576c)}
+.banner-slide:nth-child(3){background:linear-gradient(135deg,#4facfe,#00f2fe)}
+.banner-content{text-align:center;color:#fff;padding:20px}
+.banner-title{font-size:20px;font-weight:900;margin-bottom:4px;text-shadow:0 2px 4px rgba(0,0,0,.2)}
+.banner-sub{font-size:12px;opacity:.9;margin-bottom:8px}
+.banner-btn{display:inline-block;padding:8px 24px;background:#fff;color:#333;border-radius:20px;font-size:12px;font-weight:700;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+.banner-dots{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:6px}
+.banner-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.4);cursor:pointer;transition:.2s}
+.banner-dot.active{background:#fff;width:18px;border-radius:3px}
+
+/* FLASH SALE */
+.flash-sale{background:linear-gradient(135deg,#FFF5F5,#FFF0F0);margin:12px 16px;border-radius:12px;padding:16px;border:1px solid #FECACA}
+.flash-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.flash-title-row{display:flex;align-items:center;gap:8px}
+.flash-icon{font-size:20px}.flash-label{font-size:16px;font-weight:800;color:#DC2626}
+.flash-timer{display:flex;gap:6px;align-items:center}
+.flash-timer-block{background:#DC2626;color:#fff;padding:3px 8px;border-radius:4px;font-size:14px;font-weight:900;font-family:monospace;min-width:28px;text-align:center}
+.flash-timer-sep{font-weight:900;color:#DC2626;font-size:14px}
+.flash-more{font-size:12px;font-weight:700;color:#DC2626;cursor:pointer;display:flex;align-items:center;gap:2px}
+.flash-items{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:4px;-webkit-overflow-scrolling:touch}
+.flash-card{min-width:140px;background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.08);flex-shrink:0;cursor:pointer;scroll-snap-align:start;transition:.15s}
+.flash-card:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,.12)}
+.flash-card-img{width:100%;aspect-ratio:1;background:var(--g50);display:flex;align-items:center;justify-content:center;font-size:32px;position:relative}
+.flash-card-progress{position:absolute;bottom:0;left:0;right:0;height:4px;background:rgba(0,0,0,.1)}
+.flash-card-progress-bar{height:100%;background:linear-gradient(90deg,#DC2626,#EF4444);border-radius:0 2px 2px 0;transition:width .3s}
+.flash-card-body{padding:10px}
+.flash-card-price{font-size:16px;font-weight:800;color:#DC2626}
+.flash-card-orig{font-size:10px;color:var(--g500);text-decoration:line-through;margin-left:4px}
+.flash-card-title{font-size:11px;font-weight:600;color:var(--g700);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.flash-card-sold{font-size:10px;color:var(--g500);margin-top:4px}
+
+/* PRODUCT CARD REDESIGN — compact + social proof */
+.pcard .sold-badge{font-size:9px;color:var(--g500);display:flex;align-items:center;gap:2px;margin-top:2px}
+.pcard .free-ship{display:inline-block;padding:1px 4px;border-radius:2px;background:linear-gradient(90deg,#FF6B6B,#FF8E53);color:#fff;font-size:8px;font-weight:700;margin-right:4px}
+
+/* SCROLL TO TOP */
+.scroll-top{position:fixed;bottom:90px;right:20px;z-index:900;width:40px;height:40px;border-radius:50%;background:var(--w);border:1px solid var(--g200);box-shadow:0 2px 8px rgba(0,0,0,.12);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;opacity:0;transform:translateY(20px);transition:.3s;pointer-events:none}
+.scroll-top.visible{opacity:1;transform:translateY(0);pointer-events:auto}
+.scroll-top:hover{background:var(--o);color:#fff;border-color:var(--o)}
+
+/* IMPROVED CATEGORY ROW */
+.cat-scroll{display:flex;gap:8px;overflow-x:auto;padding:8px 16px;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.cat-scroll::-webkit-scrollbar{display:none}
+.cat-chip{padding:6px 16px;border-radius:20px;border:1.5px solid var(--g200);font-weight:600;font-size:12px;cursor:pointer;white-space:nowrap;transition:.15s;background:var(--w);flex-shrink:0;scroll-snap-align:start}
+.cat-chip:hover{background:var(--g50);border-color:var(--o)}
+.cat-chip.active{background:var(--o);color:#fff;border-color:var(--o);box-shadow:0 2px 8px rgba(249,115,22,.25)}
+
+/* COUPON BAR */
+.coupon-bar{display:flex;gap:8px;padding:8px 16px;overflow-x:auto;scrollbar-width:none}
+.coupon-bar::-webkit-scrollbar{display:none}
+.coupon-chip{display:flex;align-items:center;gap:6px;padding:8px 14px;background:linear-gradient(135deg,#FFF7ED,#FEE2E2);border:1px solid #FED7AA;border-radius:8px;font-size:11px;font-weight:700;white-space:nowrap;cursor:pointer;flex-shrink:0;transition:.15s}
+.coupon-chip:hover{transform:translateY(-1px);box-shadow:0 2px 6px rgba(249,115,22,.15)}
+.coupon-chip-amount{font-size:16px;font-weight:900;color:var(--o)}
+.coupon-chip-desc{color:var(--g700);font-size:10px}
+.coupon-chip-arrow{color:var(--o);font-size:12px}
+
+/* IMPROVED GRID — 4 cols on desktop */
+@media(min-width:1024px){.grid{grid-template-columns:repeat(4,1fr);gap:12px}}
+@media(min-width:768px) and (max-width:1023px){.grid{grid-template-columns:repeat(3,1fr);gap:12px}}
+@media(max-width:767px){.grid{grid-template-columns:repeat(2,1fr);gap:8px}}
+
+/* SECTION ENHANCEMENT */
+.section-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:12px}
+.section-header .sec-title{margin-bottom:0}
+.section-more{font-size:12px;font-weight:600;color:var(--o);cursor:pointer;white-space:nowrap;display:flex;align-items:center;gap:2px}
+
+/* Waterfall / Masonry variation */
+@media(min-width:1024px){
+  .masonry-grid{column-count:4;column-gap:12px}
+  .masonry-grid .pcard{break-inside:avoid;margin-bottom:12px}
+}
+
+/* OFFICIAL / VERIFIED BADGE */
+.verified-badge{display:inline-flex;align-items:center;gap:2px;background:#DBEAFE;color:#1D4ED8;padding:1px 6px;border-radius:4px;font-size:8px;font-weight:700;margin-left:4px}
+
+</style>
+</head>
+<body>
+
+<div class="top-bar" onclick="ApkModal.open()"><span>📱</span><span id="top-text">Download AceProxy App — faster sourcing</span><span class="top-badge">BETA</span></div>
+
+<div class="app-header" id="appHeader">
+  <div class="app-logo">🔶 ACEPROXY</div>
+  <div class="header-search-wrap" id="headerSearchWrap">
+    <input class="header-search-input" id="headerSearchInput" placeholder="Search products..." onkeydown="if(event.key==='Enter'){HeaderSearch.doSearch(this.value)}">
+    <button class="header-search-btn" onclick="HeaderSearch.doSearch(document.getElementById('headerSearchInput').value)">🔍</button>
+  </div>
+  <div class="app-actions">
+    <button class="app-icon-btn" onclick="Notif.open()" id="notifBtn">
+      🔔<span class="dot" id="notifDot" style="display:none"></span>
+    </button>
+  </div>
+</div>
+
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('home')"><span class="tab-icon">🏠</span> <span id="tab-home">Home</span></button>
+  <button class="tab-btn" onclick="switchTab('discovery')"><span class="tab-icon">🔥</span> <span id="tab-disc">Discovery</span></button>
+  <button class="tab-btn" onclick="switchTab('assistant')"><span class="tab-icon">🤖</span> <span id="tab-asst">Assistant</span></button>
+
+  <button class="tab-btn" onclick="switchTab('resale')"><span class="tab-icon">🔄</span> <span id="tab-resale">Resale</span></button>
+  <button class="tab-btn" onclick="switchTab('profile')"><span class="tab-icon">👤</span> <span id="tab-prof">Profile</span></button>
+  <button class="tab-btn" onclick="Cart.toggle()" style="position:relative"><span class="tab-icon">🛒</span><span class="cart-badge" id="cart-badge">0</span><span id="tab-cart">Cart</span></button>
+</div>
+
+<!-- HOME -->
+<div class="page active" id="page-home"><div class="page-inner">
+
+<div class="countdown"><span id="cd-label">⏳ Lebaran 2026</span><span class="countdown-t" id="cd-timer"></span><span id="cd-hint">Order now for delivery before Eid!</span></div>
+
+<!-- BANNER CAROUSEL -->
+<div class="banner-wrap" id="bannerWrap">
+  <div class="banner-track" id="bannerTrack">
+    <div class="banner-slide" onclick="switchTab('discovery')"><div class="banner-content"><div class="banner-title">⚡ Flash Sale Lebaran</div><div class="banner-sub">Up to 60% savings — limited time only!</div><span class="banner-btn">Shop Now →</span></div></div>
+    <div class="banner-slide" onclick="Onboard.open()"><div class="banner-content"><div class="banner-title">🆕 First Time Here?</div><div class="banner-sub">Learn how AceProxy saves you money</div><span class="banner-btn">Take a Tour →</span></div></div>
+    <div class="banner-slide" onclick="switchTab('discovery')"><div class="banner-content"><div class="banner-title">🔍 Smart Sourcing</div><div class="banner-sub">Paste any link — we find the best deal</div><span class="banner-btn">Try Now →</span></div></div>
+  </div>
+  <div class="banner-dots" id="bannerDots"></div>
+</div>
+
+<div class="hero">
+  <div class="hero-tag" id="hero-tag">JAKARTA PREMIUM PILOT</div>
+  <h1 class="hero-title" id="hero-title">Your Global<br>Sourcing Store</h1>
+  <p class="hero-sub" id="hero-sub">Premium products from world-class factories, AI-inspected, vacuum-packed to Jakarta.</p>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="hero-stat-num">10+</div><div class="hero-stat-label" id="st1">Products</div></div>
+    <div class="hero-stat"><div class="hero-stat-num">60%+</div><div class="hero-stat-label" id="st2">Avg Savings</div></div>
+    <div class="hero-stat"><div class="hero-stat-num">7-10D</div><div class="hero-stat-label" id="st3">Delivery</div></div>
+    <div class="hero-stat"><div class="hero-stat-num">AI</div><div class="hero-stat-label" id="st4">Inspected</div></div>
+  </div>
+</div>
+
+<div class="trust-bar">
+  <div class="trust-item"><div class="trust-icon">🔍</div><div class="trust-label">AI Quality</div><div class="trust-value">VisionQC 2.0</div></div>
+  <div class="trust-item"><div class="trust-icon">📦</div><div class="trust-label">Packaging</div><div class="trust-value">Vacuum Sealed</div></div>
+  <div class="trust-item"><div class="trust-icon">💳</div><div class="trust-label">Payment</div><div class="trust-value">Xendit · WorldFirst</div></div>
+  <div class="trust-item"><div class="trust-icon">🚚</div><div class="trust-label">Delivery</div><div class="trust-value">7-10 Days</div></div>
+</div>
+
+<!-- FLASH SALE -->
+<div class="flash-sale" id="flashSale">
+  <div class="flash-header">
+    <div class="flash-title-row"><span class="flash-icon">⚡</span><span class="flash-label">FLASH SALE</span></div>
+    <div class="flash-timer"><span class="flash-timer-block" id="flashH">00</span><span class="flash-timer-sep">:</span><span class="flash-timer-block" id="flashM">00</span><span class="flash-timer-sep">:</span><span class="flash-timer-block" id="flashS">00</span></div>
+    <div class="flash-more" onclick="switchTab('discovery')">More →</div>
+  </div>
+  <div class="flash-items" id="flashItems"></div>
+</div>
+
+<!-- COUPON BAR -->
+<div class="coupon-bar" id="couponBar">
+  <div class="coupon-chip" onclick="Profile.onTab('coupons')"><span class="coupon-chip-amount">5% OFF</span><span class="coupon-chip-desc">First Order</span><span class="coupon-chip-arrow">→</span></div>
+  <div class="coupon-chip" onclick="Profile.onTab('coupons')"><span class="coupon-chip-amount">10K IDR</span><span class="coupon-chip-desc">Min 100K</span><span class="coupon-chip-arrow">→</span></div>
+  <div class="coupon-chip" onclick="Profile.onTab('coupons')"><span class="coupon-chip-amount">FREE SHIP</span><span class="coupon-chip-desc">Jakarta Only</span><span class="coupon-chip-arrow">→</span></div>
+</div>
+
+<div class="sec">
+  <div class="sec-title" id="sec-title">Lebaran 2026 Collection</div>
+  <div class="sec-sub" id="sec-sub">Hand-picked premium items — factory direct to doorstep</div>
+  <div class="controls">
+    
+    <select class="sort-pick" id="sortPicker" onchange="Home.render()">
+      <option value="margin" id="so-margin">Best Value</option><option value="price-lo" id="so-lo">Price ↑</option><option value="price-hi" id="so-hi">Price ↓</option>
+    </select>
+  </div>
+  <div class="controls"><button class="filter-btn" onclick="Category.open()" id="browse-cat">📂 Browse Categories</button></div>
+<div class="controls" id="filterRow"></div>
+  <div class="grid" id="productGrid"></div>
+</div>
+
+  <div class="sec" id="recentSection" style="display:none">
+    <div class="sec-title" id="recent-title">🕐 Recently Viewed</div>
+    <div style="display:flex;gap:10px;overflow-x:auto;padding-bottom:8px" id="recentList"></div>
+  </div>
+
+<div class="promo-bar"><div class="promo-title" id="promo-title">🎉 Lebaran Special</div><div class="promo-desc" id="promo-desc">First order 5% off — use code LEBARAN2026 at checkout</div><div class="promo-code">LEBARAN2026</div></div>
+<div class="sec" style="background:var(--w);border-top:1px solid var(--g100)">
+  <div class="sec-title" id="rev-title">Customer Reviews</div><div class="sec-sub" id="rev-sub">Trusted by Jakarta early adopters</div>
+  <div class="rev-grid" id="revGrid"></div>
+</div>
+<div class="sec"><div class="sec-title" id="faq-title">FAQ</div><div class="faq-grid" id="faqGrid"></div></div>
+
+<div class="why-ace">
+  <div class="why-ace-title" id="why-title">🤔 Why AceProxy?</div>
+  <div class="why-ace-sub" id="why-sub">We're not a regular store — here's the difference</div>
+  <div class="why-grid">
+    <div class="why-card"><div class="why-card-icon">🏭</div><div class="why-card-title" id="why1t">Factory Direct</div><div class="why-card-desc" id="why1d">No middlemen, save 30-60%</div></div>
+    <div class="why-card"><div class="why-card-icon">🔍</div><div class="why-card-title" id="why2t">AI Inspected</div><div class="why-card-desc" id="why2d">VisionQC checks every item</div></div>
+    <div class="why-card"><div class="why-card-icon">📦</div><div class="why-card-title" id="why3t">Vacuum Packed</div><div class="why-card-desc" id="why3d">Save up to 60% on shipping</div></div>
+    <div class="why-card"><div class="why-card-icon">🔄</div><div class="why-card-title" id="why4t">Resale Guarantee</div><div class="why-card-desc" id="why4d">Not satisfied? Resell easily</div></div>
+    <div class="why-card"><div class="why-card-icon">🚚</div><div class="why-card-title" id="why5t">7-10 Day Delivery</div><div class="why-card-desc" id="why5d">Priority logistics to Jakarta</div></div>
+    <div class="why-card"><div class="why-card-icon">💳</div><div class="why-card-title" id="why6t">Secure Payment</div><div class="why-card-desc" id="why6d">Xendit & WorldFirst backed</div></div>
+  </div>
+</div>
+</div></div>
+
+<!-- DISCOVERY (Smart Collection + Trending) -->
+<div class="page" id="page-discovery"><div class="page-inner">
+<div class="sec">
+  <!-- Smart Collection Section -->
+  <div class="smart-collect-section">
+    <div class="smart-collect-title" id="sc-title">🔗 Smart Collection</div>
+    <div class="smart-collect-sub" id="sc-sub">Paste ANY product link from any website. We'll intelligently find matching products, compare prices, and prepare listing for you.</div>
+    <div class="smart-collect-input-wrap">
+      <input type="text" class="smart-collect-input" id="scInput" placeholder="Tempel link produk apapun dari luar negeri... (Amazon, Shopee, Lazada, TikTok Shop, dsb)" onkeydown="if(event.key==='Enter')SmartCollect.search()">
+      <button class="smart-collect-btn" onclick="SmartCollect.search()" id="sc-btn">🔍 Cari Produk Serupa</button>
+    </div>
+    <div class="smart-collect-notice">
+      <div class="sc-notice-icon">📦</div>
+      <div class="sc-notice-text">
+        <div class="sc-notice-title" id="sc-logistics-title">🚚 Logistics Compliance Notice</div>
+        <div class="sc-notice-body" id="sc-logistics-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;font-size:11px">
+            <div style="background:#F0FDF4;border-radius:6px;padding:8px"><div style="font-weight:700;color:#15803D;margin-bottom:4px">✅ Bisa Dikirim</div><div style="color:#166534;line-height:1.4">Fashion & tekstil · Dekorasi rumah · Aksesori · Mainan · Mukena & alat ibadah · Elektronik tanpa baterai · Tas & koper</div></div>
+            <div style="background:#FEF3C7;border-radius:6px;padding:8px"><div style="font-weight:700;color:#B45309;margin-bottom:4px">⚠️ Perlu Penanganan Khusus</div><div style="color:#92400E;line-height:1.4">Powerbank / baterai tanam (+Rp 25-50rb) · Barang pecah belah (+Rp 15-25rb) · Cairan >100ml → jalur laut · Kosmetik & makanan (butuh izin BPOM)</div></div>
+            <div style="background:#FEE2E2;border-radius:6px;padding:8px"><div style="font-weight:700;color:#B91C1C;margin-bottom:4px">🚫 Tidak Bisa Dikirim</div><div style="color:#991B1B;line-height:1.4">Baterai lepas / Li-ion pack · Cairan mudah terbakar · Narkoba & senjata · Hewan hidup · Produk palsu (KW)</div></div>
+          </div>
+          <div style="margin-top:6px;padding:6px 8px;background:#EFF6FF;border-radius:6px;font-size:10px;color:#1E40AF">📋 <strong>Bea Cukai Indonesia:</strong> Nilai ≤ Rp 500.000/paket bebas bea masuk & PPN. Nilai lebih dikenakan bea masuk 7,5% + PPN 11%. Wajib deklarasi nilai yang akurat.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trending Section -->
+  <div style="margin-top:24px">
+    <div class="sec-title" id="disc-title">🔥 Trending Now</div>
+    <div class="sec-sub" id="disc-sub">Hot picks & community favorites in Jakarta</div>
+    <div id="discoveryList"></div>
+  </div>
+  <div class="promo-bar" style="margin:12px 0 0"><div class="promo-title" id="resale-hero-title">🔄 Resale Hub</div><div class="promo-desc" id="resale-hero-desc">Not satisfied? Resell in our community marketplace — earn Ace Credits.</div><button class="resale-hero-btn" onclick="switchTab('resale')" id="resale-hero-btn">Browse Resale →</button></div>
+</div>
+</div></div>
+
+<!-- ASSISTANT -->
+<div class="page" id="page-assistant"><div class="page-inner">
+<div class="sec">
+  <div class="sec-title">🤖 AI Smart Sourcing Assistant</div>
+  <div class="sec-sub" id="asst-sub">Ask me anything — product recommendations, order tracking, payment help</div>
+  <div class="quick-btns" id="quickBtns"></div>
+  <div class="chat-box" id="chatBox"></div>
+  <div class="chat-input-row">
+    <button class="chat-mic" id="chatMic" onclick="Assistant.toggleVoice()" title="Voice input">🎤</button>
+    <input class="chat-input" id="chatInput" placeholder="Type or tap 🎤 to speak..." onkeypress="if(event.key==='Enter')Assistant.send()">
+    <button class="chat-send" onclick="Assistant.send()">➤</button>
+  </div>
+</div>
+</div></div>
+
+<!-- WALLET -->
+<div class="page" id="page-wallet"><div class="page-inner">
+<div class="sec">
+  <div class="w-balance-card">
+    <div class="w-bal-label" id="wal-bal-label">Ace Credits Balance</div>
+    <div class="w-bal-amount" id="wal-balance">Rp 500,000</div>
+    <div class="w-bal-sub" id="wal-sub">Explorer Level · 0.5% cashback active</div>
+  </div>
+  <div class="w-stats-grid">
+    <div class="w-stat"><div class="w-stat-label" id="ws1-label">Total Spend</div><div class="w-stat-val">Rp 12.4M</div></div>
+    <div class="w-stat"><div class="w-stat-label" id="ws2-label">Savings</div><div class="w-stat-val w-stat-green">+Rp 2.8M</div></div>
+    <div class="w-stat"><div class="w-stat-label" id="ws3-label">Pending</div><div class="w-stat-val" style="color:var(--o)">Rp 2.1M</div></div>
+    <div class="w-stat"><div class="w-stat-label" id="ws4-label">Rebates</div><div class="w-stat-val w-stat-green">+Rp 62K</div></div>
+  </div>
+  <div class="sec-title" style="font-size:14px;margin-bottom:8px" id="txn-title">Recent Transactions</div>
+  <div class="txn-list" id="txnList"></div>
+</div>
+</div></div>
+
+<!-- RESALE HUB -->
+<div class="page" id="page-resale"><div class="page-inner">
+<div class="sec">
+  <div class="resale-hero">
+    <div class="resale-hero-icon">🔄</div>
+    <div class="resale-hero-title">Ace Resale Hub</div>
+    <div class="resale-hero-desc">Turn unwanted items into Ace Credits. List in seconds, earn rewards, help the community.</div>
+    <button class="resale-hero-btn" onclick="alert('Listing feature coming soon! Chat us on WhatsApp to list your items.')" id="resale-hero-btn2">📸 List an Item</button>
+  </div>
+  <div class="sec-title" style="font-size:14px">Available Now</div>
+  <div class="sec-sub">Items being resold by our Jakarta community</div>
+  <div class="resale-grid" id="resaleGrid"></div>
+</div>
+</div>
+</div></div>
+
+<!-- PROFILE -->
+<div class="page" id="page-profile"><div class="page-inner">
+<div class="sec">
+  <div class="profile-top">
+    <div class="profile-avatar">A</div>
+    <div class="profile-name" id="prof-name">AceProxy User</div>
+    <div class="profile-level" id="prof-level">🧭 Explorer</div>
+    <div class="progress-bar"><div class="progress-fill" style="width:25%"></div></div>
+    <div class="progress-text" id="prof-progress">Rp 12.4M / Rp 50M to Elite</div>
+  </div>
+  <div class="quick-stats">
+    <div class="qs-item" onclick="Profile.switchSection('wallet')"><div class="qs-icon">💰</div><div class="qs-num">Rp 500K</div><div class="qs-label" id="qs1">Credits</div></div>
+    <div class="qs-item" onclick="switchTab('profile');Profile.switchSection('orders')"><div class="qs-icon">📦</div><div class="qs-num" id="qs2-num">3</div><div class="qs-label" id="qs2">Orders</div></div>
+    <div class="qs-item" onclick="switchTab('profile');Profile.switchSection('coupons')"><div class="qs-icon">🎫</div><div class="qs-num" id="qs3-num">2</div><div class="qs-label" id="qs3">Coupons</div></div>
+    <div class="qs-item" onclick="switchTab('profile');Profile.switchSection('favorites')"><div class="qs-icon">❤️</div><div class="qs-num" id="qs4-num">0</div><div class="qs-label" id="qs4">Favorites</div></div>
+  </div>
+
+  <div style="background:var(--w);border-radius:12px;border:1px solid var(--g100);overflow:hidden;margin-bottom:16px">
+    <div class="settings-item" onclick="Profile.switchSection('wallet')" style="padding:14px 16px">
+      <div class="settings-item-icon">💰</div>
+      <div class="settings-item-info"><div class="settings-item-label" id="pm-wallet">My Wallet</div></div>
+      <span class="settings-item-arrow">›</span>
+    </div>
+    <div class="settings-item" onclick="switchTab('resale')" style="padding:14px 16px;border-top:1px solid var(--g50)">
+      <div class="settings-item-icon">🔄</div>
+      <div class="settings-item-info"><div class="settings-item-label" id="pm-resale">Resale Hub</div></div>
+      <span class="settings-item-arrow">›</span>
+    </div>
+    <div class="settings-item" onclick="Settings.open()" style="padding:14px 16px;border-top:1px solid var(--g50)">
+      <div class="settings-item-icon">⚙️</div>
+      <div class="settings-item-info"><div class="settings-item-label" id="pm-settings">Settings</div></div>
+      <span class="settings-item-arrow">›</span>
+    </div>
+    <div class="settings-item" onclick="Help.open()" style="padding:14px 16px;border-top:1px solid var(--g50)">
+      <div class="settings-item-icon">❓</div>
+      <div class="settings-item-info"><div class="settings-item-label" id="pm-help">Help Center</div></div>
+      <span class="settings-item-arrow">›</span>
+    </div>
+  </div>
+  <div class="profile-section-tabs">
+    <button class="ps-tab active" onclick="Profile.switchSection('orders')" id="ps-orders">📦 <span id="ps-orders-label">Orders</span></button>
+    <button class="ps-tab" onclick="Profile.switchSection('coupons')" id="ps-coupons">🎫 <span id="ps-coupons-label">Coupons</span></button>
+    <button class="ps-tab" onclick="Profile.switchSection('favorites')" id="ps-favorites">❤️ <span id="ps-favorites-label">Favorites</span></button>
+    <button class="ps-tab" onclick="Profile.switchSection('wallet')" id="ps-wallet">💰 <span id="ps-wallet-label">Wallet</span></button>
+  </div>
+  <div id="ps-orders-section">
+    <div class="order-tabs">
+      <button class="otab active" onclick="Profile.filterOrders('ALL')" id="otab-all">All</button>
+      <button class="otab" onclick="Profile.filterOrders('PAID')" id="otab-paid">Paid</button>
+      <button class="otab" onclick="Profile.filterOrders('SHIPPED')" id="otab-ship">Shipping</button>
+      <button class="otab" onclick="Profile.filterOrders('DELIVERED')" id="otab-done">Delivered</button>
+    </div>
+    <div id="orderList"></div>
+  </div>
+  <div id="ps-coupons-section" style="display:none"><div id="couponList"></div></div>
+  <div id="ps-favorites-section" style="display:none"><div id="favList"></div></div>
+  
+  <div id="ps-wallet-section" style="display:none">
+    <div class="w-balance-card">
+      <div class="w-bal-label" id="w-bal-label">Available Balance</div>
+      <div class="w-bal-amount">Rp 500,000</div>
+      <div class="w-bal-sub" id="w-bal-sub">≈ $31.25 USD</div>
+    </div>
+    <div class="w-stats-grid">
+      <div class="w-stat"><div class="w-stat-label" id="w-stat-in">Total In</div><div class="w-stat-val w-stat-green">Rp 2.1M</div></div>
+      <div class="w-stat"><div class="w-stat-label" id="w-stat-out">Total Out</div><div class="w-stat-val w-stat-red">Rp 1.6M</div></div>
+      <div class="w-stat"><div class="w-stat-label" id="w-stat-pending">Pending</div><div class="w-stat-val">Rp 0</div></div>
+      <div class="w-stat"><div class="w-stat-label" id="w-stat-credits">Ace Credits</div><div class="w-stat-val w-stat-green">150</div></div>
+    </div>
+    <div class="txn-list" id="txnList"></div>
+  </div>
+  <button style="width:100%;padding:12px;margin-top:12px;border-radius:10px;background:var(--w);border:1px solid var(--g300);font-weight:700;cursor:pointer;font-size:12px" onclick="Lang.cycle()" id="lang-btn">🌐 Switch Language</button>
+</div>
+</div>
+
+<!-- ONBOARDING -->
+<div class="onboard-overlay" id="onboardOverlay" onclick="Onboard.close()">
+  <div class="onboard-modal" onclick="event.stopPropagation()">
+    <button class="onboard-close" onclick="Onboard.close()">✕</button>
+    <div class="onboard-logo"><span>ACEPROXY</span></div>
+    <div class="onboard-title" id="onb-title">Not your average online store</div>
+    <div class="onboard-sub" id="onb-sub">We're a cross-border sourcing platform — here's why that matters.</div>
+    <div class="onboard-features">
+      <div class="onboard-feat">
+        <div class="onboard-feat-icon">🏭</div>
+        <div class="onboard-feat-info">
+          <div class="onboard-feat-title" id="onb-f1t">Factory-Direct Pricing</div>
+          <div class="onboard-feat-desc" id="onb-f1d">We source directly from premium manufacturers. No middlemen, no retail markup — save 30-60% vs local stores.</div>
+        </div>
+      </div>
+      <div class="onboard-feat">
+        <div class="onboard-feat-icon">🔍</div>
+        <div class="onboard-feat-info">
+          <div class="onboard-feat-title" id="onb-f2t">AI Quality Inspection</div>
+          <div class="onboard-feat-desc" id="onb-f2d">Every item passes VisionQC 2.0 AI inspection before shipping. Color, stitching, specs — all verified.</div>
+        </div>
+      </div>
+      <div class="onboard-feat">
+        <div class="onboard-feat-icon">📦</div>
+        <div class="onboard-feat-info">
+          <div class="onboard-feat-title" id="onb-f3t">Vacuum-Sealed Packaging</div>
+          <div class="onboard-feat-desc" id="onb-f3d">We compress items by up to 60% volume — saving you shipping costs. Every order is trackable.</div>
+        </div>
+      </div>
+      <div class="onboard-feat">
+        <div class="onboard-feat-icon">⚠️</div>
+        <div class="onboard-feat-info">
+          <div class="onboard-feat-title" id="onb-f4t">No Returns — Here's Why</div>
+          <div class="onboard-feat-desc" id="onb-f4d">As a proxy buying service, we purchase items specifically for you. Can't return? Use our Resale Hub to earn Ace Credits instead.</div>
+        </div>
+      </div>
+      <div class="onboard-feat">
+        <div class="onboard-feat-icon">🚚</div>
+        <div class="onboard-feat-info">
+          <div class="onboard-feat-title" id="onb-f5t">Delivery: 7-10 Days to Jakarta</div>
+          <div class="onboard-feat-desc" id="onb-f5d">Orders are consolidated, vacuum-packed, and shipped via priority logistics. Full tracking from factory to your door.</div>
+        </div>
+      </div>
+    </div>
+    <button class="onboard-cta" onclick="Onboard.close()" id="onb-cta">Got it — Start Shopping!</button>
+    <div class="onboard-skip" onclick="Onboard.close()" id="onb-skip">Skip introduction</div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="prodModal" onclick="Modal.close()"><div class="modal" id="prodModalContent" onclick="event.stopPropagation()"></div></div>
+<div class="cart-overlay" id="cartOverlay" onclick="Cart.toggle()"></div>
+<div class="cart-panel" id="cartPanel">
+  <div class="cart-hdr"><span id="cart-title">Cart</span><button onclick="Cart.toggle()" style="background:none;border:none;font-size:18px;cursor:pointer">✕</button></div>
+  <div class="cart-list" id="cartList"><div class="cart-empty" id="cart-empty">Your cart is empty</div></div>
+  <div class="cart-footer"><div class="cart-total" id="cart-total-label">Total: <span id="cartTotal">Rp 0</span></div><button class="cart-checkout" onclick="Cart.checkout()" id="cart-checkout">Secure Checkout</button></div>
+</div>
+<div class="apk-overlay" id="apkOverlay" onclick="ApkModal.close()">
+  <div class="apk-modal" onclick="event.stopPropagation()">
+    <button class="apk-close" onclick="ApkModal.close()">✕</button>
+    <div class="apk-icon">📱</div><div class="apk-title" id="apk-title">Get the AceProxy App</div>
+    <div class="apk-sub" id="apk-sub">AI Assistant · Order Tracking · GoPay / OVO / DANA</div>
+    <div class="apk-features">
+      <div class="apk-feat">🛍 <span id="apk-f1">Browse curated premium products</span></div>
+      <div class="apk-feat">🤖 <span id="apk-f2">AI Smart Assistant chat</span></div>
+      <div class="apk-feat">📦 <span id="apk-f3">Real-time order tracking</span></div>
+      <div class="apk-feat">💳 <span id="apk-f4">Pay with GoPay, OVO, DANA & more</span></div>
+    </div>
+    <div class="apk-qr-row"><img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https://aceproxy.app" class="apk-qr"><div style="text-align:left"><div style="font-weight:700;font-size:11px">Scan to download</div><div style="font-size:10px;color:var(--g500)">Or use button below</div></div></div>
+    <a href="#" class="apk-dl" onclick="event.preventDefault();alert('APK coming soon! Chat us on WhatsApp for early access.')">⬇ Download APK</a>
+  </div>
+</div>
+<a href="https://wa.me/6281234567890" target="_blank" class="wabtn">💬</a>
+
+<!-- CHECKOUT PAGE -->
+<div class="page" id="page-checkout"><div class="page-inner"><div class="co-page">
+  <div class="co-title">🛍️ Secure Checkout</div>
+
+  <div class="co-section"><h3>📍 Delivery Address</h3>
+    <input class="co-input" placeholder="Full Name *" id="co-name">
+    <input class="co-input" placeholder="Phone Number (e.g. +62 812-3456-7890) *" id="co-phone">
+    <input class="co-input" placeholder="Street Address *" id="co-addr">
+    <div class="co-row"><input class="co-input" placeholder="City / Kabupaten *" id="co-city"><input class="co-input" placeholder="Postal Code" id="co-postal"></div>
+    <select class="co-input" id="co-province"><option value="">Select Province</option><option>DKI Jakarta</option><option>Jawa Barat</option><option>Jawa Tengah</option><option>Jawa Timur</option><option>Banten</option><option>Bali</option></select>
+    <input class="co-input" placeholder="Delivery Notes (optional)" id="co-note">
+  </div>
+
+  <div class="co-section"><h3>💳 Payment Method</h3>
+    <div class="co-payment" id="co-payment">
+      <div class="co-pay-opt active" onclick="SelectPayment(this,'GoPay')">GoPay</div>
+      <div class="co-pay-opt" onclick="SelectPayment(this,'OVO')">OVO</div>
+      <div class="co-pay-opt" onclick="SelectPayment(this,'DANA')">DANA</div>
+      <div class="co-pay-opt" onclick="SelectPayment(this,'BCA')">BCA Virtual Account</div>
+      <div class="co-pay-opt" onclick="SelectPayment(this,'Mandiri')">Mandiri VA</div>
+      <div class="co-pay-opt" onclick="SelectPayment(this,'BNI')">BNI VA</div>
+    </div>
+  </div>
+
+  <div class="co-section"><h3>📋 Order Summary</h3>
+    <div class="co-summary" id="co-summary">
+      <div id="co-items"></div>
+      <div class="co-sum-line"><span>Promo Code</span><span style="color:var(--g)">LEBARAN2026 (-5%)</span></div>
+      <div class="co-sum-line"><span>Shipping (YunTu Express, 7-9 days)</span><span id="co-ship">Rp 65,000</span></div>
+      <div class="co-sum-total"><span>Total</span><span id="co-total">Rp 0</span></div>
+    </div>
+    <button class="co-submit" onclick="PlaceOrder()">🔒 Place Order — <span id="co-submit-amount">Rp 0</span></button>
+    <div style="text-align:center;margin-top:12px;font-size:11px;color:var(--g500)">🔒 Secured by Xendit · PCI DSS Compliant</div>
+  </div>
+</div></div></div>
+
+<!-- REFUND POLICY PAGE -->
+<div class="page" id="page-refund"><div class="page-inner"><div class="policy-page">
+  <div class="lang-tabs">
+    <button class="policy-lang-btn active" onclick="RefundPolicy.switchLang('ID')">🇮🇩 Bahasa Indonesia</button>
+    <button class="policy-lang-btn" onclick="RefundPolicy.switchLang('EN')">🇬🇧 English</button>
+  </div>
+  <div id="refund-content-id">
+    <h2>📋 Kebijakan Pengembalian & Pengembalian Dana</h2>
+    <p><em>Diberlakukan per 1 Juni 2026</em></p>
+
+    <h3>1. Layanan Jasa Titip (Proxy Service)</h3>
+    <p>AceProxy adalah <strong>layanan jasa titip internasional</strong>. Kami membeli barang sesuai instruksi Anda dari pemasok di Tiongkok, menggabungkan pesanan di gudang Shenzhen, dan mengirimkannya ke alamat Anda di Indonesia.</p>
+
+    <h3>2. Kebijakan Non-Pengembalian</h3>
+    <p>Karena sifat layanan jasa titip, <strong>barang yang dibeli melalui AceProxy tidak dapat ditukar atau dikembalikan</strong>. Setiap pembelian bersifat final. Kami tidak menyimpan inventaris — setiap pesanan dibeli secara spesifik untuk Anda.</p>
+
+    <h3>3. Jaminan Kerusakan</h3>
+    <p>Jika barang tiba dalam kondisi <strong>rusak saat pengiriman</strong>, kami akan:</p>
+    <ul>
+      <li>Meminta foto kemasan dan barang yang rusak</li>
+      <li>Mengajukan klaim ke jasa pengiriman (YunTu Express)</li>
+      <li>Memberikan kompensasi hingga <strong>100% nilai barang</strong> (maks Rp 2.000.000 per pesanan)</li>
+    </ul>
+
+    <h3>4. Barang Tidak Sesuai</h3>
+    <p>Jika barang yang diterima <strong>berbeda secara signifikan</strong> dari deskripsi pesanan (warna salah, ukuran salah, model berbeda):</p>
+    <ul>
+      <li>Hubungi kami dalam <strong>24 jam</strong> setelah menerima</li>
+      <li>Kirim foto perbandingan</li>
+      <li>Kami akan mengajukan klaim ke pemasok dan memberikan kredit Ace</li>
+    </ul>
+
+    <h3>5. Batas Waktu Klaim</h3>
+    <p>Semua klaim harus diajukan dalam <strong>7 hari</strong> setelah tanggal pengiriman. Klaim di luar periode ini tidak dapat diproses.</p>
+
+    <h3>6. Pengembalian Dana</h3>
+    <p>Pengembalian dana diproses dalam <strong>3-7 hari kerja</strong> melalui metode pembayaran asli. Biaya administrasi Rp 15.000 berlaku untuk setiap pengembalian dana.</p>
+
+    <h3>7. Hubungi Kami</h3>
+    <p>📧 <strong>hello@aceproxy.id</strong><br>📱 WhatsApp: <strong>+62 812-3456-7890</strong><br>🕐 Jam operasional: Senin-Jumat, 09:00-18:00 WIB</p>
+  </div>
+  <div id="refund-content-en" style="display:none">
+    <h2>📋 Returns & Refund Policy</h2>
+    <p><em>Effective June 1, 2026</em></p>
+
+    <h3>1. Proxy Buying Service</h3>
+    <p>AceProxy is an <strong>international proxy buying service</strong>. We purchase items on your behalf from Chinese suppliers, consolidate at our Shenzhen warehouse, and ship to your Indonesian address.</p>
+
+    <h3>2. No-Return Policy</h3>
+    <p>Due to the nature of proxy buying, <strong>items purchased through AceProxy cannot be returned or exchanged</strong>. All sales are final. We hold no inventory — every order is bought specifically for you.</p>
+
+    <h3>3. Damage Guarantee</h3>
+    <p>If items arrive <strong>damaged during shipping</strong>, we will file a claim with the carrier (YunTu Express) and provide compensation up to <strong>100% of item value</strong> (max Rp 2,000,000 per order).</p>
+
+    <h3>4. Significantly Different Items</h3>
+    <p>If you receive an item that is <strong>materially different</strong> from the description: contact us within <strong>24 hours</strong>, send comparison photos, and we'll file a supplier claim and issue Ace Credits.</p>
+
+    <h3>5. Claim Window</h3>
+    <p>All claims must be submitted within <strong>7 days</strong> of delivery. Claims outside this window cannot be processed.</p>
+
+    <h3>6. Refund Processing</h3>
+    <p>Refunds are processed within <strong>3-7 business days</strong> via the original payment method. A Rp 15,000 admin fee applies.</p>
+
+    <h3>7. Contact Us</h3>
+    <p>📧 <strong>hello@aceproxy.id</strong><br>📱 WhatsApp: <strong>+62 812-3456-7890</strong><br>🕐 Hours: Mon-Fri, 09:00-18:00 WIB</p>
+  </div>
+</div></div></div>
+
+<div class="footer">
+  <div class="footer-grid">
+    <div class="ft"><div class="ft-title">About AceProxy</div><p>Premium cross-border proxy buying. Source→Inspect→Deliver from China to Indonesia.</p></div>
+    <div class="ft"><div class="ft-title">Quick Links</div><a href="#" onclick="switchTab('home')">Shop</a><a href="#" onclick="switchTab('refund')">Returns & Refund Policy</a><a href="#" onclick="switchTab('assistant')">AI Assistant</a></div>
+    <div class="ft"><div class="ft-title">Contact</div><p>📱 WA +62 812-3456-7890</p><p>📧 hello@aceproxy.id</p></div>
+    <div class="ft"><div class="ft-title">Partners</div><p>YunTu Express</p><p>Xendit — Payments</p></div>
+  </div>
+  <div class="ft-bottom"><span>PT AceProxy Global Indonesia</span><span>© 2026 · hello@aceproxy.id</span></div>
+</div>
+
+<script>
+// API_BASE — 部署时自动检测或手动配置
+// 本地开发: http://localhost:3001/api/v1
+// 生产部署: 替换为你的后端 URL
+const API_BASE = (()=>{
+  const host = typeof location !== 'undefined' ? location.hostname : '';
+  if (host==='localhost' || host==='127.0.0.1') return 'http://localhost:3001/api/v1';
+  // 生产环境: 设置你的后端 URL
+  // 例如: return 'https://api.aceproxy.id/api/v1';
+  /* AUTO-DETECT: 同域部署时自动推断 */
+  return location.protocol + '//' + host.replace(':443','').replace(':8443','') + ':3001/api/v1';
+})();
+const P=[{id:"EID-JKT-001",name:"Premium Silk Hijab",cat:"Fashion",cost:12,price:99000,arb:.60,color:"#FCE7F3",badge:"hot",rating:4.8,rv:23,desc:"Luxurious silk hijab in emerald green. Lightweight, breathable. Perfect for Lebaran."},{id:"EID-JKT-002",name:"Travel Mukena Pro",cat:"Travel",cost:45,price:280000,arb:.75,color:"#E0F2FE",badge:"best",rating:4.9,rv:47,desc:"Compact travel prayer set with sajadah pouch. Water-resistant, dries in minutes."},{id:"EID-JKT-003",name:"Smart Zikr Ring Gen2",cat:"Electronics",cost:85,price:450000,arb:.10,color:"#F1F5F9",badge:"new",rating:4.3,rv:8,desc:"Bluetooth Zikr counter ring. USB-C charging, 7-day battery."},{id:"EID-JKT-004",name:"3D LED Islamic Decor",cat:"Home",cost:15,price:150000,arb:.30,color:"#FEF3C7",badge:"hot",rating:4.6,rv:31,desc:"3D LED wall decor with Islamic patterns. 16 colors, remote, timer."},{id:"EID-JKT-005",name:"Luxury Gift Set",cat:"Gifts",cost:35,price:220000,arb:.20,color:"#FCE7F3",badge:"",rating:4.5,rv:15,desc:"Premium Lebaran gift box: dates, cookies, decorative packaging."},{id:"EID-JKT-006",name:"Modern Baju Koko",cat:"Fashion",cost:55,price:320000,arb:.50,color:"#E8F5E9",badge:"best",rating:4.7,rv:52,desc:"Embroidered Baju Koko, cotton blend. 5 colors, contemporary slim fit."},{id:"EID-JKT-007",name:"Geometric Prayer Mat",cat:"Home",cost:28,price:150000,arb:.65,color:"#FFF7ED",badge:"hot",rating:4.8,rv:38,desc:"Thick cushioned prayer mat. Non-slip, foldable, velvet top."},{id:"EID-JKT-008",name:"Minimalist Cookie Jar",cat:"Home",cost:18,price:120000,arb:.20,color:"#F3E8FF",badge:"",rating:4.4,rv:9,desc:"Airtight ceramic jar, Nordic design. Dishwasher safe, 2L."},{id:"EID-JKT-009",name:"Hakoba Eyelet Dress",cat:"Fashion",cost:85,price:420000,arb:.40,color:"#FCE4EC",badge:"new",rating:4.9,rv:19,desc:"Elegant eyelet embroidery dress. Premium cotton, knee-length."},{id:"EID-JKT-010",name:"Solar Arabic Lantern",cat:"Home",cost:18,price:95000,arb:.35,color:"#FFF8E1",badge:"",rating:4.5,rv:26,desc:"Solar-powered lantern. Auto on at dusk. Weatherproof."}];
+const CATS=['ALL'],CI={};
+const CAT_COLORS={smartphones:'#E8F4FD',skincare:'#FCE7F3',fashion:'#E0F2FE',electronics:'#F1F5F9',home:'#FEF3C7',muslimwear:'#E8F5E9',baby:'#F3E8FF',food:'#FFF8E1',sports:'#DCFCE7',accessories:'#FCE4EC',beauty:'#FDF2F8',health:'#F0FDF4',stationery:'#FFF7ED'};
+const CAT_EMOJI={smartphones:'📱',skincare:'🧴',fashion:'👗',electronics:'⌚',home:'🏠',muslimwear:'🧕',baby:'🍼',food:'🍪',sports:'⚽',accessories:'💍',beauty:'💄',health:'💊',stationery:'✏️'};
+// Fetch real products from backend API (falls back to mock above)
+async function fetchProducts(){
+  try{
+    const r=await fetch(API_BASE+'/product/list?limit=200');
+    const j=await r.json();
+    if(!j.data||!j.data.items)return;
+    const cats=new Set();
+    P=j.data.items.map(p=>{
+      const cat=p.category||'Other';cats.add(cat);
+      const costIdr=(p.costCny||0)*2200;
+      const arb=costIdr>0?Math.max(.05,Math.min(.80,(p.priceIdr-costIdr)/costIdr)):.30;
+      return{id:p.id,name:p.name,cat,price:p.priceIdr,cost:p.costCny||0,arb:Math.round(arb*100)/100,color:CAT_COLORS[cat]||'#F1F5F9',badge:arb>.45?'best':(p.ratingAvg>=4.7?'hot':''),rating:p.ratingAvg||0,rv:p.reviewCount||0,desc:p.description||'',img:Array.isArray(p.images)?p.images[0]:null};
+    CATS.length=0;CATS.push('ALL',...cats);
+    cats.forEach(c=>{CI[c]=CAT_EMOJI[c]||'📦'});
+    const stat=document.querySelector('.hero-stat-num');if(stat)stat.textContent=P.length+'+';
+    Home.render();Discovery.render();
+    FlashSale.renderItems();
+    Banner.init();
+  }catch(e){console.error('[fetchProducts]',e)}
+}
+const L={
+EN:{"top-text":"Download AceProxy App -- faster sourcing","tab-home":"Home","tab-disc":"Discovery","tab-asst":"Assistant","tab-wallet":"Wallet","tab-resale":"Resale","tab-prof":"Profile","tab-cart":"Cart","cd-label":"⏳ Lebaran 2026","cd-hint":"Order now for delivery before Eid!","hero-tag":"JAKARTA PREMIUM PILOT","hero-title":"Your Global<br>Sourcing Store","hero-sub":"Premium products from world-class factories, AI-inspected, vacuum-packed to Jakarta.","st1":"Products","st2":"Avg Savings","st3":"Delivery","st4":"Inspected","sec-title":"Lebaran 2026 Collection","sec-sub":"Hand-picked premium items -- factory direct to doorstep","so-margin":"Best Value","so-lo":"Price ↑","so-hi":"Price ↓","promo-title":"🎉 Lebaran Special","promo-desc":"First order 5% off -- use code LEBARAN2026 at checkout","rev-title":"Customer Reviews","rev-sub":"Trusted by Jakarta early adopters","faq-title":"FAQ","all":"ALL","disc-title":"🔥 Trending Now","disc-sub":"Hot picks & community favorites in Jakarta","resale-hero-title":"🔄 Resale Hub","resale-hero-desc":"Not satisfied? Resell in our community marketplace -- earn Ace Credits.","resale-hero-btn":"Browse Resale →","resale-hero-btn2":"📸 List an Item","sc-title":"Smart Collection","sc-sub":"Paste ANY product link from any website. We'll intelligently find matching products, compare prices, and prepare listing for you.","sc-btn":"Find Matching Products","sc-logistics-title":"Logistics Compliance Notice","sc-logistics-body":"<div><strong>✅ Can Ship:</strong> Clothing, home goods, electronics (no battery), accessories, gifts, prayer items.</div><div><strong>⚠️ Extra Shipping Cost:</strong> Oversized items, fragile goods (glass/ceramic), liquid cosmetics (≤100ml only).</div><div><strong>🚫 Cannot Ship:</strong> Batteries (loose), flammable liquids, drugs, weapons, fresh food, live animals.</div>","sc-results-title":"Matching Products Found","asst-sub":"Ask me anything -- product recommendations, order tracking, payment help","wal-bal-label":"Ace Credits Balance","wal-balance":"Rp 500,000","wal-sub":"Explorer Level · 0.5% cashback active","ws1-label":"Total Spend","ws2-label":"Savings","ws3-label":"Pending","ws4-label":"Rebates","txn-title":"Recent Transactions","prof-name":"AceProxy User","prof-level":"🧭 Explorer","prof-progress":"Rp 12.4M / Rp 50M to Elite","qs1":"Credits","qs2":"Orders","qs3":"Coupons","qs4":"Favorites","otab-all":"All","otab-paid":"Paid","otab-ship":"Shipping","otab-done":"Delivered","lang-btn":"🌐 Switch Language","cart-title":"Cart","cart-empty":"Your cart is empty","cart-total-label":"Total: ","cart-checkout":"Secure Checkout","apk-title":"Get the AceProxy App","apk-sub":"AI Assistant · Order Tracking · GoPay / OVO / DANA","apk-f1":"Browse curated premium products","apk-f2":"AI Smart Assistant chat","apk-f3":"Real-time order tracking","apk-f4":"Pay with GoPay, OVO, DANA & more","add_cart":"Add to Cart","in_cart":"In Cart ✓","margin_gain":"Savings","cost_label":"Factory Cost","quick_view":"Tap for details →","q1":"Product Recommendations","q2":"Check My Order","q3":"Payment Help","q4":"Best Value Picks","why-title":"🤔 Why AceProxy?","why-sub":"We're not a regular store -- here's the difference","why1t":"Factory Direct","why1d":"No middlemen, save 30-60%","why2t":"AI Inspected","why2d":"VisionQC checks every item","why3t":"Vacuum Packed","why3d":"Save up to 60% on shipping","why4t":"Resale Guarantee","why4d":"Not satisfied? Resell easily","why5t":"7-10 Day Delivery","why5d":"Priority logistics to Jakarta","why6t":"Secure Payment","why6d":"Xendit & WorldFirst backed","onb-title":"Not your average online store","onb-sub":"We're a cross-border sourcing platform -- here's why.","onb-f1t":"Factory-Direct Pricing","onb-f1d":"We source from premium manufacturers. No middlemen, no markup -- save 30-60% vs local stores.","onb-f2t":"AI Quality Inspection","onb-f2d":"Every item passes VisionQC 2.0 AI before shipping. Color, stitching, specs -- all verified.","onb-f3t":"Vacuum-Sealed Packaging","onb-f3d":"Items compressed up to 60% -- saving shipping costs. Full tracking factory to door.","onb-f4t":"No Returns -- Here's Why","onb-f4d":"As a proxy buying service, items are purchased for you. Use our Resale Hub to earn Ace Credits.","onb-f5t":"7-10 Day Delivery to Jakarta","onb-f5d":"Orders consolidated, vacuum-packed, shipped via priority logistics with tracking.","onb-cta":"Got it -- Start Shopping!","onb-skip":"Skip introduction","no-orders":"No orders yet","no-orders-desc":"Your orders will appear here after checkout.","no-favs":"No favorites yet","no-favs-desc":"Tap ♡ on any product to save it here.","no-coupons":"No coupons available","no-coupons-desc":"Coupons will appear here when available.","used-coupons":"Used Coupons","used":"Used","expires":"Expires","tap-copy":"Tap to copy","coupon-copied":"Coupon code copied","added-cart":"Added to cart","cart-empty-checkout":"Your cart is empty!","fav-added":"Added to favorites","fav-removed":"Removed from favorites","checkout-title":"🛒 Order Summary","checkout-subtotal":"Subtotal","checkout-promo":"Promo","checkout-discount":"Discount","checkout-total":"Total","checkout-secure":"✅ Secure Payment via Xendit & WorldFirst","order-detail":"Order Detail","order-id":"Order ID","product-label":"Product","price":"Price","status-label":"Status","date-label":"Date","order-track-hint":"📦 Track your order via the AI Assistant.","os-paid":"Paid","os-shipped":"Shipping","os-pending":"Pending","os-delivered":"Delivered","sourcing-title":"Smart Sourcing","sourcing-sub":"Paste any product link from 1688, Taobao, JD, Amazon, Shopee... We'll find the same item and list it for you.","sourcing-btn":"Find Same Item","sourcing-result-title":"Same Item Search Results","sourcing-matches-title":"Found matches from Chinese suppliers","sourcing-list-btn":"Quick List","listing-title":"Quick Listing in Progress","listing-sub":"AI is processing your product...","listing-step-1":"Analyzing product info...","listing-step-2":"Calculating price & margin...","listing-step-3":"Estimating logistics & delivery...","listing-step-4":"AI quality inspection...","listing-step-5":"Finalizing listing...","listing-complete":"Listing Complete!","listing-complete-sub":"Your product is now live on Resale Hub.","listing-success":"Product listed successfully!","ps-wallet-label":"Wallet"},
+ID:{"top-text":"Unduh Aplikasi AceProxy","tab-home":"Beranda","tab-disc":"Jelajah","tab-asst":"Asisten","tab-wallet":"Dompet","tab-resale":"Jual Lagi","tab-prof":"Profil","tab-cart":"Keranjang","cd-label":"⏳ Lebaran 2026","cd-hint":"Pesan sekarang untuk pengiriman sebelum Lebaran!","hero-tag":"PILOT PREMIUM JAKARTA","hero-title":"Toko Sourcing<br>Global Anda","hero-sub":"Produk premium dari pabrik kelas dunia, inspeksi AI, kemasan vakum ke Jakarta.","st1":"Produk","st2":"Hemat Rata2","st3":"Pengiriman","st4":"Inspeksi","sec-title":"Koleksi Lebaran 2026","sec-sub":"Barang premium pilihan -- pabrik langsung ke pintu Anda","so-margin":"Nilai Terbaik","so-lo":"Harga ↑","so-hi":"Harga ↓","promo-title":"🎉 Spesial Lebaran","promo-desc":"Pembeli pertama diskon 5% -- gunakan kode LEBARAN2026","rev-title":"Ulasan Pelanggan","rev-sub":"Dipercaya pengguna awal Jakarta","faq-title":"FAQ","all":"SEMUA","disc-title":"🔥 Tren Sekarang","disc-sub":"Pilihan populer & favorit komunitas","resale-hero-title":"🔄 Resale Hub","resale-hero-desc":"Tidak puas? Jual kembali di marketplace komunitas kami -- dapatkan Ace Credits.","resale-hero-btn":"Jelajahi Resale →","resale-hero-btn2":"📸 Jual Barang","sc-title":"Smart Collection","sc-sub":"Tempel TAUUTA link produk dari website manapun. Kami akan menemukan produk yang cocok, bandingkan harga, dan siapkan listing untuk Anda.","sc-btn":"Cari Produk Serupa","sc-logistics-title":"Pemberitahuan Kepatuhan Logistik","sc-logistics-body":"<div><strong>✅ Bisa Dikirim:</strong> Pakaian, barang rumah, elektronik (tanpa baterai), aksesoris, hadiah, barang ibadah.</div><div><strong>⚠️ Biaya Tambahan:</strong> Barang berukuran besar, barang rapuh (kaca/keramik), kosmetik cair (≤100ml saja).</div><div><strong>🚫 Tidak Bisa Dikirim:</strong> Baterai (lepas), cairan mudah terbakar, narkoba, senjata, makanan segar, hewan hidup.</div>","sc-results-title":"Produk Serupa Ditemukan","asst-sub":"Tanya apa saja -- rekomendasi produk, lacak pesanan, bantuan pembayaran","wal-bal-label":"Saldo Ace Credits","wal-balance":"Rp 500.000","wal-sub":"Level Explorer · 0.5% cashback aktif","ws1-label":"Total Belanja","ws2-label":"Penghematan","ws3-label":"Tertunda","ws4-label":"Rebate","txn-title":"Transaksi Terbaru","prof-name":"Pengguna AceProxy","prof-level":"🧭 Explorer","prof-progress":"Rp 12.4Jt / Rp 50Jt ke Elite","qs1":"Kredit","qs2":"Pesanan","qs3":"Kupon","qs4":"Favorit","otab-all":"Semua","otab-paid":"Dibayar","otab-ship":"Dikirim","otab-done":"Selesai","lang-btn":"🌐 Ganti Bahasa","cart-title":"Keranjang","cart-empty":"Keranjang kosong","cart-total-label":"Total: ","cart-checkout":"Checkout Aman","add_cart":"Tambah","in_cart":"Di Keranjang ✓","margin_gain":"Hemat","cost_label":"Harga Pabrik","quick_view":"Tap untuk detail →","q1":"Rekomendasi Produk","q2":"Cek Pesanan Saya","q3":"Bantuan Pembayaran","q4":"Pilihan Terbaik","why-title":"🤔 Kenapa AceProxy?","why-sub":"Bukan toko biasa -- ini bedanya","why1t":"Langsung Pabrik","why1d":"Tanpa perantara, hemat 30-60%","why2t":"Inspeksi AI","why2d":"VisionQC cek setiap barang","why3t":"Kemasan Vakum","why3d":"Hemat ongkir hingga 60%","why4t":"Jaminan Jual Lagi","why4d":"Tidak puas? Jual dengan mudah","why5t":"Pengiriman 7-10 Hari","why5d":"Logistik prioritas ke Jakarta","why6t":"Pembayaran Aman","why6d":"Didukung Xendit & WorldFirst","onb-title":"Bukan toko online biasa","onb-sub":"Kami platform sourcing lintas batas -- inilah alasannya.","onb-f1t":"Harga Langsung Pabrik","onb-f1d":"Kami sourcing dari pabrik premium. Tanpa perantara, tanpa markup -- hemat 30-60% vs toko lokal.","onb-f2t":"Inspeksi Kualitas AI","onb-f2d":"Setiap barang lolos inspeksi AI VisionQC 2.0 sebelum dikirim. Warna, jahitan, spesifikasi -- terverifikasi.","onb-f3t":"Kemasan Vakum","onb-f3d":"Barang dikompresi hingga 60% -- menghemat biaya pengiriman. Pelacakan penuh dari pabrik ke pintu Anda.","onb-f4t":"Tanpa Retur -- Ini Alasannya","onb-f4d":"Sebagai layanan proxy buying, barang dibeli khusus untuk Anda. Gunakan Resale Hub untuk dapatkan Ace Credits.","onb-f5t":"Pengiriman 7-10 Hari ke Jakarta","onb-f5d":"Pesanan dikonsolidasi, dikemas vakum, dikirim via logistik prioritas dengan pelacakan.","onb-cta":"Mengerti -- Mulai Belanja!","onb-skip":"Lewati perkenalan","no-orders":"Belum ada pesanan","no-orders-desc":"Pesanan Anda akan muncul di sini setelah checkout.","no-favs":"Belum ada favorit","no-favs-desc":"Ketuk ♡ pada produk untuk menyimpannya.","no-coupons":"Tidak ada kupon","no-coupons-desc":"Kupon akan muncul di sini jika tersedia.","used-coupons":"Kupon Terpakai","used":"Terpakai","expires":"Kadaluarsa","tap-copy":"Ketuk untuk salin","coupon-copied":"Kode kupon disalin","added-cart":"Ditambah ke keranjang","cart-empty-checkout":"Keranjang kosong!","fav-added":"Ditambah ke favorit","fav-removed":"Dihapus dari favorit","checkout-title":"🛒 Ringkasan Pesanan","checkout-subtotal":"Subtotal","checkout-promo":"Promo","checkout-discount":"Diskon","checkout-total":"Total","checkout-secure":"✅ Pembayaran Aman via Xendit & WorldFirst","order-detail":"Detail Pesanan","order-id":"ID Pesanan","product-label":"Produk","price":"Harga","status-label":"Status","date-label":"Tanggal","order-track-hint":"📦 Lacak pesanan melalui Asisten AI.","os-paid":"Dibayar","os-shipped":"Dikirim","os-pending":"Tertunda","os-delivered":"Selesai","sourcing-title":"Sourcing Cerdas","sourcing-sub":"Tempel tautan produk dari 1688, Taobao, JD, Amazon, Shopee... Kami akan cari barang sama dan daftarkan untuk Anda.","sourcing-btn":"Cari Barang Sama","sourcing-result-title":"Hasil Pencarian Barang Sama","sourcing-matches-title":"Ditemukan dari supplier China","sourcing-list-btn":"Daftar Cepat","listing-title":"Pendaftaran Cepat Berlangsung","listing-sub":"AI sedang memproses produk Anda...","listing-step-1":"Menganalisis info produk...","listing-step-2":"Menghitung harga & margin...","listing-step-3":"Estimasi logistik & pengiriman...","listing-step-4":"Pemeriksaan kualitas AI...","listing-step-5":"Menyelesaikan pendaftaran...","listing-complete":"Pendaftaran Selesai!","listing-complete-sub":"Produk Anda sekarang aktif di Resale Hub.","listing-success":"Produk berhasil didaftarkan!","ps-wallet-label":"Dompet"},
+CN:{"top-text":"下载 AceProxy App -- 手机下单更快","tab-home":"首页","tab-disc":"发现","tab-asst":"助手","tab-wallet":"钱包","tab-resale":"转卖","tab-prof":"我的","tab-cart":"购物车","cd-label":"⏳ 2026 开斋节","cd-hint":"立即下单，节前送达！","hero-tag":"雅加达高级试点","hero-title":"您的全球<br>精选商城","hero-sub":"全球顶级工厂直供精品，AI质检，真空包装直送雅加达。","st1":"商品","st2":"平均节省","st3":"配送","st4":"质检","sec-title":"2026 开斋节精选","sec-sub":"精选好物 -- 工厂直发到家","so-margin":"最超值","so-lo":"价格 ↑","so-hi":"价格 ↓","promo-title":"🎉 开斋节特惠","promo-desc":"首单立减5%，结账时使用优惠码 LEBARAN2026","rev-title":"客户评价","rev-sub":"雅加达首批用户信赖之选","faq-title":"常见问题","all":"全部","disc-title":"🔥 热门推荐","disc-sub":"社区精选热卖好物","resale-hero-title":"🔄 转卖中心","resale-hero-desc":"不满意？在社区市场一键转卖 -- 赚取Ace积分。","resale-hero-btn":"浏览转卖 →","resale-hero-btn2":"📸 发布转卖","sc-title":"智能采集","sc-sub":"粘贴任意外网商品链接。我们将智能找货比价，为您准备上架。","sc-btn":"找同款","sc-logistics-title":"物流合规提示","sc-logistics-body":"<div><strong>✅ 可发货：</strong>服装、家居、电子产品（不含电池）、配饰、礼品、宗教用品。</div><div><strong>⚠️ 加钱发货：</strong>超大件、易碎品（玻璃/陶瓷）、液体化妆品（仅≤100ml）。</div><div><strong>🚫 不可发货：</strong>电池（散装）、易燃液体、毒品、武器、生鲜、活体动物。</div>","sc-results-title":"找到匹配商品","asst-sub":"随便问 -- 商品推荐、订单追踪、支付帮助","wal-bal-label":"Ace积分余额","wal-balance":"Rp 500,000","wal-sub":"探索者等级 · 0.5%返现","ws1-label":"累计消费","ws2-label":"节省","ws3-label":"待结算","ws4-label":"返利","txn-title":"最近交易","prof-name":"AceProxy 用户","prof-level":"🧭 探索者","prof-progress":"Rp 12.4M / Rp 50M 升级精英","qs1":"积分","qs2":"订单","qs3":"优惠券","qs4":"收藏","otab-all":"全部","otab-paid":"已付","otab-ship":"运送中","otab-done":"已签收","lang-btn":"🌐 切换语言","cart-title":"购物车","cart-empty":"购物车是空的","cart-total-label":"合计：","cart-checkout":"安全结账","add_cart":"加入购物车","in_cart":"已加入 ✓","margin_gain":"节省","cost_label":"工厂成本","quick_view":"点击查看详情 →","q1":"推荐商品","q2":"查看订单","q3":"支付帮助","q4":"最超值推荐","why-title":"🤔 为什么选择 AceProxy？","why-sub":"我们不是普通电商 -- 区别在这里","why1t":"工厂直供","why1d":"没有中间商，节省30-60%","why2t":"AI质检","why2d":"VisionQC逐件检查","why3t":"真空包装","why3d":"运费最高省60%","why4t":"转卖保障","why4d":"不满意？轻松转卖","why5t":"7-10天送达","why5d":"雅加达优先物流","why6t":"安全支付","why6d":"Xendit & WorldFirst 保障","onb-title":"不是普通电商","onb-sub":"我们是跨境采购平台 -- 以下是我们的独特之处。","onb-f1t":"工厂直供价","onb-f1d":"我们直接对接优质工厂。无中间商、无加价 -- 比本地商店省30-60%。","onb-f2t":"AI 质量检测","onb-f2d":"每件商品发货前都通过 VisionQC 2.0 AI 检测。颜色、缝线、规格 -- 全部核实。","onb-f3t":"真空密封包装","onb-f3d":"商品压缩至60%体积 -- 节省运费。从工厂到您家门口全程追踪。","onb-f4t":"不支持退货 -- 原因如下","onb-f4d":"作为代购服务平台，商品专为您采购。可通过转卖中心赚取 Ace 积分。","onb-f5t":"7-10天送达雅加达","onb-f5d":"订单整合、真空包装、通过优先物流发货，全程可追踪。","onb-cta":"明白了 -- 开始购物！","onb-skip":"跳过介绍","no-orders":"暂无订单","no-orders-desc":"结账后订单将显示在这里。","no-favs":"暂无收藏","no-favs-desc":"点击商品上的 ♡ 即可收藏。","no-coupons":"暂无优惠券","no-coupons-desc":"优惠券将在可用时显示。","used-coupons":"已使用优惠券","used":"已用","expires":"有效期","tap-copy":"点击复制","coupon-copied":"优惠码已复制","added-cart":"已加入购物车","cart-empty-checkout":"购物车是空的！","fav-added":"已加入收藏","fav-removed":"已取消收藏","checkout-title":"🛒 订单摘要","checkout-subtotal":"小计","checkout-promo":"优惠","checkout-discount":"折扣","checkout-total":"合计","checkout-secure":"✅ Xendit & WorldFirst 安全支付","order-detail":"订单详情","order-id":"订单号","product-label":"商品","price":"价格","status-label":"状态","date-label":"日期","order-track-hint":"📦 通过AI助手追踪订单。","os-paid":"已付","os-shipped":"运送中","os-pending":"待处理","os-delivered":"已签收","sourcing-title":"智能采购","sourcing-sub":"粘贴1688、淘宝、京东、亚马逊、Shopee等任意商品链接，我们帮您搜同款并快速上架。","sourcing-btn":"搜索同款","sourcing-result-title":"同款搜索结果","sourcing-matches-title":"从中国供应商找到匹配商品","sourcing-list-btn":"快速上架","listing-title":"快速上架中","listing-sub":"AI正在处理您的商品...","listing-step-1":"分析商品信息...","listing-step-2":"核算价格与利润...","listing-step-3":"预估物流与配送...","listing-step-4":"AI质检中...","listing-step-5":"完成上架...","listing-complete":"上架完成！","listing-complete-sub":"您的商品已在转售中心上线。","listing-success":"商品上架成功！","ps-wallet-label":"钱包"}};
+const REV_EN=[{s:5,t:"The Travel Mukena Pro is amazing! Compact, quality fabric. 8 days to Jakarta.",a:"Putri S., North Jakarta"},{s:5,t:"Ordered 3 Baju Koko, embroidery is beautiful. Will order again!",a:"Ahmad R., South Jakarta"},{s:4,t:"Prayer mat exceeded expectations. Thick, comfortable, great patterns.",a:"Siti N., Bekasi"}];
+const RESALE_ITEMS=[{id:"RS-001",name:"Travel Mukena Pro (Like New)",price:230000,seller:"Putri S."},{id:"RS-002",name:"Luxury Gift Set (Unopened)",price:180000,seller:"Ahmad R."},{id:"RS-003",name:"Modern Baju Koko M (Tried Once)",price:260000,seller:"Dewi K."}];
+
+const REVIEWS_DATA={
+  'EID-JKT-001':[{a:'Putri S.',s:5,d:'04 Jun 2026',t:'The Travel Mukena Pro is amazing! Compact, quality fabric. 8 days to Jakarta.',tags:['Good Quality','Fast Shipping'],photos:[]},{a:'Dewi K.',s:5,d:'02 Jun 2026',t:'Perfect for umrah. Lightweight and elegant.',tags:['Recommended'],photos:[]}],
+  'EID-JKT-002':[{a:'Ahmad R.',s:5,d:'03 Jun 2026',t:'Ordered 3 Baju Koko, embroidery is beautiful. Will order again!',tags:['Good Quality'],photos:[]}],
+  'EID-JKT-003':[{a:'Siti N.',s:4,d:'01 Jun 2026',t:'Prayer mat exceeded expectations. Thick, comfortable, great patterns.',tags:['Comfortable'],photos:[]}],
+  'EID-JKT-004':[{a:'Rina L.',s:5,d:'30 May 2026',t:'Beautiful lanterns! Perfect for Ramadan decoration.',tags:['Beautiful','Worth It'],photos:[]}],
+  'EID-JKT-005':[{a:'Budi H.',s:5,d:'29 May 2026',t:'Smart ring works great. Love the prayer time feature.',tags:['Functional','Cool'],photos:[]}],
+};
+const FAQ_EN=[{q:"How long is delivery?",a:"7-10 business days to Jakarta with full tracking."},{q:"Can I return items?",a:"Items are non-returnable. Use our Resale Hub to resell."},{q:"What payments?",a:"GoPay, OVO, DANA, BCA, Mandiri, BNI. Secured by Xendit & WorldFirst."},{q:"Quality check?",a:"VisionQC 2.0 AI inspects every item before shipping."}];
+let lang='EN',filter='ALL',cart=[],oFilter='ALL';
+function T(k){return(L[lang]||L.EN)[k]||k}
+function F(n){return'Rp '+new Intl.NumberFormat('id-ID').format(n)}
+function applyT(){document.querySelectorAll('[id]').forEach(el=>{const v=T(el.id);if(!v||el.children.length>0||el.tagName==='INPUT'||el.tagName==='SELECT'||el.tagName==='IMG')return;el.textContent=v})}
+
+function switchTab(t){
+  // Close overlays/panels when switching tabs
+  Notif.close();Settings.close();Address.close();Share.close();Search.close();
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+t)?.classList.add('active');
+  const idx={home:0,discovery:1,assistant:2,resale:3,profile:4};
+  document.querySelectorAll('.tab-btn')[idx[t]]?.classList.add('active');
+  if(t==='home')Home.render();if(t==='discovery')Discovery.render();
+  if(t==='resale')Resale.render();
+  if(t==='profile')Profile.render();if(t==='assistant')Assistant.renderQuickBtns();
+  if(t==='help')Help.render();if(t==='invite')Invite.render();if(t==='category')Category.render();
+  if(t==='checkout')RenderCheckout();if(t==='refund')RefundPolicy.show();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+const Home={render(){
+  let items=[...P];if(filter!=='ALL')items=items.filter(p=>p.cat===filter);
+  const q=(document.getElementById('searchInput')?.value||'').toLowerCase();if(q)items=items.filter(p=>p.name.toLowerCase().includes(q));
+  const sort=document.getElementById('sortPicker')?.value;
+  if(sort==='margin')items.sort((a,b)=>b.arb-a.arb);
+  else if(sort==='price-lo')items.sort((a,b)=>a.price-b.price);
+  else if(sort==='price-hi')items.sort((a,b)=>b.price-a.price);
+  document.getElementById('productGrid').innerHTML=items.map(p=>{
+    const inC=cart.find(c=>c.id===p.id);
+    const bdg=p.badge==='hot'?'<span class="pbadge bhot">HOT</span>':p.badge==='new'?'<span class="pbadge bnew">NEW</span>':p.badge==='best'?'<span class="pbadge bbest">BEST</span>':'';
+    const sold=Math.floor((p.rv||0)*3.5+10);
+    const faved=Fav.isFav(p.id);
+    const imgHtml=p.img?`<img src="${p.img}" alt="${p.name}" loading="lazy" style="width:100%;height:100%;object-fit:cover">`:`${CI[p.cat]||'📦'}`;
+    return`<div class="pcard" onclick="Modal.open('${p.id}')">${bdg}
+      <button class="pfav-btn ${faved?'liked':''}" onclick="event.stopPropagation();Fav.toggle('${p.id}');Home.render()">${faved?'❤️':'🤍'}</button>
+      <div class="pimg" style="background:${p.color}">${imgHtml}<div class="pimg-hover">${T('quick_view')}</div></div>
+      <div class="pbody"><div class="pcat">${p.cat}${sold>100?' <span class="verified-badge">✓ VERIFIED</span>':''}</div><div class="pname">${p.name}</div>
+      <div class="pstars">${'★'.repeat(Math.floor(p.rating))} <span>(${p.rv})</span></div>
+      <div class="pft-row"><div class="pprice">${F(p.price)}</div><div class="pcost">${T('cost_label')} ¥${p.cost}</div></div>
+      <div class="pmargin">▲ ${T('margin_gain')} ${Math.round(p.arb*100)}%</div>
+      <div class="sold-badge">📦 ${sold}+ ${lang==='CN'?'已售':lang==='ID'?'terjual':'sold'}</div>
+      <button class="pcart-btn ${inC?'incart':''}" onclick="event.stopPropagation();Cart.add('${p.id}')">${inC?T('in_cart'):T('add_cart')}</button></div></div>`}).join('');
+  document.getElementById('filterRow').innerHTML='<div class="cat-scroll">'+CATS.map(c=>`<div class="cat-chip ${filter===c?'active':''}" onclick="filter='${c}';Home.render()">${c==='ALL'?T('all'):(CI[c]||'📦')+' '+c}</div>`).join('')+'</div>';
+  document.getElementById('revGrid').innerHTML=REV_EN.map(r=>`<div class="rev-card"><div class="rev-stars">${'★'.repeat(r.s)}</div><div class="rev-text">"${r.t}"</div><div class="rev-author">— ${r.a}</div></div>`).join('');
+  document.getElementById('faqGrid').innerHTML=FAQ_EN.map(f=>`<div class="faq-item"><div class="faq-q">${f.q}</div><div class="faq-a">${f.a}</div></div>`).join('');
+}};
+
+const Discovery={render(){
+  const sorted=[...P].sort((a,b)=>b.arb-a.arb);
+  document.getElementById('discoveryList').innerHTML=sorted.map((p,i)=>`<div class="d-card" onclick="Modal.open('${p.id}')"><div class="d-icon">${p.img?`<img src="${p.img}" style="width:44px;height:44px;border-radius:8px;object-fit:cover">`:CI[p.cat]||'📦'}</div><div class="d-info"><div class="d-title">#${i+1} ${p.name}</div><div class="d-desc">${p.desc}</div><div class="d-stat">${T('margin_gain')} ${Math.round(p.arb*100)}% · ${F(p.price)}</div></div></div>`).join('');
+}};
+
+const Assistant={
+  chats:[{role:'ai',text:'Hi there! 👋 I\'m your AceProxy Shopping Assistant. Ask about products, prices, or tap 🎤 to speak!'}],
+  history:[],
+  online:false,   // auto-detected on first message
+  checked:false,
+  listening:false,
+  recognition:null,
+  // --- Smart local reply engine (works without backend) ---
+  localReply(msg){
+    const q=msg.toLowerCase();
+    const cats={fashion:['dress','hijab','baju','koko','clothing','fashion','pakaian','gaun','服装'],home:['mat','decor','lantern','jar','prayer','rumah','家居','dekorasi'],electronics:['ring','smart','bluetooth','电子','电子'],travel:['mukena','travel','prayer set','旅行','旅行'],gifts:['gift','set','date','cookie','present','礼物']};
+    const findCat=()=>Object.entries(cats).find(([k,v])=>v.some(x=>q.includes(x)))?.[0];
+    const priceMatch=q.match(/(\d[\d,.]*k?)/g)||[];
+    let maxPrice=Infinity;
+    priceMatch.forEach(p=>{const n=parseFloat(p.replace(/[.,]/g,''));if(p.toLowerCase().includes('k'))maxPrice=Math.min(maxPrice,n*1000);else maxPrice=Math.min(maxPrice,n*10000)});
+    // Category filter
+    let results=[...P];
+    const cat=findCat();
+    if(cat&&cat!=='ALL')results=results.filter(p=>p.cat===cat);
+    // Keyword search
+    const kw=q.split(' ').filter(w=>w.length>2);
+    if(kw.length)results=results.filter(p=>(p.name+' '+p.desc).toLowerCase().includes(kw[0]));
+    // Price filter
+    if(maxPrice<1e9)results=results.filter(p=>p.price<=maxPrice);
+    // Sort by relevance
+    results.sort((a,b)=>b.arb-a.arb);
+    const top=results.slice(0,4);
+    // Build contextual reply
+    let reply='';
+    if(q.includes('recommend')||q.includes('推荐')||q.includes('rekomend')||q.includes('best')||q.includes('deal')||q.includes('show')){
+      if(top.length){
+        reply=maxPrice<1e9?`Here are my top picks under ~Rp ${Math.round(maxPrice).toLocaleString()} 💎:`:`🔥 Our best deals right now:`;
+        return{reply,products:top.map(p=>({id:p.id,name:p.name,category:p.cat,price:p.price,formattedPrice:F(p.price)}))};
+      }
+    }
+    if(q.includes('ship')||q.includes('deliver')||q.includes('配送')||q.includes('kir')||q.includes('kirim'))return{reply:'📦 Orders ship in 7-10 business days to Jakarta with full tracking. We consolidate & vacuum-pack to save you up to 60% on shipping costs!'};
+    if(q.includes('pay')||q.includes('payment')||q.includes('bayar')||q.includes('pembayar')||q.includes('支付'))return{reply:'💳 We accept GoPay, OVO, DANA, ShopeePay, QRIS & bank transfer (BCA/Mandiri/BNI). All payments secured by Xendit & WorldFirst.'};
+    if(q.includes('return')||q.includes('refund')||q.includes('退货')||q.includes('退换'))return{reply:'🔄 As a proxy buying service, items are purchased specifically for you and are non-returnable. However — you can easily resell any item in our Resale Hub to earn Ace Credits! Check the Resale tab ↑'};
+    if(q.includes('quality')||q.includes('inspect')||q.includes('质检')||q.includes('检查'))return{reply:'🔍 Every item passes VisionQC 2.0 AI inspection: color accuracy, stitching quality, dimensions & specs — all verified before shipping.'};
+    if(q.includes('hello')||q.includes('hi ')||q.includes('hey')||q.includes('你好')||q.includes('halo')||q.includes('hai'))return{reply:'Hello! 👋 Welcome to AceProxy! I can help you:\n\n• Find products that match your needs\n• Compare prices & savings\n• Answer questions about shipping, payment & quality\n\nWhat are you looking for today?'};
+    if(top.length>0){
+      reply=`I found ${top.length} product${top.length>1?'s':''} that might interest you: ✨`;
+      return{reply,products:top.map(p=>({id:p.id,name:p.name,category:p.cat,price:p.price,formattedPrice:F(p.price)}))};
+    }
+    return{reply:'Great question! 🤔 I can help with products, prices, shipping, payments & more. Try asking:\n\n• "Recommend a dress under 200k"\n• "How long is delivery?"\n• "What payment methods?"\n• "Show me best deals"'};
+  },
+  init(){
+    try{
+      const box=document.getElementById('chatBox');
+      if(box)box.innerHTML=this.chats.map(m=>this.renderMsg(m)).join('');
+      const sb=document.getElementById('chatBox');
+      if(sb)sb.scrollTop=9999;
+    }catch(e){console.warn('[AI init]',e)}
+  },
+  renderMsg(m){
+    let bubble=m.text;
+    if(m.products&&m.products.length){
+      const cards=m.products.map(p=>`<div class="ai-prod-card" onclick="Assistant.goProduct('${p.id}')"><div class="ai-prod-icon">${p.category==='Fashion'?'👗':p.category==='Home'?'🏠':p.category==='Electronics'?'⌚':p.category==='Travel'?'🧳':'🎁'}</div><div class="ai-prod-info"><div class="ai-prod-name">${p.name}</div><div class="ai-prod-price">${p.formattedPrice||'Rp '+(p.price||0).toLocaleString('id-ID')}</div></div><div class="ai-prod-arrow">→</div></div>`).join('');
+      bubble+='<br>'+cards;
+    }
+    return `<div class="chat-msg ${m.role}"><div class="chat-avatar ${m.role}">${m.role==='ai'?'🤖':'👤'}</div><div class="chat-bubble">${bubble.replace(/\n/g,'<br>')}<div class="chat-time">Just now</div></div></div>`;
+  },
+  async send(msg){
+    try{
+      const input=document.getElementById('chatInput');const text=(msg||input.value.trim());if(!text)return;
+      this.chats.push({role:'user',text});this.init();
+      if(input)input.value='';
+      this.chats.push({role:'ai',text:'<div class="chat-loading"><span>●</span><span>●</span><span>●</span> Thinking...</div>'});this.init();
+      // Try backend first (only once)
+      if(!this.checked){this.checked=true;this.online=await this.pingBackend()}
+      if(this.online){
+        await this.sendToBackend(text);
+      }else{
+        await this.sendLocal(text);
+      }
+    }catch(e){
+      console.error('[AI send]',e);
+      // Fallback to local
+      try{
+        this.chats.pop();const r=this.localReply(this.chats[this.chats.length-1]?.text||'');
+        const aiMsg={role:'ai',text:r.reply};if(r.products?.length)aiMsg.products=r.products;this.chats.push(aiMsg);this.init();
+      }catch(e2){this.chats.pop();this.chats.push({role:'ai',text:'Hi! 👋 How can I help you today? Try asking about products or prices!'});this.init();}
+    }
+  },
+  async pingBackend(){
+    try{
+      var url=this.apiBase+'/auth/login',hdr={'Content-Type':'application/json'},body=JSON.stringify({email:'ping@aceproxy.ai',password:'ping'});
+      const r=await fetch(url,{method:'POST',headers:hdr,body:body,signal:AbortSignal.timeout(3000)});
+      return r.ok||r.status===401||r.status===400;
+    }catch(e){return false}
+  },
+  async sendToBackend(text){
+    try{
+      const token=await this.getToken();
+      if(!token){throw new Error('no token')}
+      var url=this.apiBase+'/chat/steward',hdr={'Content-Type':'application/json','Authorization':'Bearer '+token},body=JSON.stringify({message:text,history:this.history.slice(-6)});
+      const res=await fetch(url,{method:'POST',headers:hdr,body:body,signal:AbortSignal.timeout(30000)});
+      if(!res.ok)throw new Error(`API ${res.status}`);
+      const data=await res.json();
+      this.chats.pop();
+      const aiMsg={role:'ai',text:data.reply||(data.toolData?'Found some products for you!':'Here\'s what I found.')};
+      if(data.toolData&&data.toolData.length) aiMsg.products=data.toolData;
+      this.chats.push(aiMsg);this.init();
+    }catch(e){
+      // Backend failed mid-flight → switch to local
+      console.warn('[AI] Backend failed, switching to local mode');
+      this.online=false;
+      await this.sendLocal(text);
+    }
+  },
+  async sendLocal(text){
+    this.chats.pop();const r=this.localReply(text);
+    // Simulate thinking delay
+    await new Promise(r=>setTimeout(r,400+Math.random()*600));
+    const aiMsg={role:'ai',text:r.reply};if(r.products?.length)aiMsg.products=r.products;
+    this.chats.push(aiMsg);this.init();
+  },
+  apiBase:API_BASE,
+  async getToken(){
+    if(!this.apiBase)return null;
+    if(this.jwt){try{const p=JSON.parse(atob(this.jwt.split('.')[1]));if(p.exp*1000>Date.now())return this.jwt}catch(e){}}
+    var url=this.apiBase+'/auth/login',hdr={'Content-Type':'application/json'},body=JSON.stringify({email:'ai-demo@aceproxy.ai',password:'demo123'});
+    try{var r=await fetch(url,{method:'POST',headers:hdr,body:body,signal:AbortSignal.timeout(3000)});if(r.ok){var d=await r.json();this.jwt=d.accessToken;return d.accessToken}}catch(e){}
+    url=this.apiBase+'/auth/register';body=JSON.stringify({email:'demo_'+Date.now()+'@aceproxy.ai',password:'demo123'});
+    try{r=await fetch(url,{method:'POST',headers:hdr,body:body,signal:AbortSignal.timeout(3000)});if(r.ok){d=await r.json();this.jwt=d.accessToken;return d.accessToken}}catch(e){}
+    return null;
+  },
+  toggleVoice(){
+    if(!('webkitSpeechRecognition'in window)&&!('SpeechRecognition'in window)){alert('Voice input not supported in this browser.');return}
+    if(this.listening){this.stopVoice();return}
+    if(!this.recognition){
+      const SR=window.webkitSpeechRecognition||window.SpeechRecognition;
+      this.recognition=new SR();
+      this.recognition.lang='en-US';
+      this.recognition.interimResults=false;
+      this.recognition.maxAlternatives=1;
+      this.recognition.onresult=(e)=>{
+        const t=e.results[0][0].transcript.trim();if(t){document.getElementById('chatInput').value=t;this.send(t)}};
+      this.recognition.onend=()=>this.stopVoice();
+      this.recognition.onerror=()=>this.stopVoice();
+    }
+    this.listening=true;this.recognition.start();
+    document.getElementById('chatMic').classList.add('listening');
+    document.getElementById('chatInput').placeholder='Listening...';
+  },
+  stopVoice(){
+    this.listening=false;if(this.recognition)try{this.recognition.stop()}catch(e){}
+    const btn=document.getElementById('chatMic');
+    if(btn)btn.classList.remove('listening');
+    const inp=document.getElementById('chatInput');
+    if(inp)inp.placeholder='Type or tap 🎤 to speak...';
+  },
+  goProduct(id){
+    switchTab('home');
+    setTimeout(()=>{if(typeof Modal!=='undefined'&&Modal.open)Modal.open(id)},300)
+  },
+  scan(){this.send('Show me your best deals')},
+  renderQuickBtns(){document.getElementById('quickBtns').innerHTML=[T('q1'),T('q2'),T('q3'),T('q4')].map(q=>`<button class="quick-btn" onclick="Assistant.send('${q}')">${q}</button>`).join('')}
+};
+
+const Wallet={render(){
+  const txns=[{d:'04 Jun',desc:'Travel Mukena Pro',amt:280000,type:'debit',icon:'🛍'},{d:'03 Jun',desc:'Ace Credits Rebate',amt:14000,type:'credit',icon:'🎁'},{d:'01 Jun',desc:'Geometric Prayer Mat',amt:150000,type:'debit',icon:'🛍'},{d:'28 May',desc:'Referral Bonus',amt:25000,type:'credit',icon:'👥'}];
+  document.getElementById('txnList').innerHTML=txns.map(t=>`<div class="txn-item"><div class="txn-icon ${t.type}">${t.icon}</div><div class="txn-info"><div class="txn-desc">${t.desc}</div><div class="txn-date">${t.d}</div></div><div class="txn-amt ${t.type}">${t.type==='credit'?'+':'-'}${F(t.amt)}</div></div>`).join('');
+}};
+
+const Resale={render(){
+  document.getElementById('resaleGrid').innerHTML=RESALE_ITEMS.map(r=>`<div class="rlisting" onclick="Modal.open('EID-JKT-001')"><div class="pimg" style="font-size:36px;background:var(--g50)">🔄</div><div class="rl-body"><div class="rl-name">${r.name}</div><div class="rl-price">${F(r.price)}</div><div class="rl-meta">👤 ${r.seller} · Jakarta</div></div></div>`).join('');
+}};
+
+
+// FAVORITES
+const Fav={
+  list:JSON.parse(sessionStorage.getItem('ace_favs')||'[]'),
+  save:function(){sessionStorage.setItem('ace_favs',JSON.stringify(this.list))},
+  isFav:function(id){return this.list.includes(id)},
+  toggle:function(id){
+    var idx=this.list.indexOf(id);
+    var self=this;
+    if(idx===-1){this.list.push(id);this.showToast('❤️ '+T('fav-added'))}
+    else{this.list.splice(idx,1);this.showToast(T('fav-removed'))}
+    this.save();Home.render();this.render();
+    var el=document.getElementById('qs4-num');if(el)el.textContent=this.list.length;
+  },
+  render:function(){
+    var el=document.getElementById('favList');if(!el)return;
+    if(!this.list.length){el.innerHTML='<div class="empty-state"><div class="empty-state-icon">❤️</div><div class="empty-state-title">'+T('no-favs')+'</div><div class="empty-state-desc">'+T('no-favs-desc')+'</div></div>';return}
+    var self=this;
+    el.innerHTML=this.list.map(function(id){var p=P.find(function(x){return x.id===id});if(!p)return'';var fIcon=p.img?'<img src="'+p.img+'" style="width:36px;height:36px;border-radius:8px;object-fit:cover">':(CI[p.cat]||'📦');return '<div class="fav-item" onclick="Modal.open(\''+p.id+'\')"><div class="fav-icon">'+fIcon+'</div><div class="fav-info"><div class="fav-name">'+p.name+'</div><div class="fav-price">'+F(p.price)+' · '+T('margin_gain')+' '+Math.round(p.arb*100)+'%</div></div><button class="fav-remove" onclick="event.stopPropagation();Fav.toggle(\''+p.id+'\')">✕</button></div>'}).join('');
+  },
+  showToast:function(msg){var t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout
+/* ===== HEADER SEARCH ===== */
+var HeaderSearch={doSearch:function(q){if(!q||!q.trim())return;q=q.trim();document.getElementById('headerSearchInput').value=q;Search.open();document.getElementById('searchPageInput').value=q;Search.open();Search.doSearch(q)}};
+(function(){t.remove()},2300)}
+};
+
+// COUPONS
+const Coupons={
+  list:[
+    {code:'LEBARAN2026',desc:'Lebaran Special',discount:'5% off entire order',exp:'30 Jun 2026',used:false,icon:'🎉'},
+    {code:'WELCOME10',desc:'New User Welcome',discount:'10% off first order',exp:'31 Dec 2026',used:false,icon:'🎁'},
+    {code:'FREESHIP',desc:'Free Shipping',discount:'Free shipping Jakarta area',exp:'31 Jul 2026',used:false,icon:'🚚'},
+    {code:'BULK5',desc:'Bulk Discount',discount:'Extra 5% off 3+ items',exp:'30 Jun 2026',used:true,icon:'📦'}
+  ],
+  available:function(){return this.list.filter(function(c){return !c.used})},
+  render:function(){
+    var el=document.getElementById('couponList');if(!el)return;
+    var avail=this.available();
+    var used=this.list.filter(function(c){return c.used});
+    var availHtml=avail.length?avail.map(function(c){return '<div class="coupon-card" onclick="Coupons.copyCode(\''+c.code+'\')"><div class="coupon-icon">'+c.icon+'</div><div class="coupon-info"><div class="coupon-code">'+c.code+'</div><div class="coupon-desc">'+c.discount+'</div><div class="coupon-exp">⏳ '+T('expires')+' '+c.exp+'</div></div><div class="coupon-action">'+T('tap-copy')+' →</div></div>'}).join(''):'';
+    var usedHtml=used.length?'<div style="margin-top:12px;font-weight:700;font-size:12px;color:var(--g500)">'+T('used-coupons')+'</div>'+used.map(function(c){return '<div class="coupon-card used"><div class="coupon-icon">'+c.icon+'</div><div class="coupon-info"><div class="coupon-code">'+c.code+'</div><div class="coupon-desc">'+c.discount+'</div><div class="coupon-exp">✅ '+T('used')+' · '+c.exp+'</div></div></div>'}).join(''):'';
+    var emptyHtml='<div class="empty-state" style="margin-top:8px"><div class="empty-state-icon">🎫</div><div class="empty-state-title">'+T('no-coupons')+'</div><div class="empty-state-desc">'+T('no-coupons-desc')+'</div></div>';
+    el.innerHTML=availHtml+emptyHtml+usedHtml;
+  },
+  copyCode:function(code){
+    if(navigator.clipboard)navigator.clipboard.writeText(code);
+    this.showToast('📋 '+T('coupon-copied')+': '+code);
+  },
+  showToast:function(msg){var t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(function(){t.remove()},2300)}
+};
+const Profile={
+  currentSection:'orders',
+  orders:[{id:'ORD-001',status:'PAID',product:'Travel Mukena Pro',date:'04 Jun 2026',icon:'🧳',price:280000},{id:'ORD-002',status:'SHIPPED',product:'Geometric Prayer Mat',date:'01 Jun 2026',icon:'🏠',price:150000},{id:'ORD-003',status:'DELIVERED',product:'Premium Silk Hijab',date:'28 May 2026',icon:'👗',price:99000}],
+  render(flt){
+    this.renderOrders(flt);
+    if(this.currentSection==='coupons')this.renderCoupons();
+    if(this.currentSection==='favorites')Fav.render();
+    const oEl=document.getElementById('qs2-num');if(oEl)oEl.textContent=this.orders.length;
+    const cEl=document.getElementById('qs3-num');if(cEl)cEl.textContent=Coupons.available().length;
+    const fEl=document.getElementById('qs4-num');if(fEl)fEl.textContent=Fav.list.length;
+  },
+  renderOrders(flt){
+    let items=flt&&flt!=='ALL'?this.orders.filter(function(o){return o.status===flt}):this.orders;
+    const el=document.getElementById('orderList');if(!el)return;
+    if(!items.length){el.innerHTML='<div class="empty-state"><div class="empty-state-icon">📦</div><div class="empty-state-title">'+T('no-orders')+'</div><div class="empty-state-desc">'+T('no-orders-desc')+'</div></div>';return}
+    var itemsHtml=items.map(function(o){return '<div class="order-card" onclick="Profile.showOrderDetail(\''+o.id+'\')"><div class="oc-icon">'+o.icon+'</div><div class="oc-info"><div class="oc-id">'+o.id+'</div><div class="oc-product">'+o.product+'</div><div class="oc-date">'+o.date+'</div></div><span class="oc-status os-'+o.status.toLowerCase()+'">'+T('os-'+(o.status.toLowerCase()))+'</span></div>'}).join('');
+    el.innerHTML=itemsHtml;
+    document.querySelectorAll('.otab').forEach(function(b){b.classList.remove('active')});
+    var idx={ALL:0,PAID:1,SHIPPED:2,DELIVERED:3};
+    var tabs=document.querySelectorAll('.otab');if(tabs[idx[flt||'ALL']])tabs[idx[flt||'ALL']].classList.add('active');
+  },
+  filterOrders:function(flt){oFilter=flt;this.renderOrders(flt)},
+  switchSection:function(section){
+    this.currentSection=section;
+    document.getElementById('ps-orders-section').style.display=section==='orders'?'block':'none';
+    document.getElementById('ps-coupons-section').style.display=section==='coupons'?'block':'none';
+    document.getElementById('ps-favorites-section').style.display=section==='favorites'?'block':'none';
+    document.querySelectorAll('.ps-tab').forEach(function(b){b.classList.remove('active')});
+    var tab=document.getElementById('ps-'+section);if(tab)tab.classList.add('active');
+    if(section==='orders')this.renderOrders(oFilter);
+    if(section==='coupons')Coupons.render();
+    if(section==='favorites')Fav.render();if(section==='wallet')Wallet.render();
+  },
+  showOrderDetail:function(id){
+    var o=this.orders.find(function(x){return x.id===id});if(!o)return;
+    alert('📦 '+T('order-detail')+'\n\n'+T('order-id')+': '+o.id+'\n'+T('product-label')+': '+o.product+'\n'+T('price')+': '+F(o.price)+'\n'+T('status-label')+': '+T('os-'+(o.status.toLowerCase()))+'\n'+T('date-label')+': '+o.date+'\n\n'+T('order-track-hint'));
+  }
+};
+
+const Cart={
+  add(id){const p=P.find(x=>x.id===id);if(!p)return;if(cart.find(c=>c.id===id)){cart=cart.filter(c=>c.id!==id)}else{cart.push(p);this.showToast(T('added-cart')+': '+p.name)}this.update();Home.render()},
+  remove(id){cart=cart.filter(c=>c.id!==id);this.update();Home.render()},update(){document.getElementById('cart-badge').textContent=cart.length;document.getElementById('cartTotal').textContent=F(cart.reduce((s,p)=>s+p.price,0));document.getElementById('cartList').innerHTML=cart.length?cart.map(p=>`<div class="cart-item"><span>${CI[p.cat]||'📦'}</span><span class="cart-item-name">${p.name}</span><span class="cart-item-price">${F(p.price)}</span><button class="cart-item-rm" onclick="Cart.add('${p.id}')">✕</button></div>`).join(''):`<div class="cart-empty">${T('cart-empty')}</div>`},
+  toggle(){document.getElementById('cartOverlay').classList.toggle('open');document.getElementById('cartPanel').classList.toggle('open')},
+  checkout(){if(!cart.length){this.showToast(T('cart-empty-checkout'));return}this.toggle();switchTab('checkout')},
+  showToast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2300)},
+};
+
+const Modal={
+  currentId:null,
+  open(id){this.currentId=id;const p=P.find(x=>x.id===id);if(!p)return;const inC=cart.find(c=>c.id===p.id);
+    // Track recently viewed
+    RecentlyViewed.add(id);
+    const reviews=REVIEWS_DATA[id]||[];
+    const avgScore=reviews.length?(reviews.reduce((s,r)=>s+r.s,0)/reviews.length).toFixed(1):'5.0';
+    const reviewHtml=reviews.length?reviews.map(r=>`<div class="review-item"><div class="review-header"><div class="review-avatar">${r.a[0]}</div><div class="review-author">${r.a}</div><div class="review-date">${r.d}</div></div><div class="review-stars">${'★'.repeat(r.s)}</div><div class="review-text">${r.t}</div><div>${r.tags.map(t=>`<span class="review-tag">${t}</span>`).join('')}</div></div>`).join(''):`<div class="empty-state" style="padding:16px"><div class="empty-state-desc">No reviews yet. Be the first!</div></div>`;
+    const related=P.filter(x=>x.cat===p.cat&&x.id!==p.id).slice(0,3);
+    const relatedHtml=related.length?`<div style="display:flex;gap:10px;overflow-x:auto;margin-top:12px">${related.map(r=>`<div style="min-width:120px;background:var(--w);border-radius:10px;border:1px solid var(--g100);padding:8px;cursor:pointer;text-align:center" onclick="Modal.open('${r.id}')"><div style="width:100%;aspect-ratio:1;margin-bottom:4px;display:flex;align-items:center;justify-content:center;font-size:28px;background:${r.color};border-radius:8px;overflow:hidden">${r.img?`<img src="${r.img}" style="width:100%;height:100%;object-fit:cover">`:CI[r.cat]||'📦'}</div><div style="font-size:11px;font-weight:700;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${r.name}</div><div style="font-size:12px;font-weight:800;color:var(--r);margin-top:4px">${F(r.price)}</div></div>`).join('')}</div>`:'<div style="font-size:11px;color:var(--g500);text-align:center;padding:12px">No related products</div>';
+    const modalImg=p.img?`<img src="${p.img}" alt="${p.name}" style="width:100%;height:100%;object-fit:cover">`:`${CI[p.cat]||'📦'}`;
+    document.getElementById('prodModalContent').innerHTML=`<div class="modal-hdr"><div class="modal-hdr-bar"></div><button class="modal-close" onclick="Modal.close()">✕</button></div><div class="modal-img" style="background:${p.color}">${modalImg}</div><div class="modal-body"><div class="modal-cat">${p.cat}</div><div class="modal-name">${p.name}</div><div class="modal-price-row"><div class="modal-price">${F(p.price)}</div><div class="modal-orig">${T('cost_label')} ¥${p.cost}</div></div><div class="modal-margin">▲ ${T('margin_gain')} ${Math.round(p.arb*100)}%</div><div class="modal-desc">${p.desc}</div><div class="modal-specs"><div class="modal-spec"><div class="modal-spec-label">Source</div><div class="modal-spec-val">Premium Factory Direct</div></div><div class="modal-spec"><div class="modal-spec-label">QC</div><div class="modal-spec-val">VisionQC 2.0 ✅</div></div><div class="modal-spec"><div class="modal-spec-label">Pack</div><div class="modal-spec-val">Vacuum Sealed</div></div><div class="modal-spec"><div class="modal-spec-label">Delivery</div><div class="modal-spec-val">Jakarta 7-10 Days</div></div></div><div style="display:flex;gap:8px;margin-top:12px"><button class="modal-btn" style="flex:1" onclick="Cart.add('${p.id}');Modal.close()">${inC?T('in_cart'):T('add_cart')}</button><button class="modal-btn" style="flex:1;background:var(--w);color:var(--o);border:1.5px solid var(--o)" onclick="Share.open('${p.id}')">🔗 Share</button></div><div style="margin-top:16px"><div style="font-size:14px;font-weight:700;margin-bottom:8px">⭐ Reviews (${reviews.length}) · ${avgScore}</div>${reviewHtml}</div><div style="margin-top:16px"><div style="font-size:14px;font-weight:700;margin-bottom:8px">🛍️ Related Products</div>${relatedHtml}</div></div>`;
+    document.getElementById('prodModal').classList.add('open');},
+  close(){document.getElementById('prodModal').classList.remove('open')}
+};
+
+const ApkModal={open(){document.getElementById('apkOverlay').classList.add('open')},close(){document.getElementById('apkOverlay').classList.remove('open')}};
+const Onboard={
+  init(){if(!sessionStorage.getItem('ace_onboarded')){setTimeout(()=>document.getElementById('onboardOverlay').classList.add('open'),1000)}},
+  close(){document.getElementById('onboardOverlay').classList.remove('open');sessionStorage.setItem('ace_onboarded','1')}
+};
+
+// RECENTLY VIEWED
+const RecentlyViewed={
+  list:JSON.parse(sessionStorage.getItem('ace_recent')||'[]'),
+  add(id){if(this.list.includes(id)){this.list.splice(this.list.indexOf(id),1)}this.list.unshift(id);if(this.list.length>10)this.list.pop();sessionStorage.setItem('ace_recent',JSON.stringify(this.list));this.render()},
+  render(){const el=document.getElementById('recentList');const sec=document.getElementById('recentSection');if(!el||!sec)return;const items=this.list.map(id=>P.find(x=>x.id===id)).filter(Boolean);if(!items.length){sec.style.display='none';return}sec.style.display='block';el.innerHTML=items.map(p=>{var rIcon=p.img?'<img src="'+p.img+'" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px">':(CI[p.cat]||'📦');return'<div style="min-width:100px;background:var(--w);border-radius:10px;border:1px solid var(--g100);padding:8px;cursor:pointer;text-align:center" onclick="Modal.open(\''+p.id+'\')"><div style="font-size:32px">'+rIcon+'</div><div style="font-size:10px;font-weight:700;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-top:4px">'+p.name+'</div><div style="font-size:11px;font-weight:800;color:var(--r);margin-top:2px">'+F(p.price)+'</div></div>'}).join('')}
+};
+
+// NOTIFICATIONS
+const Notif={
+  list:[{id:1,icon:'📦',title:'Order Shipped!',desc:'Your Travel Mukena Pro is on the way.',time:'2h ago',unread:true},{id:2,icon:'🎉',title:'New Coupon',desc:'LEBARAN2026 - 5% off your next order.',time:'5h ago',unread:true},{id:3,icon:'💰',title:'Credits Added',desc:'Rp 25,000 referral bonus received.',time:'1d ago',unread:false}],
+  open(){document.getElementById('notifPanel').classList.add('open');this.render()},
+  close(){document.getElementById('notifPanel').classList.remove('open')},
+  render(){const el=document.getElementById('notifList');if(!el)return;el.innerHTML=this.list.map(n=>`<div class="notif-item ${n.unread?'unread':''}" onclick="Notif.read(${n.id})"><div class="notif-icon">${n.icon}</div><div class="notif-info"><div class="notif-title">${n.title}</div><div class="notif-desc">${n.desc}</div><div class="notif-time">${n.time}</div></div></div>`).join('')||'<div class="empty-state" style="padding:24px"><div class="empty-state-icon">🔔</div><div class="empty-state-title">No notifications</div></div>';const unread=this.list.filter(x=>x.unread).length;const dot=document.getElementById('notifDot');if(dot)dot.style.display=unread?'block':'none'},
+  read(id){const n=this.list.find(x=>x.id===id);if(n)n.unread=false;this.render()},
+  markAllRead(){this.list.forEach(n=>n.unread=false);this.render()}
+};
+
+// SETTINGS
+const Settings={
+  open(){document.getElementById('settingsOverlay').classList.add('open');document.getElementById('settingsPanel').classList.add('open');document.getElementById('sett-lang-val').textContent=lang==='EN'?'English':lang==='ID'?'Bahasa Indonesia':'中文'},
+  close(){document.getElementById('settingsOverlay').classList.remove('open');document.getElementById('settingsPanel').classList.remove('open')},
+  editProfile(){var name=prompt('Enter your name:',document.getElementById('prof-name').textContent);if(name&&name.trim()){document.getElementById('prof-name').textContent=name.trim();this.showToast('Profile updated!')}},
+  openPayment(){alert('💳 Payment Methods\n\n• GoPay\n• OVO\n• DANA\n• QRIS\n• Bank Transfer (BCA/Mandiri/BNI)\n\nAll secured by Xendit & WorldFirst.')},
+  toggleNotif(){var el=document.getElementById('sett-notif-val');el.textContent=el.textContent==='On'?'Off':'On';this.showToast('Notifications '+el.textContent)},
+  toggleDark(){this.showToast('Dark mode coming soon! 🌙')},
+  openAbout(){alert('🔶 AceProxy v1.0\nPremium cross-border curated marketplace.\nAI quality inspection.\n\nMade with ❤️ for Jakarta.')},
+  showPrivacy(){alert('🛡️ Privacy Policy\n\nWe collect minimal data to process your orders.\nYour payment info is handled securely by Xendit.\nWe never share your data with third parties.')},
+  showTerms(){alert('📄 Terms of Service\n\nAceProxy is a proxy buying service.\nItems are non-returnable (use Resale Hub).\nDelivery: 7-10 business days to Jakarta.')},
+  logout(){if(confirm('Are you sure you want to log out?')){sessionStorage.clear();location.reload()}},
+  showToast(msg){var t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(function(){t.remove()},2300)}
+};
+
+// ADDRESS
+const Address={
+  list:JSON.parse(sessionStorage.getItem('ace_addrs')||'[]'),
+  editingId:null,
+  open(){document.getElementById('addrOverlay').classList.add('open');document.getElementById('addrPanel').classList.add('open');this.renderList()},
+  close(){document.getElementById('addrOverlay').classList.remove('open');document.getElementById('addrPanel').classList.remove('open');this.editingId=null},
+  save(){var name=document.getElementById('addrInName').value.trim();var phone=document.getElementById('addrInPhone').value.trim();var prov=document.getElementById('addrInProv').value.trim();var city=document.getElementById('addrInCity').value.trim();var detail=document.getElementById('addrInDetail').value.trim();var zip=document.getElementById('addrInZip').value.trim();var isDefault=document.getElementById('addrInDefault').checked;if(!name||!phone||!detail){alert('Please fill in name, phone and address');return}var addr={id:this.editingId||'ADDR-'+Date.now(),name,phone,prov,city,detail,zip,isDefault};if(isDefault)this.list.forEach(a=>a.isDefault=false);if(this.editingId){var idx=this.list.findIndex(a=>a.id===this.editingId);if(idx>-1)this.list[idx]=addr}else{this.list.push(addr)}sessionStorage.setItem('ace_addrs',JSON.stringify(this.list));this.showList();this.renderList();Settings.showToast('Address saved!')},
+  renderList(){var el=document.getElementById('addrList');if(!el)return;el.innerHTML=this.list.map(a=>`<div class="addr-card ${a.isDefault?'default':''}" onclick="Address.edit('${a.id}')"><div class="addr-name">${a.name}<span class="addr-phone">${a.phone}</span></div><div class="addr-detail">${a.detail}, ${a.city}, ${a.prov} ${a.zip}</div><div class="addr-actions"><button class="addr-action-btn" onclick="event.stopPropagation();Address.edit('${a.id}')">✏️ Edit</button><button class="addr-action-btn" onclick="event.stopPropagation();Address.del('${a.id}')">🗑️ Delete</button></div>${a.isDefault?'<span class="addr-default-tag">Default</span>':''}</div>`).join('')||'<div class="empty-state" style="padding:24px"><div class="empty-state-icon">📍</div><div class="empty-state-title">No addresses yet</div><div class="empty-state-desc">Add your first shipping address</div></div>'},
+  showForm(){document.getElementById('addrForm').classList.add('show');document.getElementById('addrList').style.display='none';document.getElementById('addr-add-btn').style.display='none';document.getElementById('addrInName').value='';document.getElementById('addrInPhone').value='';document.getElementById('addrInProv').value='';document.getElementById('addrInCity').value='';document.getElementById('addrInDetail').value='';document.getElementById('addrInZip').value='';document.getElementById('addrInDefault').checked=false;this.editingId=null},
+  showList(){document.getElementById('addrForm').classList.remove('show');document.getElementById('addrList').style.display='block';document.getElementById('addr-add-btn').style.display='block';this.editingId=null},
+  edit(id){var a=this.list.find(x=>x.id===id);if(!a)return;this.editingId=id;document.getElementById('addrInName').value=a.name;document.getElementById('addrInPhone').value=a.phone;document.getElementById('addrInProv').value=a.prov;document.getElementById('addrInCity').value=a.city;document.getElementById('addrInDetail').value=a.detail;document.getElementById('addrInZip').value=a.zip;document.getElementById('addrInDefault').checked=a.isDefault;this.showForm()},
+  del(id){if(!confirm('Delete this address?'))return;this.list=this.list.filter(x=>x.id!==id);sessionStorage.setItem('ace_addrs',JSON.stringify(this.list));this.renderList()}
+};
+
+// SHARE
+const Share={
+  open(id){var p=P.find(x=>x.id===id);if(!p)return;document.getElementById('shareLinkInput').value='https://aceproxy.id/p/'+id;document.getElementById('shareOverlay').classList.add('open');document.getElementById('sharePanel').classList.add('open')},
+  close(){document.getElementById('shareOverlay').classList.remove('open');document.getElementById('sharePanel').classList.remove('open')},
+  copyLink(){var inp=document.getElementById('shareLinkInput');inp.select();if(navigator.clipboard)navigator.clipboard.writeText(inp.value);Settings.showToast('Link copied!')},
+  shareWA(){var url=encodeURIComponent(document.getElementById('shareLinkInput').value);window.open('https://wa.me/?text=Check+this+out!+'+url,'_blank')},
+  shareFB(){var url=encodeURIComponent(document.getElementById('shareLinkInput').value);window.open('https://www.facebook.com/sharer/sharer.php?u='+url,'_blank')},
+  shareTG(){var url=encodeURIComponent(document.getElementById('shareLinkInput').value);window.open('https://t.me/share/url?url='+url+'&text=Check+this+out!','_blank')}
+};
+
+// SEARCH
+const Search={
+  history:JSON.parse(sessionStorage.getItem('ace_search')||'[]'),
+  open(){document.getElementById('searchPage').classList.add('open');this.renderHistory();document.getElementById('searchPageInput').focus()},
+  close(){document.getElementById('searchPage').classList.remove('open')},
+  doSearch(){var q=document.getElementById('searchPageInput').value.trim();if(!q)return;this.addHistory(q);this.close();switchTab('home');document.getElementById('searchInput').value=q;Home.render();window.scrollTo({top:0,behavior:'smooth'})},
+  quick(q){document.getElementById('searchPageInput').value=q;this.doSearch()},
+  addHistory(q){if(!this.history.includes(q)){this.history.unshift(q);if(this.history.length>10)this.history.pop();sessionStorage.setItem('ace_search',JSON.stringify(this.history))}this.renderHistory()},
+  renderHistory(){var el=document.getElementById('searchHistoryList');if(!el)return;el.innerHTML=this.history.map(h=>`<div class="search-history-item" onclick="Search.quick('${h}')"><span>🕐</span><span style="flex:1;font-size:13px">${h}</span><button style="background:none;border:none;font-size:14px;color:var(--g300);cursor:pointer" onclick="event.stopPropagation();Search.delHistory('${h}')">✕</button></div>`).join('')||'<div style="padding:16px;text-align:center;color:var(--g500);font-size:12px">No search history</div>'},
+  delHistory(q){this.history=this.history.filter(x=>x!==q);sessionStorage.setItem('ace_search',JSON.stringify(this.history));this.renderHistory()},
+  clearHistory(){this.history=[];sessionStorage.setItem('ace_search',JSON.stringify(this.history));this.renderHistory()}
+};
+
+// HELP
+const Help={
+  open(){switchTab('help');window.scrollTo({top:0})},
+  render(){var el=document.getElementById('helpFaqList');if(!el)return;el.innerHTML=FAQ_EN.map((f,i)=>`<div class="help-article" onclick="Help.showFaq(${i})"><div class="help-article-title">${f.q}</div><div class="help-article-desc">${f.a.substring(0,60)}... ›</div></div>`).join('')},
+  showCat(cat){var cats={shipping:'🚚 Shipping: Orders ship in 7-10 business days to Jakarta. Tracking provided.',payment:'💳 Payment: We accept GoPay, OVO, DANA, QRIS & bank transfers.',returns:'🔄 Returns: Items are non-returnable. Use Resale Hub to sell unwanted items.',account:'👤 Account: Edit profile, addresses, and payment methods in Settings.',products:'📦 Products: All items pass VisionQC 2.0 AI inspection before shipping.',resale:'🔄 Resale: List unwanted items, earn Ace Credits. Community-driven marketplace.'};alert(cats[cat]||'Coming soon!')},
+  showFaq(i){var f=FAQ_EN[i];if(f)alert(f.q+'\n\n'+f.a)}
+};
+
+// INVITE
+const Invite={
+  open(){switchTab('invite');window.scrollTo({top:0})},
+  render(){},
+  copyCode(){var code='ACE-JKT-2026';if(navigator.clipboard)navigator.clipboard.writeText(code);Settings.showToast('Code copied: '+code)}
+};
+
+// CATEGORY
+const Category={
+  open(){switchTab('category');window.scrollTo({top:0})},
+  render(){var el=document.getElementById('catGrid');if(!el)return;el.innerHTML=CATS.filter(c=>c!=='ALL').map(c=>`<div class="cat-item" onclick="Category.go('${c}')"><div class="cat-icon">${CI[c]||'📦'}</div><div class="cat-label">${c}</div></div>`).join('')},
+  go(cat){switchTab('home');filter=cat;Home.render();window.scrollTo({top:0,behavior:'smooth'})}
+};
+
+const Lang={cycle(){const ks=Object.keys(L);lang=ks[(ks.indexOf(lang)+1)%ks.length];applyT();Home.render();Discovery.render();Wallet.render();Resale.render();Profile.render(oFilter);Cart.update();Assistant.renderQuickBtns()}};
+
+window.addEventListener("scroll",function(){var btn=document.getElementById("scrollTopBtn");if(!btn)return;if(window.scrollY>400)btn.classList.add("show");else btn.classList.remove("show")});
+
+/* ====== NEW: Banner Carousel ====== */
+const Banner={idx:0,total:3,timer:null,init(){this.total=document.querySelectorAll('.banner-slide').length;this.renderDots();this.go(0);this.timer=setInterval(()=>this.next(),4000)},renderDots(){var h='';for(var i=0;i<this.total;i++)h+='<div class="banner-dot'+(i===0?' active':'')+'" onclick="Banner.go('+i+')"></div>';document.getElementById('bannerDots').innerHTML=h},next(){this.idx=(this.idx+1)%this.total;this.go(this.idx)},go(i){this.idx=i;document.getElementById('bannerTrack').style.transform='translateX(-'+i+'00%)';var dots=document.querySelectorAll('.banner-dot');dots.forEach((d,j)=>d.classList.toggle('active',j===i))}};
+
+/* ====== NEW: Flash Sale ====== */
+const FlashSale={end:new Date(Date.now()+6*3600*1000),timer:null,init(){this.startTimer();this.renderItems()},startTimer(){var e=this;this.timer=setInterval(()=>{var d=Math.floor((e.end-Date.now())/1e3);if(d<=0){e.end=new Date(Date.now()+6*3600*1000);d=6*3600}var h=Math.floor(d/3600),m=Math.floor(d%3600/60),s=d%60;document.getElementById('flashH').textContent=String(h).padStart(2,'0');document.getElementById('flashM').textContent=String(m).padStart(2,'0');document.getElementById('flashS').textContent=String(s).padStart(2,'0')},1000)},renderItems(){var items=P.slice(0,8).sort((a,b)=>b.arb-a.arb);var h='';items.forEach((p,i)=>{var sold=Math.floor(50+Math.random()*80);var pct=Math.floor(15+Math.random()*70);var im=p.img?'<img src="'+p.img+'" style="width:100%;height:100%;object-fit:cover">':(CI[p.cat]||'📦');h+='<div class="flash-card" onclick="Modal.open(\''+p.id+'\')"><div class="flash-card-img" style="background:'+(p.color||'#F1F5F9')+'">'+im+'<div class="flash-card-progress"><div class="flash-card-progress-bar" style="width:'+pct+'%"></div></div></div><div class="flash-card-body"><div class="flash-card-price">'+F(p.price)+'<span class="flash-card-orig">'+F(Math.round(p.price*1.35))+'</span></div><div class="flash-card-title">'+p.name+'</div><div class="flash-card-sold">🔥 '+sold+' terjual</div></div></div>'});document.getElementById('flashItems').innerHTML=h}};
+
+/* ====== NEW: Scroll to Top ====== */
+window.addEventListener('scroll',function(){var b=document.getElementById('scrollTop');if(!b)return;b.classList.toggle('visible',window.scrollY>300)});
+
+/* ====== SKELETON + INIT ====== */
+document.getElementById('productGrid').innerHTML='<div class="skel-card"><div class="skeleton skel-img"></div><div class="skeleton skel-line"></div><div class="skeleton skel-line short"></div><div class="skeleton skel-price"></div></div>'.repeat(8);
+
+setInterval(()=>{const e=new Date('2026-06-17T00:00:00+07:00');const d=Math.floor((e-Date.now())/864e5);const h=Math.floor((e-Date.now())/36e5)%24;const m=Math.floor((e-Date.now())/6e4)%60;const s=Math.floor((e-Date.now())/1e3)%60;document.getElementById('cd-timer').textContent=d>0?`${d}d ${h}h ${m}m ${s}s`:'🎉 EID MUBARAK!'},1e3);
+
+let selectedPayment='GoPay';
+function SelectPayment(el,m){selectedPayment=m;document.querySelectorAll('.co-pay-opt').forEach(o=>o.classList.remove('active'));el.classList.add('active')}
+function RenderCheckout(){
+  const items=cart.map(p=>`<div class="co-sum-line"><span>${CI[p.cat]||'📦'} ${p.name}</span><span>${F(p.price)}</span></div>`).join('');
+  const subtotal=cart.reduce((s,p)=>s+p.price,0);const disc=Math.round(subtotal*0.05);const ship=65000;const total=subtotal-disc+ship;
+  document.getElementById('co-items').innerHTML=items||'<div style="color:var(--g500);font-size:12px;padding:8px 0">Your cart is empty</div>';
+  document.getElementById('co-ship').textContent=F(ship);
+  document.getElementById('co-total').textContent=F(total);
+  document.getElementById('co-submit-amount').textContent=F(total);
+}
+function PlaceOrder(){
+  if(!cart.length)return alert('Keranjang kosong! Tambahkan produk terlebih dahulu.');
+  const name=document.getElementById('co-name').value.trim();
+  const phone=document.getElementById('co-phone').value.trim();
+  const addr=document.getElementById('co-addr').value.trim();
+  const city=document.getElementById('co-city').value.trim();
+  if(!name||!phone||!addr||!city){alert('Mohon isi alamat pengiriman lengkap');return}
+  const total=cart.reduce((s,p)=>s+p.price,0);const disc=Math.round(total*0.05);
+  alert('✅ Pesanan berhasil dibuat!\n\nTotal: '+F(total-disc+65000)+'\nPembayaran: '+selectedPayment+'\n\nAnda akan diarahkan ke halaman pembayaran Xendit.');
+  cart=[];Cart.update();switchTab('home');
+}
+const RefundPolicy={lang:'ID',switchLang(l){this.lang=l;document.querySelectorAll('.policy-lang-btn').forEach(b=>b.classList.remove('active'));event.target.classList.add('active');document.getElementById('refund-content-id').style.display=l==='ID'?'block':'none';document.getElementById('refund-content-en').style.display=l==='EN'?'block':'none'},show(){this.switchLang(this.lang)}};
+
+try{applyT();Home.render();Banner.init();FlashSale.init();fetchProducts();Assistant.init();Assistant.renderQuickBtns();Wallet.render();Resale.render();Profile.render();Cart.update();Onboard.init()}catch(e){console.error('[Init]',e)};
+
+/* PWA Service Worker + Install Prompt */
+(function(){
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('./sw.js').then(function(r){console.log('[SW] registered',r.scope)}).catch(function(e){console.warn('[SW] fail',e)});
+  }
+  var deferredPrompt;
+  window.addEventListener('beforeinstallprompt',function(e){
+    e.preventDefault();deferredPrompt=e;
+    var btn=document.createElement('div');
+    btn.id='pwa-install-btn';
+    btn.innerHTML='📲 '+((L[lang]&&L[lang]['onb-cta'])||'Install App');
+    Object.assign(btn.style,{position:'fixed',bottom:'80px',right:'16px',zIndex:999,background:'#F97316',color:'#fff',padding:'10px 20px',borderRadius:'24px',fontSize:'13px',fontWeight:700,cursor:'pointer',boxShadow:'0 4px 12px rgba(249,115,22,.4)',border:'none',fontFamily:'inherit',transition:'transform .2s'});
+    btn.addEventListener('mouseenter',function(){btn.style.transform='scale(1.05)'});
+    btn.addEventListener('mouseleave',function(){btn.style.transform='scale(1)'});
+    btn.addEventListener('click',function(){
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.then(function(c){deferredPrompt=null;btn.remove()});
+    });
+    document.body.appendChild(btn);
+  });
+  window.addEventListener('appinstalled',function(){
+    var btn=document.getElementById('pwa-install-btn');if(btn)btn.remove();
+  });
+})();
+
+/* ===== SMART COLLECTION: Paste Link -> Find Matching -> List ===== */
+var SmartCollect={
+  // ─── 物流合规数据库（中国→印尼，基于 IATA DGR + 印尼海关 PMK 199/2019）───
+  LOGISTICS_DB:{
+    // 完全禁止
+    BANNED:[
+      {kw:['散装电池','loose battery','battery pack','baterai lepas','18650','26650','lithium ion pack'],msg:'散装/单独电池禁止航空运输（IATA DGR Section II）',msgID:'Baterai lepas dilarang lewat jalur udara (IATA DGR)',msgEN:'Loose batteries banned - aviation prohibited (IATA DGR)'},
+      {kw:['打火机','lighter','korek api','zippo','fuel lighter'],msg:'含燃料打火机禁止入境',msgID:'Korek api berbahan bakar dilarang',msgEN:'Fuel lighters are prohibited'},
+      {kw:['枪','子弹','武器','weapon','gun','bullet','ammo','senjata','peluru'],msg:'武器/弹药绝对禁止',msgID:'Senjata & amunisi mutlak dilarang',msgEN:'Weapons & ammo strictly prohibited'},
+      {kw:['毒品','narcotics','narkoba','ganja','cannabis','cocaine'],msg:'毒品违禁，面临最高死刑',msgID:'Narkoba dilarang keras - ancaman hukuman mati',msgEN:'Narcotics prohibited - death penalty risk in Indonesia'},
+      {kw:['活体动物','live animal','hewan hidup','reptile','burung hidup'],msg:'活体动物需 CITES 许可，普通包裹禁止',msgID:'Hewan hidup butuh izin CITES',msgEN:'Live animals require CITES permit'},
+      {kw:['易燃气体','inflammable gas','gas mudah terbakar','aerosol spray','hairspray can'],msg:'易燃气体/气雾罐禁止航空',msgID:'Gas mudah terbakar dilarang udara',msgEN:'Flammable gas/aerosols banned from air freight'},
+      {kw:['色情','pornografi','adult content','xxx'],msg:'色情物品在印尼违法',msgID:'Konten pornografi ilegal di Indonesia',msgEN:'Pornographic material illegal in Indonesia'}
+    ],
+    // 需要特殊处理/加钱
+    SPECIAL:[
+      {kw:['内置电池','built-in battery','baterai internal','baterai tanam','power bank','powerbank','充电宝'],msg:'内置锂电须走特殊航空渠道（PI966/PI967），加收危险品附加费 Rp 25,000-50,000',msgID:'Baterai internal butuh jalur khusus, surcharge Rp 25.000-50.000',msgEN:'Built-in Li-battery: special air channel (PI966/PI967), DG surcharge Rp 25,000-50,000',surcharge:'Rp 25,000-50,000'},
+      {kw:['玻璃','glass','kaca','ceramic','keramik','porcelain','porselen'],msg:'易碎品需充气袋+双层纸箱，加收包装费 Rp 15,000-25,000',msgID:'Barang pecah belah butuh kemasan khusus, Rp 15.000-25.000',msgEN:'Fragile items need bubble wrap + double-box, +Rp 15,000-25,000',surcharge:'Rp 15,000-25,000'},
+      {kw:['香水','perfume','parfum','cologne','液体','liquid','cairan'],msg:'液体类最多100ml/瓶可走空运，超出需走海运专线（+7天）',msgID:'Cairan maks 100ml/botol via udara, lebih dari itu harus laut',msgEN:'Liquids max 100ml/bottle by air, larger volumes via sea freight (+7 days)',surcharge:'Sea freight if >100ml'},
+      {kw:['大件','oversized','barang besar','furniture','sofa','meja kayu'],msg:'超大件（长+宽+高>90cm）走特殊重货渠道，运费按体积重计算，需提前报价',msgID:'Barang besar (LWH>90cm) butuh jalur kargo khusus, harga berdasar berat volume',msgEN:'Oversized (L+W+H>90cm) via cargo only, volumetric weight pricing',surcharge:'Special cargo pricing'},
+      {kw:['食品','makanan','snack','零食','饼干','cookie','candy','permen'],msg:'食品类需印尼 BPOM 进口许可，个人自用 <5kg 可免报关，超出需申报',msgID:'Makanan butuh izin BPOM, personal use <5kg bebas bea cukai',msgEN:'Food needs BPOM permit; personal use <5kg customs-free',surcharge:'BPOM permit required for commercial'},
+      {kw:['化妆品','kosmetik','skincare','serum','cream','krim','lotion'],msg:'化妆品需 BPOM 注册（商业量），个人自用少量可随包裹申报，申报价值须实际开具',msgID:'Kosmetik butuh registrasi BPOM, deklarasi nilai harus akurat',msgEN:'Cosmetics need BPOM registration (commercial), declare actual value',surcharge:'BPOM registration for resale'},
+      {kw:['药品','obat','medicine','supplement','suplemen','vitamin'],msg:'药品/保健品须印尼卫生部（Kemenkes）进口许可，个人自用30天量可豁免',msgID:'Obat butuh izin Kemenkes, kegunaan pribadi 30 hari boleh masuk',msgEN:'Medicine needs Kemenkes permit; 30-day personal use exempt',surcharge:'Kemenkes permit for commercial'},
+      {kw:['版权','branded','logo brand','jersey','nike','adidas','gucci','lv','louis vuitton'],msg:'正品大牌需提供品牌授权证明，仿品被扣没收并罚款',msgID:'Produk bermerek butuh bukti otorisasi merek, barang palsu disita',msgEN:'Branded goods need brand authorization; counterfeit seized & fined',surcharge:'Brand authorization required'}
+    ],
+    // 绿色可发
+    OK_KEYWORDS:['clothing','pakaian','fashion','textile','tekstil','home decor','dekorasi','craft','kerajinan','toy','mainan','stationery','alat tulis','bag','tas','shoes','sepatu','accessories','aksesoris','mukena','hijab','prayer','sajadah','koko','batik','jewelry','perhiasan','watch','jam tangan','kitchenware','peralatan dapur','notebook','buku']
+  },
+  // ─── 中国→印尼 物流渠道库 ───
+  CHANNELS:[
+    {name:'J&T Express China-ID',nameID:'J&T Express',transit:'5-8 hari',price:'Rp 45,000-75,000/kg',track:true,maxW:'30kg',note:'Cocok fashion & rumah tangga',noteEN:'Best for fashion & home items',hot:true},
+    {name:'JNE International',nameID:'JNE International',transit:'7-10 hari',price:'Rp 50,000-85,000/kg',track:true,maxW:'30kg',note:'Jaringan luas ke seluruh Indonesia',noteEN:'Wide coverage across Indonesia',hot:false},
+    {name:'SF Express International',nameID:'SF Express',transit:'4-6 hari',price:'Rp 80,000-120,000/kg',track:true,maxW:'30kg',note:'Premium cepat, cocok barang mahal',noteEN:'Premium fast, good for high-value items',hot:false},
+    {name:'Cainiao Super Economy',nameID:'Cainiao Ekonomi',transit:'12-18 hari',price:'Rp 25,000-40,000/kg',track:true,maxW:'30kg',note:'Paling murah, cocok produk ringan',noteEN:'Cheapest, great for lightweight items',hot:true},
+    {name:'Sea Freight LCL',nameID:'Kargo Laut LCL',transit:'18-25 hari',price:'Rp 15,000-25,000/kg',track:false,maxW:'无限制',note:'Untuk barang >5kg atau cairan, jauh lebih hemat',noteEN:'For items >5kg or liquids, much cheaper',hot:false}
+  ],
+  // ─── 印尼海关规则 ───
+  CUSTOMS:{
+    freeThreshold:500000, // IDR 500,000 ≈ USD 30 (PMK 199/2019 个人进口免税额)
+    dutyRate:0.075, // 一般商品 7.5% 关税
+    vatRate:0.11,   // 印尼 VAT 11% (PPN)
+    pphRate:0.1,    // 所得税预扣 10%
+    maxPerShipment:1500, // USD 1500 上限，超出走正式报关
+    dangerNote:'Nilai >Rp 500.000 kena PPN 11% + bea masuk 7.5%. Deklarasi nilai harus akurat — pemalsuan nilai dikenakan denda 3x nilai barang.',
+    dangerNoteEN:'Values >Rp 500,000 subject to 11% VAT + 7.5% import duty. Declare actual value — undervaluation fines = 3× item value.'
+  },
+  parseUrl(url){
+    try{
+      var u=new URL(url);
+      var host=u.hostname.toLowerCase();
+      // Internal use only — NEVER expose source platform names to users
+      if(host.includes('1688.com'))return{platform:'CN_FACTORY',cat:'factory',icon:'🏭'};
+      if(host.includes('taobao.com')||host.includes('tmall.com'))return{platform:'CN_RETAIL',cat:'retail',icon:'🛍️'};
+      if(host.includes('jd.com')||host.includes('jingdong'))return{platform:'CN_MALL',cat:'mall',icon:'🏪'};
+      if(host.includes('pinduoduo.com')||host.includes('yangkeduo'))return{platform:'CN_GROUP',cat:'group',icon:'🛒'};
+      if(host.includes('amazon'))return{platform:'INTL_AMAZON',cat:'international',icon:'🌎'};
+      if(host.includes('shopee'))return{platform:'SEA_SHOPEE',cat:'sea',icon:'🌏'};
+      if(host.includes('tiktok')||host.includes('douyin'))return{platform:'SOCIAL_COMMERCE',cat:'social',icon:'🎵'};
+      if(host.includes('lazada'))return{platform:'SEA_LAZADA',cat:'sea',icon:'🌍'};
+      if(host.includes('aliexpress'))return{platform:'INTL_AE',cat:'international',icon:'🌐'};
+      return{platform:'EXTERNAL',cat:'external',icon:'🔗'};
+    }catch(e){return{platform:'EXTERNAL',cat:'external',icon:'🔗'};}
+  },
+  checkLogistics(name, desc){
+    var lower=(name+' '+desc).toLowerCase();
+    var result={status:'ok',label:'',labelClass:'lt-can',warning:'',surcharge:'',channel:'',customs:''};
+    // 检查禁止运输品
+    for(var i=0;i<this.LOGISTICS_DB.BANNED.length;i++){
+      var rule=this.LOGISTICS_DB.BANNED[i];
+      for(var k=0;k<rule.kw.length;k++){
+        if(lower.includes(rule.kw[k].toLowerCase())){
+          result.status='banned';
+          result.label='🚫 Tidak Bisa Dikirim';
+          result.labelClass='lt-cant';
+          result.warning=rule.msgID;
+          return result;
+        }
+      }
+    }
+    // 检查特殊处理品
+    for(var i=0;i<this.LOGISTICS_DB.SPECIAL.length;i++){
+      var rule=this.LOGISTICS_DB.SPECIAL[i];
+      for(var k=0;k<rule.kw.length;k++){
+        if(lower.includes(rule.kw[k].toLowerCase())){
+          result.status='special';
+          result.label='⚠️ Perlu Penanganan Khusus';
+          result.labelClass='lt-extra';
+          result.warning=rule.msgID;
+          result.surcharge=rule.surcharge||'';
+          return result;
+        }
+      }
+    }
+    // 默认绿色
+    result.status='ok';
+    result.label='✅ Bisa Dikirim';
+    result.labelClass='lt-can';
+    result.channel='J&T / JNE / Cainiao · 5-18 hari';
+    return result;
+  },
+  // 估算运费 (简单按重量, 默认500g)
+  estimateShipping(weightKg, fast){
+    weightKg=weightKg||0.5;
+    var rate=fast?85000:40000; // per kg
+    var base=fast?15000:8000;
+    return Math.round((base+weightKg*rate)/1000)*1000;
+  },
+  // 检查是否超免税额度
+  checkCustoms(priceIDR){
+    var c=this.CUSTOMS;
+    if(priceIDR<=c.freeThreshold){
+      return{taxable:false,note:'✅ Di bawah Rp 500.000 — bebas bea masuk & PPN',noteEN:'Below Rp 500,000 threshold — customs duty free'};
+    }
+    var duty=Math.round(priceIDR*c.dutyRate);
+    var vat=Math.round((priceIDR+duty)*c.vatRate);
+    return{
+      taxable:true,
+      duty:duty,vat:vat,total:duty+vat,
+      note:'⚠️ Kena bea masuk ≈Rp '+duty.toLocaleString()+' + PPN ≈Rp '+vat.toLocaleString(),
+      noteEN:'Customs duty ≈Rp '+duty.toLocaleString()+' + VAT ≈Rp '+vat.toLocaleString()
+    };
+  },
+  search(){
+    var url=document.getElementById('scInput').value.trim();
+    if(!url){showToast('Tempel link produk dulu ya!','warning');return;}
+    var btn=document.getElementById('sc-btn');
+    if(btn){btn.disabled=true;btn.textContent='🔄 Mencari...';}
+    showToast('Sedang mencari produk serupa...','info');
+    setTimeout(function(){
+      SmartCollect.showResults(url);
+      if(btn){btn.disabled=false;btn.textContent='🔍 Cari Produk Serupa';}
+    },1400);
+  },
+  showResults(url){
+    var info=this.parseUrl(url);
+    var overlay=document.getElementById('scResultsOverlay');
+    var infoEl=document.getElementById('scResultsInfo');
+    var grid=document.getElementById('scMatchGrid');
+    var matches=this.generateMatches(info.cat);
+    var channelHtml='<div style="margin-top:8px;padding:8px;background:#FFF7ED;border-radius:8px;font-size:11px;color:#92400E"><strong>🚚 Estimasi Ongkir CN→ID:</strong> ';
+    channelHtml+=this.CHANNELS.filter(function(c){return c.hot}).map(function(c){return '<span style="margin-right:12px">'+c.nameID+' '+c.transit+' ('+c.price+')</span>'}).join('');
+    channelHtml+='</div>';
+    var customsHtml='<div style="margin-top:6px;padding:6px 8px;background:#F0F9FF;border-radius:8px;font-size:11px;color:#0369A1">📋 <strong>Bea Masuk:</strong> Nilai ≤Rp 500.000 bebas pajak. Nilai lebih dikenakan bea masuk 7.5% + PPN 11%.</div>';
+    infoEl.innerHTML='<strong>✅ Link dianalisis.</strong> Ditemukan <strong>'+matches.length+'</strong> produk serupa dengan harga kompetitif. Semua melewati inspeksi kualitas AI.'+channelHtml+customsHtml;
+    grid.innerHTML=matches.map(function(m,i){
+      var logistics=SmartCollect.checkLogistics(m.name,m.desc);
+      var priceNum=parseInt(m.priceNum)||90000;
+      var customs=SmartCollect.checkCustoms(priceNum);
+      var tags='<div class="logistics-tags">';
+      tags+='<span class="logistics-tag '+logistics.labelClass+'">'+logistics.label+'</span>';
+      tags+='</div>';
+      var warns='';
+      if(logistics.warning){warns+='<div style="font-size:10px;color:#B45309;margin-top:3px;line-height:1.3">⚠️ '+logistics.warning+'</div>';}
+      if(logistics.surcharge){warns+='<div style="font-size:10px;color:#6B7280;margin-top:2px">+Biaya: '+logistics.surcharge+'</div>';}
+      if(customs.taxable){warns+='<div style="font-size:10px;color:#7C3AED;margin-top:2px">📋 '+customs.note+'</div>';}
+      return '<div class="sc-match-card">'+
+        '<div class="sc-match-img">'+m.icon+'</div>'+
+        '<div class="sc-match-body">'+
+        '<div class="sc-match-name">'+m.name+'</div>'+
+        '<div class="sc-match-price">'+m.price+' <span class="sc-match-original">'+m.original+'</span></div>'+
+        '<div class="sc-match-saving">▲ Hemat '+m.saving+'</div>'+
+        tags+warns+
+        '</div>'+
+        '<button class="sc-match-btn" onclick="SmartCollect.startListing('+i+')" '+(logistics.status==='banned'?'disabled style="opacity:0.4;cursor:not-allowed"':'')+'>'+
+        (logistics.status==='banned'?'🚫 Tidak Bisa Dikirim':'⚡ Quick List')+
+        '</button>'+
+        '</div>';
+    }).join('');
+    overlay.classList.add('active');
+    document.body.style.overflow='hidden';
+  },
+  generateMatches(cat){
+    // 根据来源品类生成语境相关的匹配结果
+    var catMap={
+      factory:[
+        {name:'Produk Pabrik Premium - Langsung Ekspor',price:'Rp 78,000',priceNum:78000,original:'Rp 145,000',saving:'46%',icon:'🏭',desc:'cotton textile'},
+        {name:'Versi Upgrade - Bahan Grade A',price:'Rp 92,000',priceNum:92000,original:'Rp 165,000',saving:'44%',icon:'✨',desc:'fabric'},
+        {name:'OEM Factory Direct - Vacuum Pack',price:'Rp 68,000',priceNum:68000,original:'Rp 130,000',saving:'48%',icon:'📦',desc:'clothing'},
+        {name:'Stok Ready - Kirim Hari Ini',price:'Rp 85,000',priceNum:85000,original:'Rp 155,000',saving:'45%',icon:'🚀',desc:'apparel'},
+        {name:'Best Seller Versi Ekonomi',price:'Rp 65,000',priceNum:65000,original:'Rp 120,000',saving:'46%',icon:'⭐',desc:'home'},
+        {name:'Produk Mirip - Kualitas Ekspor',price:'Rp 88,000',priceNum:88000,original:'Rp 158,000',saving:'44%',icon:'🎯',desc:'accessories'}
+      ],
+      retail:[
+        {name:'Versi Serupa - Kualitas Setara',price:'Rp 95,000',priceNum:95000,original:'Rp 175,000',saving:'46%',icon:'🛍️',desc:'fashion'},
+        {name:'Model Terbaru - Stok Terbatas',price:'Rp 108,000',priceNum:108000,original:'Rp 195,000',saving:'45%',icon:'💎',desc:'accessories'},
+        {name:'Alternatif Hemat - Bahan Sama',price:'Rp 82,000',priceNum:82000,original:'Rp 150,000',saving:'45%',icon:'💡',desc:'home decor'},
+        {name:'Produk Populer - Rating Tinggi',price:'Rp 98,000',priceNum:98000,original:'Rp 180,000',saving:'46%',icon:'🏆',desc:'textile'},
+        {name:'Flash Deal - Stok Terbatas',price:'Rp 75,000',priceNum:75000,original:'Rp 140,000',saving:'46%',icon:'⚡',desc:'clothing'},
+        {name:'Bundle Set - Lebih Hemat',price:'Rp 125,000',priceNum:125000,original:'Rp 230,000',saving:'46%',icon:'🎁',desc:'gift set'}
+      ],
+      sea:[
+        {name:'Produk Serupa di Platform Lokal',price:'Rp 88,000',priceNum:88000,original:'Rp 155,000',saving:'43%',icon:'🌊',desc:'fashion'},
+        {name:'Versi Ekspor - Harga Lebih Kompetitif',price:'Rp 72,000',priceNum:72000,original:'Rp 130,000',saving:'45%',icon:'🌏',desc:'accessories'},
+        {name:'Sumber Langsung - Tanpa Perantara',price:'Rp 65,000',priceNum:65000,original:'Rp 118,000',saving:'45%',icon:'💰',desc:'home'},
+        {name:'Model Identik - Factory Stock',price:'Rp 80,000',priceNum:80000,original:'Rp 148,000',saving:'46%',icon:'🎯',desc:'textile'},
+        {name:'Alternatif Premium - Bahan Lebih Baik',price:'Rp 95,000',priceNum:95000,original:'Rp 175,000',saving:'46%',icon:'✨',desc:'clothing'},
+        {name:'Set Komplit - Nilai Lebih Tinggi',price:'Rp 115,000',priceNum:115000,original:'Rp 210,000',saving:'45%',icon:'🎁',desc:'gift'}
+      ]
+    };
+    var list=catMap[cat]||catMap.retail;
+    return list;
+  },
+  closeResults(){
+    document.getElementById('scResultsOverlay').classList.remove('active');
+    document.body.style.overflow='';
+  },
+  startListing(matchIndex){
+    this.closeResults();
+    var overlay=document.getElementById('listingOverlay');
+    overlay.classList.add('active');
+    document.body.style.overflow='hidden';
+    var steps=[1,2,3,4,5];
+    var delays=[900,1900,2900,3900,4900];
+    var icons=['📸','📊','🚚','🔍','✅'];
+    var texts=[
+      'Menganalisis info produk & foto...',
+      'Menghitung harga jual & margin...',
+      'Memilih jalur logistik terbaik CN→ID...',
+      'Inspeksi kualitas AI & compliance check...',
+      'Finalisasi listing...'
+    ];
+    steps.forEach(function(s,i){
+      setTimeout(function(){
+        document.querySelectorAll('.listing-step').forEach(function(el){el.classList.remove('active');});
+        for(var j=1;j<s;j++){
+          var doneEl=document.getElementById('ls-step-'+j);
+          if(doneEl)doneEl.classList.add('done');
+        }
+        var stepEl=document.getElementById('ls-step-'+s);
+        if(stepEl)stepEl.classList.add('active');
+        var iconEl=document.getElementById('listingAnimIcon');
+        var textEl=document.getElementById('listingAnimText');
+        if(iconEl)iconEl.textContent=icons[i];
+        if(textEl)textEl.textContent=texts[i];
+      },delays[i]);
+    });
+    setTimeout(function(){
+      var iconEl=document.getElementById('listingAnimIcon');
+      var textEl=document.getElementById('listingAnimText');
+      var subEl=document.getElementById('listingAnimSub');
+      if(iconEl)iconEl.textContent='🎉';
+      if(textEl)textEl.textContent='Produk Berhasil Terdaftar!';
+      if(subEl)subEl.textContent='Produkmu sudah live di Resale Hub. Estimasi tiba di Jakarta 5-10 hari kerja.';
+      setTimeout(function(){
+        overlay.classList.remove('active');
+        document.body.style.overflow='';
+        switchTab('resale');
+        showToast('Produk berhasil didaftarkan! Estimasi tiba 5-10 hari 🚀','success');
+      },2000);
+    },6000);
+  },
+  showToast(msg,type){showToast(msg,type);}
+};
+
+
+</script><button class="scroll-top" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+</div>
+</div></div>
+
+<!-- SMART COLLECTION RESULTS OVERLAY -->
+<div class="sc-results-overlay" id="scResultsOverlay">
+  <div class="sc-results-panel">
+    <div class="sc-results-header">
+      <div class="sc-results-title" id="sc-results-title">🔍 Matching Products Found</div>
+      <button class="sc-results-close" onclick="SmartCollect.closeResults()">✕</button>
+    </div>
+    <div class="sc-results-info" id="scResultsInfo"></div>
+    <div class="sc-match-grid" id="scMatchGrid"></div>
+  </div>
+</div>
+
+<!-- NOTIFICATION PANEL -->
+<div class="notif-panel" id="notifPanel">
+  <div class="notif-hdr">
+    <button class="notif-close" onclick="Notif.close()">←</button>
+    <div class="notif-hdr-title" id="notif-title">🔔 Notifications</div>
+    <button style="background:none;border:none;font-size:12px;color:var(--o);font-weight:600;cursor:pointer" onclick="Notif.markAllRead()" id="notif-markall">Mark all read</button>
+  </div>
+  <div class="notif-list" id="notifList"></div>
+</div>
+
+
+<!-- SETTINGS -->
+<div class="settings-overlay" id="settingsOverlay" onclick="Settings.close()"></div>
+<div class="settings-panel" id="settingsPanel">
+  <div class="settings-hdr">
+    <button class="notif-close" onclick="Settings.close()">←</button>
+    <div class="settings-hdr-title" id="sett-title">⚙️ Settings</div>
+  </div>
+  <div class="settings-group">
+    <div class="settings-group-title" id="sett-acct">Account</div>
+    <div class="settings-item" onclick="Settings.editProfile()">
+      <div class="settings-item-icon">👤</div>
+      <div class="settings-item-info"><div class="settings-item-label" id="sett-profile">Edit Profile</div><div class="settings-item-desc" id="sett-profile-d">Name, avatar, phone</div></div>
+      <span class="settings-item-arrow">›</span>
+    </div>
+    <div class="settings-item" onclick="Address.open()">
+      <div class="settings-item-icon">📍</div>
+      <div class="settings-item-info"><div class="settings-item-label" id="sett-address">Shipping Addresses</div><div class="settings-item-desc" id="sett-address-d">Manage delivery addresses</div></div>
+      <span class="settings-item-arrow">›</span>
+    </div>
+    <div class="settings-item" onclick="Settings.openPayment()">
+      <div class="settings-item-icon">💳</div>
+      <div class="settings-item-info"><div class="settings-item-label" id="sett-payment">Payment Methods</div><div class="settings-item-desc" id="sett-payment-d">GoPay, OVO, DANA, banks</div></div>
+      <span class="settings-item-arrow">›</span>
+    </div>
+  </div>
+  <div class="settings-group">
+    <div class="settings-group-title" id="sett-pref">Preferences</div>
+    <div class="settings-item" onclick="Lang.cycle();Settings.close()">
+      <div class="settings-item-icon">🌐</div>
+      <div class="settings-item-info"><div class="settings-item-label" id="sett-lang">Language</div></div>
+      <span class="settings-item-value" id="sett-lang-val">English</span>
+    </div>
+    <div class="settings-item" onclick="Settings.toggleNotif()">
+      <div class="settings-item-icon">🔔</div>
+      <div class="settings-item-info"><div class="settings-item-label" id="sett-notif">Notifications</div><div class="settings-item-desc" id="sett-notif-d">Order updates & promotions</div></div>
+      <span class="settings-item-value" id="sett-notif-val">On</span>
+    </div>
+    <div class="settings-item" onclick="Settings.toggleDark()">
+      <div class="settings-item-icon">🌙</div>
+      <div class="settings-item-info"><div class="settings-item-label" id="sett-dark">Dark Mode</div></div>
+      <span class="settings-item-value" id="sett-dark-val">Off</span>
+    </div>
+  </div>
+  <div class="settings-group">
+    <div class="settings-group-title" id="sett-support">Support</div>
+    <div class="settings-item" onclick="Help.open()">
+      <div class="settings-item-icon">❓</div>
+      <div class="settings-item-info"><div class="settings-item-label" id="sett-help">Help Center</div><div class="settings-item-desc" id="sett-help-d">FAQ, shipping, returns</div></div>
+      <span class="settings-item-arrow">›</span>
+    </div>
+    <div class="settings-item" onclick="Invite.open()">
+      <div class="settings-item-icon">🎁</div>
+      <div class="settings-item-info"><div class="settings-item-label" id="sett-invite">Invite Friends</div><div class="settings-item-desc" id="sett-invite-d">Earn Rp 25K per referral</div></div>
+      <span class="settings-item-arrow">›</span>
+    </div>
+    <div class="settings-item" onclick="Settings.openAbout()">
+      <div class="settings-item-icon">ℹ️</div>
+      <div class="settings-item-info"><div class="settings-item-label" id="sett-about">About AceProxy</div></div>
+      <span class="settings-item-arrow">›</span>
+    </div>
+  </div>
+  <div class="settings-group">
+    <div class="settings-group-title" id="sett-legal">Legal</div>
+    <div class="settings-item" onclick="Settings.showPrivacy()">
+      <div class="settings-item-icon">🛡️</div>
+      <div class="settings-item-info"><div class="settings-item-label" id="sett-privacy">Privacy Policy</div></div>
+      <span class="settings-item-arrow">›</span>
+    </div>
+    <div class="settings-item" onclick="Settings.showTerms()">
+      <div class="settings-item-icon">📄</div>
+      <div class="settings-item-info"><div class="settings-item-label" id="sett-terms">Terms of Service</div></div>
+      <span class="settings-item-arrow">›</span>
+    </div>
+  </div>
+  <div style="padding:16px"><button style="width:100%;padding:12px;border:1.5px solid var(--r);color:var(--r);background:var(--w);border-radius:10px;font-weight:700;cursor:pointer;font-size:13px" onclick="Settings.logout()" id="sett-logout">🚪 Log Out</button></div>
+</div>
+
+
+<!-- ADDRESS PANEL -->
+<div class="addr-overlay" id="addrOverlay" onclick="Address.close()"></div>
+<div class="addr-panel" id="addrPanel" onclick="event.stopPropagation()">
+  <div class="addr-hdr">
+    <div class="addr-hdr-title" id="addr-title">📍 Shipping Addresses</div>
+    <button class="addr-close" onclick="Address.close()">✕</button>
+  </div>
+  <div id="addrList" class="addr-list"></div>
+  <div id="addrForm" class="addr-form">
+    <div style="font-size:14px;font-weight:700;margin-bottom:12px" id="addr-form-title">Add New Address</div>
+    <label class="addr-label" id="addr-l-name">Full Name</label>
+    <input class="addr-input" id="addrInName" placeholder="e.g. Ahmad Rizky">
+    <label class="addr-label" id="addr-l-phone">Phone Number</label>
+    <input class="addr-input" id="addrInPhone" placeholder="e.g. 0812-3456-7890">
+    <div class="addr-row">
+      <div>
+        <label class="addr-label" id="addr-l-prov">Province</label>
+        <input class="addr-input" id="addrInProv" placeholder="DKI Jakarta">
+      </div>
+      <div>
+        <label class="addr-label" id="addr-l-city">City</label>
+        <input class="addr-input" id="addrInCity" placeholder="Jakarta Selatan">
+      </div>
+    </div>
+    <label class="addr-label" id="addr-l-detail">Full Address</label>
+    <input class="addr-input" id="addrInDetail" placeholder="Jl. Sudirman No. 123, RT 01/RW 02">
+    <label class="addr-label" id="addr-l-zip">Postal Code</label>
+    <input class="addr-input" id="addrInZip" placeholder="12910">
+    <label style="display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer;margin:8px 0">
+      <input type="checkbox" id="addrInDefault" style="width:16px;height:16px;accent-color:var(--o)">
+      <span id="addr-l-default">Set as default address</span>
+    </label>
+    <button class="addr-save-btn" onclick="Address.save()" id="addr-save-btn">💾 Save Address</button>
+    <button style="width:100%;padding:10px;background:none;border:none;color:var(--g500);font-size:12px;cursor:pointer;margin-top:6px" onclick="Address.showList()" id="addr-cancel">Cancel</button>
+  </div>
+  <button class="addr-add-btn" id="addr-add-btn" onclick="Address.showForm()">+ Add New Address</button>
+</div>
+
+
+<!-- SHARE MODAL -->
+<div class="share-overlay" id="shareOverlay" onclick="Share.close()"></div>
+<div class="share-panel" id="sharePanel" onclick="event.stopPropagation()">
+  <div class="share-title" id="share-title">🔗 Share Product</div>
+  <div class="share-grid">
+    <button class="share-btn" onclick="Share.copyLink()"><div class="share-icon">📋</div><div class="share-label">Copy Link</div></button>
+    <button class="share-btn" onclick="Share.shareWA()"><div class="share-icon" style="background:#DCFCE7">💬</div><div class="share-label">WhatsApp</div></button>
+    <button class="share-btn" onclick="Share.shareFB()"><div class="share-icon" style="background:#DBEAFE">📘</div><div class="share-label">Facebook</div></button>
+    <button class="share-btn" onclick="Share.shareTG()"><div class="share-icon" style="background:#E0E7FF">✈️</div><div class="share-label">Telegram</div></button>
+  </div>
+  <div class="share-link-box">
+    <input type="text" id="shareLinkInput" readonly value="https://aceproxy.id/p/...">
+    <button class="share-copy-btn" onclick="Share.copyLink()">Copy</button>
+  </div>
+  <button style="width:100%;padding:12px;border:none;background:var(--g100);border-radius:10px;font-weight:700;cursor:pointer;font-size:13px" onclick="Share.close()">Close</button>
+</div>
+
+
+<!-- SEARCH PAGE -->
+<div class="search-page" id="searchPage">
+  <div class="search-hdr">
+    <div class="search-input-wrap">
+      <span>🔍</span>
+      <input type="text" id="searchPageInput" placeholder="Search products..." onkeydown="if(event.key==='Enter')Search.doSearch()">
+      <button style="background:none;border:none;font-size:16px;cursor:pointer" onclick="document.getElementById('searchPageInput').value=''">✕</button>
+    </div>
+    <button class="search-cancel" onclick="Search.close()" id="search-cancel">Cancel</button>
+  </div>
+  <div style="flex:1;overflow-y:auto">
+    <div class="search-section">
+      <div class="search-section-title"><span id="search-hot">🔥 Hot Search</span></div>
+      <div class="search-tags">
+        <button class="search-tag hot" onclick="Search.quick('Mukena')">Mukena</button>
+        <button class="search-tag hot" onclick="Search.quick('Baju Koko')">Baju Koko</button>
+        <button class="search-tag hot" onclick="Search.quick('Hijab')">Hijab</button>
+        <button class="search-tag" onclick="Search.quick('Prayer Mat')">Prayer Mat</button>
+        <button class="search-tag" onclick="Search.quick('Gift Set')">Gift Set</button>
+        <button class="search-tag" onclick="Search.quick('Bluetooth')">Bluetooth</button>
+      </div>
+    </div>
+    <div class="search-section">
+      <div class="search-section-title">
+        <span id="search-history">🕐 Search History</span>
+        <button class="search-clear-all" onclick="Search.clearHistory()" id="search-clear">Clear All</button>
+      </div>
+      <div id="searchHistoryList"></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- HELP PAGE -->
+<div class="page" id="page-help"><div class="page-inner">
+<div class="sec">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+    <button style="background:none;border:none;font-size:20px;cursor:pointer" onclick="switchTab('profile')">←</button>
+    <div style="font-size:18px;font-weight:800" id="help-title">❓ Help Center</div>
+  </div>
+  <div class="help-cat-grid">
+    <div class="help-cat-item" onclick="Help.showCat('shipping')">
+      <div class="help-cat-icon">🚚</div><div class="help-cat-label" id="help-c1">Shipping</div>
+    </div>
+    <div class="help-cat-item" onclick="Help.showCat('payment')">
+      <div class="help-cat-icon">💳</div><div class="help-cat-label" id="help-c2">Payment</div>
+    </div>
+    <div class="help-cat-item" onclick="Help.showCat('returns')">
+      <div class="help-cat-icon">🔄</div><div class="help-cat-label" id="help-c3">Returns</div>
+    </div>
+    <div class="help-cat-item" onclick="Help.showCat('account')">
+      <div class="help-cat-icon">👤</div><div class="help-cat-label" id="help-c4">Account</div>
+    </div>
+    <div class="help-cat-item" onclick="Help.showCat('products')">
+      <div class="help-cat-icon">📦</div><div class="help-cat-label" id="help-c5">Products</div>
+    </div>
+    <div class="help-cat-item" onclick="Help.showCat('resale')">
+      <div class="help-cat-icon">🔄</div><div class="help-cat-label" id="help-c6">Resale</div>
+    </div>
+  </div>
+  <div style="font-size:14px;font-weight:700;margin-bottom:10px" id="help-faq-title">📚 Frequently Asked</div>
+  <div id="helpFaqList"></div>
+  <div class="help-contact-card">
+    <div style="font-size:14px;font-weight:700;margin-bottom:4px" id="help-need">Still need help?</div>
+    <div style="font-size:12px;color:var(--g500);margin-bottom:8px" id="help-contact-d">Chat with our support team on WhatsApp</div>
+    <a href="https://wa.me/6281234567890" class="help-contact-btn" id="help-wa">💬 Chat on WhatsApp</a>
+  </div>
+</div>
+</div>
+
+
+<!-- INVITE PAGE -->
+<div class="page" id="page-invite"><div class="page-inner">
+<div class="sec">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+    <button style="background:none;border:none;font-size:20px;cursor:pointer" onclick="switchTab('profile')">←</button>
+    <div style="font-size:18px;font-weight:800" id="invite-title">🎁 Invite Friends</div>
+  </div>
+  <div class="invite-card">
+    <div style="font-size:13px;color:var(--g500)" id="invite-sub">Share your code & earn rewards</div>
+    <div class="invite-reward" id="invite-reward">🎉 Earn Rp 25,000 per friend!</div>
+    <div style="font-size:11px;color:var(--g500);margin-bottom:4px" id="invite-code-label">Your Referral Code</div>
+    <div class="invite-code" id="inviteCodeDisplay">ACE-JKT-2026</div>
+    <button class="addr-save-btn" onclick="Invite.copyCode()" id="invite-copy">📋 Copy Code</button>
+    <div class="invite-stats">
+      <div class="invite-stat"><div class="invite-stat-num" id="invite-stat1">12</div><div class="invite-stat-label" id="invite-l1">Invited</div></div>
+      <div class="invite-stat"><div class="invite-stat-num" id="invite-stat2">5</div><div class="invite-stat-label" id="invite-l2">Joined</div></div>
+      <div class="invite-stat"><div class="invite-stat-num" id="invite-stat3">125K</div><div class="invite-stat-label" id="invite-l3">Earned</div></div>
+    </div>
+  </div>
+  <div style="font-size:14px;font-weight:700;margin-bottom:10px" id="invite-how">How it works</div>
+  <div style="background:var(--w);border-radius:12px;padding:16px;border:1px solid var(--g100)">
+    <div style="display:flex;gap:10px;margin-bottom:12px"><div style="width:24px;height:24px;border-radius:12px;background:var(--o);color:var(--w);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">1</div><div style="font-size:12px"><div style="font-weight:700" id="invite-s1">Share your code</div><div style="color:var(--g500);margin-top:2px" id="invite-s1d">Copy and send to friends via WhatsApp, IG, etc.</div></div></div>
+    <div style="display:flex;gap:10px;margin-bottom:12px"><div style="width:24px;height:24px;border-radius:12px;background:var(--o);color:var(--w);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">2</div><div style="font-size:12px"><div style="font-weight:700" id="invite-s2">Friend signs up</div><div style="color:var(--g500);margin-top:2px" id="invite-s2d">They get Rp 50K off first order</div></div></div>
+    <div style="display:flex;gap:10px"><div style="width:24px;height:24px;border-radius:12px;background:var(--o);color:var(--w);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">3</div><div style="font-size:12px"><div style="font-weight:700" id="invite-s3">You get rewarded</div><div style="color:var(--g500);margin-top:2px" id="invite-s3d">Rp 25K credit for each successful referral</div></div></div>
+  </div>
+</div>
+</div>
+
+
+<!-- CATEGORY PAGE -->
+<div class="page" id="page-category"><div class="page-inner">
+<div class="sec">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+    <button style="background:none;border:none;font-size:20px;cursor:pointer" onclick="switchTab('home')">←</button>
+    <div style="font-size:18px;font-weight:800" id="cat-title">📂 Categories</div>
+  </div>
+  <div class="cat-grid" id="catGrid"></div>
+</div>
+</div>
+
+
+
+<!-- SOURCING RESULT OVERLAY -->
+<div class="sourcing-result-overlay" id="sourcingResultOverlay" onclick="if(event.target===this)Sourcing.closeResults()">
+  <div class="sourcing-result-panel">
+    <div class="sourcing-result-header">
+      <div class="sourcing-result-title" id="sourcing-result-title">🔍 Same Item Search Results</div>
+      <button class="sourcing-close-btn" onclick="Sourcing.closeResults()">&times;</button>
+    </div>
+    <div class="sourcing-source-info" id="sourcingSourceInfo"></div>
+    <div class="sourcing-matches-title" id="sourcing-matches-title">Found <strong id="sourcingMatchCount">0</strong> matches from Chinese suppliers</div>
+    <div class="sourcing-match-grid" id="sourcingMatchGrid"></div>
+  </div>
+</div>
+
+<!-- LISTING ANIMATION OVERLAY -->
+<div class="listing-overlay" id="listingOverlay">
+  <div class="listing-anim-icon" id="listingAnimIcon">🚀</div>
+  <div class="listing-anim-text" id="listingAnimText">Quick Listing in Progress</div>
+  <div class="listing-anim-sub" id="listingAnimSub">AI is processing your product...</div>
+  <div class="listing-steps">
+    <div class="listing-step active" id="ls-step-1"><div class="listing-step-icon">📸</div><div class="listing-step-text">Analyzing product info...</div></div>
+    <div class="listing-step" id="ls-step-2"><div class="listing-step-icon">📊</div><div class="listing-step-text">Calculating price & margin...</div></div>
+    <div class="listing-step" id="ls-step-3"><div class="listing-step-icon">📦</div><div class="listing-step-text">Estimating logistics & delivery...</div></div>
+    <div class="listing-step" id="ls-step-4"><div class="listing-step-icon">🔍</div><div class="listing-step-text">AI quality inspection...</div></div>
+    <div class="listing-step" id="ls-step-5"><div class="listing-step-icon">✅</div><div class="listing-step-text">Finalizing listing...</div></div>
+  </div>
+</div>
+
+<div class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>
+
+</body></html>

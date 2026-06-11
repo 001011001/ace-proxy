@@ -19,27 +19,47 @@ import { COLORS, SPACING, TYPOGRAPHY, SHADOWS } from '../theme';
  * 支持 Bank Transfer - Local Bank (IDR)。
  * 用户需上传支付凭证 (Proof of Payment) 以供后台核销。
  */
-export const PaymentScreen = ({ orderTotal = '2,450,000' }) => {
+export const PaymentScreen = ({ route, navigation }: any) => {
+  const { orderId, orderTotal } = route?.params || {};
   const { currentTheme: theme } = useRole();
   const [agreementConfirmed, setAgreementConfirmed] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('BANK_TRANSFER');
   const [proofUploaded, setProofUploaded] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [proofUri, setProofUri] = useState<string | null>(null);
 
-  const handlePayPress = () => {
-    if (!agreementConfirmed) {
-      Alert.alert('提示', '请先勾选跨境代购协议');
-      return;
+  const handleUploadProof = async () => {
+    try {
+      setUploading(true);
+      // TODO: Use expo-image-picker when dependency is added
+      // const result = await ImagePicker.launchImageLibraryAsync({...});
+      // if (!result.canceled) {
+      //   setProofUri(result.uri);
+      //   await api.uploadPaymentProof(orderId, result.uri);
+      //   setProofUploaded(true);
+      // }
+      Alert.alert('Coming Soon', 'Payment proof upload will be available in next update');
+    } catch (error) {
+      Alert.alert('Error', 'Failed to upload proof');
+    } finally {
+      setUploading(false);
     }
-    if (!proofUploaded) {
-      Alert.alert('提示', '请先上传支付凭证 (Bukti Transfer)');
-      return;
-    }
-    handleFinalConfirm();
   };
 
-  const handleFinalConfirm = () => {
-    // 逻辑：提交订单并进入 AWAITING_PAYMENT_VERIFICATION 状态
-    Alert.alert('提交成功', '支付凭证已上传，请等待后台核销。');
+  const handleSubmit = async () => {
+    if (!proofUploaded) {
+      Alert.alert('Error', 'Please upload payment proof first');
+      return;
+    }
+    try {
+      // TODO: Call actual API
+      // await api.confirmPayment(orderId);
+      Alert.alert('Success', 'Payment confirmed!', [
+        { text: 'OK', onPress: () => navigation?.navigate('Home') },
+      ]);
+    } catch (error) {
+      Alert.alert('Error', 'Failed to confirm payment');
+    }
   };
 
   return (
@@ -48,7 +68,7 @@ export const PaymentScreen = ({ orderTotal = '2,450,000' }) => {
       <ScrollView showsVerticalScrollIndicator={false}>
         <Animated.View entering={FadeInDown.duration(600)} style={styles.summary}>
           <Text style={styles.label}>应付金额 (IDR)</Text>
-          <Text style={styles.amount}>Rp {orderTotal}</Text>
+          <Text style={styles.amount}>Rp {orderTotal || '---'}</Text>
           <View style={styles.exchangeBadge}>
             <Text style={styles.exchangeNote}>≈ ¥ 1,108.60 RMB (WorldFirst 结汇预估)</Text>
           </View>
@@ -71,10 +91,11 @@ export const PaymentScreen = ({ orderTotal = '2,450,000' }) => {
           <Text style={styles.sectionTitle}>上传凭证 (Bukti Transfer)</Text>
           <TouchableOpacity 
             style={styles.uploadArea} 
-            onPress={() => setProofUploaded(true)}
+            onPress={handleUploadProof}
+            disabled={uploading}
           >
             <Text style={styles.uploadText}>
-               {proofUploaded ? '✅ Bukti Terunggah (凭证已上传)' : '📸 Upload Bukti Transfer'}
+               {uploading ? 'Uploading...' : proofUploaded ? '✅ Bukti Terunggah (凭证已上传)' : '📸 Upload Bukti Transfer'}
             </Text>
           </TouchableOpacity>
 
@@ -111,7 +132,7 @@ export const PaymentScreen = ({ orderTotal = '2,450,000' }) => {
               { backgroundColor: (agreementConfirmed && proofUploaded) ? '#F97316' : COLORS.gray[300] }, 
               agreementConfirmed && SHADOWS.medium
             ]}
-            onPress={handlePayPress}
+            onPress={handleSubmit}
             disabled={!agreementConfirmed || !proofUploaded}
           >
             <Text style={styles.payText}>提交核销 (Konfirmasi)</Text>

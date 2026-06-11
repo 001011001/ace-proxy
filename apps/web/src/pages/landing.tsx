@@ -111,6 +111,13 @@ export default function Landing() {
     <div style={{ backgroundColor: '#fff', color: '#000', fontFamily: 'Arial Black, sans-serif' }}>
       <Head>
         <title>AceProxy | {t.hero.title}</title>
+        <style>{`
+          @keyframes scan {
+            0% { top: 0; }
+            50% { top: 100%; }
+            100% { top: 0; }
+          }
+        `}</style>
       </Head>
 
       {/* Nav */}
@@ -307,16 +314,3 @@ const styles: Record<string, React.CSSProperties> = {
   footerLogo: { fontSize: '20px', fontWeight: 900 },
   footerText: { fontSize: '12px', fontWeight: 800, opacity: 0.6 }
 };
-
-// Add global CSS for the scan animation
-if (typeof document !== 'undefined') {
-  const styleSheet = document.createElement("style");
-  styleSheet.innerText = `
-    @keyframes scan {
-      0% { top: 0; }
-      50% { top: 100%; }
-      100% { top: 0; }
-    }
-  `;
-  document.head.appendChild(styleSheet);
-}

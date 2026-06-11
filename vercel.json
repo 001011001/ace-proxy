@@ -1,0 +1,19 @@
+{
+  "buildCommand": "cd apps/server && npm install && npx prisma generate && npm run build",
+  "outputDirectory": "deploy",
+  "installCommand": "npm install",
+  "framework": null,
+  "rewrites": [
+    { "source": "/api/:path*", "destination": "https://aceproxy-api.onrender.com/api/:path*" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "Cache-Control", "value": "public, max-age=3600" }
+      ]
+    }
+  ]
+}

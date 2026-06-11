@@ -9,56 +9,94 @@ import {
   KeyboardAvoidingView,
   Platform,
   Image,
-  SafeAreaView
+  SafeAreaView,
+  ActivityIndicator,
 } from 'react-native';
 import { COLORS, SHADOWS, SPACING, BORDERS } from '../theme';
+import { api } from '../services/APIService';
 
 interface Message {
   id: string;
   text: string;
-  sender: 'user' | 'steward';
+  sender: 'user' | 'steward' | 'system';
   timestamp: string;
 }
 
 /**
  * StewardChatScreen - AI 采购管家聊天界面
- * 核心逻辑：用户与 AI Steward 对话，AI 后端对接 1688 卖家并处理翻译与议价。
+ * 对接后端 Ollama + Qwen3:4b 真实 AI 模型，支持 Function Calling
  */
 export const StewardChatScreen = ({ onBack }: { onBack: () => void }) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: 'Halo! Saya Steward AceProxy Anda. Ada yang bisa saya bantu terkait pesanan atau pencarian barang di 1688?',
+      text: 'Halo! Saya AI Steward AceProxy Anda. Ada yang bisa saya bantu terkait produk, harga, atau pesanan? 🛍️',
       sender: 'steward',
       timestamp: '10:00'
     }
   ]);
   const [inputText, setInputText] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
 
-  const sendMessage = () => {
-    if (inputText.trim() === '') return;
+  const sendMessage = async () => {
+    const trimmed = inputText.trim();
+    if (trimmed === '' || isLoading) return;
 
     const userMsg: Message = {
       id: Date.now().toString(),
-      text: inputText,
+      text: trimmed,
       sender: 'user',
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
 
-    setMessages(prev => [...prev, userMsg]);
-    setInputText('');
+    // Add loading indicator
+    const loadingMsg: Message = {
+      id: 'loading',
+      text: '...',
+      sender: 'system',
+      timestamp: ''
+    };
 
-    // 模拟 AI Steward 回复
-    setTimeout(() => {
-      const stewardMsg: Message = {
-        id: (Date.now() + 1).toString(),
-        text: 'Tentu, saya akan segera menanyakan hal ini ke supplier di 1688. Mohon tunggu sebentar ya.',
-        sender: 'steward',
-        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      };
-      setMessages(prev => [...prev, stewardMsg]);
-    }, 1500);
+    setMessages(prev => [...prev, userMsg, loadingMsg]);
+    setInputText('');
+    setIsLoading(true);
+
+    try {
+      // Build conversation history for the AI
+      const history = messages
+        .filter(m => m.id !== '1' && m.sender !== 'system')
+        .map(m => ({
+          role: m.sender === 'user' ? 'user' : 'assistant',
+          content: m.text,
+        }));
+
+      const response = await api.stewardChat(trimmed, history);
+
+      // Remove loading, add real AI reply
+      setMessages(prev => {
+        const filtered = prev.filter(m => m.id !== 'loading');
+        return [...filtered, {
+          id: (Date.now() + 1).toString(),
+          text: response.reply || 'Maaf, saya tidak bisa memproses itu saat ini.',
+          sender: 'steward',
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        }];
+      });
+    } catch (error: any) {
+      console.error('[StewardChat] API error:', error);
+      setMessages(prev => {
+        const filtered = prev.filter(m => m.id !== 'loading');
+        return [...filtered, {
+          id: (Date.now() + 1).toString(),
+          text: 'Maaf, otak AI saya sedang istirahat sebentar. Silakan coba lagi atau hubungi kami via WhatsApp! 💬',
+          sender: 'steward',
+          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        }];
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -94,22 +132,31 @@ export const StewardChatScreen = ({ onBack }: { onBack: () => void }) => {
               msg.sender === 'user' ? styles.userWrapper : styles.stewardWrapper
             ]}
           >
-            <View
-              style={[
-                styles.messageBubble,
-                msg.sender === 'user' ? styles.userBubble : styles.stewardBubble
-              ]}
-            >
-              <Text
-                style={[
-                  styles.messageText,
-                  msg.sender === 'user' ? styles.userText : styles.stewardText
-                ]}
-              >
-                {msg.text}
-              </Text>
-            </View>
-            <Text style={styles.timestamp}>{msg.timestamp}</Text>
+            {msg.sender === 'system' ? (
+              <View style={[styles.messageBubble, styles.loadingBubble]}>
+                <ActivityIndicator size="small" color="#F97316" />
+                <Text style={[styles.messageText, { color: '#94A3B8', marginLeft: 8 }]}>AI is thinking...</Text>
+              </View>
+            ) : (
+              <>
+                <View
+                  style={[
+                    styles.messageBubble,
+                    msg.sender === 'user' ? styles.userBubble : styles.stewardBubble
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.messageText,
+                      msg.sender === 'user' ? styles.userText : styles.stewardText
+                    ]}
+                  >
+                    {msg.text}
+                  </Text>
+                </View>
+                <Text style={styles.timestamp}>{msg.timestamp}</Text>
+              </>
+            )}
           </View>
         ))}
       </ScrollView>
@@ -171,6 +218,7 @@ const styles = StyleSheet.create({
   messageBubble: { padding: 12, borderRadius: 12, minWidth: 80, ...BORDERS.brutalist, ...SHADOWS.brutalist },
   userBubble: { backgroundColor: '#F97316' },
   stewardBubble: { backgroundColor: '#FFF' },
+  loadingBubble: { backgroundColor: '#F8FAFC', flexDirection: 'row', alignItems: 'center', borderStyle: 'dashed' },
   messageText: { fontSize: 14, lineHeight: 20, fontWeight: '700' },
   userText: { color: '#000' },
   stewardText: { color: '#1E293B' },
