@@ -7,3 +7,7 @@ dist/
 apps/server/NUL
 deploy/nul
 apps/server/NUL
+
+# Local LLM model files (large .gguf binaries)
+*.gguf
+ai-models/*.gguf

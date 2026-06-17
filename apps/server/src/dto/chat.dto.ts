@@ -13,6 +13,10 @@ export class StewardChatDto {
   message: string;
 
   @IsOptional()
+  @IsString()
+  sessionId?: string;
+
+  @IsOptional()
   @IsArray()
   @ValidateNested({ each: true })
   history?: ChatMessageDto[];

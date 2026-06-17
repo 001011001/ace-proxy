@@ -119,6 +119,17 @@ export class VaultService {
   }
 
   /**
+   * 查询某账户池子余额（DEBIT - CREDIT）
+   */
+  async getPoolBalance(account: string): Promise<number> {
+    const result = await this.prisma.aceVaultLedger.aggregate({
+      where: { account },
+      _sum: { amount: true },
+    });
+    return Number(result._sum.amount || 0);
+  }
+
+  /**
    * 最终结算 (Payout)
    * 当用户确认收货后，将冻结资金正式转入团长/骑手账户。
    */

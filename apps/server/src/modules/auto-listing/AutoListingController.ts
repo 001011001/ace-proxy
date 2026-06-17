@@ -1,7 +1,7 @@
 import { Controller, Post, Body } from '@nestjs/common';
 import { AutoListingService } from './AutoListingService';
 
-@Controller('api/auto-listing')
+@Controller('auto-listing')
 export class AutoListingController {
   constructor(private readonly listing: AutoListingService) {}
 

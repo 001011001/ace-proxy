@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { StationService } from '../station/StationService';
 import { PatentRiskChecker } from './PatentRiskChecker';
+import { ConfigurationError, isDevMockEnabled } from '../../common/ConfigurationError';
 
 @Injectable()
 export class SentinelScraper {
@@ -16,6 +17,10 @@ export class SentinelScraper {
    * 模拟从 1688 抓取爆款并灌入 Station 首页
    */
   async runScraper(categories: string[]) {
+    if (!isDevMockEnabled()) {
+      throw new ConfigurationError('SentinelScraper', ['ALIBABA_APP_KEY (need real 1688 scraping or API)']);
+    }
+    this.logger.warn('[Sentinel] DEV_MOCK: using simulated scraping data');
     this.logger.log(`[Sentinel] Starting scraper for categories: ${categories.join(', ')}`);
     
     // 模拟 1688 抓取结果

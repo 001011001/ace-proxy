@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { LocalLlmService } from '../llm/LocalLlmService';
 
 interface TranslateRequest {
   sourceText: string;
@@ -16,12 +17,15 @@ interface TranslateResult {
  * AiTranslateService — AI 翻译上架
  *
  * 将1688/淘宝中文标题和描述自动翻译成目标国家语言。
- * P0 阶段使用 Ollama + Qwen3:4b 本地翻译，零 API 费用。
- * 后期可切换 GPT-4o-mini / DeepL API。
+ * 支持两种后端：
+ * 1. Ollama HTTP — 当 OLLAMA_URL 环境变量已配置时使用
+ * 2. LocalLlmService (node-llama-cpp) — 默认使用进程内推理，零外部依赖
  */
 @Injectable()
 export class AiTranslateService {
   private readonly logger = new Logger(AiTranslateService.name);
+  private readonly OLLAMA_URL = process.env.OLLAMA_URL || '';
+  private readonly OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'qwen3:4b';
 
   /** 语言映射 */
   private readonly langMap: Record<string, string> = {
@@ -31,16 +35,17 @@ export class AiTranslateService {
     BR: 'Portuguese',
   };
 
+  constructor(private readonly localLlm: LocalLlmService) {}
+
   /**
    * 翻译单条文本
    */
   async translate(text: string, targetCountry: string): Promise<string> {
     const targetLang = this.langMap[targetCountry.toUpperCase()] || 'English';
 
-    // 使用本地 Ollama Qwen3 翻译
     try {
       const prompt = this.buildTranslatePrompt(text, targetLang);
-      const translated = await this.callOllama(prompt);
+      const translated = await this.callLlm(prompt);
 
       if (!translated || translated.length < 3) {
         this.logger.warn(`[Translate] Empty result for "${text.substring(0, 30)}..." → ${targetLang}. Using fallback.`);
@@ -89,7 +94,7 @@ export class AiTranslateService {
    */
   private async generateMarketingLine(productName: string, targetLang: string): Promise<string> {
     const prompt = `Write ONE short, catchy marketing line (under 10 words) in ${targetLang} for this product: "${productName}". Make it appealing for cross-border e-commerce shoppers. Only output the line, nothing else.`;
-    const result = await this.callOllama(prompt);
+    const result = await this.callLlm(prompt);
     return result?.trim() || productName;
   }
 
@@ -112,17 +117,27 @@ export class AiTranslateService {
   }
 
   /**
-   * 调用本地 Ollama Qwen3:4b
+   * Call LLM — dispatches to Ollama (if configured) or LocalLlmService.
+   */
+  private async callLlm(prompt: string): Promise<string | null> {
+    // Prefer Ollama if OLLAMA_URL is explicitly configured (backward compat)
+    if (this.OLLAMA_URL) {
+      return this.callOllama(prompt);
+    }
+
+    // Use in-process LocalLlmService
+    return this.callLocalLlm(prompt);
+  }
+
+  /**
+   * 调用本地 Ollama Qwen3（original implementation, kept for backward compat）
    */
   private async callOllama(prompt: string): Promise<string> {
-    const OLLAMA_URL = process.env.OLLAMA_URL || 'http://localhost:11434';
-    const MODEL = process.env.OLLAMA_MODEL || 'qwen3:4b';
-
-    const response = await fetch(`${OLLAMA_URL}/api/generate`, {
+    const response = await fetch(`${this.OLLAMA_URL}/api/generate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: MODEL,
+        model: this.OLLAMA_MODEL,
         prompt,
         stream: false,
         options: { temperature: 0.3, num_predict: 512 },
@@ -133,5 +148,16 @@ export class AiTranslateService {
 
     const data = await response.json() as any;
     return data.response || '';
+  }
+
+  /**
+   * 调用 LocalLlmService (node-llama-cpp 进程内推理)
+   */
+  private async callLocalLlm(prompt: string): Promise<string | null> {
+    const result = await this.localLlm.completion(prompt, {
+      temperature: 0.3,
+      maxTokens: 512,
+    });
+    return result;
   }
 }

@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { ShippingService } from '../shipping/ShippingService';
+import { ConfigurationError, isDevMockEnabled } from '../../common/ConfigurationError';
 
 interface PricingStrategy {
   productId: string;
@@ -90,7 +91,11 @@ export class PricingAssistant {
       else { prices.PHP = priceLocal; margins.PHP = margin; }
     }
 
-    // 模拟竞品数据
+    // 竞品数据 — 需要真实比价 API（如 Shopee/Lazada 搜索接口）
+    if (!isDevMockEnabled()) {
+      throw new ConfigurationError('PricingAssistant', ['SHOPEE_API_KEY (for real competitor price lookup)']);
+    }
+    this.logger.warn('[Pricing] DEV_MOCK: using simulated competitor prices');
     const competitors = this.simulateCompetitorPrices(product.name, prices);
 
     return {
@@ -154,9 +159,10 @@ export class PricingAssistant {
 
     const acePrice = Number(product.priceIdr);
     const competitors = [
-      { platform: 'Shopee ID', avgPrice: Math.round(acePrice * (1 + Math.random() * 0.5 + 0.2)), link: '#' },
-      { platform: 'Tokopedia', avgPrice: Math.round(acePrice * (1 + Math.random() * 0.4 + 0.1)), link: '#' },
-      { platform: 'Lazada ID', avgPrice: Math.round(acePrice * (1 + Math.random() * 0.45 + 0.15)), link: '#' },
+      { platform: 'Shopee ID', avgPrice: Math.round(acePrice * 1.35), link: '#' },
+      { platform: 'Tokopedia', avgPrice: Math.round(acePrice * 1.28), link: '#' },
+      { platform: 'Lazada ID', avgPrice: Math.round(acePrice * 1.32), link: '#' },
+      { platform: 'Blibli', avgPrice: Math.round(acePrice * 1.30), link: '#' },
     ];
 
     return {

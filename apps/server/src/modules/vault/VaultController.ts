@@ -56,4 +56,17 @@ export class VaultController {
       lastAudit: new Date(),
     };
   }
+
+  /**
+   * 金库三池余额汇总
+   */
+  @Get('summary')
+  async summary() {
+    const [marginPool, serviceFeePool, riskReserve] = await Promise.all([
+      this.vaultService.getPoolBalance('MARGIN'),
+      this.vaultService.getPoolBalance('SERVICE_FEE'),
+      this.vaultService.getPoolBalance('RISK'),
+    ]);
+    return { marginPool, serviceFeePool, riskReserve };
+  }
 }

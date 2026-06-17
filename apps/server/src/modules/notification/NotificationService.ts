@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { ConfigurationError, isDevMockEnabled } from '../../common/ConfigurationError';
 
 /**
  * NotificationService - 实时推送与消息中心
@@ -37,7 +38,10 @@ export class NotificationService {
    * 雅加达用户习惯在 WhatsApp 沟通，这是建立“代购信任感”的生命线。
    */
   async sendWhatsAppMessage(phone: string, text: string) {
-    this.logger.log(`[Notification] Sending WhatsApp to ${phone}: ${text.substring(0, 20)}...`);
+    if (!isDevMockEnabled()) {
+      throw new ConfigurationError('Notification/WhatsApp', ['WHATSAPP_API_URL', 'WHATSAPP_ACCESS_TOKEN']);
+    }
+    this.logger.log(`[Notification] DEV_MOCK: Simulating WhatsApp to ${phone}: ${text.substring(0, 20)}...`);
     
     // 模拟集成 Meta WhatsApp Business API 或本地集成商 (如 Twilio/Smooch)
     const payload = {

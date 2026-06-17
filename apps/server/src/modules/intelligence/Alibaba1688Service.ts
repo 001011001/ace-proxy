@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import * as crypto from 'crypto';
+import { ConfigurationError, isDevMockEnabled } from '../../common/ConfigurationError';
 
 export interface SearchResult {
   offerId: string;
@@ -56,7 +57,10 @@ export class Alibaba1688Service {
   //  搜索商品
   // ═══════════════════════════════════════════
   async searchProducts(keyword: string, page = 1, pageSize = 20): Promise<SearchResult[]> {
-    if (!this.isConfigured()) return this.mockSearch(keyword);
+    if (!this.isConfigured()) {
+      if (isDevMockEnabled()) return this.mockSearch(keyword);
+      throw new ConfigurationError('1688 API', ['ALIBABA_APP_KEY', 'ALIBABA_APP_SECRET', 'ALIBABA_ACCESS_TOKEN']);
+    }
 
     try {
       const params = this.baseParams('alibaba.icbu.product.search', {
@@ -83,8 +87,9 @@ export class Alibaba1688Service {
         moq: parseInt(p.moq || p.minOrderQuantity || '1'),
       }));
     } catch (e) {
-      this.logger.warn(`[1688] Search failed, using mock: ${e}`);
-      return this.mockSearch(keyword);
+      this.logger.error(`[1688] Search failed: ${e}`);
+      if (isDevMockEnabled()) return this.mockSearch(keyword);
+      throw new ConfigurationError('1688 API', ['ALIBABA_APP_KEY — API call failed']);
     }
   }
 

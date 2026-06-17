@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -392,4 +392,22 @@ model AceConsolidationOrder {
 
   @@index([status])
   @@map("ace_consolidation_orders")
+}
+
+// 22. AI 对话日志（自动学习系统）
+model ChatLog {
+  id        String   @id @default(uuid())
+  userId    String?
+  sessionId String
+  role      String   // "user" | "assistant" | "tool"
+  content   String   @db.Text
+  intent    String?  // "search" | "buy" | "recommend" | "qa" | "translate"
+  metadata  Json?
+  rating    Int?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([sessionId])
+  @@index([intent])
+  @@index([createdAt])
 }

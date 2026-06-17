@@ -15,4 +15,14 @@ export class DashboardController {
   async getTrend() {
     return this.dashboardService.getTrend(7);
   }
+
+  @Get('category-breakdown')
+  async getCategoryBreakdown() {
+    return this.dashboardService.getCategoryBreakdown();
+  }
+
+  @Get('country-breakdown')
+  async getCountryBreakdown() {
+    return this.dashboardService.getCountryBreakdown();
+  }
 }

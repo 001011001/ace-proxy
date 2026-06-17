@@ -2,6 +2,7 @@ import { Injectable, Logger, BadRequestException, ServiceUnavailableException } 
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../../prisma/prisma.service';
 import { WebhookVerifier } from '../../common/WebhookVerifier';
+import { ConfigurationError, isDevMockEnabled } from '../../common/ConfigurationError';
 
 export interface XenditInvoice {
   id: string;
@@ -64,9 +65,12 @@ export class PaymentService {
     failureRedirectUrl?: string;
     paymentMethods?: string[];  // 限制支付方式
   }): Promise<XenditInvoice> {
-    // MVP: if no API key or is placeholder, return mock invoice for end-to-end testing
+    // MVP: if no API key or is placeholder, return mock invoice for local dev testing only
     if (!this.apiKey || this.apiKey.includes('your-') || this.apiKey.length < 10) {
-      this.logger.warn('[Payment] No valid Xendit API key — returning mock invoice');
+      if (!isDevMockEnabled()) {
+        throw new ConfigurationError('Payment/Xendit', ['XENDIT_API_KEY', 'XENDIT_CALLBACK_TOKEN']);
+      }
+      this.logger.warn('[Payment] DEV_MOCK: No valid Xendit API key — returning mock invoice');
       return {
         id: `mock_inv_${Date.now()}`,
         external_id: params.orderId,
@@ -74,6 +78,7 @@ export class PaymentService {
         amount: params.amount,
         invoice_url: `https://checkout-staging.xendit.co/web/${params.orderId}`,
         payment_method: (params.paymentMethods && params.paymentMethods[0]) || 'OVO',
+        _mockMode: true,
       } as any;
     }
 

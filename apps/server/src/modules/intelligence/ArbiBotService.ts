@@ -1,5 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PatentRiskChecker } from './PatentRiskChecker';
+import { ConfigurationError, isDevMockEnabled } from '../../common/ConfigurationError';
+import { Alibaba1688Service } from './Alibaba1688Service';
+import { UnifiedSourcingService } from './UnifiedSourcingService';
 
 export interface ArbiBotAnalysis {
   sourceUrl: string;
@@ -21,18 +24,40 @@ export interface ArbiBotAnalysis {
 export class ArbiBotService {
   private readonly logger = new Logger(ArbiBotService.name);
 
-  constructor(private readonly patentChecker: PatentRiskChecker) {}
+  constructor(
+    private readonly patentChecker: PatentRiskChecker,
+    private readonly alibaba1688: Alibaba1688Service,
+    private readonly unifiedSourcing: UnifiedSourcingService,
+  ) {}
 
   /**
-   * AI 套利分析核心逻辑
-   * 响应老板需求：粘贴链接即可秒级计算利差
+   * AI 套利分析 — 使用 UnifiedSourcingService 搜索真实 1688/京东/淘宝 价格
    */
   async analyzeLink(url: string): Promise<ArbiBotAnalysis> {
     this.logger.log(`[ArbiBot] Analyzing link: ${url}`);
 
-    // 1. 模拟 1688 反查 (实际对接 1688 图搜/关键词搜索 API)
-    const sourcePriceCNY = 50 + Math.random() * 100; // 模拟源头价格
-    const matchedSourceUrl = `https://detail.1688.com/offer/${Math.floor(Math.random() * 1000000)}.html`;
+    // 1. 搜索三平台同款
+    let sourcePriceCNY = 0;
+    let matchedSourceUrl = '';
+    try {
+      const results = await this.unifiedSourcing.searchAll(url, 3);
+      if (results.length > 0) {
+        sourcePriceCNY = results[0].priceCny;
+        matchedSourceUrl = results[0].sourceUrl;
+      }
+    } catch (e) {
+      this.logger.warn(`[ArbiBot] Sourcing failed: ${e}`);
+    }
+
+    // 真实数据不可得时 → 抛错而非随机数
+    if (sourcePriceCNY === 0 && !isDevMockEnabled()) {
+      throw new ConfigurationError('ArbiBot/1688', ['ALIBABA_APP_KEY', 'ALIBABA_APP_SECRET']);
+    }
+    if (sourcePriceCNY === 0) {
+      sourcePriceCNY = 50 + Math.random() * 100;
+      matchedSourceUrl = 'https://detail.1688.com/offer/mock';
+      this.logger.warn('[ArbiBot] DEV_MOCK: using simulated price');
+    }
 
     // 2. 专利审计 (Patent Sentry)
     const patentRisk = await this.patentChecker.checkRisk("Sample Product", "General");

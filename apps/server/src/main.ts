@@ -18,21 +18,28 @@ async function bootstrap() {
   ];
   const isDev = process.env.NODE_ENV !== 'production';
 
+  const devWhitelist = [
+    'http://localhost',
+    'http://127.0.0.1',
+    'http://10.0.',
+    'https://app.codebuddy.work',
+    '.codebuddy.work',
+    'file://',
+  ];
+
   app.enableCors({
     origin: (origin, callback) => {
       if (isDev) {
-        // 开发模式：仅允许 localhost 和 127.0.0.1
-        const allowed = !origin
-          || origin.startsWith('http://localhost')
-          || origin.startsWith('http://127.0.0.1')
-          || origin.startsWith('http://10.0.');
+        if (!origin || origin === 'null') { callback(null, true); return; }
+        const allowed = devWhitelist.some(h => {
+          if (h.startsWith('.') ) return origin.endsWith(h) || origin.includes(h + '.');
+          return origin === h || origin.startsWith(h);
+        });
+        if (!allowed) console.warn(`[CORS][DEV] Blocked origin: ${origin}`);
         callback(null, allowed);
       } else {
-        // 生产模式：严格白名单 — 禁止 file://、禁止任意域名
-        const allowed = prodWhitelist.some(h => origin.startsWith(h));
-        if (!allowed) {
-          console.warn(`[CORS] Blocked origin: ${origin}`);
-        }
+        const allowed = !origin || prodWhitelist.some(h => origin === h || origin.startsWith(h + '/'));
+        if (!allowed) console.warn(`[CORS] Blocked origin: ${origin}`);
         callback(null, allowed);
       }
     },

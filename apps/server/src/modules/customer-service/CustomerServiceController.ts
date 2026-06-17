@@ -1,7 +1,7 @@
 import { Controller, Post, Get, Body, Param } from '@nestjs/common';
 import { AiCustomerService } from './AiCustomerService';
 
-@Controller('api/customer-service')
+@Controller('customer-service')
 export class CustomerServiceController {
   constructor(private readonly cs: AiCustomerService) {}
 
@@ -18,5 +18,15 @@ export class CustomerServiceController {
   @Get('order-context/:orderId')
   async getOrderContext(@Param('orderId') orderId: string) {
     return this.cs.getOrderContext(orderId);
+  }
+
+  @Get('stats')
+  async getStats() {
+    return this.cs.getStats();
+  }
+
+  @Get('recent-chats')
+  async getRecentChats() {
+    return this.cs.getRecentChats();
   }
 }

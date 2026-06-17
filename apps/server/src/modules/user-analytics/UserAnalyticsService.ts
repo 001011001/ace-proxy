@@ -1,14 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 
-interface UserSegment {
+export interface UserSegment {
   segment: 'WHALE' | 'REGULAR' | 'NEW' | 'DORMANT' | 'LOST';
   label: string;
   count: number;
   pct: number;
 }
 
-interface UserProfile {
+export interface UserProfile {
   userId: string;
   segment: string;
   totalSpend: number;

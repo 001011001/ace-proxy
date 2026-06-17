@@ -19,7 +19,13 @@ export class ChatController {
     @Req() req: any,
     @Body() body: StewardChatDto,
   ) {
-    return this.chatService.stewardChat(req.user.userId, body.message, body.history || []);
+    return this.chatService.stewardChat(
+      req.user.userId,
+      body.message,
+      body.history || [],
+      null,
+      body.sessionId,
+    );
   }
 
   /**

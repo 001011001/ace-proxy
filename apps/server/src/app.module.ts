@@ -5,6 +5,9 @@ import { ConfigModule } from '@nestjs/config';
 // Infrastructure
 import { PrismaModule } from './prisma/prisma.module';
 
+// LLM (node-llama-cpp in-process inference)
+import { LlmModule } from './modules/llm/LlmModule';
+
 // Auth
 import { AuthModule } from './modules/auth/auth.module';
 
@@ -18,6 +21,7 @@ import { SentinelScraper } from './modules/intelligence/SentinelScraper';
 // Chat
 import { ChatService } from './modules/chat/ChatService';
 import { ChatController } from './modules/chat/ChatController';
+import { ChatLogService } from './modules/chat/ChatLogService';
 
 // Holiday
 import { HolidayService } from './modules/holiday/HolidayService';
@@ -32,6 +36,7 @@ import { StationController } from './modules/station/StationController';
 import { VaultService } from './modules/vault/VaultService';
 import { VaultController } from './modules/vault/VaultController';
 import { RiskSentryService } from './modules/vault/RiskSentryService';
+import { RiskSentryController } from './modules/vault/RiskSentryController';
 
 // Payment
 import { PaymentModule } from './modules/payment/PaymentModule';
@@ -48,6 +53,7 @@ import { InventoryService } from './modules/inventory/InventoryService';
 // AI modules
 import { AiTranslateService } from './modules/ai-translate/AiTranslateService';
 import { AiPushService } from './modules/push/AiPushService';
+import { AiPushController } from './modules/push/AiPushController';
 
 // Security
 import { ThrottlerGuard } from './common/guards/ThrottlerGuard';
@@ -62,13 +68,20 @@ import { ProfitDashboardService } from './modules/profit-dashboard/ProfitDashboa
 import { ProfitDashboardController } from './modules/profit-dashboard/ProfitDashboardController';
 import { AutoListingService } from './modules/auto-listing/AutoListingService';
 import { AutoListingController } from './modules/auto-listing/AutoListingController';
+import { SmartCollectService } from './modules/smart-collect/SmartCollectService';
+import { SmartCollectController } from './modules/smart-collect/SmartCollectController';
 
 // Phase 1.5: Cart Consolidation + Trending + Analytics + Pricing
 import { CartConsolidationService } from './modules/cart/CartConsolidationService';
 import { TrendingEngine } from './modules/trending-engine/TrendingEngine';
+import { TrendingEngineController } from './modules/trending-engine/TrendingEngineController';
 import { UserAnalyticsService } from './modules/user-analytics/UserAnalyticsService';
+import { UserAnalyticsController } from './modules/user-analytics/UserAnalyticsController';
 import { PricingAssistant } from './modules/pricing-assistant/PricingAssistant';
 import { Alibaba1688Service } from './modules/intelligence/Alibaba1688Service';
+import { JdService } from './modules/intelligence/JdService';
+import { TaobaoService } from './modules/intelligence/TaobaoService';
+import { UnifiedSourcingService } from './modules/intelligence/UnifiedSourcingService';
 
 // Others
 import { IPFirewallService } from './modules/sentinel/IPFirewallService';
@@ -95,11 +108,15 @@ import { CartController } from './modules/cart/CartController';
 import { DashboardService } from './modules/dashboard/DashboardService';
 import { DashboardController } from './modules/dashboard/DashboardController';
 
+// Order
+import { OrderController } from './modules/order/OrderController';
+
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     ScheduleModule.forRoot(),
     PrismaModule,
+    LlmModule,
     AuthModule,
     PaymentModule,
     ShippingModule,
@@ -119,12 +136,19 @@ import { DashboardController } from './modules/dashboard/DashboardController';
     LogisticsTrackingController,
     ProfitDashboardController,
     AutoListingController,
+    SmartCollectController,
+    TrendingEngineController,
+    UserAnalyticsController,
+    AiPushController,
+    RiskSentryController,
+    OrderController,
   ],
   providers: [
     IntelligenceService,
     PatentRiskChecker,
     ArbiBotService,
     ChatService,
+    ChatLogService,
     HolidayService,
     SentinelScraper,
     StationService,
@@ -156,11 +180,15 @@ import { DashboardController } from './modules/dashboard/DashboardController';
     LogisticsTrackingService,
     ProfitDashboardService,
     AutoListingService,
+    SmartCollectService,
     CartConsolidationService,
     TrendingEngine,
     UserAnalyticsService,
     PricingAssistant,
     Alibaba1688Service,
+    JdService,
+    TaobaoService,
+    UnifiedSourcingService,
   ],
 })
 export class AppModule implements NestModule {

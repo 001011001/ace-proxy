@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 
-type PushType = 'BROWSE_RECALL' | 'DROPPED_PRICE' | 'CONSOLIDATION_TIP' | 'TRACKING_UPDATE' | 'REBUY_SUGGEST';
+export type PushType = 'BROWSE_RECALL' | 'DROPPED_PRICE' | 'CONSOLIDATION_TIP' | 'TRACKING_UPDATE' | 'REBUY_SUGGEST';
 
-interface PushMessage {
+export interface PushMessage {
   type: PushType;
   title: string;
   body: string;

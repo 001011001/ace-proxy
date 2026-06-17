@@ -122,12 +122,11 @@ const products = [
 
 async function main() {
   const pool = new Pool({
-    host: 'ep-wispy-shape-aj90qiwn-pooler.c-3.us-east-2.aws.neon.tech',
-    port: 5432,
-    database: 'neondb',
-    user: 'neondb_owner',
-    password: 'npg_QF1UiIwB5tLx',
-    ssl: { rejectUnauthorized: false },
+    host: process.env.PGHOST || 'localhost',
+    port: parseInt(process.env.PGPORT || '5432'),
+    database: process.env.PGDATABASE || 'ace_proxy',
+    user: process.env.PGUSER || 'postgres',
+    password: process.env.PGPASSWORD || '',
     max: 5,
   });
 
@@ -142,7 +141,7 @@ async function main() {
           id, source_url, image_urls, name, price_idr, cost_cny,
           category, status, created_at, updated_at
         ) VALUES (
-          gen_random_uuid(), $1, $2, $3, $4, $5, $6, 'active', NOW(), NOW()
+          gen_random_uuid(), $1, $2, $3, $4, $5, $6, 'ACTIVE', NOW(), NOW()
         )
         ON CONFLICT (source_url) DO NOTHING
       `, [

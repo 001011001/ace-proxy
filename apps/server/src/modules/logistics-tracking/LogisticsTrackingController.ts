@@ -1,7 +1,7 @@
 import { Controller, Post, Get, Body, Param, Query } from '@nestjs/common';
 import { LogisticsTrackingService } from './LogisticsTrackingService';
 
-@Controller('api/logistics')
+@Controller('logistics')
 export class LogisticsTrackingController {
   constructor(private readonly tracking: LogisticsTrackingService) {}
 
@@ -37,5 +37,15 @@ export class LogisticsTrackingController {
     @Body() body: { passed: boolean; note?: string },
   ) {
     return this.tracking.handleQCResult(orderId, body.passed, body.note);
+  }
+
+  @Get('stats')
+  async getStats() {
+    return this.tracking.getStats();
+  }
+
+  @Get('delays')
+  async getDelayedOrders() {
+    return this.tracking.getDelays();
   }
 }

@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { PatentRiskChecker } from './PatentRiskChecker';
 import { StationService } from '../station/StationService';
+import { ConfigurationError, isDevMockEnabled } from '../../common/ConfigurationError';
 
 /**
  * IntelligenceService - 全球电商情报中心
@@ -38,6 +39,10 @@ export class IntelligenceService {
    * 响应产品经理需求：监控开斋节爆款的价格波动与库存风险
    */
   async monitorHeroProducts(products: any[]) {
+    if (!isDevMockEnabled()) {
+      throw new ConfigurationError('Intelligence/Monitor', ['ALIBABA_APP_KEY (real-time price check requires 1688 API)']);
+    }
+    this.logger.warn('[Intelligence] DEV_MOCK: using simulated price drift for hero products');
     this.logger.log(`[Sentinel] Monitoring ${products.length} hero products for price and patent anomalies...`);
     
     for (const product of products) {

@@ -1,8 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Alibaba1688Service } from '../intelligence/Alibaba1688Service';
+import { ConfigurationError, isDevMockEnabled } from '../../common/ConfigurationError';
 
-interface HotProduct {
+export interface HotProduct {
   productId: string;
   name: string;
   shopeePrice: number;
@@ -37,6 +38,12 @@ export class TrendingEngine {
    * 获取 Shopee 热榜→1688 比价结果
    */
   async scanHotProducts(country: string, limit = 20): Promise<HotProduct[]> {
+    // 当前不支持真实 Shopee API — 开发模式可用 mock
+    if (!isDevMockEnabled()) {
+      throw new ConfigurationError('TrendingEngine', ['SHOPEE_API_KEY', 'SHOPEE_AFFILIATE_ID']);
+    }
+    this.logger.warn('[TrendingEngine] DEV_MOCK: using simulated Shopee hotlist');
+
     // 1. 模拟 Shopee 热榜抓取
     const rawHotlist = this.simulateShopeeHotlist(country, limit);
 

@@ -5,78 +5,207 @@ import { PrismaService } from '../../prisma/prisma.service';
 export class DashboardService {
   constructor(private prisma: PrismaService) {}
 
+  // ═══════════════════════════════════════════
+  //  KPI 总览
+  // ═══════════════════════════════════════════
+
   async getKpis(role?: string) {
-    const kpis: any = {};
+    const today = new Date(); today.setHours(0, 0, 0, 0);
+    const thisMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
-    // 今日GMV
-    const today = new Date(); today.setHours(0,0,0,0);
-    const gmvResult = await this.prisma.$queryRawUnsafe(
-      `SELECT COALESCE(SUM(total_amount),0) as val FROM ace_orders WHERE status != 'CANCELLED' AND created_at >= ?`,
-      today.toISOString()
-    );
-    kpis.todayGmv = Number((gmvResult as any)[0]?.val || 0);
+    const [
+      totalProducts, totalUsers, totalOrders,
+      paidOrders, shippedOrders, deliveredOrders,
+      cancelledOrders,
+    ] = await Promise.all([
+      this.prisma.aceProduct.count({ where: { status: 'ACTIVE' } }),
+      this.prisma.aceUser.count(),
+      this.prisma.aceOrder.count(),
+      this.prisma.aceOrder.count({ where: { status: 'PAID' } }),
+      this.prisma.aceOrder.count({ where: { status: 'SHIPPED' } }),
+      this.prisma.aceOrder.count({ where: { status: 'DELIVERED' } }),
+      this.prisma.aceOrder.count({ where: { status: 'CANCELLED' } }),
+    ]);
 
-    // 净利率 (savings ratio)
-    const marginResult = await this.prisma.$queryRawUnsafe(
-      `SELECT COALESCE(AVG((total_amount - COALESCE(source_cost,0) - COALESCE(shipping_fee,0) - COALESCE(service_fee,0)) / NULLIF(total_amount,0)),0) as val FROM ace_orders WHERE status NOT IN ('CANCELLED','PENDING')`
-    );
-    kpis.netMargin = Math.round(Number((marginResult as any)[0]?.val || 0) * 10000) / 100;
+    // ── Real GMV ──
+    const gmvResult = await this.prisma.aceOrder.aggregate({
+      _sum: { totalAmount: true },
+      where: { status: { not: 'CANCELLED' } },
+    });
+    const totalGmv = Number(gmvResult._sum.totalAmount || 0);
 
-    // 活跃用户
-    const userResult = await this.prisma.$queryRawUnsafe(
-      `SELECT COUNT(*) as val FROM ace_users`
-    );
-    kpis.activeUsers = Number((userResult as any)[0]?.val || 0);
+    const todayGmvResult = await this.prisma.aceOrder.aggregate({
+      _sum: { totalAmount: true },
+      where: { createdAt: { gte: today }, status: { not: 'CANCELLED' } },
+    });
+    const todayGmv = Number(todayGmvResult._sum.totalAmount || 0);
 
-    // 产品数
-    const prodResult = await this.prisma.$queryRawUnsafe(
-      `SELECT COUNT(*) as val FROM ace_products WHERE status='ACTIVE'`
-    );
-    kpis.totalProducts = Number((prodResult as any)[0]?.val || 0);
+    const monthGmvResult = await this.prisma.aceOrder.aggregate({
+      _sum: { totalAmount: true },
+      where: { createdAt: { gte: thisMonth }, status: { not: 'CANCELLED' } },
+    });
+    const monthGmv = Number(monthGmvResult._sum.totalAmount || 0);
 
-    // 订单总数 + 各状态分布
-    const orderResult = await this.prisma.$queryRawUnsafe(
-      `SELECT COUNT(*) as total, 
-        SUM(CASE WHEN status='PAID' THEN 1 ELSE 0 END) as paid,
-        SUM(CASE WHEN status='SHIPPED' THEN 1 ELSE 0 END) as shipped,
-        SUM(CASE WHEN status='DELIVERED' THEN 1 ELSE 0 END) as delivered,
-        SUM(CASE WHEN status='PENDING' THEN 1 ELSE 0 END) as pending
-      FROM ace_orders WHERE status != 'CANCELLED'`
-    );
-    const o = (orderResult as any)[0];
-    kpis.totalOrders = Number(o.total || 0);
-    kpis.orderBreakdown = {
-      paid: Number(o.paid || 0),
-      shipped: Number(o.shipped || 0),
-      delivered: Number(o.delivered || 0),
-      pending: Number(o.pending || 0),
+    // ── Real Profit ──
+    const profitResult = await this.prisma.aceOrder.aggregate({
+      _sum: { totalAmount: true, sourceCost: true, shippingFee: true, serviceFee: true },
+      where: { status: { not: 'CANCELLED' } },
+    });
+    const totalRevenue = Number(profitResult._sum.totalAmount || 0);
+    const totalCost = Number(profitResult._sum.sourceCost || 0);
+    const totalShipping = Number(profitResult._sum.shippingFee || 0);
+    const totalService = Number(profitResult._sum.serviceFee || 0);
+    const totalProfit = totalRevenue - totalCost - totalShipping - totalService;
+    const netMargin = totalRevenue > 0 ? (totalProfit / totalRevenue) * 100 : 0;
+
+    // ── Refund Rate ──
+    const refundResult = await this.prisma.aceRefund.aggregate({
+      _sum: { refundAmount: true },
+    });
+    const totalRefund = Number(refundResult._sum.refundAmount || 0);
+    const refundRate = totalGmv > 0 ? (totalRefund / totalGmv) * 100 : 0;
+
+    // ── Today orders ──
+    const todayOrders = await this.prisma.aceOrder.count({
+      where: { createdAt: { gte: today }, status: { not: 'CANCELLED' } },
+    });
+
+    // ── Top products ──
+    const topProducts = await this.prisma.aceOrderItem.groupBy({
+      by: ['productId'],
+      _sum: { quantity: true },
+      _count: true,
+      orderBy: { _count: { _count: 'desc' } },
+      take: 5,
+    });
+    const topProductIds = topProducts.map(p => p.productId);
+
+    const topProductDetails = topProductIds.length > 0
+      ? await this.prisma.aceProduct.findMany({
+          where: { id: { in: topProductIds } },
+          select: { id: true, name: true, category: true, priceIdr: true },
+        })
+      : [];
+    const topProductsEnriched = topProducts.map(tp => {
+      const detail = topProductDetails.find(d => d.id === tp.productId);
+      return {
+        productId: tp.productId,
+        name: detail?.name || 'Unknown',
+        category: detail?.category || 'General',
+        orderCount: tp._count._count,
+        totalQty: tp._sum.quantity || 0,
+      };
+    });
+
+    return {
+      // GMV
+      todayGmv: Math.round(todayGmv),
+      monthGmv: Math.round(monthGmv),
+      totalGmv: Math.round(totalGmv),
+      // Profit
+      netMargin: Math.round(netMargin * 10) / 10,
+      totalProfit: Math.round(totalProfit),
+      totalCost: Math.round(totalCost),
+      totalShipping: Math.round(totalShipping),
+      totalService: Math.round(totalService),
+      // Orders
+      totalProducts,
+      activeUsers: totalUsers,
+      totalOrders,
+      todayOrders,
+      orderBreakdown: {
+        paid: paidOrders,
+        shipped: shippedOrders,
+        delivered: deliveredOrders,
+        cancelled: cancelledOrders,
+        pending: totalOrders - paidOrders - shippedOrders - deliveredOrders - cancelledOrders,
+      },
+      refundRate: Math.round(refundRate * 100) / 100,
+      totalRefund: Math.round(totalRefund),
+      // Top products
+      topProducts: topProductsEnriched,
     };
-
-    // 退款率
-    const refundResult = await this.prisma.$queryRawUnsafe(
-      `SELECT COUNT(*) * 100.0 / NULLIF((SELECT COUNT(*) FROM ace_orders), 0) as val FROM ace_refunds WHERE status='APPROVED'`
-    );
-    kpis.refundRate = Math.round(Number((refundResult as any)[0]?.val || 0) * 100) / 100;
-
-    return kpis;
   }
+
+  // ═══════════════════════════════════════════
+  //  趋势
+  // ═══════════════════════════════════════════
 
   async getTrend(days: number) {
     const results = [];
     for (let i = days - 1; i >= 0; i--) {
       const d = new Date(); d.setDate(d.getDate() - i);
-      const start = new Date(d); start.setHours(0,0,0,0);
-      const end = new Date(d); end.setHours(23,59,59,999);
-      const r = await this.prisma.$queryRawUnsafe(
-        `SELECT COALESCE(SUM(total_amount),0) as val, COUNT(*) as cnt FROM ace_orders WHERE status != 'CANCELLED' AND created_at >= ? AND created_at <= ?`,
-        start.toISOString(), end.toISOString()
-      );
+      const start = new Date(d); start.setHours(0, 0, 0, 0);
+      const end = new Date(d); end.setHours(23, 59, 59, 999);
+
+      const [orders, gmvResult] = await Promise.all([
+        this.prisma.aceOrder.count({
+          where: { createdAt: { gte: start, lte: end }, status: { not: 'CANCELLED' } },
+        }),
+        this.prisma.aceOrder.aggregate({
+          _sum: { totalAmount: true },
+          where: { createdAt: { gte: start, lte: end }, status: { not: 'CANCELLED' } },
+        }),
+      ]);
+
       results.push({
         date: d.toISOString().split('T')[0],
-        gmv: Number((r as any)[0]?.val || 0),
-        orders: Number((r as any)[0]?.cnt || 0),
+        gmv: Math.round(Number(gmvResult._sum.totalAmount || 0)),
+        orders,
       });
     }
     return results;
+  }
+
+  // ═══════════════════════════════════════════
+  //  品类分析
+  // ═══════════════════════════════════════════
+
+  async getCategoryBreakdown() {
+    const items = await this.prisma.aceOrderItem.findMany({
+      include: {
+        order: { select: { status: true } },
+        product: { select: { category: true } },
+      },
+      where: { order: { status: { not: 'CANCELLED' } } },
+    });
+
+    const catMap: Record<string, { orders: number; qty: number; revenue: number }> = {};
+    for (const item of items) {
+      const cat = item.product?.category || 'General';
+      if (!catMap[cat]) catMap[cat] = { orders: 0, qty: 0, revenue: 0 };
+      catMap[cat].orders += 1;
+      catMap[cat].qty += item.quantity;
+      catMap[cat].revenue += Number(item.unitPrice) * item.quantity;
+    }
+
+    return Object.entries(catMap)
+      .map(([category, data]) => ({
+        category,
+        orders: data.orders,
+        quantity: data.qty,
+        revenue: Math.round(data.revenue),
+      }))
+      .sort((a, b) => b.revenue - a.revenue);
+  }
+
+  // ═══════════════════════════════════════════
+  //  国家分析
+  // ═══════════════════════════════════════════
+
+  async getCountryBreakdown() {
+    const result = await this.prisma.aceOrder.groupBy({
+      by: ['country'],
+      _count: true,
+      _sum: { totalAmount: true },
+      where: { status: { not: 'CANCELLED' } },
+      orderBy: { _sum: { totalAmount: 'desc' } },
+    });
+
+    return result.map(r => ({
+      country: r.country || 'Unknown',
+      orders: r._count,
+      gmv: Math.round(Number(r._sum.totalAmount || 0)),
+    }));
   }
 }
