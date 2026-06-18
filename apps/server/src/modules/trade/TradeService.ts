@@ -1,4 +1,4 @@
-import { Injectable, Logger, BadRequestException } from '@nestjs/common';
+import { Injectable, Logger, BadRequestException, ForbiddenException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { VaultService } from '../vault/VaultService';
 import { SmartSplitterService } from '../splitter/SmartSplitterService';
@@ -42,7 +42,7 @@ export class TradeService {
    */
   async createOrder(orderData: any, compliance: { ip: string, deviceId: string, terms_accepted: boolean }) {
     if (!compliance.terms_accepted) {
-      throw new BadRequestException('LEGAL_ERROR: 用户必须接受跨境代购不退货协议才能下单。');
+      throw new ForbiddenException('用户必须接受跨境代购不退货协议才能下单。');
     }
 
     this.logger.log(`[Trade] Creating order with audit trail. Device: ${compliance.deviceId}`);

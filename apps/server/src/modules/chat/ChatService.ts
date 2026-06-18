@@ -558,7 +558,15 @@ IMPORTANT: When a user wants to buy something, first use [ACTION:search] to find
       throw new Error(`Ollama API error ${response.status}: ${errText}`);
     }
 
-    const data = await response.json();
+    const rawText = await response.text();
+    let data: any;
+    try {
+      data = JSON.parse(rawText);
+    } catch (e: any) {
+      this.logger.warn(`[ChatService] Failed to parse Ollama response: ${e.message}`);
+      return { content: rawText, toolCalls: [] };
+    }
+
     const msg = data.message || {};
 
     return {

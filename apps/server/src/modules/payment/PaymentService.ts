@@ -186,7 +186,21 @@ export class PaymentService {
         throw new ServiceUnavailableException(`Failed to query invoice: ${response.status}`);
       }
 
-      return response.json() as Promise<XenditInvoice>;
+      const rawText = await response.text();
+      let data: any;
+      try {
+        data = JSON.parse(rawText);
+      } catch (e: any) {
+        this.logger.error(`[Payment] getInvoiceStatus JSON parse failed: ${e.message}. Raw: ${rawText.slice(0, 200)}`);
+        throw new ServiceUnavailableException('Payment gateway returned invalid response');
+      }
+
+      if (!data || !data.id) {
+        this.logger.error(`[Payment] getInvoiceStatus returned unexpected shape: ${JSON.stringify(data).slice(0, 200)}`);
+        throw new ServiceUnavailableException('Payment gateway returned unexpected data');
+      }
+
+      return data as XenditInvoice;
     } catch (error) {
       if (error instanceof ServiceUnavailableException) throw error;
       this.logger.error(`[Payment] getInvoiceStatus failed: ${error}`);
