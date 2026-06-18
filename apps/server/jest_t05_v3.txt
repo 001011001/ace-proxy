@@ -1,0 +1,738 @@
+PASS src/common/__tests__/uuid.spec.ts (10.156 s)
+  uuid
+    generateUUIDv4
+      √ should return a valid UUID v4 format (31 ms)
+      √ should produce unique values across multiple calls (1 ms)
+    generateOrderId
+      √ should start with "ord_" prefix (9 ms)
+      √ should have length > 40 (UUID v7 is 36 chars + "ord_") (1 ms)
+    generateInviteCode
+      √ should format as ACE-{PREFIX}-{4 digits} (6 ms)
+      √ should uppercase the prefix
+    generateSessionId
+      √ should start with "sess_" prefix (1 ms)
+    generateMessageSid
+      √ should start with "wa_" prefix
+      √ should be 13 characters (wa_ + 10 alphanumeric)
+
+FAIL src/modules/trade/__tests__/TradeService.spec.ts (10.949 s)
+  TradeService
+    calculateFinalFees
+      × 基础金额计算费用 (45 ms)
+      × 高消费等级应有更低费率 (4 ms)
+    createOrder
+      × 正常创建订单 (2 ms)
+      × 未同意协议应抛出 ForbiddenException (3 ms)
+      × 订单金额应正确计算 (3 ms)
+
+  ● TradeService › calculateFinalFees › 基础金额计算费用
+
+    Nest can't resolve dependencies of the TradeService (PrismaService, ?, SmartSplitterService, NotificationService, UserLevelService, ReferralService). Please make sure that the argument VaultService at index [1] is available in the RootTestModule context.
+
+    Potential solutions:
+    - Is RootTestModule a valid NestJS module?
+    - If VaultService is a provider, is it part of the current RootTestModule?
+    - If VaultService is exported from a separate @Module, is that module imported within RootTestModule?
+      @Module({
+        imports: [ /* the Module containing VaultService */ ]
+      })
+
+    [0m [90m 51 |[39m     mockProductUpdateMany[33m.[39mmockResolvedValue({ count[33m:[39m [35m1[39m })[33m;[39m
+     [90m 52 |[39m
+    [31m[1m>[22m[39m[90m 53 |[39m     [36mconst[39m module[33m:[39m [33mTestingModule[39m [33m=[39m [36mawait[39m [33mTest[39m[33m.[39mcreateTestingModule({
+     [90m    |[39m                                   [31m[1m^[22m[39m
+     [90m 54 |[39m       providers[33m:[39m [
+     [90m 55 |[39m         [33mTradeService[39m[33m,[39m
+     [90m 56 |[39m         { provide[33m:[39m [33mPrismaService[39m[33m,[39m useValue[33m:[39m mockPrisma }[33m,[39m[0m
+
+      at TestingInjector.lookupComponentInParentModules (node_modules/@nestjs/core/injector/injector.js:262:19)
+      at TestingInjector.resolveComponentInstance (node_modules/@nestjs/core/injector/injector.js:215:33)
+      at TestingInjector.resolveComponentInstance (node_modules/@nestjs/testing/testing-injector.js:19:45)
+      at resolveParam (node_modules/@nestjs/core/injector/injector.js:129:38)
+          at async Promise.all (index 1)
+      at TestingInjector.resolveConstructorParams (node_modules/@nestjs/core/injector/injector.js:144:27)
+      at TestingInjector.loadInstance (node_modules/@nestjs/core/injector/injector.js:70:13)
+      at TestingInjector.loadProvider (node_modules/@nestjs/core/injector/injector.js:98:9)
+      at node_modules/@nestjs/core/injector/instance-loader.js:56:13
+          at async Promise.all (index 3)
+      at TestingInstanceLoader.createInstancesOfProviders (node_modules/@nestjs/core/injector/instance-loader.js:55:9)
+      at node_modules/@nestjs/core/injector/instance-loader.js:40:13
+          at async Promise.all (index 1)
+      at TestingInstanceLoader.createInstances (node_modules/@nestjs/core/injector/instance-loader.js:39:9)
+      at TestingInstanceLoader.createInstancesOfDependencies (node_modules/@nestjs/core/injector/instance-loader.js:22:13)
+      at TestingInstanceLoader.createInstancesOfDependencies (node_modules/@nestjs/testing/testing-instance-loader.js:9:9)
+      at TestingModuleBuilder.createInstancesOfDependencies (node_modules/@nestjs/testing/testing-module.builder.js:118:9)
+      at TestingModuleBuilder.compile (node_modules/@nestjs/testing/testing-module.builder.js:74:9)
+      at Object.<anonymous> (src/modules/trade/__tests__/TradeService.spec.ts:53:35)
+
+  ● TradeService › calculateFinalFees › 高消费等级应有更低费率
+
+    Nest can't resolve dependencies of the TradeService (PrismaService, ?, SmartSplitterService, NotificationService, UserLevelService, ReferralService). Please make sure that the argument VaultService at index [1] is available in the RootTestModule context.
+
+    Potential solutions:
+    - Is RootTestModule a valid NestJS module?
+    - If VaultService is a provider, is it part of the current RootTestModule?
+    - If VaultService is exported from a separate @Module, is that module imported within RootTestModule?
+      @Module({
+        imports: [ /* the Module containing VaultService */ ]
+      })
+
+    [0m [90m 51 |[39m     mockProductUpdateMany[33m.[39mmockResolvedValue({ count[33m:[39m [35m1[39m })[33m;[39m
+     [90m 52 |[39m
+    [31m[1m>[22m[39m[90m 53 |[39m     [36mconst[39m module[33m:[39m [33mTestingModule[39m [33m=[39m [36mawait[39m [33mTest[39m[33m.[39mcreateTestingModule({
+     [90m    |[39m                                   [31m[1m^[22m[39m
+     [90m 54 |[39m       providers[33m:[39m [
+     [90m 55 |[39m         [33mTradeService[39m[33m,[39m
+     [90m 56 |[39m         { provide[33m:[39m [33mPrismaService[39m[33m,[39m useValue[33m:[39m mockPrisma }[33m,[39m[0m
+
+      at TestingInjector.lookupComponentInParentModules (node_modules/@nestjs/core/injector/injector.js:262:19)
+      at TestingInjector.resolveComponentInstance (node_modules/@nestjs/core/injector/injector.js:215:33)
+      at TestingInjector.resolveComponentInstance (node_modules/@nestjs/testing/testing-injector.js:19:45)
+      at resolveParam (node_modules/@nestjs/core/injector/injector.js:129:38)
+          at async Promise.all (index 1)
+      at TestingInjector.resolveConstructorParams (node_modules/@nestjs/core/injector/injector.js:144:27)
+      at TestingInjector.loadInstance (node_modules/@nestjs/core/injector/injector.js:70:13)
+      at TestingInjector.loadProvider (node_modules/@nestjs/core/injector/injector.js:98:9)
+      at node_modules/@nestjs/core/injector/instance-loader.js:56:13
+          at async Promise.all (index 3)
+      at TestingInstanceLoader.createInstancesOfProviders (node_modules/@nestjs/core/injector/instance-loader.js:55:9)
+      at node_modules/@nestjs/core/injector/instance-loader.js:40:13
+          at async Promise.all (index 1)
+      at TestingInstanceLoader.createInstances (node_modules/@nestjs/core/injector/instance-loader.js:39:9)
+      at TestingInstanceLoader.createInstancesOfDependencies (node_modules/@nestjs/core/injector/instance-loader.js:22:13)
+      at TestingInstanceLoader.createInstancesOfDependencies (node_modules/@nestjs/testing/testing-instance-loader.js:9:9)
+      at TestingModuleBuilder.createInstancesOfDependencies (node_modules/@nestjs/testing/testing-module.builder.js:118:9)
+      at TestingModuleBuilder.compile (node_modules/@nestjs/testing/testing-module.builder.js:74:9)
+      at Object.<anonymous> (src/modules/trade/__tests__/TradeService.spec.ts:53:35)
+
+  ● TradeService › createOrder › 正常创建订单
+
+    Nest can't resolve dependencies of the TradeService (PrismaService, ?, SmartSplitterService, NotificationService, UserLevelService, ReferralService). Please make sure that the argument VaultService at index [1] is available in the RootTestModule context.
+
+    Potential solutions:
+    - Is RootTestModule a valid NestJS module?
+    - If VaultService is a provider, is it part of the current RootTestModule?
+    - If VaultService is exported from a separate @Module, is that module imported within RootTestModule?
+      @Module({
+        imports: [ /* the Module containing VaultService */ ]
+      })
+
+    [0m [90m 51 |[39m     mockProductUpdateMany[33m.[39mmockResolvedValue({ count[33m:[39m [35m1[39m })[33m;[39m
+     [90m 52 |[39m
+    [31m[1m>[22m[39m[90m 53 |[39m     [36mconst[39m module[33m:[39m [33mTestingModule[39m [33m=[39m [36mawait[39m [33mTest[39m[33m.[39mcreateTestingModule({
+     [90m    |[39m                                   [31m[1m^[22m[39m
+     [90m 54 |[39m       providers[33m:[39m [
+     [90m 55 |[39m         [33mTradeService[39m[33m,[39m
+     [90m 56 |[39m         { provide[33m:[39m [33mPrismaService[39m[33m,[39m useValue[33m:[39m mockPrisma }[33m,[39m[0m
+
+      at TestingInjector.lookupComponentInParentModules (node_modules/@nestjs/core/injector/injector.js:262:19)
+      at TestingInjector.resolveComponentInstance (node_modules/@nestjs/core/injector/injector.js:215:33)
+      at TestingInjector.resolveComponentInstance (node_modules/@nestjs/testing/testing-injector.js:19:45)
+      at resolveParam (node_modules/@nestjs/core/injector/injector.js:129:38)
+          at async Promise.all (index 1)
+      at TestingInjector.resolveConstructorParams (node_modules/@nestjs/core/injector/injector.js:144:27)
+      at TestingInjector.loadInstance (node_modules/@nestjs/core/injector/injector.js:70:13)
+      at TestingInjector.loadProvider (node_modules/@nestjs/core/injector/injector.js:98:9)
+      at node_modules/@nestjs/core/injector/instance-loader.js:56:13
+          at async Promise.all (index 3)
+      at TestingInstanceLoader.createInstancesOfProviders (node_modules/@nestjs/core/injector/instance-loader.js:55:9)
+      at node_modules/@nestjs/core/injector/instance-loader.js:40:13
+          at async Promise.all (index 1)
+      at TestingInstanceLoader.createInstances (node_modules/@nestjs/core/injector/instance-loader.js:39:9)
+      at TestingInstanceLoader.createInstancesOfDependencies (node_modules/@nestjs/core/injector/instance-loader.js:22:13)
+      at TestingInstanceLoader.createInstancesOfDependencies (node_modules/@nestjs/testing/testing-instance-loader.js:9:9)
+      at TestingModuleBuilder.createInstancesOfDependencies (node_modules/@nestjs/testing/testing-module.builder.js:118:9)
+      at TestingModuleBuilder.compile (node_modules/@nestjs/testing/testing-module.builder.js:74:9)
+      at Object.<anonymous> (src/modules/trade/__tests__/TradeService.spec.ts:53:35)
+
+  ● TradeService › createOrder › 未同意协议应抛出 ForbiddenException
+
+    Nest can't resolve dependencies of the TradeService (PrismaService, ?, SmartSplitterService, NotificationService, UserLevelService, ReferralService). Please make sure that the argument VaultService at index [1] is available in the RootTestModule context.
+
+    Potential solutions:
+    - Is RootTestModule a valid NestJS module?
+    - If VaultService is a provider, is it part of the current RootTestModule?
+    - If VaultService is exported from a separate @Module, is that module imported within RootTestModule?
+      @Module({
+        imports: [ /* the Module containing VaultService */ ]
+      })
+
+    [0m [90m 51 |[39m     mockProductUpdateMany[33m.[39mmockResolvedValue({ count[33m:[39m [35m1[39m })[33m;[39m
+     [90m 52 |[39m
+    [31m[1m>[22m[39m[90m 53 |[39m     [36mconst[39m module[33m:[39m [33mTestingModule[39m [33m=[39m [36mawait[39m [33mTest[39m[33m.[39mcreateTestingModule({
+     [90m    |[39m                                   [31m[1m^[22m[39m
+     [90m 54 |[39m       providers[33m:[39m [
+     [90m 55 |[39m         [33mTradeService[39m[33m,[39m
+     [90m 56 |[39m         { provide[33m:[39m [33mPrismaService[39m[33m,[39m useValue[33m:[39m mockPrisma }[33m,[39m[0m
+
+      at TestingInjector.lookupComponentInParentModules (node_modules/@nestjs/core/injector/injector.js:262:19)
+      at TestingInjector.resolveComponentInstance (node_modules/@nestjs/core/injector/injector.js:215:33)
+      at TestingInjector.resolveComponentInstance (node_modules/@nestjs/testing/testing-injector.js:19:45)
+      at resolveParam (node_modules/@nestjs/core/injector/injector.js:129:38)
+          at async Promise.all (index 1)
+      at TestingInjector.resolveConstructorParams (node_modules/@nestjs/core/injector/injector.js:144:27)
+      at TestingInjector.loadInstance (node_modules/@nestjs/core/injector/injector.js:70:13)
+      at TestingInjector.loadProvider (node_modules/@nestjs/core/injector/injector.js:98:9)
+      at node_modules/@nestjs/core/injector/instance-loader.js:56:13
+          at async Promise.all (index 3)
+      at TestingInstanceLoader.createInstancesOfProviders (node_modules/@nestjs/core/injector/instance-loader.js:55:9)
+      at node_modules/@nestjs/core/injector/instance-loader.js:40:13
+          at async Promise.all (index 1)
+      at TestingInstanceLoader.createInstances (node_modules/@nestjs/core/injector/instance-loader.js:39:9)
+      at TestingInstanceLoader.createInstancesOfDependencies (node_modules/@nestjs/core/injector/instance-loader.js:22:13)
+      at TestingInstanceLoader.createInstancesOfDependencies (node_modules/@nestjs/testing/testing-instance-loader.js:9:9)
+      at TestingModuleBuilder.createInstancesOfDependencies (node_modules/@nestjs/testing/testing-module.builder.js:118:9)
+      at TestingModuleBuilder.compile (node_modules/@nestjs/testing/testing-module.builder.js:74:9)
+      at Object.<anonymous> (src/modules/trade/__tests__/TradeService.spec.ts:53:35)
+
+  ● TradeService › createOrder › 订单金额应正确计算
+
+    Nest can't resolve dependencies of the TradeService (PrismaService, ?, SmartSplitterService, NotificationService, UserLevelService, ReferralService). Please make sure that the argument VaultService at index [1] is available in the RootTestModule context.
+
+    Potential solutions:
+    - Is RootTestModule a valid NestJS module?
+    - If VaultService is a provider, is it part of the current RootTestModule?
+    - If VaultService is exported from a separate @Module, is that module imported within RootTestModule?
+      @Module({
+        imports: [ /* the Module containing VaultService */ ]
+      })
+
+    [0m [90m 51 |[39m     mockProductUpdateMany[33m.[39mmockResolvedValue({ count[33m:[39m [35m1[39m })[33m;[39m
+     [90m 52 |[39m
+    [31m[1m>[22m[39m[90m 53 |[39m     [36mconst[39m module[33m:[39m [33mTestingModule[39m [33m=[39m [36mawait[39m [33mTest[39m[33m.[39mcreateTestingModule({
+     [90m    |[39m                                   [31m[1m^[22m[39m
+     [90m 54 |[39m       providers[33m:[39m [
+     [90m 55 |[39m         [33mTradeService[39m[33m,[39m
+     [90m 56 |[39m         { provide[33m:[39m [33mPrismaService[39m[33m,[39m useValue[33m:[39m mockPrisma }[33m,[39m[0m
+
+      at TestingInjector.lookupComponentInParentModules (node_modules/@nestjs/core/injector/injector.js:262:19)
+      at TestingInjector.resolveComponentInstance (node_modules/@nestjs/core/injector/injector.js:215:33)
+      at TestingInjector.resolveComponentInstance (node_modules/@nestjs/testing/testing-injector.js:19:45)
+      at resolveParam (node_modules/@nestjs/core/injector/injector.js:129:38)
+          at async Promise.all (index 1)
+      at TestingInjector.resolveConstructorParams (node_modules/@nestjs/core/injector/injector.js:144:27)
+      at TestingInjector.loadInstance (node_modules/@nestjs/core/injector/injector.js:70:13)
+      at TestingInjector.loadProvider (node_modules/@nestjs/core/injector/injector.js:98:9)
+      at node_modules/@nestjs/core/injector/instance-loader.js:56:13
+          at async Promise.all (index 3)
+      at TestingInstanceLoader.createInstancesOfProviders (node_modules/@nestjs/core/injector/instance-loader.js:55:9)
+      at node_modules/@nestjs/core/injector/instance-loader.js:40:13
+          at async Promise.all (index 1)
+      at TestingInstanceLoader.createInstances (node_modules/@nestjs/core/injector/instance-loader.js:39:9)
+      at TestingInstanceLoader.createInstancesOfDependencies (node_modules/@nestjs/core/injector/instance-loader.js:22:13)
+      at TestingInstanceLoader.createInstancesOfDependencies (node_modules/@nestjs/testing/testing-instance-loader.js:9:9)
+      at TestingModuleBuilder.createInstancesOfDependencies (node_modules/@nestjs/testing/testing-module.builder.js:118:9)
+      at TestingModuleBuilder.compile (node_modules/@nestjs/testing/testing-module.builder.js:74:9)
+      at Object.<anonymous> (src/modules/trade/__tests__/TradeService.spec.ts:53:35)
+
+FAIL src/modules/payment/__tests__/PaymentService.spec.ts (11.104 s)
+  PaymentService
+    createInvoice
+      √ API Key 缺失时应抛 InternalServerErrorException (69 ms)
+      × 无效金额应抛 BadRequestException (26 ms)
+    getInvoiceStatus
+      × 无效 invoiceId 应抛 BadRequestException (13 ms)
+    handleWebhook
+      √ 应能处理 webhook 回调（脱敏日志） (4 ms)
+    金额校验
+      × 零金额应抛 BadRequestException (8 ms)
+      × 超过限额应抛 BadRequestException (10 ms)
+
+  ● PaymentService › createInvoice › 无效金额应抛 BadRequestException
+
+    expect(received).rejects.toThrow(expected)
+
+    Expected constructor: BadRequestException
+    Received constructor: InternalServerErrorException
+
+    Received message: "XENDIT_API_KEY is not configured. Payment service unavailable."
+
+        [0m [90m 69 |[39m     [90m// API Key 检查：缺失时抛 InternalServerErrorException，禁止静默降级[39m
+         [90m 70 |[39m     [36mif[39m ([33m![39m[36mthis[39m[33m.[39mapiKey [33m||[39m [36mthis[39m[33m.[39mapiKey[33m.[39mincludes([32m'your-'[39m) [33m||[39m [36mthis[39m[33m.[39mapiKey[33m.[39mlength [33m<[39m [35m10[39m) {
+        [31m[1m>[22m[39m[90m 71 |[39m       [36mthrow[39m [36mnew[39m [33mInternalServerErrorException[39m(
+         [90m    |[39m             [31m[1m^[22m[39m
+         [90m 72 |[39m         [32m'XENDIT_API_KEY is not configured. Payment service unavailable.'[39m[33m,[39m
+         [90m 73 |[39m       )[33m;[39m
+         [90m 74 |[39m     }[0m
+
+      at PaymentService.createInvoice (src/modules/payment/PaymentService.ts:71:13)
+      at Object.<anonymous> (src/modules/payment/__tests__/PaymentService.spec.ts:62:17)
+      at Object.toThrow (node_modules/expect/build/index.js:218:22)
+      at Object.<anonymous> (src/modules/payment/__tests__/PaymentService.spec.ts:68:17)
+
+  ● PaymentService › getInvoiceStatus › 无效 invoiceId 应抛 BadRequestException
+
+    expect(received).rejects.toThrow(expected)
+
+    Expected constructor: BadRequestException
+    Received constructor: InternalServerErrorException
+
+    Received message: "XENDIT_API_KEY is not configured. Payment service unavailable."
+
+        [0m [90m 170 |[39m   [36masync[39m getInvoiceStatus(invoiceId[33m:[39m string)[33m:[39m [33mPromise[39m[33m<[39m[33mXenditInvoice[39m[33m>[39m {
+         [90m 171 |[39m     [36mif[39m ([33m![39m[36mthis[39m[33m.[39mapiKey [33m||[39m [36mthis[39m[33m.[39mapiKey[33m.[39mlength [33m<[39m [35m10[39m) {
+        [31m[1m>[22m[39m[90m 172 |[39m       [36mthrow[39m [36mnew[39m [33mInternalServerErrorException[39m([32m'XENDIT_API_KEY is not configured. Payment service unavailable.'[39m)[33m;[39m
+         [90m     |[39m             [31m[1m^[22m[39m
+         [90m 173 |[39m     }
+         [90m 174 |[39m     [36mthis[39m[33m.[39mvalidateInvoiceId(invoiceId)[33m;[39m
+         [90m 175 |[39m[0m
+
+      at PaymentService.getInvoiceStatus (src/modules/payment/PaymentService.ts:172:13)
+      at Object.<anonymous> (src/modules/payment/__tests__/PaymentService.spec.ts:75:17)
+      at Object.toThrow (node_modules/expect/build/index.js:218:22)
+      at Object.<anonymous> (src/modules/payment/__tests__/PaymentService.spec.ts:76:17)
+
+  ● PaymentService › 金额校验 › 零金额应抛 BadRequestException
+
+    expect(received).rejects.toThrow(expected)
+
+    Expected constructor: BadRequestException
+    Received constructor: InternalServerErrorException
+
+    Received message: "XENDIT_API_KEY is not configured. Payment service unavailable."
+
+        [0m [90m 69 |[39m     [90m// API Key 检查：缺失时抛 InternalServerErrorException，禁止静默降级[39m
+         [90m 70 |[39m     [36mif[39m ([33m![39m[36mthis[39m[33m.[39mapiKey [33m||[39m [36mthis[39m[33m.[39mapiKey[33m.[39mincludes([32m'your-'[39m) [33m||[39m [36mthis[39m[33m.[39mapiKey[33m.[39mlength [33m<[39m [35m10[39m) {
+        [31m[1m>[22m[39m[90m 71 |[39m       [36mthrow[39m [36mnew[39m [33mInternalServerErrorException[39m(
+         [90m    |[39m             [31m[1m^[22m[39m
+         [90m 72 |[39m         [32m'XENDIT_API_KEY is not configured. Payment service unavailable.'[39m[33m,[39m
+         [90m 73 |[39m       )[33m;[39m
+         [90m 74 |[39m     }[0m
+
+      at PaymentService.createInvoice (src/modules/payment/PaymentService.ts:71:13)
+      at Object.<anonymous> (src/modules/payment/__tests__/PaymentService.spec.ts:98:17)
+      at Object.toThrow (node_modules/expect/build/index.js:218:22)
+      at Object.<anonymous> (src/modules/payment/__tests__/PaymentService.spec.ts:104:17)
+
+  ● PaymentService › 金额校验 › 超过限额应抛 BadRequestException
+
+    expect(received).rejects.toThrow(expected)
+
+    Expected constructor: BadRequestException
+    Received constructor: InternalServerErrorException
+
+    Received message: "XENDIT_API_KEY is not configured. Payment service unavailable."
+
+        [0m [90m 69 |[39m     [90m// API Key 检查：缺失时抛 InternalServerErrorException，禁止静默降级[39m
+         [90m 70 |[39m     [36mif[39m ([33m![39m[36mthis[39m[33m.[39mapiKey [33m||[39m [36mthis[39m[33m.[39mapiKey[33m.[39mincludes([32m'your-'[39m) [33m||[39m [36mthis[39m[33m.[39mapiKey[33m.[39mlength [33m<[39m [35m10[39m) {
+        [31m[1m>[22m[39m[90m 71 |[39m       [36mthrow[39m [36mnew[39m [33mInternalServerErrorException[39m(
+         [90m    |[39m             [31m[1m^[22m[39m
+         [90m 72 |[39m         [32m'XENDIT_API_KEY is not configured. Payment service unavailable.'[39m[33m,[39m
+         [90m 73 |[39m       )[33m;[39m
+         [90m 74 |[39m     }[0m
+
+      at PaymentService.createInvoice (src/modules/payment/PaymentService.ts:71:13)
+      at Object.<anonymous> (src/modules/payment/__tests__/PaymentService.spec.ts:109:17)
+      at Object.toThrow (node_modules/expect/build/index.js:218:22)
+      at Object.<anonymous> (src/modules/payment/__tests__/PaymentService.spec.ts:115:17)
+
+FAIL src/modules/order/__tests__/OrderController.spec.ts (11.214 s)
+  OrderController
+    list
+      √ 应分页返回订单列表 (44 ms)
+      √ 应按状态过滤 (5 ms)
+    timeline
+      × 应返回物流节点信息 (3 ms)
+    exportCsv
+      × 应防 CSV 注入（字段不包含 =、+、-、@） (4 ms)
+
+  ● OrderController › timeline › 应返回物流节点信息
+
+    TypeError: Cannot read properties of undefined (reading 'findMany')
+
+    [0m [90m 68 |[39m   [33m@[39m[33mGet[39m([32m':id/timeline'[39m)
+     [90m 69 |[39m   [36masync[39m timeline([33m@[39m[33mParam[39m([32m'id'[39m) id[33m:[39m string) {
+    [31m[1m>[22m[39m[90m 70 |[39m     [36mconst[39m nodes [33m=[39m [36mawait[39m [36mthis[39m[33m.[39mprisma[33m.[39maceLogisticsNode[33m.[39mfindMany({
+     [90m    |[39m                                                      [31m[1m^[22m[39m
+     [90m 71 |[39m       where[33m:[39m { orderId[33m:[39m id }[33m,[39m orderBy[33m:[39m { timestamp[33m:[39m [32m'asc'[39m }[33m,[39m
+     [90m 72 |[39m     })[33m;[39m
+     [90m 73 |[39m     [36mconst[39m labels[33m:[39m [33mRecord[39m[33m<[39m[33mstring[39m[33m,[39m string[33m>[39m [33m=[39m {[0m
+
+      at OrderController.timeline (src/modules/order/OrderController.ts:70:54)
+      at Object.<anonymous> (src/modules/order/__tests__/OrderController.spec.ts:85:39)
+
+  ● OrderController › exportCsv › 应防 CSV 注入（字段不包含 =、+、-、@）
+
+    TypeError: res.send is not a function
+
+    [0m [90m 103 |[39m     res[33m.[39msetHeader([32m'Content-Type'[39m[33m,[39m [32m'text/csv; charset=utf-8'[39m)[33m;[39m
+     [90m 104 |[39m     res[33m.[39msetHeader([32m'Content-Disposition'[39m[33m,[39m [32m`attachment; filename="orders-${new Date().toISOString().split('T')[0]}.csv"`[39m)[33m;[39m
+    [31m[1m>[22m[39m[90m 105 |[39m     res[33m.[39msend(header [33m+[39m rows)[33m;[39m
+     [90m     |[39m         [31m[1m^[22m[39m
+     [90m 106 |[39m   }
+     [90m 107 |[39m }
+     [90m 108 |[39m[0m
+
+      at OrderController.exportCsv (src/modules/order/OrderController.ts:105:9)
+      at Object.<anonymous> (src/modules/order/__tests__/OrderController.spec.ts:103:7)
+
+[33m[Nest] 34672  - [39m2026/06/18 15:03:14 [33m   WARN[39m [38;5;3m[WebhookVerifier] [39m[33m[Webhook] Invalid callback token. Received: wrong-to...[39m
+[33m[Nest] 34672  - [39m2026/06/18 15:03:14 [33m   WARN[39m [38;5;3m[WebhookVerifier] [39m[33m[Webhook] Invalid callback token. Received: wrong-to...[39m
+PASS src/common/__tests__/WebhookVerifier.spec.ts (11.242 s)
+  WebhookVerifier
+    verifyCallbackToken
+      √ should throw ConfigurationError when XENDIT_CALLBACK_TOKEN is not set (47 ms)
+      √ should throw UnauthorizedException when token does not match (3 ms)
+      √ should pass silently when token matches (1 ms)
+    verifyHmacSignature
+      √ should throw ConfigurationError when XENDIT_WEBHOOK_SECRET is not set (2 ms)
+      √ should throw UnauthorizedException when signature header is missing (1 ms)
+
+PASS src/modules/cart/__tests__/CartService.spec.ts (11.474 s)
+  CartService
+    addToCart
+      √ 应正常添加商品到购物车 (43 ms)
+      √ 库存不足时应抛出异常 (11 ms)
+    getCart
+      √ 应返回购物车内容 (3 ms)
+    removeCartItem
+      √ 应正常移除购物车商品 (4 ms)
+
+FAIL src/modules/marketing/__tests__/CouponService.spec.ts (11.503 s)
+  CouponService
+    getByCode
+      √ 应返回优惠券 (43 ms)
+    claimCoupon
+      √ 应成功领取优惠券 (3 ms)
+      × 过期优惠券应抛出异常 (3 ms)
+      √ 超出限量应抛出异常 (8 ms)
+    listUserCoupons
+      √ 应返回用户已领取的优惠券 (4 ms)
+
+  ● CouponService › claimCoupon › 过期优惠券应抛出异常
+
+    expect(received).rejects.toThrow()
+
+    Received promise resolved instead of rejected
+    Resolved to value: {"claimedAt": 2026-06-18T07:03:15.070Z, "code": "WELCOME10", "id": "coup_001", "usedCount": 6}
+
+    [0m [90m 102 |[39m       })[33m;[39m
+     [90m 103 |[39m
+    [31m[1m>[22m[39m[90m 104 |[39m       [36mawait[39m expect(
+     [90m     |[39m             [31m[1m^[22m[39m
+     [90m 105 |[39m         service[33m.[39mclaimCoupon([32m'user_001'[39m[33m,[39m [32m'OLD2025'[39m)[33m,[39m
+     [90m 106 |[39m       )[33m.[39mrejects[33m.[39mtoThrow([33mBadRequestException[39m)[33m;[39m
+     [90m 107 |[39m     })[33m;[39m[0m
+
+      at expect (node_modules/expect/build/index.js:113:15)
+      at Object.<anonymous> (src/modules/marketing/__tests__/CouponService.spec.ts:104:13)
+
+FAIL src/modules/shipping/__tests__/ShippingService.spec.ts (11.479 s)
+  ShippingService
+    getUserQuote
+      × 应返回印尼标准运费 (39 ms)
+      × 泰国运费应使用 THB 汇率 (2 ms)
+      × 菲律宾运费应使用 PHP 汇率 (2 ms)
+    getEstimateRange
+      × 应返回时效估算 (2 ms)
+
+  ● ShippingService › getUserQuote › 应返回印尼标准运费
+
+    Nest can't resolve dependencies of the ShippingService (?). Please make sure that the argument YuntuShippingProvider at index [0] is available in the RootTestModule context.
+
+    Potential solutions:
+    - Is RootTestModule a valid NestJS module?
+    - If YuntuShippingProvider is a provider, is it part of the current RootTestModule?
+    - If YuntuShippingProvider is exported from a separate @Module, is that module imported within RootTestModule?
+      @Module({
+        imports: [ /* the Module containing YuntuShippingProvider */ ]
+      })
+
+    [0m [90m 30 |[39m     jest[33m.[39mspyOn([33mLogger[39m[33m.[39mprototype[33m,[39m [32m'error'[39m)[33m.[39mmockImplementation(() [33m=>[39m {})[33m;[39m
+     [90m 31 |[39m
+    [31m[1m>[22m[39m[90m 32 |[39m     [36mconst[39m module[33m:[39m [33mTestingModule[39m [33m=[39m [36mawait[39m [33mTest[39m[33m.[39mcreateTestingModule({
+     [90m    |[39m                                   [31m[1m^[22m[39m
+     [90m 33 |[39m       providers[33m:[39m [
+     [90m 34 |[39m         [33mShippingService[39m[33m,[39m
+     [90m 35 |[39m         { provide[33m:[39m [32m'YuntuShippingProvider'[39m[33m,[39m useValue[33m:[39m mockYuntu }[33m,[39m[0m
+
+      at TestingInjector.lookupComponentInParentModules (node_modules/@nestjs/core/injector/injector.js:262:19)
+      at TestingInjector.resolveComponentInstance (node_modules/@nestjs/core/injector/injector.js:215:33)
+      at TestingInjector.resolveComponentInstance (node_modules/@nestjs/testing/testing-injector.js:19:45)
+      at resolveParam (node_modules/@nestjs/core/injector/injector.js:129:38)
+          at async Promise.all (index 0)
+      at TestingInjector.resolveConstructorParams (node_modules/@nestjs/core/injector/injector.js:144:27)
+      at TestingInjector.loadInstance (node_modules/@nestjs/core/injector/injector.js:70:13)
+      at TestingInjector.loadProvider (node_modules/@nestjs/core/injector/injector.js:98:9)
+      at node_modules/@nestjs/core/injector/instance-loader.js:56:13
+          at async Promise.all (index 3)
+      at TestingInstanceLoader.createInstancesOfProviders (node_modules/@nestjs/core/injector/instance-loader.js:55:9)
+      at node_modules/@nestjs/core/injector/instance-loader.js:40:13
+          at async Promise.all (index 1)
+      at TestingInstanceLoader.createInstances (node_modules/@nestjs/core/injector/instance-loader.js:39:9)
+      at TestingInstanceLoader.createInstancesOfDependencies (node_modules/@nestjs/core/injector/instance-loader.js:22:13)
+      at TestingInstanceLoader.createInstancesOfDependencies (node_modules/@nestjs/testing/testing-instance-loader.js:9:9)
+      at TestingModuleBuilder.createInstancesOfDependencies (node_modules/@nestjs/testing/testing-module.builder.js:118:9)
+      at TestingModuleBuilder.compile (node_modules/@nestjs/testing/testing-module.builder.js:74:9)
+      at Object.<anonymous> (src/modules/shipping/__tests__/ShippingService.spec.ts:32:35)
+
+  ● ShippingService › getUserQuote › 泰国运费应使用 THB 汇率
+
+    Nest can't resolve dependencies of the ShippingService (?). Please make sure that the argument YuntuShippingProvider at index [0] is available in the RootTestModule context.
+
+    Potential solutions:
+    - Is RootTestModule a valid NestJS module?
+    - If YuntuShippingProvider is a provider, is it part of the current RootTestModule?
+    - If YuntuShippingProvider is exported from a separate @Module, is that module imported within RootTestModule?
+      @Module({
+        imports: [ /* the Module containing YuntuShippingProvider */ ]
+      })
+
+    [0m [90m 30 |[39m     jest[33m.[39mspyOn([33mLogger[39m[33m.[39mprototype[33m,[39m [32m'error'[39m)[33m.[39mmockImplementation(() [33m=>[39m {})[33m;[39m
+     [90m 31 |[39m
+    [31m[1m>[22m[39m[90m 32 |[39m     [36mconst[39m module[33m:[39m [33mTestingModule[39m [33m=[39m [36mawait[39m [33mTest[39m[33m.[39mcreateTestingModule({
+     [90m    |[39m                                   [31m[1m^[22m[39m
+     [90m 33 |[39m       providers[33m:[39m [
+     [90m 34 |[39m         [33mShippingService[39m[33m,[39m
+     [90m 35 |[39m         { provide[33m:[39m [32m'YuntuShippingProvider'[39m[33m,[39m useValue[33m:[39m mockYuntu }[33m,[39m[0m
+
+      at TestingInjector.lookupComponentInParentModules (node_modules/@nestjs/core/injector/injector.js:262:19)
+      at TestingInjector.resolveComponentInstance (node_modules/@nestjs/core/injector/injector.js:215:33)
+      at TestingInjector.resolveComponentInstance (node_modules/@nestjs/testing/testing-injector.js:19:45)
+      at resolveParam (node_modules/@nestjs/core/injector/injector.js:129:38)
+          at async Promise.all (index 0)
+      at TestingInjector.resolveConstructorParams (node_modules/@nestjs/core/injector/injector.js:144:27)
+      at TestingInjector.loadInstance (node_modules/@nestjs/core/injector/injector.js:70:13)
+      at TestingInjector.loadProvider (node_modules/@nestjs/core/injector/injector.js:98:9)
+      at node_modules/@nestjs/core/injector/instance-loader.js:56:13
+          at async Promise.all (index 3)
+      at TestingInstanceLoader.createInstancesOfProviders (node_modules/@nestjs/core/injector/instance-loader.js:55:9)
+      at node_modules/@nestjs/core/injector/instance-loader.js:40:13
+          at async Promise.all (index 1)
+      at TestingInstanceLoader.createInstances (node_modules/@nestjs/core/injector/instance-loader.js:39:9)
+      at TestingInstanceLoader.createInstancesOfDependencies (node_modules/@nestjs/core/injector/instance-loader.js:22:13)
+      at TestingInstanceLoader.createInstancesOfDependencies (node_modules/@nestjs/testing/testing-instance-loader.js:9:9)
+      at TestingModuleBuilder.createInstancesOfDependencies (node_modules/@nestjs/testing/testing-module.builder.js:118:9)
+      at TestingModuleBuilder.compile (node_modules/@nestjs/testing/testing-module.builder.js:74:9)
+      at Object.<anonymous> (src/modules/shipping/__tests__/ShippingService.spec.ts:32:35)
+
+  ● ShippingService › getUserQuote › 菲律宾运费应使用 PHP 汇率
+
+    Nest can't resolve dependencies of the ShippingService (?). Please make sure that the argument YuntuShippingProvider at index [0] is available in the RootTestModule context.
+
+    Potential solutions:
+    - Is RootTestModule a valid NestJS module?
+    - If YuntuShippingProvider is a provider, is it part of the current RootTestModule?
+    - If YuntuShippingProvider is exported from a separate @Module, is that module imported within RootTestModule?
+      @Module({
+        imports: [ /* the Module containing YuntuShippingProvider */ ]
+      })
+
+    [0m [90m 30 |[39m     jest[33m.[39mspyOn([33mLogger[39m[33m.[39mprototype[33m,[39m [32m'error'[39m)[33m.[39mmockImplementation(() [33m=>[39m {})[33m;[39m
+     [90m 31 |[39m
+    [31m[1m>[22m[39m[90m 32 |[39m     [36mconst[39m module[33m:[39m [33mTestingModule[39m [33m=[39m [36mawait[39m [33mTest[39m[33m.[39mcreateTestingModule({
+     [90m    |[39m                                   [31m[1m^[22m[39m
+     [90m 33 |[39m       providers[33m:[39m [
+     [90m 34 |[39m         [33mShippingService[39m[33m,[39m
+     [90m 35 |[39m         { provide[33m:[39m [32m'YuntuShippingProvider'[39m[33m,[39m useValue[33m:[39m mockYuntu }[33m,[39m[0m
+
+      at TestingInjector.lookupComponentInParentModules (node_modules/@nestjs/core/injector/injector.js:262:19)
+      at TestingInjector.resolveComponentInstance (node_modules/@nestjs/core/injector/injector.js:215:33)
+      at TestingInjector.resolveComponentInstance (node_modules/@nestjs/testing/testing-injector.js:19:45)
+      at resolveParam (node_modules/@nestjs/core/injector/injector.js:129:38)
+          at async Promise.all (index 0)
+      at TestingInjector.resolveConstructorParams (node_modules/@nestjs/core/injector/injector.js:144:27)
+      at TestingInjector.loadInstance (node_modules/@nestjs/core/injector/injector.js:70:13)
+      at TestingInjector.loadProvider (node_modules/@nestjs/core/injector/injector.js:98:9)
+      at node_modules/@nestjs/core/injector/instance-loader.js:56:13
+          at async Promise.all (index 3)
+      at TestingInstanceLoader.createInstancesOfProviders (node_modules/@nestjs/core/injector/instance-loader.js:55:9)
+      at node_modules/@nestjs/core/injector/instance-loader.js:40:13
+          at async Promise.all (index 1)
+      at TestingInstanceLoader.createInstances (node_modules/@nestjs/core/injector/instance-loader.js:39:9)
+      at TestingInstanceLoader.createInstancesOfDependencies (node_modules/@nestjs/core/injector/instance-loader.js:22:13)
+      at TestingInstanceLoader.createInstancesOfDependencies (node_modules/@nestjs/testing/testing-instance-loader.js:9:9)
+      at TestingModuleBuilder.createInstancesOfDependencies (node_modules/@nestjs/testing/testing-module.builder.js:118:9)
+      at TestingModuleBuilder.compile (node_modules/@nestjs/testing/testing-module.builder.js:74:9)
+      at Object.<anonymous> (src/modules/shipping/__tests__/ShippingService.spec.ts:32:35)
+
+  ● ShippingService › getEstimateRange › 应返回时效估算
+
+    Nest can't resolve dependencies of the ShippingService (?). Please make sure that the argument YuntuShippingProvider at index [0] is available in the RootTestModule context.
+
+    Potential solutions:
+    - Is RootTestModule a valid NestJS module?
+    - If YuntuShippingProvider is a provider, is it part of the current RootTestModule?
+    - If YuntuShippingProvider is exported from a separate @Module, is that module imported within RootTestModule?
+      @Module({
+        imports: [ /* the Module containing YuntuShippingProvider */ ]
+      })
+
+    [0m [90m 30 |[39m     jest[33m.[39mspyOn([33mLogger[39m[33m.[39mprototype[33m,[39m [32m'error'[39m)[33m.[39mmockImplementation(() [33m=>[39m {})[33m;[39m
+     [90m 31 |[39m
+    [31m[1m>[22m[39m[90m 32 |[39m     [36mconst[39m module[33m:[39m [33mTestingModule[39m [33m=[39m [36mawait[39m [33mTest[39m[33m.[39mcreateTestingModule({
+     [90m    |[39m                                   [31m[1m^[22m[39m
+     [90m 33 |[39m       providers[33m:[39m [
+     [90m 34 |[39m         [33mShippingService[39m[33m,[39m
+     [90m 35 |[39m         { provide[33m:[39m [32m'YuntuShippingProvider'[39m[33m,[39m useValue[33m:[39m mockYuntu }[33m,[39m[0m
+
+      at TestingInjector.lookupComponentInParentModules (node_modules/@nestjs/core/injector/injector.js:262:19)
+      at TestingInjector.resolveComponentInstance (node_modules/@nestjs/core/injector/injector.js:215:33)
+      at TestingInjector.resolveComponentInstance (node_modules/@nestjs/testing/testing-injector.js:19:45)
+      at resolveParam (node_modules/@nestjs/core/injector/injector.js:129:38)
+          at async Promise.all (index 0)
+      at TestingInjector.resolveConstructorParams (node_modules/@nestjs/core/injector/injector.js:144:27)
+      at TestingInjector.loadInstance (node_modules/@nestjs/core/injector/injector.js:70:13)
+      at TestingInjector.loadProvider (node_modules/@nestjs/core/injector/injector.js:98:9)
+      at node_modules/@nestjs/core/injector/instance-loader.js:56:13
+          at async Promise.all (index 3)
+      at TestingInstanceLoader.createInstancesOfProviders (node_modules/@nestjs/core/injector/instance-loader.js:55:9)
+      at node_modules/@nestjs/core/injector/instance-loader.js:40:13
+          at async Promise.all (index 1)
+      at TestingInstanceLoader.createInstances (node_modules/@nestjs/core/injector/instance-loader.js:39:9)
+      at TestingInstanceLoader.createInstancesOfDependencies (node_modules/@nestjs/core/injector/instance-loader.js:22:13)
+      at TestingInstanceLoader.createInstancesOfDependencies (node_modules/@nestjs/testing/testing-instance-loader.js:9:9)
+      at TestingModuleBuilder.createInstancesOfDependencies (node_modules/@nestjs/testing/testing-module.builder.js:118:9)
+      at TestingModuleBuilder.compile (node_modules/@nestjs/testing/testing-module.builder.js:74:9)
+      at Object.<anonymous> (src/modules/shipping/__tests__/ShippingService.spec.ts:32:35)
+
+FAIL src/modules/auth/__tests__/AuthService.spec.ts (11.785 s)
+  AuthService
+    register
+      × 应成功创建新用户 (101 ms)
+      √ 重复邮箱应抛出 ConflictException (5 ms)
+    login
+      × 正确密码应返回 token (121 ms)
+      √ 错误密码应抛出 UnauthorizedException (119 ms)
+    getUser
+      √ 应返回用户信息 (3 ms)
+
+  ● AuthService › register › 应成功创建新用户
+
+    TypeError: this.jwtService.sign is not a function
+
+    [0m [90m 59 |[39m     [36mconst[39m payload [33m=[39m { sub[33m:[39m userId[33m,[39m email[33m,[39m role }[33m;[39m
+     [90m 60 |[39m     [36mreturn[39m {
+    [31m[1m>[22m[39m[90m 61 |[39m       accessToken[33m:[39m [36mthis[39m[33m.[39mjwtService[33m.[39msign(payload)[33m,[39m
+     [90m    |[39m                                    [31m[1m^[22m[39m
+     [90m 62 |[39m       expiresIn[33m:[39m [32m'7d'[39m[33m,[39m
+     [90m 63 |[39m     }[33m;[39m
+     [90m 64 |[39m   }[0m
+
+      at AuthService.generateToken (src/modules/auth/auth.service.ts:61:36)
+      at AuthService.register (src/modules/auth/auth.service.ts:30:24)
+      at Object.<anonymous> (src/modules/auth/__tests__/AuthService.spec.ts:53:22)
+
+  ● AuthService › login › 正确密码应返回 token
+
+    TypeError: this.jwtService.sign is not a function
+
+    [0m [90m 59 |[39m     [36mconst[39m payload [33m=[39m { sub[33m:[39m userId[33m,[39m email[33m,[39m role }[33m;[39m
+     [90m 60 |[39m     [36mreturn[39m {
+    [31m[1m>[22m[39m[90m 61 |[39m       accessToken[33m:[39m [36mthis[39m[33m.[39mjwtService[33m.[39msign(payload)[33m,[39m
+     [90m    |[39m                                    [31m[1m^[22m[39m
+     [90m 62 |[39m       expiresIn[33m:[39m [32m'7d'[39m[33m,[39m
+     [90m 63 |[39m     }[33m;[39m
+     [90m 64 |[39m   }[0m
+
+      at AuthService.generateToken (src/modules/auth/auth.service.ts:61:36)
+      at AuthService.login (src/modules/auth/auth.service.ts:45:24)
+      at Object.<anonymous> (src/modules/auth/__tests__/AuthService.spec.ts:83:22)
+
+FAIL src/modules/vault/__tests__/VaultService.spec.ts (11.798 s)
+  VaultService
+    recordOrderLedger
+      × 应该正常写入7条分账记录 (36 ms)
+      × 零和校验应通过（借方 = 贷方） (3 ms)
+      × 零和校验失败应抛异常 (6 ms)
+    getPoolBalance
+      √ 应正确聚合账户余额 (6 ms)
+      √ 空账户应返回 0 (4 ms)
+    handleChargeback
+      √ 应写入拒付记录并锁定资金 (7 ms)
+    recordResaleSettlement
+      √ 应返回正确分账（平台5% + 团长2% + 卖方93%） (3 ms)
+    finalizeSettlement
+      × 应完成结算并更新团长余额 (2 ms)
+
+  ● VaultService › recordOrderLedger › 应该正常写入7条分账记录
+
+    TypeError: fn is not a function
+
+    [0m [90m 34 |[39m     mockTx[33m.[39mmockImplementation((cb[33m:[39m any) [33m=>[39m {
+     [90m 35 |[39m       [36mif[39m ([36mtypeof[39m cb [33m===[39m [32m'function'[39m) [36mreturn[39m cb(mockPrisma)[33m;[39m
+    [31m[1m>[22m[39m[90m 36 |[39m       [36mreturn[39m [33mPromise[39m[33m.[39mall(cb[33m.[39mmap((fn[33m:[39m any) [33m=>[39m fn()))[33m;[39m
+     [90m    |[39m                                              [31m[1m^[22m[39m
+     [90m 37 |[39m     })[33m;[39m
+     [90m 38 |[39m
+     [90m 39 |[39m     [36mconst[39m module[33m:[39m [33mTestingModule[39m [33m=[39m [36mawait[39m [33mTest[39m[33m.[39mcreateTestingModule({[0m
+
+      at src/modules/vault/__tests__/VaultService.spec.ts:36:46
+          at Array.map (<anonymous>)
+      at Object.<anonymous> (src/modules/vault/__tests__/VaultService.spec.ts:36:29)
+      at VaultService.recordOrderLedger (src/modules/vault/VaultService.ts:53:23)
+      at Object.<anonymous> (src/modules/vault/__tests__/VaultService.spec.ts:53:36)
+
+  ● VaultService › recordOrderLedger › 零和校验应通过（借方 = 贷方）
+
+    TypeError: fn is not a function
+
+    [0m [90m 34 |[39m     mockTx[33m.[39mmockImplementation((cb[33m:[39m any) [33m=>[39m {
+     [90m 35 |[39m       [36mif[39m ([36mtypeof[39m cb [33m===[39m [32m'function'[39m) [36mreturn[39m cb(mockPrisma)[33m;[39m
+    [31m[1m>[22m[39m[90m 36 |[39m       [36mreturn[39m [33mPromise[39m[33m.[39mall(cb[33m.[39mmap((fn[33m:[39m any) [33m=>[39m fn()))[33m;[39m
+     [90m    |[39m                                              [31m[1m^[22m[39m
+     [90m 37 |[39m     })[33m;[39m
+     [90m 38 |[39m
+     [90m 39 |[39m     [36mconst[39m module[33m:[39m [33mTestingModule[39m [33m=[39m [36mawait[39m [33mTest[39m[33m.[39mcreateTestingModule({[0m
+
+      at src/modules/vault/__tests__/VaultService.spec.ts:36:46
+          at Array.map (<anonymous>)
+      at Object.<anonymous> (src/modules/vault/__tests__/VaultService.spec.ts:36:29)
+      at VaultService.recordOrderLedger (src/modules/vault/VaultService.ts:53:23)
+      at Object.<anonymous> (src/modules/vault/__tests__/VaultService.spec.ts:69:36)
+
+  ● VaultService › recordOrderLedger › 零和校验失败应抛异常
+
+    expect(received).resolves.toBeDefined()
+
+    Received promise rejected instead of resolved
+    Rejected to value: [TypeError: fn is not a function]
+
+    [0m [90m 84 |[39m       mockLedgerCreate[33m.[39mmockResolvedValue({ id[33m:[39m [35m1[39m })[33m;[39m
+     [90m 85 |[39m
+    [31m[1m>[22m[39m[90m 86 |[39m       [36mawait[39m expect(
+     [90m    |[39m             [31m[1m^[22m[39m
+     [90m 87 |[39m         service[33m.[39mrecordOrderLedger([32m'ORD-003'[39m[33m,[39m {
+     [90m 88 |[39m           total[33m:[39m [35m100000[39m[33m,[39m
+     [90m 89 |[39m           cost[33m:[39m [35m60000[39m[33m,[39m[0m
+
+      at expect (node_modules/expect/build/index.js:113:15)
+      at Object.<anonymous> (src/modules/vault/__tests__/VaultService.spec.ts:86:13)
+
+  ● VaultService › finalizeSettlement › 应完成结算并更新团长余额
+
+    TypeError: fn is not a function
+
+    [0m [90m 34 |[39m     mockTx[33m.[39mmockImplementation((cb[33m:[39m any) [33m=>[39m {
+     [90m 35 |[39m       [36mif[39m ([36mtypeof[39m cb [33m===[39m [32m'function'[39m) [36mreturn[39m cb(mockPrisma)[33m;[39m
+    [31m[1m>[22m[39m[90m 36 |[39m       [36mreturn[39m [33mPromise[39m[33m.[39mall(cb[33m.[39mmap((fn[33m:[39m any) [33m=>[39m fn()))[33m;[39m
+     [90m    |[39m                                              [31m[1m^[22m[39m
+     [90m 37 |[39m     })[33m;[39m
+     [90m 38 |[39m
+     [90m 39 |[39m     [36mconst[39m module[33m:[39m [33mTestingModule[39m [33m=[39m [36mawait[39m [33mTest[39m[33m.[39mcreateTestingModule({[0m
+
+      at src/modules/vault/__tests__/VaultService.spec.ts:36:46
+          at Array.map (<anonymous>)
+      at Object.<anonymous> (src/modules/vault/__tests__/VaultService.spec.ts:36:29)
+      at VaultService.finalizeSettlement (src/modules/vault/VaultService.ts:144:23)
+      at Object.<anonymous> (src/modules/vault/__tests__/VaultService.spec.ts:158:36)
+
+PASS src/modules/payment/__tests__/PaymentFulfillmentService.spec.ts (12.306 s)
+  PaymentFulfillmentService
+    fulfill
+      √ should return success for already PAID order (idempotency) (63 ms)
+      √ should reject order when amount mismatch exceeds 1% tolerance (4 ms)
+      √ should successfully fulfill a valid order (4 ms)
+
+PASS src/modules/product/__tests__/ProductService.spec.ts (12.477 s)
+  ProductService
+    decrementStockWithRetry
+      √ should return true when stock is sufficient and decrement succeeds (62 ms)
+      √ should return false when stock is insufficient (4 ms)
+      √ should retry on transient errors up to MAX_RETRIES (179 ms)
+
+Test Suites: 7 failed, 5 passed, 12 total
+Tests:       22 failed, 39 passed, 61 total
+Snapshots:   0 total
+Time:        14.848 s, estimated 20 s
+Ran all test suites.

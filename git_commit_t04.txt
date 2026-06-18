@@ -1,0 +1,6 @@
+[main 8dcb094] feat: T04 frontend API integration — api-client.js, index.html exchange rate/cart/coupon/logistics API calls, admin.html exchange rate dynamic
+ 6 files changed, 256 insertions(+), 6 deletions(-)
+ create mode 100644 apps/server/jest_t04_out.txt
+ create mode 100644 apps/server/tsc_t04_output.txt
+ create mode 100644 deploy/api-client.js
+ create mode 100644 git_commit_t03.txt

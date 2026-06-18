@@ -1,0 +1,34 @@
+FAIL src/modules/trade/__tests__/TradeService.spec.ts
+  TradeService
+    calculateFinalFees
+      × 基础金额计算费用 (16 ms)
+      √ 高消费等级应有更低费率 (3 ms)
+    createOrder
+      √ 正常创建订单 (9 ms)
+      √ 未同意协议应抛出 ForbiddenException (7 ms)
+      √ 订单金额应正确计算 (3 ms)
+
+  ● TradeService › calculateFinalFees › 基础金额计算费用
+
+    expect(received).toHaveProperty(path)
+
+    Expected path: "exchangeRate"
+    Received path: []
+
+    Received value: {"badge": undefined, "level": "EXPLORER", "rebateAmount": 5000, "serviceFee": 80000}
+
+    [0m [90m 74 |[39m
+     [90m 75 |[39m       expect(result)[33m.[39mtoBeDefined()[33m;[39m
+    [31m[1m>[22m[39m[90m 76 |[39m       expect(result)[33m.[39mtoHaveProperty([32m'exchangeRate'[39m)[33m;[39m
+     [90m    |[39m                      [31m[1m^[22m[39m
+     [90m 77 |[39m       expect(result)[33m.[39mtoHaveProperty([32m'serviceFee'[39m)[33m;[39m
+     [90m 78 |[39m     })[33m;[39m
+     [90m 79 |[39m[0m
+
+      at Object.<anonymous> (src/modules/trade/__tests__/TradeService.spec.ts:76:22)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 4 passed, 5 total
+Snapshots:   0 total
+Time:        5.143 s, estimated 13 s
+Ran all test suites matching /src\\modules\\trade/i.

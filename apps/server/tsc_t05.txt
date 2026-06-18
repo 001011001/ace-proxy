@@ -1,0 +1,24 @@
+src/main.ts(3,48): error TS2307: Cannot find module '@nestjs/swagger' or its corresponding type declarations.
+src/modules/auth/__tests__/AuthService.spec.ts(3,29): error TS2307: Cannot find module '../AuthService' or its corresponding type declarations.
+src/modules/auth/auth.controller.ts(2,67): error TS2307: Cannot find module '@nestjs/swagger' or its corresponding type declarations.
+src/modules/dashboard/DashboardService.ts(63,15): error TS2353: Object literal may only specify known properties, and 'refundAmount' does not exist in type 'AceRefundSumAggregateInputType'.
+src/modules/dashboard/DashboardService.ts(65,50): error TS2339: Property 'refundAmount' does not exist on type '{ amount?: Decimal; }'.
+src/modules/dashboard/DashboardService.ts(74,31): error TS2615: Type of property 'AND' circularly references itself in mapped type '{ [K in keyof { AND?: AceOrderItemScalarWhereWithAggregatesInput | AceOrderItemScalarWhereWithAggregatesInput[]; ... 6 more ...; unitPrice?: string | ... 3 more ... | DecimalWithAggregatesFilter<...>; }]: Or<...> extends 1 ? { ...; }[K] extends infer TK ? GetHavingFields<...> : never : {} extends FieldPaths<...> ? n...'.
+src/modules/dashboard/DashboardService.ts(74,31): error TS2615: Type of property 'NOT' circularly references itself in mapped type '{ [K in keyof { AND?: AceOrderItemScalarWhereWithAggregatesInput | AceOrderItemScalarWhereWithAggregatesInput[]; ... 6 more ...; unitPrice?: string | ... 3 more ... | DecimalWithAggregatesFilter<...>; }]: Or<...> extends 1 ? { ...; }[K] extends infer TK ? GetHavingFields<...> : never : {} extends FieldPaths<...> ? n...'.
+src/modules/dashboard/DashboardService.ts(74,31): error TS2615: Type of property 'OR' circularly references itself in mapped type '{ [K in keyof { AND?: AceOrderItemScalarWhereWithAggregatesInput | AceOrderItemScalarWhereWithAggregatesInput[]; ... 6 more ...; unitPrice?: string | ... 3 more ... | DecimalWithAggregatesFilter<...>; }]: Or<...> extends 1 ? { ...; }[K] extends infer TK ? GetHavingFields<...> : never : {} extends FieldPaths<...> ? n...'.
+src/modules/order/__tests__/OrderController.spec.ts(103,41): error TS2554: Expected 1 arguments, but got 2.
+src/modules/order/OrderController.ts(3,67): error TS2307: Cannot find module '@nestjs/swagger' or its corresponding type declarations.
+src/modules/payment/PaymentController.ts(13,67): error TS2307: Cannot find module '@nestjs/swagger' or its corresponding type declarations.
+src/modules/product/ProductController.ts(8,52): error TS2307: Cannot find module '@nestjs/swagger' or its corresponding type declarations.
+src/modules/shipping/__tests__/ShippingService.spec.ts(22,36): error TS2339: Property 'calculateShipping' does not exist on type 'ShippingService'.
+src/modules/shipping/__tests__/ShippingService.spec.ts(34,36): error TS2339: Property 'calculateShipping' does not exist on type 'ShippingService'.
+src/modules/shipping/__tests__/ShippingService.spec.ts(47,36): error TS2339: Property 'calculateShipping' does not exist on type 'ShippingService'.
+src/modules/shipping/__tests__/ShippingService.spec.ts(60,38): error TS2339: Property 'estimateShipping' does not exist on type 'ShippingService'.
+src/modules/trade/__tests__/TradeService.spec.ts(60,36): error TS2554: Expected 2-3 arguments, but got 1.
+src/modules/trade/__tests__/TradeService.spec.ts(68,37): error TS2554: Expected 2-3 arguments, but got 1.
+src/modules/trade/__tests__/TradeService.spec.ts(69,38): error TS2554: Expected 2-3 arguments, but got 1.
+src/modules/trade/__tests__/TradeService.spec.ts(96,17): error TS2554: Expected 2 arguments, but got 1.
+src/modules/trade/__tests__/TradeService.spec.ts(123,36): error TS2554: Expected 2 arguments, but got 1.
+src/modules/trade/__tests__/TradeService.spec.ts(137,17): error TS2554: Expected 2 arguments, but got 1.
+src/modules/trade/__tests__/TradeService.spec.ts(154,36): error TS2554: Expected 2 arguments, but got 1.
+src/modules/trade/TradeController.ts(2,67): error TS2307: Cannot find module '@nestjs/swagger' or its corresponding type declarations.

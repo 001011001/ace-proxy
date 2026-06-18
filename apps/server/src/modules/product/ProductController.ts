@@ -5,13 +5,17 @@ import {
   Query,
   NotFoundException,
 } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ProductService } from './ProductService';
 
+@ApiTags('Product — 商品')
 @Controller('product')
 export class ProductController {
   constructor(private readonly productService: ProductService) {}
 
   /** 产品列表（分页、搜索、分类、排序） */
+  @ApiOperation({ summary: '商品列表', description: '分页查询商品，支持搜索、分类、排序' })
+  @ApiResponse({ status: 200, description: '返回商品分页列表' })
   @Get('list')
   async list(
     @Query('page') page?: string,

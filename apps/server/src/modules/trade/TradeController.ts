@@ -1,9 +1,11 @@
 import { Controller, Post, Get, Body, Param, Req, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import { TradeService } from './TradeService';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { CreateOrderDto, CalculateFeesDto, SalvageActionDto } from '../../dto/trade.dto';
 import { PrismaService } from '../../prisma/prisma.service';
 
+@ApiTags('Trade — 交易')
 @Controller('trade')
 export class TradeController {
   constructor(
@@ -11,6 +13,8 @@ export class TradeController {
     private readonly prisma: PrismaService,
   ) {}
 
+  @ApiBearerAuth()
+  @ApiOperation({ summary: '确认跨境代购协议' })
   @UseGuards(JwtAuthGuard)
   @Post('onboarding/confirm')
   async confirmOnboarding(@Req() req: any) {

@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { ApiResponseInterceptor } from './common/interceptors/ApiResponseInterceptor';
 import { ThrottlerGuard } from './common/guards/ThrottlerGuard';
@@ -63,6 +64,18 @@ async function bootstrap() {
 
   // 注册统一 API 响应拦截器
   app.useGlobalInterceptors(new ApiResponseInterceptor());
+
+  // Swagger API 文档
+  const swaggerConfig = new DocumentBuilder()
+    .setTitle('AceProxy API')
+    .setDescription('AceProxy 跨境电商代购平台 API 文档 — 支持 ID/TH/PH 多国市场')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .addServer('http://localhost:3001', 'Local Development')
+    .addServer('https://api.aceproxy.id', 'Production')
+    .build();
+  const document = SwaggerModule.createDocument(app, swaggerConfig);
+  SwaggerModule.setup('api/docs', app, document);
   
   const port = process.env.PORT || 3000;
   await app.listen(port, '0.0.0.0');

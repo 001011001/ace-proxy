@@ -1,5 +1,6 @@
 import { Controller, Get, Query, Param, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
+import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import { PrismaService } from '../../prisma/prisma.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { escapeCsvField } from '../../common/csv-escape';
@@ -7,10 +8,14 @@ import { escapeCsvField } from '../../common/csv-escape';
 /**
  * OrderController — 订单管理后台 API
  */
+@ApiTags('Order — 订单')
 @Controller('order')
 export class OrderController {
   constructor(private readonly prisma: PrismaService) {}
 
+  @ApiBearerAuth()
+  @ApiOperation({ summary: '订单列表', description: '分页查询订单，支持状态过滤和日期范围' })
+  @ApiResponse({ status: 200, description: '返回分页订单列表' })
   @UseGuards(JwtAuthGuard)
   @Get('list')
   async list(
