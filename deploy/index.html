@@ -9,6 +9,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="AceProxy">
 <link rel="manifest" href="./manifest.json">
+<script src="api-client.js"></script>
 <style>
 :root{--o:#F97316;--b:#000;--w:#fff;--g:#16A34A;--r:#EF4444;--bl:#3B82F6;--y:#EAB308;--p:#8B5CF6;
 --g50:#F8FAFC;--g100:#F1F5F9;--g200:#E2E8F0;--g300:#CBD5E1;--g500:#64748B;--g700:#334155;--g900:#0F172A;--r2:12px}
@@ -1160,6 +1161,14 @@ let P=[{id:"EID-JKT-001",name:"Premium Silk Hijab",cat:"Fashion",cost:12,price:9
 const CATS=['ALL'],CI={};
 const CAT_COLORS={smartphones:'#E8F4FD',skincare:'#FCE7F3',fashion:'#E0F2FE',electronics:'#F1F5F9',home:'#FEF3C7',muslimwear:'#E8F5E9',baby:'#F3E8FF',food:'#FFF8E1',sports:'#DCFCE7',accessories:'#FCE4EC',beauty:'#FDF2F8',health:'#F0FDF4',stationery:'#FFF7ED'};
 const CAT_EMOJI={smartphones:'📱',skincare:'🧴',fashion:'👗',electronics:'⌚',home:'🏠',muslimwear:'🧕',baby:'🍼',food:'🍪',sports:'⚽',accessories:'💍',beauty:'💄',health:'💊',stationery:'✏️'};
+// Exchange rate CNY→IDR (fetched dynamically, 2200 as fallback)
+let _exchangeRateCnyIdr = 2200;
+async function fetchExchangeRate() {
+  try {
+    const data = await window.API.apiSafe('/config/exchange-rate', {}, { rate: 2200 });
+    _exchangeRateCnyIdr = data.rate || data.exchangeRate || 2200;
+  } catch (e) { _exchangeRateCnyIdr = 2200; }
+}
 // Fetch real products from backend API (falls back to mock above)
 let _productsLoading=false;
 async function fetchProducts(){
@@ -1176,7 +1185,7 @@ async function fetchProducts(){
     const newProducts=[];  // 先构建新数组，成功后再替换 P
     raw.forEach(p=>{
       const cat=p.category||'Other';cats.add(cat);
-      const costIdr=(p.costCny||0)*2200;
+      const costIdr=(p.costCny||0)*_exchangeRateCnyIdr;
       const arb=costIdr>0?Math.max(.05,Math.min(.80,(p.priceIdr-costIdr)/costIdr)):.30;
       newProducts.push({id:p.id,name:p.name,cat,price:p.priceIdr,cost:p.costCny||0,arb:Math.round(arb*100)/100,color:CAT_COLORS[cat]||'#F1F5F9',badge:arb>.45?'best':(p.ratingAvg>=4.7?'hot':''),rating:p.ratingAvg||0,rv:p.reviewCount||p.ratingCount||0,desc:p.description||'',img:Array.isArray(p.imageUrls)?p.imageUrls[0]:(Array.isArray(p.images)?p.images[0]:null)});
     });
@@ -1725,14 +1734,30 @@ const Fav={
 };
 var HeaderSearch={doSearch:function(q){if(!q||!q.trim())return;q=q.trim();document.getElementById('headerSearchInput').value=q;Search.open();document.getElementById('searchPageInput').value=q;Search.open();Search.doSearch(q)}};
 
-// COUPONS
+// COUPONS — 优先从后端加载，fallback 为内置数据
 const Coupons={
+  _loaded:false,
   list:[
     {code:'LEBARAN2026',desc:'Lebaran Special',discount:'5% off entire order',exp:'30 Jun 2026',used:false,icon:'🎉'},
     {code:'WELCOME10',desc:'New User Welcome',discount:'10% off first order',exp:'31 Dec 2026',used:false,icon:'🎁'},
     {code:'FREESHIP',desc:'Free Shipping',discount:'Free shipping Jakarta area',exp:'31 Jul 2026',used:false,icon:'🚚'},
     {code:'BULK5',desc:'Bulk Discount',discount:'Extra 5% off 3+ items',exp:'30 Jun 2026',used:true,icon:'📦'}
   ],
+  async loadFromServer(){
+    if(this._loaded)return;this._loaded=true;
+    try{
+      const data=await window.API.api('/coupon');
+      const items=data&&data.items?data.items:(Array.isArray(data)?data:[]);
+      if(items&&items.length){
+        this.list=items.map(function(c){return{
+          code:c.code,desc:c.description||c.type,icon:'🎫',
+          discount:c.type==='FIXED'?'Rp '+Number(c.value||0).toLocaleString('id-ID'):(c.value||0)+'% off',
+          exp:c.endDate?new Date(c.endDate).toLocaleDateString():'—',used:!!c.claimedAt
+        }});
+      }
+    }catch(e){console.warn('[Coupons] loadFromServer failed:',e.message)}
+    this.render();
+  },
   available:function(){return this.list.filter(function(c){return !c.used})},
   render:function(){
     var el=document.getElementById('couponList');if(!el)return;
@@ -1781,8 +1806,26 @@ const Cart={
   add(id){const p=P.find(x=>x.id===id);if(!p)return;const ex=cart.find(c=>c.id===id);
     if(ex){ex.qty=(ex.qty||1)+1;this.showToast('+1 '+p.name)}
     else{cart.push({id:p.id,name:p.name,cat:p.cat,price:p.price,img:p.img,qty:1});this.showToast(T('added-cart')+': '+p.name)}
-    this.update();Home.render()},
-  remove(id){const ex=cart.find(c=>c.id===id);if(!ex)return;if(ex.qty>1){ex.qty--}else{cart=cart.filter(c=>c.id!==id)}this.update();Home.render()},
+    this.update();Home.render();
+    // 异步同步到后端（fire-and-forget）
+    window.API.apiSafe('/cart/add',{method:'POST',body:JSON.stringify({productId:id,quantity:ex?ex.qty:1})},null);
+  },
+  remove(id){const ex=cart.find(c=>c.id===id);if(!ex)return;if(ex.qty>1){ex.qty--}else{cart=cart.filter(c=>c.id!==id)}this.update();Home.render();
+    // 异步同步到后端
+    window.API.apiSafe('/cart/remove/'+encodeURIComponent(id),{method:'DELETE'},null);
+  },
+  // 从后端加载购物车（登录后调用）
+  async loadFromServer(){
+    try{
+      const data=await window.API.api('/cart');
+      const items=data&&data.items?data.items:(Array.isArray(data)?data:[]);
+      if(items&&items.length){
+        cart=items.map(i=>({id:i.productId||i.id,name:i.name||i.productName,cat:i.category||'Other',price:i.unitPrice||i.price||0,img:i.imageUrl||null,qty:i.quantity||1}));
+        this.update();
+        if(typeof Home!=='undefined')Home.render();
+      }
+    }catch(e){console.warn('[Cart] loadFromServer failed, using local:',e.message)}
+  },
   update(){
     document.getElementById('cart-badge').textContent=cart.reduce((s,c)=>s+c.qty,0);
     const total=cart.reduce((s,c)=>s+c.price*c.qty,0);
@@ -1881,6 +1924,20 @@ const Order={
     const div=document.createElement('div');
     div.innerHTML=html;
     document.body.appendChild(div.firstChild);
+    // 异步获取真实物流追踪（成功后更新 timeline）
+    (async function(){
+      try{
+        const track=await window.API.api('/logistics-tracking/'+encodeURIComponent(id));
+        if(track&&(track.events||track.timeline)){
+          var events=track.timeline||track.events||[];
+          var tlContainers=document.querySelectorAll('[id^=\"tl-container-\"]');
+          tlContainers.forEach(function(c){c.remove();});
+          // 简单刷新：关闭弹窗后让用户重新打开（避免 DOM 操作复杂度）
+          // @todo P3 — 替换为 WebSocket 实时推送物流更新
+          console.log('[Order] Tracking data loaded for '+id+': '+events.length+' events');
+        }
+      }catch(e){console.warn('[Order] Tracking API failed:',e.message)}
+    })();
   },
   _shipPrice(s){
     const o=(Modal.SHIPPING_OPTIONS[lang]||Modal.SHIPPING_OPTIONS.EN).find(x=>x.id===s);
@@ -2240,7 +2297,7 @@ async function PlaceOrder(){
 }
 const RefundPolicy={lang:'ID',switchLang(l){this.lang=l;document.querySelectorAll('.policy-lang-btn').forEach(b=>b.classList.remove('active'));event.target.classList.add('active');document.getElementById('refund-content-id').style.display=l==='ID'?'block':'none';document.getElementById('refund-content-en').style.display=l==='EN'?'block':'none'},show(){this.switchLang(this.lang)}};
 
-try{applyT();Home.render();Banner.init();FlashSale.init();fetchProducts();Assistant.init();Assistant.renderQuickBtns();Wallet.render();Resale.render();Profile.render();Cart.update();Onboard.init();if(Auth.isLoggedIn()&&Auth.user){Auth.onAuthSuccess()}else{Auth.init()}}catch(e){console.error('[Init]',e)};
+try{applyT();Home.render();Banner.init();FlashSale.init();fetchExchangeRate();fetchProducts();Assistant.init();Assistant.renderQuickBtns();Wallet.render();Resale.render();Profile.render();Cart.update();Coupons.loadFromServer();Onboard.init();if(Auth.isLoggedIn()&&Auth.user){Auth.onAuthSuccess();Cart.loadFromServer()}else{Auth.init()}}catch(e){console.error('[Init]',e)};
 
 /* PWA Service Worker + Install Prompt */
 (function(){

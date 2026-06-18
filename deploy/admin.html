@@ -10,6 +10,7 @@
 <meta name="apple-mobile-web-app-title" content="AceProxy">
 <title>AceProxy Console</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script src="api-client.js"></script>
 <style>
 :root{--bg:#0d1117;--sbg:#161b22;--card:#1c2129;--brd:#30363d;--tx:#e6edf3;--td:#8b949e;--ac:#e94560;--a2:#4f8cff;--gr:#22c55e;--or:#f59e0b;--rd:#ef4444;--pu:#a855f7;--r:10px;--t:.2s;--tab-h:56px;--safe:env(safe-area-inset-bottom,0px)}
 *{margin:0;padding:0;box-sizing:border-box}
@@ -399,7 +400,16 @@ let currentPage = 'dashboard';
 let charts = {};
 const CN = {ID:'🇮🇩 印尼站',TH:'🇹🇭 泰国站',PH:'🇵🇭 菲律宾站',BR:'🇧🇷 巴西站'};
 const CURR = {ID:'Rp',TH:'฿',PH:'₱',BR:'R$'};
-const RATE = {ID:2200,TH:4.8,PH:7.2,BR:0.72};
+// 汇率：优先从后端 /config/exchange-rate 获取，fallback 为兜底值
+let RATE = {ID:2200,TH:4.8,PH:7.2,BR:0.72};
+async function loadExchangeRates(){
+  try{
+    const data=await window.API.apiSafe('/config/exchange-rate',{},{rate:2200});
+    const rate=data.rate||data.exchangeRate||2200;
+    RATE={ID:rate,TH:(rate/2200*4.8),PH:(rate/2200*7.2),BR:(rate/2200*0.72)};
+    console.log('[Admin] Exchange rates loaded:',RATE);
+  }catch(e){console.warn('[Admin] Exchange rate load failed, using defaults:',e.message)}
+}
 
 // ───── 初始化 ─────
 document.addEventListener('DOMContentLoaded',()=>{
@@ -407,6 +417,7 @@ document.addEventListener('DOMContentLoaded',()=>{
     document.getElementById('adminLogin').style.display = 'none';
     document.getElementById('adminShell').style.display = '';
     document.getElementById('countryLabel').textContent=CN[country];
+    loadExchangeRates();
     navigateTo('dashboard');
     updateClock();setInterval(updateClock,30000);
   }
