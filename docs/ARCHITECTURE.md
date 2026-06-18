@@ -417,7 +417,127 @@ PaymentService.handleWebhook()
 
 ---
 
-## 6. 技术选型理由
+## 6. 数据库 Schema 概览
+
+### 核心表关系
+
+```
+ace_user (1) ─────────< (N) ace_order ─────< (N) ace_order_item
+    │                        │
+    │                        └──< (N) ace_logistics_node
+    │
+    ├──< (N) ace_cart_item ──> (1) ace_product
+    │
+    ├──< (N) ace_vault_ledger
+    │
+    └──< (N) ace_chat_log
+
+ace_product
+    ├──< (N) ace_coupon (global, not per-product)
+    └──< (N) ace_cart_item ──> (1) ace_user
+
+ace_partner ──< (N) ace_order (if source === 'RESALE')
+```
+
+### 主要表说明
+
+| 表名 | 行数预期 | 核心索引 | 说明 |
+|------|---------|---------|------|
+| `ace_user` | 10K–1M | `email UNIQUE` | 用户账户 |
+| `ace_product` | 1K–100K | `category`, `status` | 商品目录 |
+| `ace_order` | 10K–10M | `userId`, `status`, `createdAt` | 订单主表 |
+| `ace_order_item` | 50K–50M | `orderId` | 订单明细 |
+| `ace_vault_ledger` | 70K–70M | `account`, `orderId` | 财务账本（每订单7条） |
+| `ace_cart_item` | 1K–100K | `userId` | 购物车 |
+| `ace_coupon` | 10–1K | `code UNIQUE` | 优惠券 |
+| `ace_chat_log` | 10K–1M | `sessionId`, `userId` | AI 对话历史 |
+| `ace_holiday_config` | 3–30 | `stationId` | 节日UI配置 |
+| `ace_logistics_node` | 60K–60M | `orderId`, `timestamp` | 物流节点（每订单6+节点） |
+| `ace_partner` | 100–10K | `status` | 团长/代购者 |
+
+### 数据库大小估算
+
+| 阶段 | 订单量 | 总行数估算 | 磁盘占用估算 |
+|------|--------|-----------|-------------|
+| MVP | < 1K/月 | ~50K | ~50 MB |
+| 增长期 | 1K–10K/月 | ~500K | ~200 MB |
+| 规模化 | 10K–100K/月 | ~5M | ~1 GB |
+| 企业级 | > 100K/月 | ~50M+ | ~10 GB+ |
+
+### 迁移策略
+
+所有 Schema 变更通过 Prisma Migrate 管理：
+
+1. 开发环境: 修改 `schema.prisma` → `npx prisma migrate dev --name change_desc`
+2. 代码审查: 检查生成的 SQL 迁移文件（`prisma/migrations/`）
+3. 生产部署: `npx prisma migrate deploy`（仅执行，不生成）
+4. 回滚: 通过反向迁移文件或数据库快照恢复
+
+**迁移安全规则**:
+- 禁止 `DROP COLUMN` 在生产直接执行 — 先标记 deprecated，下个版本删除
+- 重命名字段使用 `@map` 保持数据库列名不变
+- 大表添加索引使用 `CREATE INDEX CONCURRENTLY`（避免锁表）
+
+---
+
+## 7. API 设计原则
+
+### REST 规范
+
+所有 API 遵循 RESTful 约定：
+
+| 操作 | 方法 | 路径 | 示例 |
+|------|------|------|------|
+| 列表 | GET | `/resource/list?page=&limit=` | `GET /product/list?page=2&limit=20` |
+| 详情 | GET | `/resource/:id` | `GET /product/prod_001` |
+| 创建 | POST | `/resource` | `POST /trade/order` |
+| 更新 | PATCH | `/resource/:id` | `PATCH /cart/item/cart_001` |
+| 删除 | DELETE | `/resource/:id` | `DELETE /cart/item/cart_001` |
+| 动作 | POST | `/resource/:id/action` | `POST /payment/webhook/xendit` |
+
+### 统一响应格式
+
+所有成功响应经过 `ApiResponseInterceptor` 统一包装：
+
+```json
+{
+  "success": true,
+  "data": {
+    "items": [...],
+    "total": 42,
+    "page": 1,
+    "limit": 20
+  },
+  "timestamp": "2026-06-18T12:00:00.000Z"
+}
+```
+
+错误响应：
+
+```json
+{
+  "statusCode": 400,
+  "message": "Coupon expired",
+  "error": "Bad Request",
+  "timestamp": "2026-06-18T12:00:00.000Z"
+}
+```
+
+### 分页规范
+
+- 参数: `page`(默认1) + `limit`(默认20，上限100)
+- 响应: `items` + `total` + `page` + `limit` + `totalPages`
+- 数据库: Prisma `skip`/`take` 分页
+
+### 日期范围过滤
+
+- 参数: `startDate` + `endDate` (ISO 8601 格式)
+- endDate 自动补齐到 23:59:59.999
+- 无效日期静默忽略（不抛异常）
+
+---
+
+## 8. 技术选型理由
 
 ### 为什么 NestJS？
 
@@ -457,7 +577,7 @@ PaymentService.handleWebhook()
 
 ---
 
-## 7. 未来扩展计划
+## 9. 未来扩展计划
 
 ### Phase 1: MVP 强化（当前阶段）
 - [x] JWT 认证 + Swagger 文档

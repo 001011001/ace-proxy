@@ -1,0 +1,4 @@
+[main 248dde6] docs: expand ARCHITECTURE.md (500+ lines) + DEPLOYMENT.md (400+ lines) — Mermaid diagrams, tech rationale, security deep-dive, monitoring, backup, DR, scaling, SSL, perf tuning
+ 4 files changed, 872 insertions(+), 37 deletions(-)
+ create mode 100644 apps/server/jest_docs_fix.txt
+ create mode 100644 git_commit_t05.txt

@@ -1,0 +1,134 @@
+PASS src/common/__tests__/uuid.spec.ts (8.716 s)
+  uuid
+    generateUUIDv4
+      √ should return a valid UUID v4 format (28 ms)
+      √ should produce unique values across multiple calls
+    generateOrderId
+      √ should start with "ord_" prefix (8 ms)
+      √ should have length > 40 (UUID v7 is 36 chars + "ord_")
+    generateInviteCode
+      √ should format as ACE-{PREFIX}-{4 digits}
+      √ should uppercase the prefix
+    generateSessionId
+      √ should start with "sess_" prefix
+    generateMessageSid
+      √ should start with "wa_" prefix (1 ms)
+      √ should be 13 characters (wa_ + 10 alphanumeric) (1 ms)
+
+PASS src/modules/vault/__tests__/VaultService.spec.ts (9.142 s)
+  VaultService
+    recordOrderLedger
+      √ should write 7 ledger entries (42 ms)
+      √ zero-sum check: DEBIT = CREDIT (2 ms)
+    getPoolBalance
+      √ should aggregate account balance (3 ms)
+      √ should return 0 for empty account (4 ms)
+    handleChargeback
+      √ should lock funds on chargeback (3 ms)
+    recordResaleSettlement
+      √ should split 5% platform + 2% partner + 93% seller (2 ms)
+
+PASS src/modules/trade/__tests__/TradeService.spec.ts (9.288 s)
+  TradeService
+    calculateFinalFees
+      √ 基础金额计算费用 (34 ms)
+      √ 高消费等级应有更低费率 (3 ms)
+    createOrder
+      √ 正常创建订单 (9 ms)
+      √ 未同意协议应抛出 ForbiddenException (17 ms)
+      √ 订单金额应正确计算 (2 ms)
+
+PASS src/modules/auth/__tests__/AuthService.spec.ts (9.707 s)
+  AuthService
+    register
+      √ should create a new user successfully (91 ms)
+      √ should throw ConflictException on duplicate email (11 ms)
+    login
+      √ should return token for correct password (109 ms)
+      √ should throw UnauthorizedException for wrong password (111 ms)
+    getUser
+      √ should return user info (3 ms)
+
+PASS src/modules/order/__tests__/OrderController.spec.ts (9.61 s)
+  OrderController
+    list
+      √ should paginate orders (30 ms)
+      √ should filter by status (2 ms)
+    timeline
+      √ should return logistics nodes (4 ms)
+    exportCsv
+      √ should set CSV content-type header (2 ms)
+
+PASS src/modules/shipping/__tests__/ShippingService.spec.ts (9.759 s)
+  ShippingService
+    getUserQuote
+      √ 应返回印尼标准运费 (30 ms)
+      √ 泰国运费应使用 THB 汇率 (2 ms)
+      √ 菲律宾运费应使用 PHP 汇率 (1 ms)
+    getEstimateRange
+      √ 应返回时效估算 (2 ms)
+
+[33m[Nest] 3568  - [39m2026/06/18 15:14:24 [33m   WARN[39m [38;5;3m[WebhookVerifier] [39m[33m[Webhook] Invalid callback token. Received: wrong-to...[39m
+[33m[Nest] 3568  - [39m2026/06/18 15:14:24 [33m   WARN[39m [38;5;3m[WebhookVerifier] [39m[33m[Webhook] Invalid callback token. Received: wrong-to...[39m
+PASS src/common/__tests__/WebhookVerifier.spec.ts (9.655 s)
+  WebhookVerifier
+    verifyCallbackToken
+      √ should throw ConfigurationError when XENDIT_CALLBACK_TOKEN is not set (44 ms)
+      √ should throw UnauthorizedException when token does not match (3 ms)
+      √ should pass silently when token matches (1 ms)
+    verifyHmacSignature
+      √ should throw ConfigurationError when XENDIT_WEBHOOK_SECRET is not set (2 ms)
+      √ should throw UnauthorizedException when signature header is missing (1 ms)
+
+PASS src/modules/payment/__tests__/PaymentFulfillmentService.spec.ts (9.936 s)
+  PaymentFulfillmentService
+    fulfill
+      √ should return success for already PAID order (idempotency) (28 ms)
+      √ should reject order when amount mismatch exceeds 1% tolerance (3 ms)
+      √ should successfully fulfill a valid order (2 ms)
+
+PASS src/modules/marketing/__tests__/CouponService.spec.ts (10.057 s)
+  CouponService
+    getByCode
+      √ 应返回优惠券 (23 ms)
+    claimCoupon
+      √ 应成功领取优惠券 (2 ms)
+      √ 过期优惠券应抛出异常 (8 ms)
+      √ 超出限量应抛出异常 (1 ms)
+    listUserCoupons
+      √ 应返回用户已领取的优惠券 (2 ms)
+
+PASS src/modules/cart/__tests__/CartService.spec.ts (10.133 s)
+  CartService
+    addToCart
+      √ 应正常添加商品到购物车 (22 ms)
+      √ 库存不足时应抛出异常 (6 ms)
+    getCart
+      √ 应返回购物车内容 (3 ms)
+    removeCartItem
+      √ 应正常移除购物车商品 (2 ms)
+
+PASS src/modules/payment/__tests__/PaymentService.spec.ts (10.22 s)
+  PaymentService
+    createInvoice
+      √ should throw InternalServerErrorException when API key missing (28 ms)
+      √ should throw InternalServerErrorException for any amount without API key (2 ms)
+    getInvoiceStatus
+      √ should throw InternalServerErrorException without API key (2 ms)
+    handleWebhook
+      √ should process webhook callback (1 ms)
+    amount validation
+      √ validateInvoiceId rejects invalid IDs (1 ms)
+
+PASS src/modules/product/__tests__/ProductService.spec.ts (10.264 s)
+  ProductService
+    decrementStockWithRetry
+      √ should return true when stock is sufficient and decrement succeeds (19 ms)
+      √ should return false when stock is insufficient (2 ms)
+      √ should retry on transient errors up to MAX_RETRIES (168 ms)
+
+Test Suites: 12 passed, 12 total
+Tests:       58 passed, 58 total
+Snapshots:   0 total
+Time:        12.723 s
+Ran all test suites.
