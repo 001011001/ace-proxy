@@ -1,0 +1,153 @@
+classDiagram
+    class PrismaService {
+        +aceCoupon findUnique|findMany|create|update
+        +aceHolidayConfig findFirst|upsert|update
+        +aceOrder findUnique|findMany|create|update|aggregate
+        +aceVaultLedger findMany|create|aggregate
+        +aceProduct findMany|findUnique
+        +aceCartItem findMany|create|delete|update
+        +aceLogisticsNode findMany|create
+        +aceUser findUnique|update
+        +acePartner findMany
+        +aceHeroProduct findMany
+    }
+
+    class CouponService {
+        -PrismaService prisma
+        +createCoupon(data) Promise~AceCoupon~
+        +applyCoupon(code, amount) Promise~DiscountResult~
+        +listCoupons(country?) Promise~AceCoupon[]~
+        +validateCoupon(code) Promise~AceCoupon~
+    }
+
+    class HolidayService {
+        -PrismaService prisma
+        +getConfig(stationId) Promise~AceHolidayConfig~
+        +updateConfig(patch) Promise~AceHolidayConfig~
+        +toggleActivation(active) Promise~AceHolidayConfig~
+        +listConfigs() Promise~AceHolidayConfig[]~
+    }
+
+    class RegionService {
+        -PrismaService prisma
+        +getSettings(regionId) Promise~RegionSettings~
+        +updateSettings(regionId, patch) Promise~void~
+        +getChargebackRate(regionId) Promise~number~
+    }
+
+    class NotificationService {
+        -PrismaService prisma
+        +sendLogisticUpdate(userId, status, trackingId) Promise~void~
+        +sendMarketingBlast(userIds, content) Promise~void~
+        +sendWhatsAppMessage(phone, text) Promise~void~
+        +createInAppNotification(userId, type, body) Promise~void~
+        +getNotifications(userId) Promise~Notification[]~
+    }
+
+    class IntelligenceService {
+        -PatentRiskChecker patentChecker
+        -StationService stationService
+        +fetchIntelligence() Promise~Brief~
+        +monitorHeroProducts(products) Promise~void~
+        -scrapeAMZ123() Promise~string[]~
+        -scrapeTikTok() Promise~string[]~
+        -generateDailyBrief(news, signals) Promise~string~
+    }
+
+    class ArbiBotService {
+        -PatentRiskChecker patentChecker
+        -Alibaba1688Service alibaba1688
+        -UnifiedSourcingService unifiedSourcing
+        +analyzeLink(url) Promise~ArbiBotAnalysis~
+    }
+
+    class VisionQCService {
+        +performQC(imageUrl, expectedProduct, category) Promise~QCResult~
+        +calculateCompressionSavings(weight, origVol, compVol) Promise~CompressionResult~
+    }
+
+    class IPFirewallService {
+        +evaluateRisk(skuImage) Promise~RiskResult~
+        -detectBrandLogo(image) Promise~boolean~
+        -calculateVisualSimilarity(image) Promise~number~
+    }
+
+    class TradeService {
+        -PrismaService prisma
+        -VaultService vault
+        -SmartSplitterService splitter
+        -NotificationService notification
+        -UserLevelService membership
+        -ReferralService referral
+        +createOrder(data, compliance) Promise~AceOrder~
+        +calculateFinalFees(userId, amount, totalSpend?) Promise~FeeResult~
+        +handlePaymentSuccess(orderId, payload) Promise~void~
+        +handleSalvageAction(userId, orderId, action) Promise~void~
+    }
+
+    class ChatService {
+        -PrismaService prisma
+        -LocalLlmService localLlm
+        -ChatLogService chatLog
+        -ProductService productService
+        -CartService cartService
+        +stewardChat(userId, msg, history, products, sessionId) Promise~ChatResult~
+        -parseAction(text) Action~
+        -executeToolCall(call) Promise~any~
+        -fallbackReply(sessionId, intent) ChatResult~
+    }
+
+    class PaymentService {
+        -ConfigService config
+        -PrismaService prisma
+        -WebhookVerifier verifier
+        -PaymentFulfillmentService fulfillment
+        +createInvoice(params) Promise~XenditInvoice~
+        +createPaymentLink(params) Promise~PaymentLink~
+        +getInvoiceStatus(invoiceId) Promise~XenditInvoice~
+        +handleWebhook(payload, token, sig, rawBody) Promise~void~
+        +refundInvoice(params) Promise~RefundResult~
+        +getCollectionReconciliation(params) Promise~Reconciliation~
+    }
+
+    class ShippingService {
+        -YuntuShippingProvider yuntu
+        +getCostQuote(params) ShippingQuote
+        +getUserQuote(params) UserQuote
+        +getConsolidatedUserQuote(params) ConsolidatedQuote
+        +validateAddress(country, city, province) boolean
+        +getEstimateRange(country, zone) EstimateRange
+        -getDefaultCurrency(country) string
+    }
+
+    class DashboardService {
+        -PrismaService prisma
+        +getKpi() Promise~KpiResult~
+        +getTrend(days) Promise~TrendPoint[]~
+        +getCategoryBreakdown() Promise~CategoryBreak[]~
+        +getTopProducts(limit) Promise~TopProduct[]~
+    }
+
+    class VaultService {
+        -PrismaService prisma
+        +recordOrderLedger(orderId, amounts) Promise~void~
+        +recordSalvageRebate(orderId, amount) Promise~void~
+        +getSummary() Promise~VaultSummary~
+        +getLedger(params) Promise~LedgerEntry[]~
+    }
+
+    %% Relationships
+    CouponService --> PrismaService : injects
+    HolidayService --> PrismaService : injects
+    RegionService --> PrismaService : injects
+    NotificationService --> PrismaService : injects
+    TradeService --> PrismaService : injects
+    TradeService --> VaultService : injects
+    TradeService --> NotificationService : injects
+    ChatService --> PrismaService : injects
+    ChatService --> CartService : injects
+    PaymentService --> PrismaService : injects
+    DashboardService --> PrismaService : injects
+    VaultService --> PrismaService : injects
+    ArbiBotService --> IntelligenceService : depends on
+    IntelligenceService --> IPFirewallService : via PatentRiskChecker

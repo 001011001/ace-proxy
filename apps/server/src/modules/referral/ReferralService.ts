@@ -1,4 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import * as crypto from 'crypto';
+import { generateInviteCode } from '../../common/uuid';
 
 /**
  * ReferralService - 社交裂变与红人激励引擎
@@ -31,9 +33,7 @@ export class ReferralService {
    * 为“雅加达指挥官”生成唯一邀请码
    */
   async generatePartnerInviteCode(partnerName: string) {
-    const prefix = partnerName.substring(0, 3).toUpperCase();
-    const random = Math.floor(1000 + Math.random() * 9000);
-    return `ACE-${prefix}-${random}`;
+    return generateInviteCode(partnerName);
   }
 
   /**

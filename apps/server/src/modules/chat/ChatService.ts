@@ -5,6 +5,7 @@ import type { ChatResult as LlmChatResult } from '../llm/LocalLlmService';
 import { ChatLogService } from './ChatLogService';
 import { ProductService } from '../product/ProductService';
 import { CartService } from '../cart/CartService';
+import { generateSessionId } from '../../common/uuid';
 
 /**
  * Public ChatResult — returned to the frontend.
@@ -61,7 +62,7 @@ export class ChatService {
     products: any[] | null = null,
     sessionId?: string,
   ): Promise<ChatResult> {
-    const sid = sessionId || this.generateUUID();
+    const sid = sessionId || generateSessionId();
 
     this.logger.log(`[Steward AI] User ${userId} (session ${sid}): ${message}`);
 
@@ -634,13 +635,5 @@ IMPORTANT: When a user wants to buy something, first use [ACTION:search] to find
   async handleSupplierReply(orderId: string, supplierContent: string) {
     this.logger.log(`[Steward] Supplier replied for order ${orderId}`);
     return { translated: supplierContent, status: 'RECEIVED' };
-  }
-
-  private generateUUID(): string {
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-      const r = (Math.random() * 16) | 0;
-      const v = c === 'x' ? r : (r & 0x3) | 0x8;
-      return v.toString(16);
-    });
   }
 }

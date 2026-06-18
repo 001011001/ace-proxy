@@ -55,36 +55,38 @@ export class CartService {
   }
 
   async addToCart(userId: string, productId: string, qty: number) {
-    const product = await this.prisma.aceProduct.findUnique({
-      where: { id: productId },
-      select: { id: true, stock: true, status: true, name: true },
-    });
+    return this.prisma.$transaction(async (tx) => {
+      const product = await tx.aceProduct.findUnique({
+        where: { id: productId },
+        select: { id: true, stock: true, status: true, name: true },
+      });
 
-    if (!product || product.status !== 'ACTIVE') {
-      throw new BadRequestException('Product not found or unavailable');
-    }
+      if (!product || product.status !== 'ACTIVE') {
+        throw new BadRequestException('Product not found or unavailable');
+      }
 
-    if (product.stock !== null && product.stock < qty) {
-      throw new BadRequestException(`Insufficient stock. Available: ${product.stock}`);
-    }
-
-    const existing = await this.prisma.aceCartItem.findFirst({
-      where: { userId, productId },
-    });
-
-    if (existing) {
-      const newQty = existing.quantity + qty;
-      if (product.stock !== null && product.stock < newQty) {
+      if (product.stock !== null && product.stock < qty) {
         throw new BadRequestException(`Insufficient stock. Available: ${product.stock}`);
       }
-      return this.prisma.aceCartItem.update({
-        where: { id: existing.id },
-        data: { quantity: newQty },
-      });
-    }
 
-    return this.prisma.aceCartItem.create({
-      data: { userId, productId, quantity: qty },
+      const existing = await tx.aceCartItem.findFirst({
+        where: { userId, productId },
+      });
+
+      if (existing) {
+        const newQty = existing.quantity + qty;
+        if (product.stock !== null && product.stock < newQty) {
+          throw new BadRequestException(`Insufficient stock. Available: ${product.stock}`);
+        }
+        return tx.aceCartItem.update({
+          where: { id: existing.id },
+          data: { quantity: newQty },
+        });
+      }
+
+      return tx.aceCartItem.create({
+        data: { userId, productId, quantity: qty },
+      });
     });
   }
 

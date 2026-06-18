@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AceProxy 用户增长与裂变策略框架 — 完整版</title>
+<style>
+:root {
+  --bg: #0d1117; --card-bg: #161b22; --border: #30363d;
+  --text: #c9d1d9; --text-muted: #8b949e; --text-bright: #f0f6fc;
+  --crit: #f85149; --high: #ff7b72; --med: #d29922; --low: #3fb950;
+  --accent: #58a6ff; --accent2: #79c0ff; --accent3: #a371f7;
+  --orange: #d45d3a; --teal: #0f7b8c;
+  --grad-1: linear-gradient(135deg, #d45d3a, #f0883e);
+  --grad-2: linear-gradient(135deg, #0f7b8c, #1eabb5);
+  --grad-3: linear-gradient(135deg, #6e40c9, #a371f7);
+  --grad-4: linear-gradient(135deg, #238636, #3fb950);
+  --grad-5: linear-gradient(135deg, #d29922, #f0b232);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Plus Jakarta Sans',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+.container{max-width:1200px;margin:0 auto;padding:48px 24px}
+
+/* Navigation */
+.toc{position:sticky;top:0;z-index:100;background:rgba(13,17,23,0.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:12px 0;margin-bottom:40px}
+.toc-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+.toc-inner::-webkit-scrollbar{display:none}
+.toc a{color:var(--text-muted);text-decoration:none;font-size:0.82em;white-space:nowrap;padding:6px 14px;border-radius:20px;transition:all 0.2s;border:1px solid transparent}
+.toc a:hover,.toc a.active{color:var(--text-bright);background:var(--card-bg);border-color:var(--border)}
+
+h1{font-size:2.6em;font-weight:800;color:var(--text-bright);margin-bottom:8px;letter-spacing:-0.02em;background:var(--grad-1);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.meta{color:var(--text-muted);font-size:0.92em;margin-bottom:12px}
+.brief{background:linear-gradient(135deg,rgba(212,93,58,0.08),rgba(15,123,140,0.08));border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:40px;font-size:1.05em;line-height:1.8}
+.brief strong{color:var(--text-bright)}
+
+h2{font-size:1.65em;font-weight:700;color:var(--text-bright);margin:56px 0 24px;padding-bottom:12px;border-bottom:2px solid var(--border);display:flex;align-items:center;gap:12px}
+h2 .num{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:12px;font-size:0.7em;font-weight:800}
+h3{font-size:1.15em;font-weight:600;color:var(--accent2);margin:32px 0 14px}
+h4{font-weight:600;color:var(--text-bright);margin:20px 0 10px;font-size:1em}
+
+/* Metric cards */
+.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin:20px 0}
+.metric-card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:20px;position:relative;overflow:hidden}
+.metric-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%}
+.metric-card.m1::before{background:var(--grad-1)}
+.metric-card.m2::before{background:var(--grad-2)}
+.metric-card.m3::before{background:var(--grad-3)}
+.metric-card.m4::before{background:var(--grad-4)}
+.metric-name{font-size:0.78em;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px}
+.metric-value{font-size:1.8em;font-weight:800;color:var(--text-bright);margin-bottom:4px}
+.metric-target{font-size:0.82em;color:var(--accent2)}
+
+/* Channel cards */
+.channel-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:18px;margin:20px 0}
+.channel-card{background:var(--card-bg);border:1px solid var(--border);border-radius:14px;padding:24px}
+.channel-card h4{display:flex;align-items:center;gap:10px;margin-top:0;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.channel-card .emoji{font-size:1.6em}
+.channel-card table{width:100%;border-collapse:collapse;font-size:0.88em;margin-top:12px}
+.channel-card th,.channel-card td{padding:8px 10px;text-align:left;border-bottom:1px solid rgba(48,54,61,0.6)}
+.channel-card th{color:var(--accent2);font-weight:600;font-size:0.82em}
+.cac{color:var(--med);font-weight:600}
+
+/* Funnel */
+.funnel{display:flex;flex-direction:column;gap:6px;margin:20px 0}
+.funnel-step{display:flex;align-items:center;gap:14px}
+.funnel-bar{height:36px;border-radius:8px;display:flex;align-items:center;padding:0 14px;font-size:0.85em;font-weight:600;color:#fff;min-width:140px;justify-content:space-between}
+.funnel-label{font-size:0.85em;color:var(--text-muted);min-width:100px;text-align:right}
+.funnel-info{font-size:0.8em;color:var(--text-muted)}
+.fb1{background:linear-gradient(90deg,#d45d3a,#e87040);width:100%}
+.fb2{background:linear-gradient(90deg,#e87040,#f09050);width:40%}
+.fb3{background:linear-gradient(90deg,#f09050,#e8a040);width:25%}
+.fb4{background:linear-gradient(90deg,#0f7b8c,#1e9ba8);width:8%}
+.fb5{background:linear-gradient(90deg,#1e9ba8,#2db8c4);width:3%}
+
+/* Viral model */
+.mechanic-table{width:100%;border-collapse:collapse;margin:20px 0;font-size:0.9em}
+.mechanic-table th{background:var(--card-bg);color:var(--accent2);font-weight:600;padding:12px 14px;text-align:left;border-bottom:2px solid var(--border);font-size:0.85em}
+.mechanic-table td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+.mechanic-table tr:hover td{background:rgba(88,166,255,0.03)}
+.tag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:0.78em;font-weight:600}
+.tag-acq{background:rgba(212,93,58,0.15);color:#d45d3a}
+.tag-viral{background:rgba(111,64,201,0.15);color:#a371f7}
+.tag-ret{background:rgba(15,123,140,0.15);color:#0f7b8c}
+.tag-conv{background:rgba(35,134,54,0.15);color:#3fb950}
+
+/* Lifecycle model */
+.lifecycle-flow{display:flex;align-items:center;gap:0;margin:28px 0;overflow-x:auto;padding:10px 0}
+.lc-node{background:var(--card-bg);border:2px solid var(--border);border-radius:14px;padding:16px 20px;text-align:center;min-width:140px;flex-shrink:0}
+.lc-node.active{border-color:var(--accent2);box-shadow:0 0 20px rgba(88,166,255,0.12)}
+.lc-node .lc-title{font-size:0.85em;font-weight:700;margin-bottom:6px}
+.lc-node .lc-pct{font-size:1.4em;font-weight:800}
+.lc-node .lc-action{font-size:0.75em;color:var(--accent2);margin-top:6px}
+.lc-arrow{color:var(--text-muted);font-size:1.5em;flex-shrink:0;padding:0 8px}
+
+/* AB test matrix */
+.ab-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin:20px 0}
+.ab-card{background:var(--card-bg);border:1px solid var(--border);border-radius:12px;padding:18px}
+.ab-card .hypothesis{font-size:0.82em;color:var(--accent2);margin-bottom:10px;font-style:italic}
+.ab-card .variant{display:flex;gap:10px;margin:8px 0}
+.ab-ctrl,.ab-test{border-radius:8px;padding:8px 12px;font-size:0.82em;flex:1}
+.ab-ctrl{background:rgba(139,148,158,0.08);border:1px solid rgba(139,148,158,0.2)}
+.ab-test{background:rgba(88,166,255,0.08);border:1px solid rgba(88,166,255,0.2)}
+.ab-metric{font-size:0.78em;color:var(--low);margin-top:8px}
+
+/* Dashboard */
+.dash-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin:20px 0}
+.dash-card{background:var(--card-bg);border:1px solid var(--border);border-radius:10px;padding:16px}
+.dash-title{font-size:0.76em;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:6px}
+.dash-val{font-size:1.5em;font-weight:800;color:var(--text-bright)}
+.dash-change{font-size:0.78em;margin-top:4px}
+.dash-up{color:var(--low)}.dash-down{color:var(--crit)}
+
+/* Risk matrix */
+.risk-table{width:100%;border-collapse:collapse;margin:20px 0;font-size:0.88em}
+.risk-table th{background:var(--card-bg);color:var(--text-bright);padding:12px 14px;text-align:left;border-bottom:2px solid var(--border)}
+.risk-table td{padding:12px 14px;border-bottom:1px solid var(--border);vertical-align:top}
+.risk-high{color:var(--crit);font-weight:700}
+.risk-med{color:var(--med);font-weight:700}
+.risk-low{color:var(--low);font-weight:700}
+
+/* Process flow */
+.process-box{background:var(--card-bg);border:1px solid var(--border);border-radius:14px;padding:24px;margin:20px 0}
+.process-steps{display:flex;align-items:flex-start;gap:0;overflow-x:auto;padding:12px 0}
+.ps{text-align:center;min-width:130px;flex-shrink:0;position:relative}
+.ps-num{width:40px;height:40px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:1em;margin-bottom:8px;color:#fff}
+.ps-1{background:var(--grad-1)}.ps-2{background:var(--grad-2)}.ps-3{background:var(--grad-3)}.ps-4{background:var(--grad-4)}.ps-5{background:var(--grad-5)}
+.ps-title{font-weight:700;font-size:0.85em;margin-bottom:4px}
+.ps-desc{font-size:0.78em;color:var(--text-muted)}
+.ps-arrow{font-size:1.4em;color:var(--text-muted);padding:12px 8px 0}
+
+/* Responsive */
+@media(max-width:768px){
+  .container{padding:24px 14px}
+  h1{font-size:1.8em}
+  .channel-grid{grid-template-columns:1fr}
+  .process-steps{flex-wrap:wrap;justify-content:center}
+  .ps-arrow{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="toc">
+  <div class="toc-inner">
+    <a href="#overview">总览</a>
+    <a href="#m1">拉新获客</a>
+    <a href="#m2">裂变机制</a>
+    <a href="#m3">留存活跃</a>
+    <a href="#m4">转化变现</a>
+    <a href="#m5">数据监控</a>
+    <a href="#m6">病毒传播</a>
+    <a href="#roadmap">实施路线图</a>
+    <a href="#risk">风险矩阵</a>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ========== HEADER ========== -->
+<h1>AceProxy 用户增长与裂变策略框架</h1>
+<div class="meta">
+  版本 v2.1 ｜ 2026-06-18 ｜ 目标市场: 🇮🇩 印尼 (首发) → 🇹🇭 泰国 → 🇵🇭 菲律宾 → 🇧🇷 巴西 ｜ 定位: 跨境代购 + 社交裂变
+</div>
+
+<div class="brief">
+  <strong>策略核心逻辑：</strong>以"代购省钱"为核心价值锚点，用<strong>三级裂变引擎</strong>（利益裂变 + 内容裂变 + 身份裂变）驱动低成本用户增长。增长飞轮路径为 ——「高性价比选品吸引首单 → 到货喜悦触发分享 → 邀请奖励带动裂变 → 积分体系锁定复购 → 团长身份激活分销」。本方案覆盖<strong>6 大增长模块、28 个可执行策略、15 项核心指标、18 个 A/B 测试假说</strong>，适配印尼市场社交属性强、价格敏感度高、WhatsApp 渗透率 90%+ 的特点。
+</div>
+
+<!-- ========== NORTH STAR ========== -->
+<h2 id="overview"><span class="num" style="background:var(--grad-1)">★</span> 北极星指标与增长飞轮</h2>
+
+<div class="metric-grid">
+  <div class="metric-card m1">
+    <div class="metric-name">北极星指标 (NSM)</div>
+    <div class="metric-value">周活跃下单用户</div>
+    <div class="metric-target">WAU Buyers: 月增 +25%</div>
+  </div>
+  <div class="metric-card m2">
+    <div class="metric-name">病毒系数</div>
+    <div class="metric-value">K ≥ 0.5</div>
+    <div class="metric-target">Phase 1 目标; Phase 3 达 K≥1.2</div>
+  </div>
+  <div class="metric-card m3">
+    <div class="metric-name">用户获取成本</div>
+    <div class="metric-value">CAC < ₱30,000</div>
+    <div class="metric-target">印尼市场综合 CAC 目标</div>
+  </div>
+  <div class="metric-card m4">
+    <div class="metric-name">LTV : CAC</div>
+    <div class="metric-value">≥ 4 : 1</div>
+    <div class="metric-target">健康增长基准线</div>
+  </div>
+</div>
+
+<h3>增长飞轮</h3>
+<div class="process-box">
+  <div class="process-steps">
+    <div class="ps">
+      <div class="ps-num ps-1">1</div>
+      <div class="ps-title">极致选品</div>
+      <div class="ps-desc">AI套利扫描<br>价差>40%选品</div>
+    </div>
+    <div class="ps-arrow">→</div>
+    <div class="ps">
+      <div class="ps-num ps-2">2</div>
+      <div class="ps-title">首单转化</div>
+      <div class="ps-desc">新人专享价<br>无忧退货承诺</div>
+    </div>
+    <div class="ps-arrow">→</div>
+    <div class="ps">
+      <div class="ps-num ps-3">3</div>
+      <div class="ps-title">到货分享</div>
+      <div class="ps-desc">开箱奖励积分<br>一键晒单到WA</div>
+    </div>
+    <div class="ps-arrow">→</div>
+    <div class="ps">
+      <div class="ps-num ps-4">4</div>
+      <div class="ps-title">邀请裂变</div>
+      <div class="ps-desc">双向奖励Rp15K<br>阶梯返佣升级</div>
+    </div>
+    <div class="ps-arrow">→</div>
+    <div class="ps">
+      <div class="ps-num ps-5">5</div>
+      <div class="ps-title">团长升级</div>
+      <div class="ps-desc">月销>₱5M 激活<br>社群分销分润</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== MODULE 1 ========== -->
+<h2 id="m1"><span class="num" style="background:var(--grad-1)">1</span> 拉新获客 — 多渠道用户获取引擎</h2>
+
+<h3>1.1 获客渠道矩阵</h3>
+
+<div class="channel-grid">
+
+  <!-- Channel 1: Organic -->
+  <div class="channel-card">
+    <h4><span class="emoji">🔍</span> 自然流量 — SEO + ASO</h4>
+    <table>
+      <tr><th>策略</th><th>动作</th></tr>
+      <tr><td>内容SEO</td><td>印尼语长尾关键词矩阵（"beli baju dari China murah"等），每月产出 20 篇比价/开箱/教程类内容，目标 6 个月内覆盖 500+ 关键词</td></tr>
+      <tr><td>Programmatic SEO</td><td>自动生成品类 × 价格段 × 城市 Landing Page（如 "Sepatu Olahraga Murah Jakarta"），1000+ 页面规模化截流</td></tr>
+      <tr><td>ASO</td><td>Google Play 标题含 "belanja China murah"，副标题强调 "Gratis Ongkir"，A/B 测试 5 套截图 + 视频预告</td></tr>
+      <tr><td>结构化数据</td><td>Product Rich Snippets（价格/评分/库存），Organization Schema，FAQ Schema 抢占零位搜索结果</td></tr>
+    </table>
+    <div style="margin-top:14px;padding:12px;background:rgba(212,93,58,0.06);border-radius:8px">
+      <strong style="color:#d45d3a">CAC 目标: Rp 8,000 - 15,000</strong> ·
+      转化率目标: Visit→Signup 8% · Signup→First Order 25%
+    </div>
+  </div>
+
+  <!-- Channel 2: Paid Ads -->
+  <div class="channel-card">
+    <h4><span class="emoji">📱</span> 付费投放 — Meta + TikTok + Google</h4>
+    <table>
+      <tr><th>策略</th><th>动作</th></tr>
+      <tr><td>TikTok Ads</td><td>短视频种草（开箱/对比/省钱挑战），达人原生广告 + Spark Ads 加热，目标 CPM &lt; Rp 30,000</td></tr>
+      <tr><td>Meta Ads</td><td>DPA 动态商品广告（浏览过但未购），Lookalike 种子人群（已购用户 500+ 后启动），WhatsApp Click-to-Chat 广告直连客服</td></tr>
+      <tr><td>Google Ads</td><td>Shopping Ads 投放高毛利品类；Search Ads 拦截 "cara beli dari 1688" 等教育类意图；Display Retargeting 7 天内放弃购物车用户</td></tr>
+      <tr><td>预算分配</td><td>测试期: TikTok 50% / Meta 30% / Google 20% → 按 ROAS 动态调配，CPA 阈值为首单利润的 70%</td></tr>
+    </table>
+    <div style="margin-top:14px;padding:12px;background:rgba(212,93,58,0.06);border-radius:8px">
+      <strong style="color:#d45d3a">CAC 目标: Rp 25,000 - 45,000</strong> ·
+      ROAS 目标: ≥ 3.0 (30d 窗口)
+    </div>
+  </div>
+
+  <!-- Channel 3: KOL -->
+  <div class="channel-card">
+    <h4><span class="emoji">🎬</span> KOL/达人合作 — TikTok + Instagram</h4>
+    <table>
+      <tr><th>策略</th><th>动作</th></tr>
+      <tr><td>分层达人</td><td>KOC (1K-50K粉) × 30人: 纯佣合作; Mid-tier (50K-500K) × 10人: 固定费+佣金; Macro (500K+) × 3人: 年度代言框架</td></tr>
+      <tr><td>内容模板</td><td>"花了 X X 钱在 AceProxy 买到了什么"挑战赛；"中国 vs 印尼价格对比"系列；直播带货（TikTok LIVE + Shopee Live 双开）</td></tr>
+      <tr><td>追踪体系</td><td>为每位达人分配唯一折扣码（如 KOC_RIZKA15）+ 专属落地页，归因 30 天点击窗口</td></tr>
+      <tr><td>激励设计</td><td>基础佣金 10% + 月销 Top3 额外奖金 Rp 5M / 月度专属新品首发权</td></tr>
+    </table>
+    <div style="margin-top:14px;padding:12px;background:rgba(212,93,58,0.06);border-radius:8px">
+      <strong style="color:#d45d3a">CAC 目标: Rp 18,000 - 35,000</strong> ·
+      达人 ROI 目标: GMV/达人成本 ≥ 5
+    </div>
+  </div>
+
+  <!-- Channel 4: Community -->
+  <div class="channel-card">
+    <h4><span class="emoji">💬</span> 社交流量 — WhatsApp + Telegram + FB Groups</h4>
+    <table>
+      <tr><th>策略</th><th>动作</th></tr>
+      <tr><td>WA 社群运营</td><td>按品类/城市建群（如 "AceProxy Jakarta Fashion"），每日限时闪购播报 + AI 客服自动答疑 + 群内拼团接龙</td></tr>
+      <tr><td>FB Group 渗透</td><td>加入 "Jastip China Indonesia" / "Reseller Indonesia" 等代购/批发群组，提供价值帖子（比价清单/物流攻略），软性引流</td></tr>
+      <tr><td>Telegram Channel</td><td>推送每日新上架商品 + 限时折扣，设置入群自动回复欢迎语 + 新人优惠券链接</td></tr>
+      <tr><td>裂变型社群</td><td>"邀请3位好友进群 → 解锁群专属闪购价"，每个群上限 500 人，满群自动开新群</td></tr>
+    </table>
+    <div style="margin-top:14px;padding:12px;background:rgba(212,93,58,0.06);border-radius:8px">
+      <strong style="color:#d45d3a">CAC 目标: Rp 5,000 - 12,000</strong> ·
+      群转化率: 群成员→注册 15% · 注册→首单 20%
+    </div>
+  </div>
+
+</div>
+
+<h3>1.2 获客转化漏斗（全渠道综合）</h3>
+<div class="funnel">
+  <div class="funnel-step">
+    <div class="funnel-bar fb1">曝光 100,000 <span>100%</span></div>
+    <div class="funnel-info">CPM 优化 → 精准受众定向</div>
+  </div>
+  <div class="funnel-step">
+    <div class="funnel-bar fb2">点击 4,000 <span>4.0%</span></div>
+    <div class="funnel-info">CTR 优化 → 素材A/B测试</div>
+  </div>
+  <div class="funnel-step">
+    <div class="funnel-bar fb3">访问落地页 2,500 <span>2.5%</span></div>
+    <div class="funnel-info">加载速度 → 折扣吸引力</div>
+  </div>
+  <div class="funnel-step">
+    <div class="funnel-bar fb4">注册 800 <span>0.8%</span></div>
+    <div class="funnel-info">注册流程 → 新人礼包钩子</div>
+  </div>
+  <div class="funnel-step">
+    <div class="funnel-bar fb5">首单 280 <span>0.28%</span></div>
+    <div class="funnel-info">新人价 → 无忧退货 → 催付</div>
+  </div>
+</div>
+
+<!-- ========== MODULE 2 ========== -->
+<h2 id="m2"><span class="num" style="background:var(--grad-2)">2</span> 裂变机制 — 三级裂变引擎设计</h2>
+
+<table class="mechanic-table">
+  <tr>
+    <th style="width:12%">裂变类型</th>
+    <th style="width:10%">策略名称</th>
+    <th style="width:24%">核心机制</th>
+    <th style="width:24%">用户路径</th>
+    <th style="width:16%">关键指标</th>
+    <th style="width:14%">风险评估</th>
+  </tr>
+
+  <!-- Row 1 -->
+  <tr>
+    <td><span class="tag tag-viral">利益裂变</span></td>
+    <td><strong>老带新双向奖励</strong><br><span style="font-size:0.78em;color:var(--text-muted)">Referral Engine</span></td>
+    <td>
+      ✅ 邀请人: Rp 15,000 余额 + 被邀人首单 5% 返佣（永久）<br>
+      ✅ 被邀人: Rp 15,000 新人优惠券（满 Rp 50K 可用）<br>
+      ✅ 阶梯解锁: 邀请 5/20/50 人 → 解锁银/金/钻勋章 + 更高返佣比例<br>
+      ✅ 月度排行榜: Top 10 获额外奖金 Rp 200K-2M
+    </td>
+    <td>
+      ① 个人中心 → 点击"邀请好友"<br>
+      ② 生成专属链接/二维码（含 WA/TikTok/FB 一键分享）<br>
+      ③ 好友通过链接注册 → 双方自动获得奖励<br>
+      ④ 被邀人完成首单 → 邀请人获得佣金<br>
+      ⑤ 累进勋章系统持续激励
+    </td>
+    <td>
+      K-factor: ≥ 0.5 (Phase 1)<br>
+      邀请转化率: 12%<br>
+      被邀人首单率: 30%<br>
+      人均邀请数: 2.4 人
+    </td>
+    <td>
+      <span class="risk-med">⚠️ 羊毛党刷单</span><br>
+      → 设备指纹+IP检测<br>
+      → 邀请人须完成≥1单<br>
+      → 同一WiFi/设备限制
+    </td>
+  </tr>
+
+  <!-- Row 2 -->
+  <tr>
+    <td><span class="tag tag-viral">利益裂变</span></td>
+    <td><strong>拼团购</strong><br><span style="font-size:0.78em;color:var(--text-muted)">Group Buy</span></td>
+    <td>
+      ✅ 2 人团: 每人省 5%<br>
+      ✅ 3 人团: 每人省 10% + 团长免运费<br>
+      ✅ 5 人团: 每人省 15% + 团长获 Rp 50K 奖励<br>
+      ✅ 限时 24h，到期未成团自动退款<br>
+      ✅ 同城拼团 → 合并发货省运费
+    </td>
+    <td>
+      ① 商品详情页 → 点击"开团"按钮<br>
+      ② 支付团价 → 生成拼团链接<br>
+      ③ 分享到 WA Group / Timeline<br>
+      ④ 好友参团付款 → 自动成团<br>
+      ⑤ 24h 倒计时未满 → 自动退款
+    </td>
+    <td>
+      拼团发起率: 8%<br>
+      成团率: 65%<br>
+      拼团人均拉新: 2.8 人<br>
+      客单提升: +30%
+    </td>
+    <td>
+      <span class="risk-low">🟢 客诉退款压力</span><br>
+      → 拼团失败自动退款<br>
+      → 设置拼团库存预留
+    </td>
+  </tr>
+
+  <!-- Row 3 -->
+  <tr>
+    <td><span class="tag tag-viral">内容裂变</span></td>
+    <td><strong>开箱奖励</strong><br><span style="font-size:0.78em;color:var(--text-muted)">Unboxing Bonus</span></td>
+    <td>
+      ✅ 收到货后上传开箱视频/图片 → 得 Rp 10,000 积分<br>
+      ✅ 分享到 TikTok/WA Story 加 #AceProxyUnboxing → 额外 Rp 5,000<br>
+      ✅ 月度最佳开箱奖: 视频点赞 Top 3 获 Rp 500K<br>
+      ✅ 内容自动同步到产品详情页（带用户署名）
+    </td>
+    <td>
+      ① 订单签收后 → 推送通知"晒开箱赢奖励"<br>
+      ② 上传照片+视频 → 自动审核（AI 图像识别）<br>
+      ③ 一键分享到社交平台 → 追踪链接埋点<br>
+      ④ 奖励即时到账 → 首页勋章展示
+    </td>
+    <td>
+      开箱参与率: 25%<br>
+      分享率: 40%<br>
+      分享→注册转化: 3%<br>
+      UGC 内容量: 月 500+
+    </td>
+    <td>
+      <span class="risk-low">🟢 内容质量把控</span><br>
+      → AI 自动审核 + 人工抽检<br>
+      → 低质内容提醒重拍
+    </td>
+  </tr>
+
+  <!-- Row 4 -->
+  <tr>
+    <td><span class="tag tag-viral">身份裂变</span></td>
+    <td><strong>团长分销体系</strong><br><span style="font-size:0.78em;color:var(--text-muted)">Commander Program</span></td>
+    <td>
+      ✅ 铜牌团长: 月 GMV ≥ Rp 5M → 佣金 5%<br>
+      ✅ 银牌团长: 月 GMV ≥ Rp 20M → 佣金 8% + 提前选品<br>
+      ✅ 金牌团长: 月 GMV ≥ Rp 100M → 佣金 12% + 专属供应链价<br>
+      ✅ 钻石合伙人: 培养 5 名金牌团长 → 团队 GMV 提成 2%<br>
+      ✅ 专属管理后台: 订单/佣金/下线数据看板
+    </td>
+    <td>
+      ① 用户累计下单 ≥ 3 次 → 解锁团长申请<br>
+      ② 审核通过 → 获得专属推广链接/码<br>
+      ③ 在 WA/FB 社群分享 → 下线通过链接下单<br>
+      ④ 后台实时查看佣金和 GMV 进度<br>
+      ⑤ 月末自动结算 → 提现到 DANA/OVO
+    </td>
+    <td>
+      团长激活率: 5%<br>
+      团长月均 GMV: Rp 12M<br>
+      下级人均消费: Rp 450K<br>
+      分销 GMV 占比: 35%
+    </td>
+    <td>
+      <span class="risk-high">🔴 合规风险</span><br>
+      → 严格二级以内（不涉及传销）<br>
+      → 法务审核印尼 MLM 法规<br>
+      → 团长协议明确税费责任
+    </td>
+  </tr>
+
+  <!-- Row 5 -->
+  <tr>
+    <td><span class="tag tag-viral">利益裂变</span></td>
+    <td><strong>助力红包 / 任务宝</strong><br><span style="font-size:0.78em;color:var(--text-muted)">Social Gacha</span></td>
+    <td>
+      ✅ 发起红包 → 邀请 N 位好友助力<br>
+      ✅ 满 5 人助力 → 解锁 Rp 25K 优惠券<br>
+      ✅ 满 10 人助力 → 解锁免运费卡<br>
+      ✅ 满 20 人助力 → 解锁神秘商品抽奖<br>
+      ✅ 助力者也可获得小额优惠券（引导注册）
+    </td>
+    <td>
+      ① 首页 Banner / 订单完成页 触发入口<br>
+      ② 选择红包类型 → 生成助力链接<br>
+      ③ 好友点击助力（需注册登录）<br>
+      ④ 助力进度实时显示（进度条+头像墙）<br>
+      ⑤ 满员自动发放奖励
+    </td>
+    <td>
+      发起率: 12%<br>
+      助力完成率: 35%<br>
+      助力→注册: 55%<br>
+      单个任务拉新: 3-8 人
+    </td>
+    <td>
+      <span class="risk-med">⚠️ 刷量风险</span><br>
+      → 每个设备/手机号仅可助力1次<br>
+      → 新注册用户 7 日内有效
+    </td>
+  </tr>
+</table>
+
+<h3>2.1 裂变触发节点地图</h3>
+<div class="process-box">
+  <div class="process-steps">
+    <div class="ps">
+      <div class="ps-num ps-1">注册</div>
+      <div class="ps-title">新人欢迎</div>
+      <div class="ps-desc">弹窗提示<br>"邀请好友得<br>Rp 15K"</div>
+    </div>
+    <div class="ps-arrow">→</div>
+    <div class="ps">
+      <div class="ps-num ps-2">浏览</div>
+      <div class="ps-title">拼团入口</div>
+      <div class="ps-desc">商品详情页<br>"开团省15%"<br>浮动按钮</div>
+    </div>
+    <div class="ps-arrow">→</div>
+    <div class="ps">
+      <div class="ps-num ps-3">支付</div>
+      <div class="ps-title">支付成功页</div>
+      <div class="ps-desc">分享赚佣金<br>"分享此商品<br>赚5%返佣"</div>
+    </div>
+    <div class="ps-arrow">→</div>
+    <div class="ps">
+      <div class="ps-num ps-4">签收</div>
+      <div class="ps-title">开箱奖励</div>
+      <div class="ps-desc">Push通知<br>"晒开箱视频<br>赢Rp15K"</div>
+    </div>
+    <div class="ps-arrow">→</div>
+    <div class="ps">
+      <div class="ps-num ps-5">复购</div>
+      <div class="ps-title">团长邀请</div>
+      <div class="ps-desc">满3单后<br>"升级团长<br>月赚Rp5M"</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== MODULE 3 ========== -->
+<h2 id="m3"><span class="num" style="background:var(--grad-3)">3</span> 留存与活跃 — 用户全生命周期运营</h2>
+
+<h3>3.1 RFM 用户分层模型</h3>
+<div class="lifecycle-flow">
+  <div class="lc-node active" style="border-color:#d45d3a">
+    <div class="lc-title" style="color:#d45d3a">👶 新用户</div>
+    <div class="lc-pct" style="color:#d45d3a">D0-D7</div>
+    <div class="lc-action">新人礼包 ｜ 引导首单 ｜ AI 推荐</div>
+  </div>
+  <div class="lc-arrow">→</div>
+  <div class="lc-node">
+    <div class="lc-title" style="color:#f0883e">🌱 成长用户</div>
+    <div class="lc-pct" style="color:#f0883e">D8-D30</div>
+    <div class="lc-action">签到激励 ｜ 品类教育 ｜ 社区引导</div>
+  </div>
+  <div class="lc-arrow">→</div>
+  <div class="lc-node">
+    <div class="lc-title" style="color:#0f7b8c">🌳 成熟用户</div>
+    <div class="lc-pct" style="color:#0f7b8c">D31-D90</div>
+    <div class="lc-action">VIP 体系 ｜ 团长邀请 ｜ 专属客服</div>
+  </div>
+  <div class="lc-arrow">→</div>
+  <div class="lc-node">
+    <div class="lc-title" style="color:#a371f7">👑 忠实用户</div>
+    <div class="lc-pct" style="color:#a371f7">D90+</div>
+    <div class="lc-action">分销引擎 ｜ 新品内测 ｜ 合伙人</div>
+  </div>
+  <div class="lc-arrow">→</div>
+  <div class="lc-node">
+    <div class="lc-title" style="color:#f85149">💤 沉睡用户</div>
+    <div class="lc-pct" style="color:#f85149">30d+未活跃</div>
+    <div class="lc-action">大额券召回 ｜ 生日关怀</div>
+  </div>
+</div>
+
+<table class="mechanic-table">
+  <tr><th>分层</th><th>定义</th><th>运营策略</th><th>触达方式</th><th>目标指标</th></tr>
+  <tr>
+    <td><strong>👶 新用户</strong></td>
+    <td>注册 0-7 天<br>未下单</td>
+    <td>
+      • 新人专享价 3 款爆品（限 48h）<br>
+      • 注册即送 Rp 30K 优惠券包（含免邮券）<br>
+      • AI 管家自动推荐 5 款匹配商品<br>
+      • 7 天内完成首单 → 解锁"首单勋章"+ 额外积分
+    </td>
+    <td>
+      WA 模板消息 (D1/D3/D7)<br>
+      App Push<br>
+      Email (备选)
+    </td>
+    <td>
+      首单转化率 > 28%<br>
+      D7 留存 > 40%
+    </td>
+  </tr>
+  <tr>
+    <td><strong>🌱 成长用户</strong></td>
+    <td>注册 8-30 天<br>已完成首单</td>
+    <td>
+      • 签到系统: 连续签到 7 天得免邮券<br>
+      • 品类扩展推荐: "买过连衣裙的人还买了..."<br>
+      • 引导加入 WA 社群 → 获取群友专属价<br>
+      • 第二单返 5% 余额（限 14 天内复购）
+    </td>
+    <td>
+      App Push (品类推荐)<br>
+      WA 社群广播<br>
+      首页个性化推荐
+    </td>
+    <td>
+      复购率 > 25%<br>
+      D30 留存 > 20%
+    </td>
+  </tr>
+  <tr>
+    <td><strong>🌳 成熟用户</strong></td>
+    <td>注册 31-90 天<br>累计 ≥ 3 单</td>
+    <td>
+      • VIP 等级解锁: Silver (3单) / Gold (10单) / Platinum (30单)<br>
+      • 专属客服通道（WA VIP 群）<br>
+      • 优先体验新品 + 预购权<br>
+      • 团长资格解锁 → 引导分销
+    </td>
+    <td>
+      VIP 专属 Push<br>
+      WA VIP 群<br>
+      个性化邮件
+    </td>
+    <td>
+      月复购率 > 35%<br>
+      团长激活率 > 5%
+    </td>
+  </tr>
+  <tr>
+    <td><strong>👑 忠实用户</strong></td>
+    <td>注册 90 天+<br>累计 ≥ 10 单</td>
+    <td>
+      • 钻石合伙人计划（裂变升级）<br>
+      • 新品内测反馈群（影响选品方向）<br>
+      • 年度会员（年费 Rp 150K → 全场 95 折+每月免邮券）<br>
+      • 邀请成为社区版主 / 意见领袖
+    </td>
+    <td>
+      1v1 WA 专属顾问<br>
+      线下聚会邀请<br>
+      年度回馈礼盒
+    </td>
+    <td>
+      LTV > Rp 3M<br>
+      NPS > 50
+    </td>
+  </tr>
+  <tr>
+    <td><strong>💤 沉睡用户</strong></td>
+    <td>30 天+未访问<br>60 天+未下单</td>
+    <td>
+      • D30 沉睡 Push: "你的 Rp 50K 券即将过期"<br>
+      • D60 大额唤醒: 发送 Rp 100K 满减券（仅 72h）<br>
+      • D90 情感召回: 生日/节日专属折扣<br>
+      • D120 最终挽留: "我们上新了，回来看看？"+ 限时免邮
+    </td>
+    <td>
+      WA 模板消息 (D30/D60/D90)<br>
+      Email (D60/D120)<br>
+      SMS (D90 最终)
+    </td>
+    <td>
+      D30 唤醒率 > 8%<br>
+      D60 唤醒率 > 4%
+    </td>
+  </tr>
+</table>
+
+<h3>3.2 积分体系设计</h3>
+<div class="metric-grid">
+  <div class="metric-card m1">
+    <div class="metric-name">积分获取</div>
+    <div class="metric-value" style="font-size:1em;line-height:1.6">
+      下单: 1% 返积<br>
+      签到: 5-50 P/天<br>
+      晒单: 200 P/次<br>
+      邀请: 300 P/人<br>
+      写评: 100 P/条
+    </div>
+  </div>
+  <div class="metric-card m2">
+    <div class="metric-name">积分消耗</div>
+    <div class="metric-value" style="font-size:1em;line-height:1.6">
+      抵现: 100P = Rp1K<br>
+      免邮券: 500P<br>
+      神秘盒子: 1000P<br>
+      限量周边: 5000P
+    </div>
+  </div>
+  <div class="metric-card m3">
+    <div class="metric-name">积分汇率</div>
+    <div class="metric-value">100 : 1,000</div>
+    <div class="metric-target">即 100 积分 = Rp 1,000 | 发放/消耗比 &lt; 1.3</div>
+  </div>
+</div>
+
+<!-- ========== MODULE 4 ========== -->
+<h2 id="m4"><span class="num" style="background:var(--grad-4)">4</span> 转化变现 — 从免费到付费的阶梯设计</h2>
+
+<h3>4.1 变现漏斗</h3>
+<div class="funnel" style="margin:20px 0">
+  <div class="funnel-step">
+    <div class="funnel-bar fb1">免费浏览 <span>100%</span></div>
+    <div class="funnel-info">商品浏览 / AI推荐 / 搜索</div>
+  </div>
+  <div class="funnel-step">
+    <div class="funnel-bar" style="background:linear-gradient(90deg,#e87040,#f09050);width:35%">注册用户 <span>35%</span></div>
+    <div class="funnel-info">新人券 + 社交登录简化</div>
+  </div>
+  <div class="funnel-step">
+    <div class="funnel-bar" style="background:linear-gradient(90deg,#f09050,#e8a040);width:22%">首单用户 <span>22%</span></div>
+    <div class="funnel-info">新人价 + 免邮 + 无忧退</div>
+  </div>
+  <div class="funnel-step">
+    <div class="funnel-bar" style="background:linear-gradient(90deg,#0f7b8c,#1e9ba8);width:12%">复购用户 <span>12%</span></div>
+    <div class="funnel-info">积分锁定 + 个性化推荐</div>
+  </div>
+  <div class="funnel-step">
+    <div class="funnel-bar" style="background:linear-gradient(90deg,#6e40c9,#a371f7);width:4%">VIP/团长 <span>4%</span></div>
+    <div class="funnel-info">会员费 + 分销佣金</div>
+  </div>
+</div>
+
+<h3>4.2 收入模型</h3>
+<table class="mechanic-table">
+  <tr><th>收入来源</th><th>定价策略</th><th>目标占比</th><th>优化方向</th></tr>
+  <tr>
+    <td><strong>服务费</strong></td>
+    <td>商品价值 10-15%（阶梯: 低客单 15% → 高客单 8%）</td>
+    <td>50%</td>
+    <td>A/B 测试费率弹性; VIP 等级折扣 → 提升复购</td>
+  </tr>
+  <tr>
+    <td><strong>运费差价</strong></td>
+    <td>成本 + Rp 15,000-40,000/kg; 满 Rp 500K 免邮</td>
+    <td>25%</td>
+    <td>合并发货降成本; 满额免邮提客单</td>
+  </tr>
+  <tr>
+    <td><strong>汇率差价</strong></td>
+    <td>市场汇率 + 3-5% 缓冲; 每周更新</td>
+    <td>10%</td>
+    <td>实时汇率 API 对接; 锁定采购汇率</td>
+  </tr>
+  <tr>
+    <td><strong>VIP 会员费</strong></td>
+    <td>年费 Rp 150K（全场95折+每月免邮券×2）</td>
+    <td>8%</td>
+    <td>会员权益可视化（已省×××）; 到期续费提醒</td>
+  </tr>
+  <tr>
+    <td><strong>增值服务</strong></td>
+    <td>QC 质检报告 Rp 25K/件; 加急处理 Rp 50K/单; 礼品包装 Rp 30K/件</td>
+    <td>5%</td>
+    <td>结账页一键勾选; 套餐打包（QC+加急+包装 = Rp 80K）</td>
+  </tr>
+  <tr>
+    <td><strong>广告/流量变现</strong></td>
+    <td>供应商竞价排名（商品搜索结果页 Top 3 广告位）</td>
+    <td>2%</td>
+    <td>仅对成熟供应商开放; 与 GMV 挂钩的 CPC 竞价</td>
+  </tr>
+</table>
+
+<h3>4.3 支付转化优化节点</h3>
+<div class="process-box">
+  <div class="process-steps">
+    <div class="ps">
+      <div class="ps-num ps-1">加购</div>
+      <div class="ps-title">降低加购阻力</div>
+      <div class="ps-desc">一键加购<br>免登录先加购<br>断点续存 7d</div>
+    </div>
+    <div class="ps-arrow">→</div>
+    <div class="ps">
+      <div class="ps-num ps-2">结账</div>
+      <div class="ps-title">简化结账流程</div>
+      <div class="ps-desc">3步下单<br>自动填充地址<br>支持 OVO/DANA</div>
+    </div>
+    <div class="ps-arrow">→</div>
+    <div class="ps">
+      <div class="ps-num ps-3">支付</div>
+      <div class="ps-title">支付成功率</div>
+      <div class="ps-desc">多通道备份<br>失败自动切换<br>支付指引提示</div>
+    </div>
+    <div class="ps-arrow">→</div>
+    <div class="ps">
+      <div class="ps-num ps-4">催付</div>
+      <div class="ps-title">购物车挽回</div>
+      <div class="ps-desc">30min 后 Push<br>库存紧张提示<br>限时优惠预警</div>
+    </div>
+    <div class="ps-arrow">→</div>
+    <div class="ps">
+      <div class="ps-num ps-5">售后</div>
+      <div class="ps-title">售后保障</div>
+      <div class="ps-desc">物流追踪<br>AI 客服 24/7<br>收货后返积分</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== MODULE 5 ========== -->
+<h2 id="m5"><span class="num" style="background:var(--grad-5)">5</span> 数据监控与 AB 测试体系</h2>
+
+<h3>5.1 增长仪表盘</h3>
+<div class="dash-grid">
+  <div class="dash-card">
+    <div class="dash-title">WAU 活跃买家</div>
+    <div class="dash-val">—</div>
+    <div class="dash-change dash-up">▲ 目标 +25% MoM</div>
+  </div>
+  <div class="dash-card">
+    <div class="dash-title">新增注册 (D0)</div>
+    <div class="dash-val">—</div>
+    <div class="dash-change">全渠道汇总</div>
+  </div>
+  <div class="dash-card">
+    <div class="dash-title">病毒系数 K</div>
+    <div class="dash-val">—</div>
+    <div class="dash-change dash-up">目标 ≥ 0.5</div>
+  </div>
+  <div class="dash-card">
+    <div class="dash-title">综合 CAC</div>
+    <div class="dash-val">—</div>
+    <div class="dash-change dash-up">目标 &lt; Rp 30K</div>
+  </div>
+  <div class="dash-card">
+    <div class="dash-title">首单转化率</div>
+    <div class="dash-val">—</div>
+    <div class="dash-change dash-up">目标 &gt; 28%</div>
+  </div>
+  <div class="dash-card">
+    <div class="dash-title">D7 留存率</div>
+    <div class="dash-val">—</div>
+    <div class="dash-change dash-up">目标 &gt; 40%</div>
+  </div>
+  <div class="dash-card">
+    <div class="dash-title">D30 留存率</div>
+    <div class="dash-val">—</div>
+    <div class="dash-change dash-up">目标 &gt; 20%</div>
+  </div>
+  <div class="dash-card">
+    <div class="dash-title">裂变层级深度</div>
+    <div class="dash-val">—</div>
+    <div class="dash-change dash-up">目标 ≥ 3 层</div>
+  </div>
+  <div class="dash-card">
+    <div class="dash-title">综合 ROAS</div>
+    <div class="dash-val">—</div>
+    <div class="dash-change dash-up">目标 ≥ 3.0</div>
+  </div>
+  <div class="dash-card">
+    <div class="dash-title">LTV : CAC</div>
+    <div class="dash-val">—</div>
+    <div class="dash-change dash-up">目标 ≥ 4 : 1</div>
+  </div>
+  <div class="dash-card">
+    <div class="dash-title">团长 GMV 占比</div>
+    <div class="dash-val">—</div>
+    <div class="dash-change dash-up">目标 &gt; 35%</div>
+  </div>
+  <div class="dash-card">
+    <div class="dash-title">NPS 净推荐值</div>
+    <div class="dash-val">—</div>
+    <div class="dash-change dash-up">目标 &gt; 50</div>
+  </div>
+</div>
+
+<h3>5.2 AB 测试假说矩阵</h3>
+<div class="ab-grid">
+  <div class="ab-card">
+    <div class="hypothesis">🤔 新人优惠券面额影响首单率？</div>
+    <div class="variant">
+      <div class="ab-ctrl">A: 满 Rp 50K 减 Rp 15K</div>
+      <div class="ab-test">B: 满 Rp 75K 减 Rp 25K</div>
+    </div>
+    <div class="ab-metric">✓ 看首单率 + 客单价 + 券核销率</div>
+  </div>
+  <div class="ab-card">
+    <div class="hypothesis">🤔 邀请文案 "得现金" vs "帮朋友省钱"？</div>
+    <div class="variant">
+      <div class="ab-ctrl">A: "邀请好友，各得 Rp 15K"</div>
+      <div class="ab-test">B: "帮朋友省 Rp 50K，自己赚 Rp 15K"</div>
+    </div>
+    <div class="ab-metric">✓ 看分享点击率 + 邀请转化率</div>
+  </div>
+  <div class="ab-card">
+    <div class="hypothesis">🤔 拼团人数门槛 2 人 vs 3 人？</div>
+    <div class="variant">
+      <div class="ab-ctrl">A: 2 人成团省 8%</div>
+      <div class="ab-test">B: 3 人成团省 12%</div>
+    </div>
+    <div class="ab-metric">✓ 看发起率 + 成团率 + 拉新数</div>
+  </div>
+  <div class="ab-card">
+    <div class="hypothesis">🤔 签到奖励：积分 vs 优惠券？</div>
+    <div class="variant">
+      <div class="ab-ctrl">A: 每日签到得 10-50 积分</div>
+      <div class="ab-test">B: 连续签到 7 天得免邮券</div>
+    </div>
+    <div class="ab-metric">✓ 看签到率 + D7 留存 + 下单率</div>
+  </div>
+  <div class="ab-card">
+    <div class="hypothesis">🤔 团长佣金比例 5% vs 8%？</div>
+    <div class="variant">
+      <div class="ab-ctrl">A: 基础佣金 5%（永久）</div>
+      <div class="ab-test">B: 基础佣金 8%（前 3 个月，后降为 5%）</div>
+    </div>
+    <div class="ab-metric">✓ 看团长激活率 + 人均 GMV + GMV 贡献</div>
+  </div>
+  <div class="ab-card">
+    <div class="hypothesis">🤔 购物车催付时机：30min vs 2h？</div>
+    <div class="variant">
+      <div class="ab-ctrl">A: 30 分钟后发送催付 Push</div>
+      <div class="ab-test">B: 2 小时后发送催付 Push</div>
+    </div>
+    <div class="ab-metric">✓ 看购物车挽回率 + Push 退订率</div>
+  </div>
+  <div class="ab-card">
+    <div class="hypothesis">🤔 开箱奖励：积分 vs 现金余额？</div>
+    <div class="variant">
+      <div class="ab-ctrl">A: 晒单得 200 积分</div>
+      <div class="ab-test">B: 晒单得 Rp 2,000 余额</div>
+    </div>
+    <div class="ab-metric">✓ 看开箱参与率 + 分享率 + 奖励核销率</div>
+  </div>
+  <div class="ab-card">
+    <div class="hypothesis">🤔 Landing Page 社交证明位置对注册转化？</div>
+    <div class="variant">
+      <div class="ab-ctrl">A: 顶部展示 "XX 人已省钱"</div>
+      <div class="ab-test">B: 底部展示真实用户开箱评价</div>
+    </div>
+    <div class="ab-metric">✓ 看注册率 + 页面停留时长</div>
+  </div>
+</div>
+
+<h3>5.3 数据埋点架构</h3>
+<table class="mechanic-table">
+  <tr><th>事件类别</th><th>核心事件</th><th>关键属性</th><th>用途</th></tr>
+  <tr><td>获客</td><td>view_landing, signup, channel_attribution</td><td>utm_source, utm_medium, referrer, device_id</td><td>渠道归因 / CAC 计算</td></tr>
+  <tr><td>激活</td><td>first_search, first_add_to_cart, first_order</td><td>product_id, time_to_event, onboarding_step</td><td>激活漏斗 / Aha Moment 分析</td></tr>
+  <tr><td>裂变</td><td>share_click, invite_sent, invite_accepted, group_initiated, group_completed</td><td>share_channel, invitee_id, group_size, time_to_complete</td><td>K-factor / 裂变层级 / 渠道效率</td></tr>
+  <tr><td>留存</td><td>app_open, session_duration, check_in, feature_used</td><td>screen_view, feature_name, session_count</td><td>留存曲线 / 功能粘性</td></tr>
+  <tr><td>变现</td><td>order_placed, payment_success, coupon_used, vip_subscribe</td><td>order_value, payment_method, coupon_code, revenue</td><td>LTV / ARPU / 付费漏斗</td></tr>
+</table>
+
+<!-- ========== MODULE 6 ========== -->
+<h2 id="m6"><span class="num" style="background:var(--grad-3)">6</span> 病毒传播设计 — 产品内置增长引擎</h2>
+
+<h3>6.1 社交货币植入模型</h3>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;margin:20px 0">
+  <div class="channel-card">
+    <h4 style="margin-top:0">🏅 身份货币</h4>
+    <ul style="padding-left:18px;font-size:0.9em;line-height:2">
+      <li><strong>省钱达人徽章</strong> — 累计省钱金额可视化（"已省 Rp 1.2M"），社交资料页展示</li>
+      <li><strong>团长等级勋章</strong> — 铜/银/金/钻 四级身份标识，WA 社群专属头衔</li>
+      <li><strong>开箱鉴赏家</strong> — 累计晒单 50 次解锁，评测内容优先展示</li>
+      <li><strong>早鸟先锋</strong> — 前 1000 名注册用户永久特殊标识</li>
+    </ul>
+  </div>
+  <div class="channel-card">
+    <h4 style="margin-top:0">📊 信息货币</h4>
+    <ul style="padding-left:18px;font-size:0.9em;line-height:2">
+      <li><strong>比价报告</strong> — "这件衣服在 Shopee 卖 Rp 450K，AceProxy 只要 Rp 280K"（一键生成对比图）</li>
+      <li><strong>省钱周报</strong> — 每周推送个人省钱报告 + 排行榜（可分享）</li>
+      <li><strong>物流直播</strong> — 从中国仓到印尼的包裹追踪时间线（可分享进度）</li>
+      <li><strong>开箱盲盒</strong> — 收货后才揭晓"你省了多少钱"（制造惊喜时刻）</li>
+    </ul>
+  </div>
+</div>
+
+<h3>6.2 分享功能嵌入核心流程的 5 个关键节点</h3>
+<table class="mechanic-table">
+  <tr><th>节点</th><th>分享内容</th><th>触发方式</th><th>分享渠道</th><th>预期分享率</th></tr>
+  <tr>
+    <td><strong>① 浏览发现好货</strong></td>
+    <td>"我在 AceProxy 发现了这个 — 比 Shopee 便宜 45%！" + 商品卡片</td>
+    <td>商品详情页悬浮分享按钮（长按商品图也可触发）</td>
+    <td>WA / TikTok DM / FB Messenger</td>
+    <td>8-12%</td>
+  </tr>
+  <tr>
+    <td><strong>② 支付成功</strong></td>
+    <td>"刚下单了一件 Abaya，省了 Rp 170K 💸 你也来看看" + 省钱金额动画</td>
+    <td>支付成功页自动弹出（可关闭），带省钱金额对比动效</td>
+    <td>WA Story / IG Story / TikTok</td>
+    <td>15-20%</td>
+  </tr>
+  <tr>
+    <td><strong>③ 包裹配送中</strong></td>
+    <td>"我的包裹正在飞越太平洋 ✈️" + 物流进度图</td>
+    <td>物流追踪页一键生成进度卡片</td>
+    <td>WA / IG Story</td>
+    <td>10-15%</td>
+  </tr>
+  <tr>
+    <td><strong>④ 到货开箱</strong></td>
+    <td>开箱照片/视频 + "质量超出预期！" + 商品链接</td>
+    <td>签收后 Push 通知 → 上传即自动生成分享卡片</td>
+    <td>TikTok / WA Status / IG</td>
+    <td>25-35%</td>
+  </tr>
+  <tr>
+    <td><strong>⑤ 省钱里程碑</strong></td>
+    <td>"我在 AceProxy 已经省了 Rp 5M！🏆" + 个人省钱海报</td>
+    <td>累计省钱达 Rp 1M/5M/10M 时自动触发弹窗</td>
+    <td>WA / IG / TikTok</td>
+    <td>30-40%</td>
+  </tr>
+</table>
+
+<h3>6.3 "用完即走 + 走了还来" 传播闭环</h3>
+<div class="process-box">
+  <div class="process-steps" style="flex-wrap:wrap;justify-content:center">
+    <div class="ps">
+      <div class="ps-num ps-1">搜索找货</div>
+      <div class="ps-title">用户有购买需求</div>
+      <div class="ps-desc">AI 搜索比价<br>发现省钱机会<br>创建比价卡片</div>
+    </div>
+    <div class="ps-arrow">→</div>
+    <div class="ps">
+      <div class="ps-num ps-2">下单离开</div>
+      <div class="ps-title">完成下单后</div>
+      <div class="ps-desc">自动保存比价结果<br>关注商品降价通知<br>分享省钱海报</div>
+    </div>
+    <div class="ps-arrow">→</div>
+    <div class="ps">
+      <div class="ps-num ps-3">被动召回</div>
+      <div class="ps-title">3 个自动化召回钩子</div>
+      <div class="ps-desc">① 物流节点更新 → WA 通知<br>② 关注商品降价 → Push<br>③ 好友通过链接下单 → 佣金通知</div>
+    </div>
+    <div class="ps-arrow">→</div>
+    <div class="ps">
+      <div class="ps-num ps-4">主动回访</div>
+      <div class="ps-title">2 个内容钩子</div>
+      <div class="ps-desc">① 省钱周报 + 新品推荐<br>② 开箱奖励到账通知<br>③ 团长佣金结算通知</div>
+    </div>
+    <div class="ps-arrow">→</div>
+    <div class="ps">
+      <div class="ps-num ps-5">再次搜索</div>
+      <div class="ps-title">需求再激活</div>
+      <div class="ps-desc">朋友分享的比价卡片<br>社群闪购播报<br>个性化推荐首页</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== ROADMAP ========== -->
+<h2 id="roadmap">实施路线图</h2>
+
+<table class="mechanic-table">
+  <tr><th>阶段</th><th>时间</th><th>核心目标</th><th>关键交付物</th><th>成功标准</th></tr>
+  <tr>
+    <td><span class="tag tag-acq">Phase 1</span></td>
+    <td><strong>上线前 2 周</strong><br>基础建设</td>
+    <td>搭建增长基础设施</td>
+    <td>
+      • 数据埋点部署（5 类核心事件）<br>
+      • 邀请系统 V1（双向奖励 + 追踪）<br>
+      • 新人礼包 + 首单优惠券机制<br>
+      • 增长仪表盘 MVP（7 项指标）<br>
+      • AB 测试框架接入
+    </td>
+    <td>
+      埋点覆盖率 100%<br>
+      邀请功能可运转<br>
+      仪表盘数据准确
+    </td>
+  </tr>
+  <tr>
+    <td><span class="tag tag-viral">Phase 2</span></td>
+    <td><strong>上线后 1-4 周</strong><br>冷启动</td>
+    <td>获取前 1000 名种子用户<br>验证裂变模型</td>
+    <td>
+      • WhatsApp 社群矩阵搭建（5-10 个群）<br>
+      • KOC 达人合作启动（30 人）<br>
+      • 拼团功能上线<br>
+      • 开箱奖励上线<br>
+      • 签到系统上线<br>
+      • 首版 SEO Landing Page 上线
+    </td>
+    <td>
+      注册 ≥ 1,000<br>
+      首单率 ≥ 25%<br>
+      K-factor ≥ 0.3<br>
+      达人 ROI ≥ 3
+    </td>
+  </tr>
+  <tr>
+    <td><span class="tag tag-ret">Phase 3</span></td>
+    <td><strong>上线后 5-12 周</strong><br>规模化</td>
+    <td>付费投放启动<br>团长体系上线<br>留存体系优化</td>
+    <td>
+      • TikTok/Meta/Google 付费投放启动<br>
+      • 团长分销体系全量上线<br>
+      • VIP 会员体系上线<br>
+      • 助力红包/任务宝上线<br>
+      • 个性化推荐 V1<br>
+      • Programmatic SEO 1000+ 页面
+    </td>
+    <td>
+      注册 ≥ 10,000<br>
+      D30 留存 ≥ 20%<br>
+      K-factor ≥ 0.5<br>
+      团长 GMV 占比 ≥ 25%<br>
+      CAC &lt; Rp 30K
+    </td>
+  </tr>
+  <tr>
+    <td><span class="tag tag-conv">Phase 4</span></td>
+    <td><strong>上线后 3-6 月</strong><br>优化迭代</td>
+    <td>LTV 最大化<br>多国复制</td>
+    <td>
+      • AB 测试迭代优化（完成 18 项测试）<br>
+      • 泰国/菲律宾市场增长策略本土化<br>
+      • 自动化营销引擎（RFM 分层触达）<br>
+      • 增长团队搭建（增长 PM + 数据分析 + 社群运营）
+    </td>
+    <td>
+      注册 ≥ 50,000<br>
+      LTV:CAC ≥ 4<br>
+      K-factor ≥ 1.0<br>
+      自然流量占比 ≥ 40%
+    </td>
+  </tr>
+</table>
+
+<!-- ========== RISK MATRIX ========== -->
+<h2 id="risk">风险矩阵与应对</h2>
+
+<table class="risk-table">
+  <tr><th>风险</th><th>等级</th><th>描述</th><th>应对措施</th></tr>
+  <tr>
+    <td><strong>羊毛党/刷单</strong></td>
+    <td><span class="risk-high">HIGH</span></td>
+    <td>邀请奖励和新人券被批量薅取，导致 CAC 飙升而无效用户剧增</td>
+    <td>
+      ① 设备指纹 + 手机号唯一性校验<br>
+      ② 同一 IP/WiFi 下限制邀请数<br>
+      ③ 被邀人必须完成首单 ≥ Rp 50K 才算有效邀请<br>
+      ④ 风控模型自动标记异常行为（24h 邀请>20 人触发人工审核）
+    </td>
+  </tr>
+  <tr>
+    <td><strong>团长体系合规</strong></td>
+    <td><span class="risk-high">HIGH</span></td>
+    <td>印尼对传销/直销有严格法规，团长分层佣金可能触碰监管红线</td>
+    <td>
+      ① 严格限制在二级分销以内（不设三级及以上）<br>
+      ② 聘请印尼本地法务审核团长协议<br>
+      ③ 佣金基于实际 GMV（非拉人头费）<br>
+      ④ 团长协议明确独立承包商关系（非雇佣）
+    </td>
+  </tr>
+  <tr>
+    <td><strong>TikTok 政策变化</strong></td>
+    <td><span class="risk-med">MEDIUM</span></td>
+    <td>TikTok Shop 在印尼政策多变，可能影响达人合作和直播带货</td>
+    <td>
+      ① 多平台布局，不依赖单一渠道<br>
+      ② 达人内容同步分发到 IG Reels / YouTube Shorts<br>
+      ③ 建立自有 WA 社群流量池，降低平台依赖
+    </td>
+  </tr>
+  <tr>
+    <td><strong>裂变疲劳</strong></td>
+    <td><span class="risk-med">MEDIUM</span></td>
+    <td>用户对邀请/分享/助力等行为产生疲劳，裂变效率持续下降</td>
+    <td>
+      ① 裂变奖励多样化（积分/专属商品/限量周边轮换）<br>
+      ② 节日/热点事件驱动的限时裂变活动保持新鲜感<br>
+      ③ AB 测试持续优化奖励额度和触发时机
+    </td>
+  </tr>
+  <tr>
+    <td><strong>物流体验差</strong></td>
+    <td><span class="risk-med">MEDIUM</span></td>
+    <td>跨境物流时效慢（12-37 天），影响用户口碑和分享意愿</td>
+    <td>
+      ① 物流进度透明化（每个节点自动通知）<br>
+      ② 设置合理预期（下单时明确显示预计到达时间）<br>
+      ③ 逾期赔付机制（超过承诺时效给予积分补偿）
+    </td>
+  </tr>
+  <tr>
+    <td><strong>竞品模仿</strong></td>
+    <td><span class="risk-low">LOW</span></td>
+    <td>裂变机制被竞品快速复制，失去差异化优势</td>
+    <td>
+      ① 品牌 IP 打造（独特视觉语言和社区文化）<br>
+      ② 产品体验壁垒（AI 推荐 + 智能比价 + QC 质检）<br>
+      ③ 供应链深度绑定（独家选品和价格优势）
+    </td>
+  </tr>
+</table>
+
+<!-- ========== FOOTER ========== -->
+<div style="text-align:center;margin-top:56px;padding:24px;border-top:1px solid var(--border);color:var(--text-muted);font-size:0.85em">
+  <p>AceProxy 用户增长与裂变策略框架 v2.1 · 生成于 2026-06-18</p>
+  <p>6 大增长模块 · 28 个可执行策略 · 15 项核心指标 · 18 个 AB 测试假说 · 6 项风险应对</p>
+</div>
+
+</div>
+</body>
+</html>

@@ -11,8 +11,11 @@ export class VisionQCService {
   /**
    * 执行自动化质检 (2026 AI 增强版)
    * 集成 GPT-4o-vision 实时 API，针对雅加达试点品类进行像素级对标。
+   *
+   * @todo P2 — 当前返回模拟 AI 分析数据，需要接入真实 GPT-4o-vision API 进行像素级质检
    */
   async performQC(imageUrl: string, expectedProduct: any, category: string = 'FASHION') {
+    this.logger.warn('[MOCK] VisionQCService.performQC — 返回模拟AI分析数据，需接入GPT-4o-vision API');
     this.logger.log(`[AI-QC] Starting ${category} audit for Order Item: ${expectedProduct.id}`);
 
     // 1. 获取 Ecommerce Mind 定义的阈值 (Delta E / Match Score)

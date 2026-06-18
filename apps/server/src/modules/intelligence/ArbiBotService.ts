@@ -32,6 +32,8 @@ export class ArbiBotService {
 
   /**
    * AI 套利分析 — 使用 UnifiedSourcingService 搜索真实 1688/京东/淘宝 价格
+   *
+   * @todo P2 — DEV_MOCK 分支返回模拟价格数据，需要接入真实 1688/Taobao/JD API 并移除 fallback
    */
   async analyzeLink(url: string): Promise<ArbiBotAnalysis> {
     this.logger.log(`[ArbiBot] Analyzing link: ${url}`);
@@ -54,6 +56,7 @@ export class ArbiBotService {
       throw new ConfigurationError('ArbiBot/1688', ['ALIBABA_APP_KEY', 'ALIBABA_APP_SECRET']);
     }
     if (sourcePriceCNY === 0) {
+      this.logger.warn('[MOCK] ArbiBotService.analyzeLink — 使用模拟价格，需接入真实1688/淘宝/JD API');
       sourcePriceCNY = 50 + Math.random() * 100;
       matchedSourceUrl = 'https://detail.1688.com/offer/mock';
       this.logger.warn('[ArbiBot] DEV_MOCK: using simulated price');

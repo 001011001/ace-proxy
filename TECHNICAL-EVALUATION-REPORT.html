@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AceProxy 全面技术评估报告 — 2026-06-18</title>
+<style>
+  :root {
+    --bg: #0d1117; --card-bg: #161b22; --border: #30363d;
+    --text: #c9d1d9; --text-muted: #8b949e; --text-bright: #f0f6fc;
+    --crit: #f85149; --high: #ff7b72; --med: #d29922; --low: #3fb950;
+    --accent: #58a6ff; --accent2: #79c0ff;
+    --pill-crit: #da363333; --pill-high: #da363322; --pill-med: #bb800922; --pill-low: #23863622;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; padding: 0; }
+  .container { max-width: 1100px; margin: 0 auto; padding: 40px 24px; }
+  h1 { font-size: 2.4em; font-weight: 800; color: var(--text-bright); margin-bottom: 4px; letter-spacing: -0.02em; }
+  h2 { font-size: 1.6em; font-weight: 700; color: var(--text-bright); margin: 48px 0 20px; padding-bottom: 10px; border-bottom: 2px solid var(--border); }
+  h3 { font-size: 1.15em; font-weight: 600; color: var(--accent2); margin: 28px 0 12px; }
+  p, li { margin-bottom: 8px; }
+  ul { padding-left: 20px; margin-bottom: 16px; }
+  
+  .meta { color: var(--text-muted); font-size: 0.9em; margin-bottom: 32px; }
+  .badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 0.8em; font-weight: 600; margin-right: 6px; }
+  .badge-crit { background: var(--pill-crit); color: var(--crit); border: 1px solid var(--crit); }
+  .badge-high { background: var(--pill-high); color: var(--high); border: 1px solid var(--high); }
+  .badge-med { background: var(--pill-med); color: var(--med); border: 1px solid var(--med); }
+  .badge-low { background: var(--pill-low); color: var(--low); border: 1px solid var(--low); }
+
+  .scorecard { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin: 24px 0; }
+  .score-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px; text-align: center; }
+  .score-grade { font-size: 2.6em; font-weight: 800; }
+  .score-label { color: var(--text-muted); font-size: 0.85em; margin-top: 4px; }
+  .grade-A { color: #3fb950; } .grade-B { color: #79c0ff; } .grade-C { color: #d29922; } .grade-D { color: #f85149; }
+
+  .finding { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 16px 20px; margin-bottom: 12px; border-left: 4px solid; }
+  .finding-crit { border-left-color: var(--crit); }
+  .finding-high { border-left-color: var(--high); }
+  .finding-med { border-left-color: var(--med); }
+  .finding-low { border-left-color: var(--low); }
+  .finding h4 { font-size: 1em; margin-bottom: 6px; }
+  .finding .code { font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace; font-size: 0.85em; background: rgba(255,255,255,0.05); padding: 2px 8px; border-radius: 4px; }
+
+  .roadmap { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; }
+  .roadmap-col { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
+  .roadmap-col h3 { margin-top: 0; }
+  .roadmap-item { padding: 8px 0; border-bottom: 1px solid var(--border); }
+  .roadmap-item:last-child { border-bottom: none; }
+
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.9em; }
+  th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border); }
+  th { color: var(--accent2); font-weight: 600; }
+  
+  .summary-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 20px 0; }
+  .summary-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 20px; text-align: center; }
+  .summary-num { font-size: 2.2em; font-weight: 800; }
+  .summary-desc { font-size: 0.8em; color: var(--text-muted); margin-top: 4px; }
+  .num-crit { color: var(--crit); } .num-high { color: var(--high); } .num-med { color: var(--med); } .num-low { color: var(--low); }
+
+  .strength-weakness { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .sw-box { background: var(--card-bg); border-radius: 12px; padding: 24px; }
+  .sw-box.good { border: 1px solid #23863655; }
+  .sw-box.bad { border: 1px solid #da363355; }
+  .sw-box h3 { margin-top: 0; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+
+  @media (max-width: 768px) {
+    .container { padding: 20px 12px; }
+    .summary-grid { grid-template-columns: repeat(2, 1fr); }
+    .strength-weakness, .roadmap { grid-template-columns: 1fr; }
+    h1 { font-size: 1.8em; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>🚀 AceProxy 全面技术评估报告</h1>
+<div class="meta">
+  评估日期: 2026-06-18 &nbsp;|&nbsp; 项目: AceProxy 跨境代购平台 &nbsp;|&nbsp; 评估范围: 全栈 (NestJS + React Native + Next.js + SPA)
+</div>
+
+<!-- ====== OVERALL SCORE ====== -->
+<h2>一、综合评分</h2>
+<div class="scorecard">
+  <div class="score-item">
+    <div class="score-grade grade-C">C+</div>
+    <div class="score-label">架构设计</div>
+  </div>
+  <div class="score-item">
+    <div class="score-grade grade-C">C</div>
+    <div class="score-label">代码质量</div>
+  </div>
+  <div class="score-item">
+    <div class="score-grade grade-C">C+</div>
+    <div class="score-label">安全性</div>
+  </div>
+  <div class="score-item">
+    <div class="score-grade grade-B">B</div>
+    <div class="score-label">性能潜力</div>
+  </div>
+  <div class="score-item">
+    <div class="score-grade grade-C">C-</div>
+    <div class="score-label">可维护性</div>
+  </div>
+  <div class="score-item">
+    <div class="score-grade grade-D">D</div>
+    <div class="score-label">测试覆盖</div>
+  </div>
+  <div class="score-item">
+    <div class="score-grade grade-B">B</div>
+    <div class="score-label">技术栈选择</div>
+  </div>
+  <div class="score-item">
+    <div class="score-grade grade-B-">B-</div>
+    <div class="score-label">文档完整性</div>
+  </div>
+  <div class="score-item">
+    <div class="score-grade grade-B-">B-</div>
+    <div class="score-label">DevOps</div>
+  </div>
+  <div class="score-item">
+    <div class="score-grade grade-C">C</div>
+    <div class="score-label">前端实现度</div>
+  </div>
+</div>
+
+<!-- ====== ISSUE SUMMARY ====== -->
+<h2>二、问题总览</h2>
+<div class="summary-grid">
+  <div class="summary-box">
+    <div class="summary-num num-crit">4</div>
+    <div class="summary-desc">🔴 Critical 严重</div>
+  </div>
+  <div class="summary-box">
+    <div class="summary-num num-high">12</div>
+    <div class="summary-desc">🟠 High 高危</div>
+  </div>
+  <div class="summary-box">
+    <div class="summary-num num-med">18</div>
+    <div class="summary-desc">🟡 Medium 中等</div>
+  </div>
+  <div class="summary-box">
+    <div class="summary-num num-low">8</div>
+    <div class="summary-desc">🟢 Low 低风险</div>
+  </div>
+</div>
+
+<p style="color:var(--text-muted); font-size:0.9em;">
+  合计 <strong style="color:var(--text-bright)">42 个发现</strong>。
+  相比 2026-06-05 审计报告中的 38 个问题，已有 <strong style="color:var(--low)">8 个修复</strong>（CORS 白名单、ValidationPipe、RBAC 注册、Prisma 索引、Decimal 类型、$transaction、密码验证、统一响应格式），但仍有 <strong style="color:var(--crit)">4 个新 Critical</strong> 和遗留高危问题。
+</p>
+
+<!-- ====== STRENGTHS & WEAKNESSES ====== -->
+<h2>三、优势与劣势</h2>
+<div class="strength-weakness">
+  <div class="sw-box good">
+    <h3 style="color:#3fb950">✅ 核心优势</h3>
+    <ul>
+      <li><strong>Monorepo 架构清晰</strong>：pnpm + TurboRepo，前后端分离</li>
+      <li><strong>Shipping Provider 模式优秀</strong>：接口抽象 + 真实云途价格表接入，可扩展</li>
+      <li><strong>数据库设计全面</strong>：22 张表覆盖完整电商链路，索引优化到位</li>
+      <li><strong>设计系统成熟</strong>：DESIGN.md 681 行详尽规范，色彩/字体/组件体系完整</li>
+      <li><strong>Auth 模块扎实</strong>：JWT + bcrypt，密码强度验证，异常处理规范</li>
+      <li><strong>CI/CD 已就绪</strong>：GitHub Actions 三阶段流水线</li>
+      <li><strong>多国架构内置</strong>：countries/{id,th,ph} 配置驱动，扩展性好</li>
+      <li><strong>代码审计意识强</strong>：已有 738 行审计报告且持续修复</li>
+    </ul>
+  </div>
+  <div class="sw-box bad">
+    <h3 style="color:#f85149">❌ 核心劣势</h3>
+    <ul>
+      <li><strong>零自动化测试</strong>：无单测/集成测试/E2E，金融系统不可接受</li>
+      <li><strong>TypeScript 严格模式全关</strong>：strictNullChecks: false + noImplicitAny: false</li>
+      <li><strong>上帝模块反模式</strong>：54 个 providers 扁平注册在 AppModule</li>
+      <li><strong>大量 Mock 实现混入生产代码</strong>：8+ 服务返回假数据</li>
+      <li><strong>前端硬编码严重</strong>：大部分屏幕使用 Mock 数据，无真实 API 调用</li>
+      <li><strong>.env 含真实密钥</strong>：LLM API Key 明文暴露于代码仓库</li>
+      <li><strong>无 API 文档</strong>：无 Swagger/OpenAPI 规范</li>
+      <li><strong>内存存储关键数据</strong>：Coupon、Region、Holiday 用 Map 存，重启丢失</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ====== DETAILED FINDINGS ====== -->
+<h2>四、详细发现</h2>
+
+<h3>🔴 Critical — 严重问题（4 项）</h3>
+
+<div class="finding finding-crit">
+  <h4>C-01: .env 包含真实云端 LLM API Key <span class="badge badge-crit">CRITICAL</span></h4>
+  <p><strong>位置</strong>: <span class="code">apps/server/.env:25</span></p>
+  <p><strong>风险</strong>: 真实 API Key <span class="code">3d929b40e5314221b4...</span> 硬编码在环境变量文件中。虽然 <code>.gitignore</code> 已排除 <code>.env</code>，但该文件存在于本地磁盘，任何有文件系统访问权限的人可读取。若曾被提交到 Git 历史，Token 已永久泄露，攻击者可调用该 API 产生费用或窃取数据。</p>
+  <p><strong>建议</strong>: 立即轮换该 API Key；确认 Git 历史中无泄露（<code>git log --all -p -- .env</code>）；使用 <code>git filter-branch</code> 或 BFG 清理历史；强制所有密钥从环境变量或 Secret Manager 注入。</p>
+</div>
+
+<div class="finding finding-crit">
+  <h4>C-02: JWT Secret 为弱密钥且出现在多个配置源 <span class="badge badge-crit">CRITICAL</span></h4>
+  <p><strong>位置</strong>: <span class="code">apps/server/.env:5</span> / <span class="code">auth.module.ts:25</span> / <span class="code">jwt.strategy.ts:11</span></p>
+  <p><strong>风险</strong>: JWT Secret <span class="code">ace-proxy-super-secret-jwt-key-2026-change-in-production</span> 是弱密钥（纯英文单词组合），抗暴力破解能力低。且 auth.module.ts 和 jwt.strategy.ts 的 fallback 密钥不同（<code>|| 'AceProxySecret2026'</code>），若环境变量未设可能取到不同值导致不可预期的认证失败。</p>
+  <p><strong>建议</strong>: 生成强随机密钥（<code>openssl rand -base64 64</code>）；统一从 ConfigService 单一源读取；移除所有 fallback 硬编码；生产环境强制 <code>JWT_SECRET</code> 必须设置（否则启动失败）。</p>
+</div>
+
+<div class="finding finding-crit">
+  <h4>C-03: 零测试覆盖 — 金融交易系统无自动化安全网 <span class="badge badge-crit">CRITICAL</span></h4>
+  <p><strong>位置</strong>: 全项目 <span class="code">0 个 *.spec.ts / *.test.ts</span>（项目自有代码）</p>
+  <p><strong>风险</strong>: 涉及财务计算、支付回调、账本分账的核心逻辑没有任何自动化测试保护。VaultService 的零和校验、TradeService 的费用计算、AuthService 的密码验证、CouponService 的折扣逻辑——任何修改都可能引入资金计算错误而无人知晓。对于电商金融系统，这是不可接受的技术债务。</p>
+  <p><strong>建议</strong>: 
+    ① 立即为 <strong>VaultService</strong>（零和校验）、<strong>TradeService</strong>（费用计算）、<strong>AuthService</strong>（登录注册）编写单元测试<br>
+    ② 为 <strong>PaymentController</strong>（Xendit Webhook）编写集成测试<br>
+    ③ 目标：核心业务逻辑覆盖率 ≥ 80%，整体 ≥ 60%<br>
+    ④ 配置 Jest + Supertest，加入 CI 流水线
+  </p>
+</div>
+
+<div class="finding finding-crit">
+  <h4>C-04: Docker 安全漏洞 — 数据库端口暴露 + 无健康检查 <span class="badge badge-crit">CRITICAL</span></h4>
+  <p><strong>位置</strong>: <span class="code">docker-compose.yml:11</span> / <span class="code">apps/server/Dockerfile</span></p>
+  <p><strong>风险</strong>: PostgreSQL 端口 <span class="code">5432:5432</span> 直接映射到宿主机，若服务器有公网 IP 则数据库对全网开放。Dockerfile 中缺少 <code>prisma generate</code> 步骤（<span class="code">prisma</span> CLI 在 dependencies 而非 devDependencies，但 Client 需要 generate），镜像可能无法启动。</p>
+  <p><strong>建议</strong>: 删除 docker-compose 中的 <code>ports</code> 映射（仅用 Docker 内部网络）；添加 <code>HEALTHCHECK</code> 指令；在 Dockerfile 中添加 <code>RUN npx prisma generate</code>；将 <code>prisma</code> 移入 devDependencies。</p>
+</div>
+
+<h3>🟠 High — 高危问题（12 项）</h3>
+
+<div class="finding finding-high">
+  <h4>H-01: 上帝模块 — 54 个 providers 扁平注册在 AppModule <span class="badge badge-high">HIGH</span></h4>
+  <p><strong>位置</strong>: <span class="code">app.module.ts:114-198</span></p>
+  <p><strong>影响</strong>: 所有服务互相对所有其他服务可见，无法控制依赖边界。任何一个服务的修改可能隐式影响其他服务。模块无法独立测试、无法按需加载、无法独立部署。启动时一次性创建所有依赖实例，冷启动缓慢。</p>
+  <p><strong>方案</strong>: 按业务领域拆分为独立 NestJS Module：IntelligenceModule、TradeModule（含 Vault + Cart）、ProductModule、HolidayModule、AnalyticsModule、CronModule、CustomerServiceModule、AutoListingModule。每个模块只 <code>exports</code> 其公开服务，<code>imports</code> 其需要的其他模块。</p>
+</div>
+
+<div class="finding finding-high">
+  <h4>H-02: TypeScript 严格模式全关 — 大量 <code>any</code> 类型绕过编译检查 <span class="badge badge-high">HIGH</span></h4>
+  <p><strong>位置</strong>: <span class="code">tsconfig.json:15-19</span></p>
+  <p><strong>影响</strong>: <code>strictNullChecks: false</code> 导致运行时空引用风险（如 TradeService 中 order 为 null 时后续逻辑基于 0 金额计算）。<code>noImplicitAny: false</code> 允许 12+ 处 <code>any</code> 类型参数签名通过编译（<code>createOrder(orderData: any)</code>, <code>executeToolCall(toolCall: any)</code> 等）。</p>
+  <p><strong>方案</strong>: 分阶段启用 — Phase 1: 新建文件强制 strict 模式（通过 <code>tsconfig.strict.json</code> + <code>include</code>）；Phase 2: 逐一修复现有文件并逐步扩大 strict 范围；Phase 3: 全项目 strict: true。</p>
+</div>
+
+<div class="finding finding-high">
+  <h4>H-03: 8+ 服务返回 Mock/假数据 — 生产代码中的"假装工作" <span class="badge badge-high">HIGH</span></h4>
+  <table>
+    <tr><th>服务</th><th>方法</th><th>问题</th></tr>
+    <tr><td>HolidayService</td><td>全部</td><td>用内存变量模拟，不读写数据库</td></tr>
+    <tr><td>RegionService</td><td>全部</td><td>用内存 Map 模拟，重启丢失</td></tr>
+    <tr><td>CouponService</td><td>全部</td><td>优惠券存内存 Map，重启丢失</td></tr>
+    <tr><td>IntelligenceService</td><td>scrapeAMZ123 / scrapeTikTok</td><td>返回硬编码数组，无真实爬取</td></tr>
+    <tr><td>ArbiBotService</td><td>analyze</td><td>用 Math.random() 模拟价格分析</td></tr>
+    <tr><td>VisionQCService</td><td>全部</td><td>质检结果全部硬编码</td></tr>
+    <tr><td>IPFirewallService</td><td>checkLogo</td><td>Logo 检测返回硬编码值</td></tr>
+    <tr><td>NotificationService</td><td>全部 send*</td><td>只打印日志，实际不发送</td></tr>
+  </table>
+  <p><strong>方案</strong>: 为每个 Mock 服务添加 <code>@todo</code> 标记和运行时警告（<code>this.logger.warn('[MOCK] ...')</code>）；优先实现 CouponService → HolidayService → NotificationService。</p>
+</div>
+
+<div class="finding finding-high">
+  <h4>H-04: 前端大量硬编码 — 大部分屏幕无真实 API 调用 <span class="badge badge-high">HIGH</span></h4>
+  <p><strong>影响</strong>: CartScreen 用硬编码 2 个商品，数量增减按钮无事件处理；ProductDetailScreen 永远是同一个 "Premium Silk Abaya"，不接收 productId；PaymentScreen 金额默认值 Rp 2,450,000 硬编码，"上传凭证"只设 state 不上传；Web 管理后台 12 个面板全是假数据。</p>
+  <p><strong>方案</strong>: 优先连接真实 API — 购物车 CRUD → 商品详情 → 支付流程 → 订单管理。Web 管理后台接入 SWR/React Query 调用后端 Dashboard API。</p>
+</div>
+
+<div class="finding finding-high">
+  <h4>H-05: ChatService 在内存中全量过滤 — N+1 性能风险 <span class="badge badge-high">HIGH</span></h4>
+  <p><strong>位置</strong>: <span class="code">ChatService.ts:240-249</span></p>
+  <p><strong>影响</strong>: 先 <code>prisma.aceProduct.findMany()</code> 取全量产品，再在 Node.js 中用 <code>.filter()</code> 做关键词匹配。当产品数量增长至数千条时，每次搜索都全表扫描 + 全量传输到应用层。</p>
+  <p><strong>方案</strong>: 使用 Prisma 的 <code>contains</code> 查询在数据库层过滤；或接入 PostgreSQL 全文索引（<code>tsvector</code>）；或引入 Elasticsearch/MeiliSearch 做搜索引擎。</p>
+</div>
+
+<div class="finding finding-high">
+  <h4>H-06: PaymentService Mock 模式静默返回假发票 <span class="badge badge-high">HIGH</span></h4>
+  <p><strong>位置</strong>: <span class="code">PaymentService.ts:30-38</span></p>
+  <p><strong>影响</strong>: XENDIT_API_KEY 为空时返回 mock 发票数据，用户以为支付已创建但实际没有真实发票。生产环境若配置错误将导致资金流程断裂。</p>
+  <p><strong>方案</strong>: 生产环境 API Key 为空时立即抛出异常（<code>throw new InternalServerErrorException('Payment provider not configured')</code>），而非静默降级为 Mock。</p>
+</div>
+
+<div class="finding finding-high">
+  <h4>H-07: 导航实现用手动状态切换 — 无 URL 路由 <span class="badge badge-high">HIGH</span></h4>
+  <p><strong>位置</strong>: <span class="code">apps/mobile/App.js</span></p>
+  <p><strong>影响</strong>: 使用 <code>useState('LOGIN')</code> + 条件渲染实现页面切换，而非 React Navigation。无法处理深层链接、返回手势、页面转场动画。所有页面共享单一 React 树。</p>
+  <p><strong>方案</strong>: 迁移到 React Navigation（@react-navigation/native + @react-navigation/bottom-tabs + @react-navigation/stack）。</p>
+</div>
+
+<div class="finding finding-high">
+  <h4>H-08: APIService BASE_URL 硬编码模拟器地址 <span class="badge badge-high">HIGH</span></h4>
+  <p><strong>位置</strong>: <span class="code">apps/mobile/src/services/APIService.ts:3</span> — <span class="code">http://10.0.2.2:3000/api/v1</span></p>
+  <p><strong>影响</strong>: 生产 APK 会指向 Android 模拟器专用地址，真机上无法连接。</p>
+  <p><strong>方案</strong>: 根据 <code>__DEV__</code> 和环境变量切换；使用 Expo Constants 的 <code>manifest.extra</code> 配置 API 地址。</p>
+</div>
+
+<div class="finding finding-high">
+  <h4>H-09: 部分 API 端点缺少认证保护 <span class="badge badge-high">HIGH</span></h4>
+  <p><strong>影响</strong>: <code>/vault/ledger/:orderId</code>（财务写入）、<code>/holiday/update-config</code>（业务配置修改）、<code>/chat/webhook/whatsapp</code>（消息入口）等端点缺少 <code>@UseGuards(JwtAuthGuard)</code>。</p>
+  <p><strong>方案</strong>: 全局应用 JwtAuthGuard（AppModule 中注册为 APP_GUARD），需要公开的端点用 <code>@Public()</code> 装饰器标记。</p>
+</div>
+
+<div class="finding finding-high">
+  <h4>H-10: TradeController.calculateFees 传入硬编码 totalSpend=0 <span class="badge badge-high">HIGH</span></h4>
+  <p><strong>位置</strong>: <span class="code">TradeController.ts:43-48</span></p>
+  <p><strong>影响</strong>: 所有用户始终按最低等级 (EXPLORER) 计算费率，VIP 用户折扣永远不生效——这直接影响营收。</p>
+  <p><strong>方案</strong>: 从数据库查询用户 <code>totalSpend</code> 或通过 JWT payload 传递用户等级。</p>
+</div>
+
+<div class="finding finding-high">
+  <h4>H-11: RBAC 中间件注册范围不完整 <span class="badge badge-high">HIGH</span></h4>
+  <p><strong>位置</strong>: <span class="code">app.module.ts:196</span> — 仅注册 <code>vault, station, holiday</code> 三个路由</p>
+  <p><strong>影响</strong>: <code>payment</code>、<code>order</code>、<code>product</code> 等业务路由不受 RBAC 保护。应该覆盖所有管理端点或全局注册。</p>
+  <p><strong>方案</strong>: 全局注册 RBACMiddleware（<code>.forRoutes('*')</code>），结合 RolesGuard 对特定端点精细化控制。</p>
+</div>
+
+<div class="finding finding-high">
+  <h4>H-12: 前端 SPA 架构无路由状态管理 <span class="badge badge-high">HIGH</span></h4>
+  <p><strong>位置</strong>: <span class="code">deploy/index.html</span> (258KB 单文件)</p>
+  <p><strong>影响</strong>: 所有功能打包为单文件 SPA，无代码分割。258KB 首次加载体积大。状态散落在多处 <code>useState</code> 和 <code>sessionStorage</code> 中，无集中状态管理。</p>
+  <p><strong>方案</strong>: 考虑拆分为多页面或引入轻量路由（如 page.js）；引入 Zustand 或 Jotai 做集中状态管理。</p>
+</div>
+
+<h3>🟡 Medium — 中等问题（18 项）</h3>
+
+<div class="finding finding-med">
+  <h4>M-01: 多处 throw new Error() 而非 NestJS 异常 <span class="badge badge-med">MEDIUM</span></h4>
+  <p>TradeService 用 <code>throw new Error('LEGAL_ERROR: ...')</code> 等原生 Error，客户端收到 500 而非 400 级业务错误码。应使用 <code>ForbiddenException</code> / <code>BadRequestException</code>。</p>
+</div>
+<div class="finding finding-med">
+  <h4>M-02: PaymentService.getInvoiceStatus 无错误处理 <span class="badge badge-med">MEDIUM</span></h4>
+  <p>外部 API 调用无 try-catch、不检查 <code>response.ok</code>、不验证 invoiceId 格式（可注入路径）。</p>
+</div>
+<div class="finding finding-med">
+  <h4>M-03: ChatService JSON.parse 无保护 <span class="badge badge-med">MEDIUM</span></h4>
+  <p>AI 返回的 arguments 可能是畸形 JSON，<code>JSON.parse</code> 抛出未处理异常导致整个聊天请求崩溃。</p>
+</div>
+<div class="finding finding-med">
+  <h4>M-04: StationService 已废弃方法仍被调用 <span class="badge badge-med">MEDIUM</span></h4>
+  <p><code>setProductStatus</code> 和 <code>updateTrendingProducts</code> 标记 @deprecated 但仍被 SentinelScraper 和 IntelligenceService 调用。</p>
+</div>
+<div class="finding finding-med">
+  <h4>M-05: 缺少 Prisma Migrations 历史 <span class="badge badge-med">MEDIUM</span></h4>
+  <p>项目无 <code>prisma/migrations/</code> 目录，生产环境无法追踪 schema 变更。只能通过 <code>prisma db push</code> 同步。</p>
+</div>
+<div class="finding finding-med">
+  <h4>M-06: 三套 Schema 定义不一致 <span class="badge badge-med">MEDIUM</span></h4>
+  <p><code>ace_proxy_schema.sql</code>、<code>sql-init.sql</code>、Prisma schema 三套数据模型不同步。<code>sql-init.sql</code> 表名完全不同 (users vs ace_users)。</p>
+</div>
+<div class="finding finding-med">
+  <h4>M-07: @types/bcrypt 和 @types/passport-jwt 错误放在 dependencies <span class="badge badge-med">MEDIUM</span></h4>
+  <p>类型定义包应在 devDependencies，放在 dependencies 增加生产镜像体积。</p>
+</div>
+<div class="finding finding-med">
+  <h4>M-08: pg 包安装但从未使用 <span class="badge badge-med">MEDIUM</span></h4>
+  <p>项目使用 Prisma 作为 ORM，不需要直接使用 pg 驱动。</p>
+</div>
+<div class="finding finding-med">
+  <h4>M-09: NestJS 核心包版本不统一 <span class="badge badge-med">MEDIUM</span></h4>
+  <p>@nestjs/common v10 与 @nestjs/config v4、@nestjs/jwt v11、@nestjs/schedule v4 混用。虽然独立包的版本号体系独立，但应统一到最新稳定版。</p>
+</div>
+<div class="finding finding-med">
+  <h4>M-10: Landing 页面通过 JS 注入全局 CSS <span class="badge badge-med">MEDIUM</span></h4>
+  <p>Next.js SSR 环境通过 useEffect 创建 style 元素注入动画关键帧，可能导致 hydration mismatch。</p>
+</div>
+<div class="finding finding-med">
+  <h4>M-11: VaultService.recordResaleSettlement 构建条目但不写入数据库 <span class="badge badge-med">MEDIUM</span></h4>
+  <p>方法计算了 platformFee/partnerReward/sellerReturn 但 return 后就结束了，未持久化。</p>
+</div>
+<div class="finding finding-med">
+  <h4>M-12: CouponService 全部用内存 Map 存储 <span class="badge badge-med">MEDIUM</span></h4>
+  <p>优惠券数据（claimedAt, usedAt, status）存内存，服务重启全部清零。已有 AceCoupon 数据库表未使用。</p>
+</div>
+<div class="finding finding-med">
+  <h4>M-13: 前端使用 sessionStorage 持久化关键数据 <span class="badge badge-med">MEDIUM</span></h4>
+  <p>收藏夹、购物车等数据仅存 sessionStorage，关闭标签页即丢失。应迁移到 AsyncStorage（移动端）或后端 API。</p>
+</div>
+<div class="finding finding-med">
+  <h4>M-14: 汇率和运费加价系数硬编码在 ShippingService <span class="badge badge-med">MEDIUM</span></h4>
+  <p>汇率（IDR:2200, THB:5.0, PHP:7.8）和运费加价（perKg:40/17/20）硬编码，应移到配置表或数据库，支持动态调整。</p>
+</div>
+<div class="finding finding-med">
+  <h4>M-15: 无 API 文档（Swagger/OpenAPI）<span class="badge badge-med">MEDIUM</span></h4>
+  <p>19 个 Controller、60+ 端点无任何自动生成的 API 文档。推荐接入 @nestjs/swagger。</p>
+</div>
+<div class="finding finding-med">
+  <h4>M-16: 无日志系统 <span class="badge badge-med">MEDIUM</span></h4>
+  <p>全项目使用 NestJS Logger（console 输出），无结构化日志、无日志聚合、无 ELK/Seq。生产环境排查困难。</p>
+</div>
+<div class="finding finding-med">
+  <h4>M-17: 无性能监控和 APM <span class="badge badge-med">MEDIUM</span></h4>
+  <p>无 Sentry/DataDog/OpenTelemetry 集成，无请求耗时追踪。出问题只能看服务器日志。</p>
+</div>
+<div class="finding finding-med">
+  <h4>M-18: ThreatIntelligenceService 硬编码区域列表 <span class="badge badge-med">MEDIUM</span></h4>
+  <p><span class="code">RiskSentryService.ts:17</span> 硬编码 <code>['JKT', 'LDN']</code>，注释说应从数据库查。新增区域不会被风控监控。</p>
+</div>
+
+<h3>🟢 Low — 低风险问题（8 项）</h3>
+<div class="finding finding-low">
+  <h4>L-01: prisma CLI 在 dependencies 而非 devDependencies <span class="badge badge-low">LOW</span></h4>
+</div>
+<div class="finding finding-low">
+  <h4>L-02: 无 .editorconfig / .nvmrc 统一开发环境 <span class="badge badge-low">LOW</span></h4>
+</div>
+<div class="finding finding-low">
+  <h4>L-03: Docker Compose 根目录和 apps/server 各有一套，存在重复 <span class="badge badge-low">LOW</span></h4>
+</div>
+<div class="finding finding-low">
+  <h4>L-04: package-lock.json 和 pnpm-workspace.yaml 共存 — 包管理器冲突 <span class="badge badge-low">LOW</span></h4>
+</div>
+<div class="finding finding-low">
+  <h4>L-05: 多套 SQL 初始化脚本（sql-init.sql / ace_proxy_schema.sql / init_order_chat.sql）混乱 <span class="badge badge-low">LOW</span></h4>
+</div>
+<div class="finding finding-low">
+  <h4>L-06: 前端 i18n 字典仅约 10 个 key，国际化覆盖不完整 <span class="badge badge-low">LOW</span></h4>
+</div>
+<div class="finding finding-low">
+  <h4>L-07: 无 Prettier/ESLint 配置文件（仅 devDependencies 中有 prettier） <span class="badge badge-low">LOW</span></h4>
+</div>
+<div class="finding finding-low">
+  <h4>L-08: seed 脚本分散（seed-100-products.js / seed-data.js / seed-sqlite.js），无统一种子管理 <span class="badge badge-low">LOW</span></h4>
+</div>
+
+<!-- ====== ARCHITECTURE REVIEW ====== -->
+<h2>五、架构深度分析</h2>
+
+<h3>5.1 当前架构图（简化）</h3>
+<pre style="background:var(--card-bg); border:1px solid var(--border); border-radius:8px; padding:16px; margin:12px 0; font-size:0.85em; line-height:1.5; overflow-x:auto;">
+┌─────────────────────────────────────────────────────────────────────┐
+│                        Client Layer                                  │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────────┐  │
+│  │ React Native │  │ Next.js Web  │  │  deploy/ SPA (258KB)     │  │
+│  │ (Expo 50)    │  │ (App Router) │  │  (Landing+Admin+Terms)   │  │
+│  └──────┬───────┘  └──────┬───────┘  └───────────┬──────────────┘  │
+└─────────┼──────────────────┼──────────────────────┼─────────────────┘
+          │ HTTP/REST        │ HTTP/REST            │ HTTP/REST
+          ▼                  ▼                      ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                    API Gateway (NestJS v10)                          │
+│  ┌──────────────────────────────────────────────────────────────┐   │
+│  │              AppModule (上帝模块 — 54 providers)               │   │
+│  │  ┌─────────┐ ┌────────┐ ┌───────┐ ┌──────────┐ ┌─────────┐  │   │
+│  │  │AuthMod  │ │PayMod  │ │ShipMod│ │ LlmMod   │ │ Cron    │  │   │
+│  │  └─────────┘ └────────┘ └───────┘ └──────────┘ └─────────┘  │   │
+│  │  ┌─────────┐ ┌────────┐ ┌───────┐ ┌──────────┐ ┌─────────┐  │   │
+│  │  │Product  │ │Trade   │ │Vault  │ │Holiday   │ │ Chat    │  │   │
+│  │  └─────────┘ └────────┘ └───────┘ └──────────┘ └─────────┘  │   │
+│  │  ┌─────────┐ ┌────────┐ ┌───────┐ ┌──────────┐ ┌─────────┐  │   │
+│  │  │Referral │ │Coupon  │ │Cart   │ │Analytics │ │Sentinel │  │   │
+│  │  └─────────┘ └────────┘ └───────┘ └──────────┘ └─────────┘  │   │
+│  │  ... (共 35+ 业务模块)                                         │   │
+│  └──────────────────────────────────────────────────────────────┘   │
+└───────────────────────────────┬─────────────────────────────────────┘
+                                │ Prisma Client
+                                ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                  PostgreSQL (Prisma ORM)                             │
+│  22 张表: users / orders / vault_ledger / products / coupons ...    │
+└─────────────────────────────────────────────────────────────────────┘
+</pre>
+
+<h3>5.2 推荐架构（模块化重构后）</h3>
+<pre style="background:var(--card-bg); border:1px solid var(--border); border-radius:8px; padding:16px; margin:12px 0; font-size:0.85em; line-height:1.5; overflow-x:auto;">
+┌─────────────────────────────────────────────────────────────────────┐
+│                        Client Layer                                  │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────────────────┐  │
+│  │ React Native │  │ Next.js Web  │  │  deploy/ SPA (258KB)     │  │
+│  │ + Navigation │  │ + React Query│  │  + Zustand State         │  │
+│  └──────┬───────┘  └──────┬───────┘  └───────────┬──────────────┘  │
+└─────────┼──────────────────┼──────────────────────┼─────────────────┘
+          │                  │                      │
+          ▼                  ▼                      ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│                    API Gateway (NestJS v10)                          │
+│  ┌─────────┐ ┌─────────┐ ┌──────────┐ ┌──────────┐ ┌─────────┐   │
+│  │AuthMod  │ │TradeMod │ │ProductMod│ │IntelMod  │ │AdminMod │   │
+│  │(public) │ │+Vault   │ │+Cart     │ │+Arbi+AI  │ │+Cron    │   │
+│  └─────────┘ └─────────┘ └──────────┘ └──────────┘ └─────────┘   │
+│  ┌─────────┐ ┌─────────┐ ┌──────────┐ ┌──────────┐ ┌─────────┐   │
+│  │PayMod   │ │ShipMod  │ │HolidayMod│ │AnalytMod │ │Referral │   │
+│  └─────────┘ └─────────┘ └──────────┘ └──────────┘ └─────────┘   │
+└───────────────────────────────┬─────────────────────────────────────┘
+                                │ Prisma + Cache Layer (Redis)
+                                ▼
+┌────────────────────────────────────────────────────────────────────┐
+│          PostgreSQL (Primary)  +  Redis (Cache/Session)            │
+│          + MeiliSearch (产品搜索) + BullMQ (异步任务队列)          │
+└────────────────────────────────────────────────────────────────────┘
+</pre>
+
+<h3>5.3 技术栈评估</h3>
+<table>
+  <tr><th>层面</th><th>选择</th><th>评分</th><th>评价</th></tr>
+  <tr><td>后端框架</td><td>NestJS v10</td><td>A</td><td>类型安全、模块化、DI 成熟，适合企业级电商</td></tr>
+  <tr><td>ORM</td><td>Prisma v5</td><td>A-</td><td>类型生成优秀，但 migration 支持需加强使用</td></tr>
+  <tr><td>数据库</td><td>PostgreSQL</td><td>A</td><td>金融级可靠性，适合交易系统</td></tr>
+  <tr><td>移动端</td><td>React Native + Expo 50</td><td>B+</td><td>快速迭代，但版本略旧（最新 Expo 53）</td></tr>
+  <tr><td>Web 前端</td><td>Next.js 13.4</td><td>C+</td><td>版本严重过时（最新 15+），App Router 早期版本</td></tr>
+  <tr><td>状态管理</td><td>Context API</td><td>C</td><td>适合简单场景，复杂业务建议 Zustand/Jotai</td></tr>
+  <tr><td>AI 推理</td><td>Ollama + Qwen3:4b</td><td>B</td><td>本地部署零 API 费用，但 4B 模型能力有限</td></tr>
+  <tr><td>部署</td><td>Docker Compose</td><td>B</td><td>适合单机，扩展需要 K8s 或云服务</td></tr>
+</table>
+
+<!-- ====== ROADMAP ====== -->
+<h2>六、改进路线图</h2>
+
+<div class="roadmap">
+  <div class="roadmap-col">
+    <h3 style="color:#f85149">🔴 Phase 1: 安全底线（本周 — 2 周）</h3>
+    <div class="roadmap-item"><strong>1.</strong> 轮换所有泄露的 API Key / JWT Secret</div>
+    <div class="roadmap-item"><strong>2.</strong> 为 VaultService/TradeService/AuthService 编写 30+ 单元测试</div>
+    <div class="roadmap-item"><strong>3.</strong> 全局 JwtAuthGuard + @Public() 装饰器</div>
+    <div class="roadmap-item"><strong>4.</strong> 修复 Dockerfile (prisma generate + HEALTHCHECK)</div>
+    <div class="roadmap-item"><strong>5.</strong> 修复 PaymentService Mock 模式 → 生产抛异常</div>
+    <div class="roadmap-item"><strong>6.</strong> 修复 TradeController totalSpend=0 bug</div>
+    <div class="roadmap-item"><strong>7.</strong> 统一 API 错误处理（throw NestJS exceptions）</div>
+  </div>
+  <div class="roadmap-col">
+    <h3 style="color:#d29922">🟡 Phase 2: 质量提升（2 周 — 1 月）</h3>
+    <div class="roadmap-item"><strong>8.</strong> 拆解上帝模块 → 8-10 个独立 NestJS Module</div>
+    <div class="roadmap-item"><strong>9.</strong> 启用 TypeScript strict 模式（阶段性）</div>
+    <div class="roadmap-item"><strong>10.</strong> 实现 CouponService/HolidayService 真实持久化</div>
+    <div class="roadmap-item"><strong>11.</strong> 前端接入真实 API（购物车→商品详情→支付）</div>
+    <div class="roadmap-item"><strong>12.</strong> 迁移到 React Navigation</div>
+    <div class="roadmap-item"><strong>13.</strong> ChatService 搜索改数据库层过滤</div>
+    <div class="roadmap-item"><strong>14.</strong> 接入 @nestjs/swagger 生成 API 文档</div>
+  </div>
+  <div class="roadmap-col">
+    <h3 style="color:#3fb950">🟢 Phase 3: 工程化（1 — 3 月）</h3>
+    <div class="roadmap-item"><strong>15.</strong> 集成测试（Payment Webhook / Trade 全流程）</div>
+    <div class="roadmap-item"><strong>16.</strong> 结构化日志（Winston/Pino）+ 日志聚合</div>
+    <div class="roadmap-item"><strong>17.</strong> APM 集成（Sentry/OpenTelemetry）</div>
+    <div class="roadmap-item"><strong>18.</strong> 引入 Redis 缓存（产品列表/汇率/会话）</div>
+    <div class="roadmap-item"><strong>19.</strong> 引入 MeiliSearch 替代内存过滤</div>
+    <div class="roadmap-item"><strong>20.</strong> 统一种子数据管理（Prisma seed.ts）</div>
+    <div class="roadmap-item"><strong>21.</strong> 前端状态管理升级（Zustand）</div>
+  </div>
+  <div class="roadmap-col">
+    <h3 style="color:#58a6ff">🔵 Phase 4: 架构演进（3 月+）</h3>
+    <div class="roadmap-item"><strong>22.</strong> 支付/物流服务独立微服务化（按需）</div>
+    <div class="roadmap-item"><strong>23.</strong> CQRS 读写分离（Dashboard 大屏查询）</div>
+    <div class="roadmap-item"><strong>24.</strong> Event Sourcing（Vault 账本完整审计链）</div>
+    <div class="roadmap-item"><strong>25.</strong> 多国独立部署（ID/TH/PH 独立实例）</div>
+    <div class="roadmap-item"><strong>26.</strong> Next.js 升级到 v15</div>
+    <div class="roadmap-item"><strong>27.</strong> React Native → Expo SDK 53</div>
+    <div class="roadmap-item"><strong>28.</strong> K8s 容器编排（单机→集群）</div>
+  </div>
+</div>
+
+<!-- ====== RECOMMENDATIONS ====== -->
+<h2>七、具体优化方案</h2>
+
+<h3>7.1 模块化重构示例</h3>
+<pre style="background:var(--card-bg); border:1px solid var(--border); border-radius:8px; padding:16px; margin:12px 0; font-size:0.85em; overflow-x:auto;">
+// === BEFORE: AppModule 上帝模块 ===
+@Module({
+  controllers: [StationController, VaultController, ChatController, ...19个],
+  providers: [IntelligenceService, PatentRiskChecker, ...35个],
+})
+
+// === AFTER: 模块化 ===
+// trade/trade.module.ts
+@Module({
+  controllers: [TradeController, VaultController, CartController],
+  providers: [TradeService, VaultService, CartService, SmartSplitterService],
+  exports: [TradeService, VaultService],
+})
+export class TradeModule {}
+
+// intelligence/intelligence.module.ts
+@Module({
+  controllers: [ArbiBotController, TrendingEngineController],
+  providers: [IntelligenceService, ArbiBotService, TrendingEngine, PatentRiskChecker,
+             Alibaba1688Service, JdService, TaobaoService, UnifiedSourcingService],
+  exports: [ArbiBotService],
+})
+export class IntelligenceModule {}
+
+// AppModule — 精简后
+@Module({
+  imports: [ConfigModule, ScheduleModule, PrismaModule,
+    AuthModule, PaymentModule, ShippingModule, LlmModule,
+    TradeModule, ProductModule, IntelligenceModule, HolidayModule,
+    CustomerServiceModule, AnalyticsModule, AutoListingModule, CronModule],
+})
+export class AppModule {}
+</pre>
+
+<h3>7.2 推荐的 TypeScript Strict 渐进迁移</h3>
+<pre style="background:var(--card-bg); border:1px solid var(--border); border-radius:8px; padding:16px; margin:12px 0; font-size:0.85em; overflow-x:auto;">
+// tsconfig.json — 当前
+"strictNullChecks": false,
+"noImplicitAny": false,
+
+// 第一步: 创建 tsconfig.strict.json
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "strictNullChecks": true,
+    "noImplicitAny": true
+  },
+  "include": ["src/modules/auth/**/*", "src/modules/shipping/**/*", "src/modules/vault/**/*"]
+}
+
+// 第二步: 逐步扩大 include 范围
+// 第三步: 将 strict 配置移入主 tsconfig.json
+</pre>
+
+<h3>7.3 测试策略建议</h3>
+<table>
+  <tr><th>层级</th><th>工具</th><th>范围</th><th>目标覆盖率</th></tr>
+  <tr><td>单元测试</td><td>Jest</td><td>Service 层（Vault, Trade, Auth, Coupon）</td><td>≥ 80%</td></tr>
+  <tr><td>集成测试</td><td>Jest + Supertest</td><td>Controller + DB（Payment, Trade, Auth）</td><td>≥ 50%</td></tr>
+  <tr><td>E2E</td><td>Playwright</td><td>关键用户流（注册→下单→支付→收货）</td><td>≥ 5 scenarios</td></tr>
+  <tr><td>API Contract</td><td>Pact / OpenAPI</td><td>前后端接口契约</td><td>所有端点</td></tr>
+</table>
+
+<!-- ====== FINAL SUMMARY ====== -->
+<h2>八、总结</h2>
+
+<div style="background:var(--card-bg); border:2px solid var(--accent); border-radius:12px; padding:24px; margin:20px 0;">
+  <p style="font-size:1.1em; margin-bottom:16px;">
+    <strong>AceProxy 是一个</strong> 业务设计优秀但工程质量有待提升的项目。核心业务逻辑（Shipping Provider 模式、Vault 零和账本、多国价格体系）体现了扎实的领域建模能力，但 TypeScript 严格模式全关、零测试覆盖、上帝模块反模式等问题构成了显著的技术债务，在支付和财务密集型业务中风险尤其突出。
+  </p>
+  <p style="margin-bottom:12px;">
+    <strong style="color:var(--low)">做得好：</strong> Monorepo 架构、Shipping Provider 接口设计、Prisma Schema 完整度、设计系统、代码审计文化、CI/CD 流水线
+  </p>
+  <p style="margin-bottom:12px;">
+    <strong style="color:var(--crit)">需要立即改进：</strong> 密钥轮换、编写测试、TypeScript 严格模式、模块化重构、API 文档
+  </p>
+  <p>
+    <strong style="color:var(--accent2)">核心建议：</strong> 在上线印尼市场前，<u>至少完成 Phase 1（安全底线）</u>——否则一个 Xendit Webhook 伪造或账本事务失败就可能导致直接资金损失。Phase 2（质量提升）建议在上线后 1 个月内完成，确保系统能支撑规模化增长。
+  </p>
+</div>
+
+<p style="color:var(--text-muted); font-size:0.85em; text-align:center; margin-top:40px;">
+  AceProxy 全面技术评估报告 · 生成于 2026-06-18 · 共 42 项发现 · 4 级严重度 · 28 项改进建议
+</p>
+
+</div>
+</body>
+</html>

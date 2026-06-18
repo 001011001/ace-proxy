@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AceProxy 冷启动 — 获客与赚钱方法排名推荐</title>
+<style>
+:root {
+  --bg: #0d1117; --card: #161b22; --border: #30363d;
+  --text: #c9d1d9; --muted: #8b949e; --bright: #f0f6fc;
+  --orange: #d45d3a; --teal: #0f7b8c; --gold: #d29922;
+  --green: #3fb950; --blue: #58a6ff; --purple: #a371f7;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+.container{max-width:960px;margin:0 auto;padding:48px 24px}
+
+h1{font-size:2.2em;font-weight:800;color:var(--bright);margin-bottom:6px;letter-spacing:-0.02em}
+.subtitle{color:var(--muted);font-size:0.92em;margin-bottom:36px;line-height:1.7}
+.subtitle strong{color:var(--orange)}
+
+/* Context box */
+.ctx-box{background:linear-gradient(135deg,rgba(212,93,58,0.06),rgba(15,123,140,0.06));border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:40px}
+.ctx-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px;font-size:0.9em}
+.ctx-item{display:flex;align-items:flex-start;gap:8px}
+.ctx-icon{font-size:1.2em;flex-shrink:0}
+.ctx-label{color:var(--muted);font-size:0.8em}
+.ctx-val{font-weight:600;color:var(--bright)}
+
+/* Method cards */
+.method{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px;margin-bottom:20px;position:relative;transition:all 0.2s}
+.method:hover{border-color:rgba(88,166,255,0.3)}
+.method-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px}
+.method-left{display:flex;align-items:flex-start;gap:16px}
+.method-rank{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1.4em;color:#fff;flex-shrink:0}
+.rank-1{background:var(--orange)}.rank-2{background:var(--teal)}.rank-3{background:var(--gold)}
+.rank-4{background:var(--purple)}.rank-5{background:var(--blue)}
+.rank-6,.rank-7,.rank-8,.rank-9,.rank-10{background:rgba(139,148,158,0.4);color:var(--bright)}
+
+.method-name{font-size:1.25em;font-weight:700;color:var(--bright)}
+.method-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.tag{display:inline-block;padding:3px 10px;border-radius:10px;font-size:0.75em;font-weight:600;white-space:nowrap}
+.tag-zero{background:rgba(35,134,54,0.15);color:var(--green)}
+.tag-viral{background:rgba(163,113,247,0.15);color:var(--purple)}
+.tag-product{background:rgba(88,166,255,0.15);color:var(--blue)}
+.tag-community{background:rgba(15,123,140,0.15);color:var(--teal)}
+.tag-content{background:rgba(210,153,34,0.15);color:var(--gold)}
+.tag-seo{background:rgba(88,166,255,0.15);color:var(--blue)}
+
+.method-match{text-align:right;font-size:0.85em}
+.match-score{font-size:2em;font-weight:800;color:var(--bright)}
+.match-label{color:var(--muted);font-size:0.78em}
+
+.method-body{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+@media(max-width:640px){.method-body{grid-template-columns:1fr}}
+.mb-item{background:rgba(255,255,255,0.02);border-radius:10px;padding:14px}
+.mb-title{font-size:0.78em;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px}
+.mb-content{font-size:0.9em;line-height:1.6}
+.mb-content ul{padding-left:16px;margin:4px 0}
+.mb-content li{margin-bottom:3px}
+
+.method-bottom{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding-top:14px;border-top:1px solid var(--border)}
+.metric-box{flex:1;min-width:120px;text-align:center;padding:10px;background:rgba(255,255,255,0.015);border-radius:8px}
+.metric-val{font-size:1.2em;font-weight:700;color:var(--bright)}
+.metric-label{font-size:0.72em;color:var(--muted)}
+
+/* Recommendation cards */
+.rec-card{background:linear-gradient(135deg,rgba(212,93,58,0.08),rgba(15,123,140,0.08));border:1px solid var(--border);border-radius:14px;padding:28px;margin-bottom:20px}
+.rec-card h3{font-size:1.2em;color:var(--bright);margin-bottom:6px}
+.rec-num{display:inline-block;width:32px;height:32px;border-radius:10px;text-align:center;line-height:32px;font-weight:800;color:#fff;margin-right:8px}
+.rec-r1{background:var(--orange)}.rec-r2{background:var(--teal)}.rec-r3{background:var(--gold)}
+.rec-reason{font-size:0.92em;color:var(--muted);font-style:italic;margin-bottom:12px}
+.rec-action{background:var(--card);border-radius:10px;padding:16px;font-size:0.9em;line-height:1.7}
+.rec-action strong{color:var(--orange)}
+
+/* Calendar */
+.calendar{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:24px 0}
+@media(max-width:768px){.calendar{grid-template-columns:repeat(2,1fr)}}
+.cal-week{background:var(--card);border-radius:12px;padding:16px;border:1px solid var(--border)}
+.cal-week h4{font-size:0.95em;color:var(--bright);margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.cal-week ul{padding-left:14px;font-size:0.82em;line-height:1.7}
+.cal-week li{margin-bottom:4px}
+
+/* Summary table */
+.summary{width:100%;border-collapse:collapse;margin:24px 0;font-size:0.88em}
+.summary th{background:var(--card);color:var(--bright);text-align:left;padding:10px 14px;border-bottom:2px solid var(--border)}
+.summary td{padding:10px 14px;border-bottom:1px solid var(--border)}
+.summary tr:hover td{background:rgba(255,255,255,0.01)}
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>🎯 AceProxy 冷启动获客方法排名</h1>
+<p class="subtitle">
+  基于你的现状：<strong>零营销预算</strong> · <strong>产品未上线</strong> · <strong>目标前 1000 个付费用户</strong> · <strong>🇮🇩 印尼市场首发</strong> · <strong>一人开发者</strong>
+</p>
+
+<!-- CONTEXT -->
+<div class="ctx-box">
+  <h3 style="color:var(--bright);margin-bottom:4px">📍 情况分析</h3>
+  <p style="font-size:0.88em;color:var(--muted);margin-bottom:14px">
+    你是一个深圳独立开发者，用 NestJS + React Native 搭建了面向印尼的跨境代购平台。核心价值主张是<strong>"比印尼本地价格便宜 40%+"</strong>，通过直接从中国供应链采购+集运。现在产品即将完成但尚未上线，<strong>零预算、零用户、零品牌</strong>，目标是用最低成本获取前 1000 个真实付费用户来验证 PMF。
+  </p>
+  <div class="ctx-grid">
+    <div class="ctx-item">
+      <span class="ctx-icon">🏢</span>
+      <div><div class="ctx-label">业务类型</div><div class="ctx-val">跨境电商代购平台</div></div>
+    </div>
+    <div class="ctx-item">
+      <span class="ctx-icon">🎯</span>
+      <div><div class="ctx-label">目标市场</div><div class="ctx-val">印尼 (WA渗透90%+, 价格敏感, 移动优先)</div></div>
+    </div>
+    <div class="ctx-item">
+      <span class="ctx-icon">💰</span>
+      <div><div class="ctx-label">营销预算</div><div class="ctx-val" style="color:var(--green)">¥0 — 纯自然流量</div></div>
+    </div>
+    <div class="ctx-item">
+      <span class="ctx-icon">🧑‍💻</span>
+      <div><div class="ctx-label">资源约束</div><div class="ctx-val">一人开发+运营, 无团队</div></div>
+    </div>
+    <div class="ctx-item">
+      <span class="ctx-icon">🚀</span>
+      <div><div class="ctx-label">项目阶段</div><div class="ctx-val" style="color:var(--gold)">产品开发中, 未上线</div></div>
+    </div>
+    <div class="ctx-item">
+      <span class="ctx-icon">📈</span>
+      <div><div class="ctx-label">首要目标</div><div class="ctx-val" style="color:var(--orange)">前 1000 个付费用户, 验证 PMF</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- METHOD 1 -->
+<div class="method">
+  <div class="method-header">
+    <div class="method-left">
+      <div class="method-rank rank-1">1</div>
+      <div>
+        <div class="method-name">WhatsApp 社群冷启动</div>
+        <div class="method-tags">
+          <span class="tag tag-zero">¥0 成本</span>
+          <span class="tag tag-community">社群运营</span>
+          <span class="tag tag-viral">可裂变</span>
+        </div>
+      </div>
+    </div>
+    <div class="method-match"><div class="match-score">97%</div><div class="match-label">匹配度</div></div>
+  </div>
+  <div class="method-body">
+    <div class="mb-item">
+      <div class="mb-title">🎯 适用条件 & 投入</div>
+      <div class="mb-content">
+        <strong>印尼 WhatsApp 渗透率 90%+</strong>，是绝对的第一社交工具。你完全不需要花钱触达他们。<br><br>
+        <strong>主要投入</strong>：你的时间 — 每天 1-2 小时手动运营。<br>
+        ① 创建 3-5 个 WA 群（按品类/城市分）<br>
+        ② 每天分享比价内容、省钱技巧<br>
+        ③ 用 AI 客服自动回复常见问题<br>
+        ④ 群里积累到 50 人后启动群裂变
+      </div>
+    </div>
+    <div class="mb-item">
+      <div class="mb-title">📈 回报 & ⚠️ 风险</div>
+      <div class="mb-content">
+        <strong>预期回报</strong>：
+        <ul>
+          <li>每个 500 人群预计可转化 30-50 个付费用户</li>
+          <li>建 2-3 个活跃群 → 100-150 个首单用户 (3 个月内)</li>
+          <li>群内拼团裂变可放大 2-3 倍</li>
+        </ul>
+        <strong>主要风险</strong>：初期群不够活跃 → 每天坚持发有价值的内容（比价图、省钱技巧），不要只发促销；用 AI 客服保持响应速度。
+      </div>
+    </div>
+  </div>
+  <div class="method-bottom">
+    <div class="metric-box"><div class="metric-val" style="color:var(--green)">¥0</div><div class="metric-label">获客成本</div></div>
+    <div class="metric-box"><div class="metric-val">15-20%</div><div class="metric-label">群→注册转化</div></div>
+    <div class="metric-box"><div class="metric-val">8-12 周</div><div class="metric-label">见效周期</div></div>
+    <div class="metric-box"><div class="metric-val">★★★★★</div><div class="metric-label">一人可执行</div></div>
+  </div>
+</div>
+
+<!-- METHOD 2 -->
+<div class="method">
+  <div class="method-header">
+    <div class="method-left">
+      <div class="method-rank rank-2">2</div>
+      <div>
+        <div class="method-name">比价工具病毒传播 (Product-Led Growth)</div>
+        <div class="method-tags">
+          <span class="tag tag-zero">¥0 成本</span>
+          <span class="tag tag-product">产品内置</span>
+          <span class="tag tag-viral">高裂变</span>
+        </div>
+      </div>
+    </div>
+    <div class="method-match"><div class="match-score">95%</div><div class="match-label">匹配度</div></div>
+  </div>
+  <div class="method-body">
+    <div class="mb-item">
+      <div class="mb-title">🎯 适用条件 & 投入</div>
+      <div class="mb-content">
+        你的核心价值是<strong>"省钱"</strong>，比价就是最天然的传播钩子。把这个做进产品核心流程。<br><br>
+        <strong>投入</strong>：在产品中加一个"生成比价卡片"功能（开发成本 1-2 天）。<br>
+        用户搜索某商品 → 系统自动生成 Shopee vs AceProxy 对比图 → 一键分享到 WA/TikTok → 好友通过链接注册 → 双方获奖励。<br>
+        这是 <strong>WA 渗透率 90%+ 市场的产品级裂变引擎</strong>。
+      </div>
+    </div>
+    <div class="mb-item">
+      <div class="mb-title">📈 回报 & ⚠️ 风险</div>
+      <div class="mb-content">
+        <strong>预期回报</strong>：
+        <ul>
+          <li>比价卡片分享率预计 8-15%（省钱是强社交货币）</li>
+          <li>每 1 次有效分享可带来 0.3-0.5 个注册（K-factor ≈ 0.3-0.5）</li>
+          <li>不需要任何广告费，用户就是你的传播渠道</li>
+        </ul>
+        <strong>风险</strong>：需要对比价数据持续更新以保持准确性；Shopee 等平台可能会封爬虫 IP。
+      </div>
+    </div>
+  </div>
+  <div class="method-bottom">
+    <div class="metric-box"><div class="metric-val" style="color:var(--green)">¥0</div><div class="metric-label">获客成本</div></div>
+    <div class="metric-box"><div class="metric-val">8-15%</div><div class="metric-label">卡片分享率</div></div>
+    <div class="metric-box"><div class="metric-val">0.3-0.5</div><div class="metric-label">病毒系数 K</div></div>
+    <div class="metric-box"><div class="metric-val">★★★★★</div><div class="metric-label">一人可执行</div></div>
+  </div>
+</div>
+
+<!-- METHOD 3 -->
+<div class="method">
+  <div class="method-header">
+    <div class="method-left">
+      <div class="method-rank rank-3">3</div>
+      <div>
+        <div class="method-name">KOC 种子用户免费样品合作</div>
+        <div class="method-tags">
+          <span class="tag tag-zero">极低成本</span>
+          <span class="tag tag-content">内容种草</span>
+          <span class="tag tag-viral">可裂变</span>
+        </div>
+      </div>
+    </div>
+    <div class="method-match"><div class="match-score">88%</div><div class="match-label">匹配度</div></div>
+  </div>
+  <div class="method-body">
+    <div class="mb-item">
+      <div class="mb-title">🎯 适用条件 & 投入</div>
+      <div class="mb-content">
+        找 10-20 个印尼 TikTok 小达人 (1K-20K 粉)，免费寄样品换真实开箱视频。<strong>不需要给他们钱</strong>，用免费产品置换内容。<br><br>
+        <strong>投入</strong>：样品成本 ¥500-1000 + 运费 ¥200-400 = <strong>¥700-1400</strong>（唯一需要的现金支出）。<br>
+        选品策略：选 3-5 款高颜值+高差价产品（如 Abaya、家居小物、饰品），客单价 ¥30-80。
+      </div>
+    </div>
+    <div class="mb-item">
+      <div class="mb-title">📈 回报 & ⚠️ 风险</div>
+      <div class="mb-content">
+        <strong>预期回报</strong>：
+        <ul>
+          <li>20 个 KOC × 平均 5000 播放 = 100K 总曝光</li>
+          <li>保守 0.5% 转化 → 约 500 注册，50-100 首单</li>
+          <li>开箱视频可复用为产品详情页 UGC 素材</li>
+        </ul>
+        <strong>风险</strong>：部分 KOC 可能不履约；需先筛选活跃度高、粉丝真实的达人；物流可能延迟影响内容时效。
+      </div>
+    </div>
+  </div>
+  <div class="method-bottom">
+    <div class="metric-box"><div class="metric-val">¥700-1400</div><div class="metric-label">总现金投入</div></div>
+    <div class="metric-box"><div class="metric-val">100K+</div><div class="metric-label">预估总曝光</div></div>
+    <div class="metric-box"><div class="metric-val">4-6 周</div><div class="metric-label">见效周期</div></div>
+    <div class="metric-box"><div class="metric-val">★★★★☆</div><div class="metric-label">一人可执行</div></div>
+  </div>
+</div>
+
+<!-- METHOD 4 -->
+<div class="method">
+  <div class="method-header">
+    <div class="method-left">
+      <div class="method-rank rank-4">4</div>
+      <div>
+        <div class="method-name">老带新邀请奖励系统</div>
+        <div class="method-tags">
+          <span class="tag tag-zero">零预付费</span>
+          <span class="tag tag-product">产品内置</span>
+          <span class="tag tag-viral">高裂变</span>
+        </div>
+      </div>
+    </div>
+    <div class="method-match"><div class="match-score">85%</div><div class="match-label">匹配度</div></div>
+  </div>
+  <div class="method-body">
+    <div class="mb-item">
+      <div class="mb-title">🎯 适用条件 & 投入</div>
+      <div class="mb-content">
+        把它做进产品的 DNA——从注册第一天就提醒用户"邀请朋友可以省钱"。<br><br>
+        <strong>核心设计</strong>：邀请人获得 Rp 15K 余额奖励，被邀人获得 Rp 15K 优惠券。奖励只在被邀人<strong>完成首单后</strong>发放（成本后置）。<br><br>
+        <strong>投入</strong>：开发 2-3 天。奖励成本由首单利润覆盖（一单利润 Rp 30-50K，拨出 Rp 20K 做奖励）。
+      </div>
+    </div>
+    <div class="mb-item">
+      <div class="mb-title">📈 回报 & ⚠️ 风险</div>
+      <div class="mb-content">
+        <strong>预期回报</strong>：
+        <ul>
+          <li>假设 100 用户，人均邀请 2 人，30% 被邀人下单 → 新增 60 付费用户</li>
+          <li>裂变成本 = 60 × Rp 20K = Rp 1.2M (≈ ¥550)，由首单利润覆盖</li>
+          <li>随着用户基数增长，裂变效应指数级放大</li>
+        </ul>
+        <strong>风险</strong>：羊毛党刷邀请 → 需要设备指纹 + 同一 WiFi 限制 + 被邀人必须完成真实首单 ≥ Rp 50K。
+      </div>
+    </div>
+  </div>
+  <div class="method-bottom">
+    <div class="metric-box"><div class="metric-val" style="color:var(--green)">后置成本</div><div class="metric-label">获客成本</div></div>
+    <div class="metric-box"><div class="metric-val">2-3 天</div><div class="metric-label">开发工时</div></div>
+    <div class="metric-box"><div class="metric-val">0.3-0.5</div><div class="metric-label">病毒系数 K</div></div>
+    <div class="metric-box"><div class="metric-val">★★★★★</div><div class="metric-label">一人可执行</div></div>
+  </div>
+</div>
+
+<!-- METHOD 5 -->
+<div class="method">
+  <div class="method-header">
+    <div class="method-left">
+      <div class="method-rank rank-5">5</div>
+      <div>
+        <div class="method-name">SEO 长尾内容矩阵</div>
+        <div class="method-tags">
+          <span class="tag tag-zero">¥0 成本</span>
+          <span class="tag tag-seo">SEO</span>
+          <span class="tag tag-content">长期资产</span>
+        </div>
+      </div>
+    </div>
+    <div class="method-match"><div class="match-score">78%</div><div class="match-label">匹配度</div></div>
+  </div>
+  <div class="method-body">
+    <div class="mb-item">
+      <div class="mb-title">🎯 适用条件 & 投入</div>
+      <div class="mb-content">
+        <strong>印尼消费者大量搜索购物相关问题</strong>。你可以用印尼语内容截流。<br><br>
+        <strong>投入</strong>：你的时间，每周 2-3 篇内容。用 ChatGPT/DeepSeek 辅助生成印尼语文案。<br>
+        目标关键词："beli baju dari China murah"、"cara belanja online dari luar negeri"、"jastip China terpercaya" 等。<br>
+        同时做 Programmatic SEO：自动生成 品类×价格×城市 Landing Page。
+      </div>
+    </div>
+    <div class="mb-item">
+      <div class="mb-title">📈 回报 & ⚠️ 风险</div>
+      <div class="mb-content">
+        <strong>预期回报</strong>：
+        <ul>
+          <li>3-6 个月后：每天稳定 50-200 自然搜索访客</li>
+          <li>月 1500-6000 UV → 保守 2-5% 注册转化 → 30-300/月</li>
+          <li>SEO 是复利资产：内容积累越多，流量越增长</li>
+        </ul>
+        <strong>风险</strong>：见效慢（3-6 个月才有明显流量）；AI 生成的印尼语可能有语法问题需人工校验；Google 算法更新可能影响排名。
+      </div>
+    </div>
+  </div>
+  <div class="method-bottom">
+    <div class="metric-box"><div class="metric-val" style="color:var(--green)">¥0</div><div class="metric-label">获客成本</div></div>
+    <div class="metric-box"><div class="metric-val">3-6 月</div><div class="metric-label">见效周期</div></div>
+    <div class="metric-box"><div class="metric-val">持续复利</div><div class="metric-label">长期价值</div></div>
+    <div class="metric-box"><div class="metric-val">★★★☆☆</div><div class="metric-label">投入时间多</div></div>
+  </div>
+</div>
+
+<!-- METHOD 6 -->
+<div class="method">
+  <div class="method-header">
+    <div class="method-left">
+      <div class="method-rank rank-6">6</div>
+      <div>
+        <div class="method-name">Facebook Group / Reddit 社群渗透</div>
+        <div class="method-tags">
+          <span class="tag tag-zero">¥0 成本</span>
+          <span class="tag tag-community">社群</span>
+          <span class="tag tag-content">软性引流</span>
+        </div>
+      </div>
+    </div>
+    <div class="method-match"><div class="match-score">72%</div><div class="match-label">匹配度</div></div>
+  </div>
+  <div class="method-body">
+    <div class="mb-item">
+      <div class="mb-title">🎯 适用条件 & 投入</div>
+      <div class="mb-content">
+        印尼有大量 "Jastip China Indonesia" / "Reseller Indonesia" / "Belanja Online Murah" 等 FB Group。<br><br>
+        <strong>投入</strong>：每天 30 分钟，加入 5-10 个相关群组，提供 <strong>价值先行</strong>——分享比价清单、省钱购物攻略，在内容中软性露出 AceProxy。不要硬广，先建立信任。
+      </div>
+    </div>
+    <div class="mb-item">
+      <div class="mb-title">📈 回报 & ⚠️ 风险</div>
+      <div class="mb-content">
+        <strong>预期回报</strong>：日均被动引流 5-10 注册，稳定后可达 150-300/月。<br><br>
+        <strong>风险</strong>：被群主踢出（硬广）→ 永远是价值先行，提供省钱清单而非直接发链接；FB Group 活跃度可能下降 → 多群布局分摊风险。
+      </div>
+    </div>
+  </div>
+  <div class="method-bottom">
+    <div class="metric-box"><div class="metric-val">¥0</div><div class="metric-label">获客成本</div></div>
+    <div class="metric-box"><div class="metric-val">30min/天</div><div class="metric-label">时间投入</div></div>
+    <div class="metric-box"><div class="metric-val">2-4 周</div><div class="metric-label">见效周期</div></div>
+    <div class="metric-box"><div class="metric-val">★★★★☆</div><div class="metric-label">一人可执行</div></div>
+  </div>
+</div>
+
+<!-- METHOD 7 -->
+<div class="method">
+  <div class="method-header">
+    <div class="method-left">
+      <div class="method-rank rank-7">7</div>
+      <div>
+        <div class="method-name">预售 / Waitlist 造势</div>
+        <div class="method-tags">
+          <span class="tag tag-zero">¥0 成本</span>
+          <span class="tag tag-viral">可裂变</span>
+          <span class="tag tag-product">产品内置</span>
+        </div>
+      </div>
+    </div>
+    <div class="method-match"><div class="match-score">68%</div><div class="match-label">匹配度</div></div>
+  </div>
+  <div class="method-body">
+    <div class="mb-item">
+      <div class="mb-title">🎯 适用条件 & 投入</div>
+      <div class="mb-content">
+        在正式上线前先做一个简单的 <strong>Waitlist Landing Page</strong>。<br><br>
+        "抢先注册，上线后获得 Rp 50K 专属优惠券" + 邀请好友排位机制（邀请 3 人提升排队位置）。<br><br>
+        <strong>投入</strong>：做一页 Landing Page 2-3 小时 + 放到 deploy/ 目录部署。
+      </div>
+    </div>
+    <div class="mb-item">
+      <div class="mb-title">📈 回报 & ⚠️ 风险</div>
+      <div class="mb-content">
+        <strong>预期回报</strong>：上线前积累 200-500 个 Waitlist 邮箱 → 上线当天集中转化，首日即有付费用户。Waitlist 裂变可再放大 2-3 倍。<br><br>
+        <strong>风险</strong>：产品延迟上线 → 用户流失 → 承诺的首批优惠必须兑现；Waitlist 用户 ≠ 付费用户，转化率约 10-20%。
+      </div>
+    </div>
+  </div>
+  <div class="method-bottom">
+    <div class="metric-box"><div class="metric-val">¥0</div><div class="metric-label">获客成本</div></div>
+    <div class="metric-box"><div class="metric-val">2-3h</div><div class="metric-label">开发工时</div></div>
+    <div class="metric-box"><div class="metric-val">上线前</div><div class="metric-label">最佳时机</div></div>
+    <div class="metric-box"><div class="metric-val">★★★★★</div><div class="metric-label">一人可执行</div></div>
+  </div>
+</div>
+
+<!-- METHOD 8 -->
+<div class="method">
+  <div class="method-header">
+    <div class="method-left">
+      <div class="method-rank rank-8">8</div>
+      <div>
+        <div class="method-name">Google Play ASO 优化 + 刷评冷启动</div>
+        <div class="method-tags">
+          <span class="tag tag-zero">¥0 成本</span>
+          <span class="tag tag-content">ASO</span>
+          <span class="tag tag-seo">应用商店</span>
+        </div>
+      </div>
+    </div>
+    <div class="method-match"><div class="match-score">60%</div><div class="match-label">匹配度</div></div>
+  </div>
+  <div class="method-body">
+    <div class="mb-item">
+      <div class="mb-title">🎯 适用条件 & 投入</div>
+      <div class="mb-content">
+        <strong>适用条件</strong>：你有 APK（React Native），需要上架 Google Play。<br><br>
+        <strong>投入</strong>：标题含 "belanja China murah" / "jastip" 等印尼语关键词；副标题强调 "Hemat 40%+"；A/B 测试 3-5 套截图和视频；前 20 条评分手动邀请种子用户评。
+      </div>
+    </div>
+    <div class="mb-item">
+      <div class="mb-title">📈 回报 & ⚠️ 风险</div>
+      <div class="mb-content">
+        <strong>预期回报</strong>：优化后 Play Store 日均自然下载 20-50（印尼市场低价购物类搜索量可观）。<br><br>
+        <strong>风险</strong>：需要 Google Play 上架审核（1-3 天）；初期评分少 → 转化率低 → 需要种子用户手动评价启动。
+      </div>
+    </div>
+  </div>
+  <div class="method-bottom">
+    <div class="metric-box"><div class="metric-val">¥0</div><div class="metric-label">获客成本</div></div>
+    <div class="metric-box"><div class="metric-val">1-2 天</div><div class="metric-label">优化工时</div></div>
+    <div class="metric-box"><div class="metric-val">20-50/天</div><div class="metric-label">预估下载量</div></div>
+    <div class="metric-box"><div class="metric-val">★★★☆☆</div><div class="metric-label">需APK上架</div></div>
+  </div>
+</div>
+
+<!-- METHOD 9 -->
+<div class="method">
+  <div class="method-header">
+    <div class="method-left">
+      <div class="method-rank rank-9">9</div>
+      <div>
+        <div class="method-name">交叉合作 / 换量</div>
+        <div class="method-tags">
+          <span class="tag tag-zero">¥0 成本</span>
+          <span class="tag tag-content">合作</span>
+          <span class="tag tag-community">生态</span>
+        </div>
+      </div>
+    </div>
+    <div class="method-match"><div class="match-score">52%</div><div class="match-label">匹配度</div></div>
+  </div>
+  <div class="method-body">
+    <div class="mb-item">
+      <div class="mb-title">🎯 适用条件 & 投入</div>
+      <div class="mb-content">
+        找印尼本土互补型小商家/KOL/物流公司合作。互相推荐客户。<br><br>
+        <strong>例子</strong>：和印尼本地小型物流公司（非云途）合作——"用 XX 物流，首单用 AceProxy 可减 Rp 20K"。反之亦然。<br><br>
+        <strong>投入</strong>：谈判时间 + 可能的互惠条件（如对方客户用 AceProxy 给折扣）。
+      </div>
+    </div>
+    <div class="mb-item">
+      <div class="mb-title">📈 回报 & ⚠️ 风险</div>
+      <div class="mb-content">
+        <strong>预期回报</strong>：取决于合作方体量，一对有效合作可带来 50-200 注册。<br><br>
+        <strong>风险</strong>：谈判困难——你 0 用户时没有谈判筹码；合作方不积极 → 优先找体量对等的小商家互相换量。
+      </div>
+    </div>
+  </div>
+  <div class="method-bottom">
+    <div class="metric-box"><div class="metric-val">¥0</div><div class="metric-label">获客成本</div></div>
+    <div class="metric-box"><div class="metric-val">谈判驱动</div><div class="metric-label">不确定性</div></div>
+    <div class="metric-box"><div class="metric-val">4-8 周</div><div class="metric-label">见效周期</div></div>
+    <div class="metric-box"><div class="metric-val">★★☆☆☆</div><div class="metric-label">依赖关系</div></div>
+  </div>
+</div>
+
+<!-- METHOD 10 -->
+<div class="method">
+  <div class="method-header">
+    <div class="method-left">
+      <div class="method-rank rank-10">10</div>
+      <div>
+        <div class="method-name">PR / 媒体报道</div>
+        <div class="method-tags">
+          <span class="tag tag-zero">¥0 成本</span>
+          <span class="tag tag-content">公关</span>
+          <span class="tag tag-seo">品牌</span>
+        </div>
+      </div>
+    </div>
+    <div class="method-match"><div class="match-score">40%</div><div class="match-label">匹配度</div></div>
+  </div>
+  <div class="method-body">
+    <div class="mb-item">
+      <div class="mb-title">🎯 适用条件 & 投入</div>
+      <div class="mb-content">
+        写一篇有新闻价值的稿子投给印尼科技/电商类媒体。"中国技术开发者为印尼消费者打造跨境购物平台"。<br><br>
+        <strong>投入</strong>：写稿 2-3 小时 + 找媒体联系人 + 跟进。被拒概率高。<br><br>
+        <strong>不推荐现在做</strong>——PR 在你有用户数据/故事之后才有效。0 用户时没有说服力。
+      </div>
+    </div>
+    <div class="mb-item">
+      <div class="mb-title">📈 回报 & ⚠️ 风险</div>
+      <div class="mb-content">
+        <strong>预期回报</strong>：一篇报道可能带来 500-2000 访问，但转化率极低（1-2%）。<br><br>
+        <strong>风险</strong>：投入回报比极低（50+ 封邮件可能 0 回复）；在当前阶段过早——先有首批用户和数据再考虑 PR。
+      </div>
+    </div>
+  </div>
+  <div class="method-bottom">
+    <div class="metric-box"><div class="metric-val">¥0</div><div class="metric-label">获客成本</div></div>
+    <div class="metric-box"><div class="metric-val">低</div><div class="metric-label">优先级</div></div>
+    <div class="metric-box"><div class="metric-val">>6 月</div><div class="metric-label">适当时机</div></div>
+    <div class="metric-box"><div class="metric-val">★★☆☆☆</div><div class="metric-label">不推荐现在</div></div>
+  </div>
+</div>
+
+<!-- SUMMARY TABLE -->
+<h2 style="color:var(--bright);margin:48px 0 20px;padding-bottom:10px;border-bottom:2px solid var(--border)">📊 十种方法一览</h2>
+<table class="summary">
+  <tr><th>排名</th><th>方法</th><th>成本</th><th>见效</th><th>预估月获客</th><th>一人可行</th><th>优先级</th></tr>
+  <tr><td style="color:var(--orange);font-weight:800">#1</td><td>WhatsApp 社群冷启动</td><td style="color:var(--green)">¥0</td><td>2-4周</td><td>30-50</td><td>★★★★★</td><td style="color:var(--orange);font-weight:700">立即做</td></tr>
+  <tr><td style="color:var(--teal);font-weight:800">#2</td><td>比价工具病毒传播</td><td style="color:var(--green)">¥0</td><td>上线即有</td><td>30-80</td><td>★★★★★</td><td style="color:var(--teal);font-weight:700">上线前做</td></tr>
+  <tr><td style="color:var(--gold);font-weight:800">#3</td><td>KOC 种子用户合作</td><td>¥700-1400</td><td>4-6周</td><td>20-40</td><td>★★★★☆</td><td style="color:var(--gold);font-weight:700">同步启动</td></tr>
+  <tr><td>#4</td><td>老带新邀请系统</td><td style="color:var(--green)">后置成本</td><td>上线即有</td><td>逐步放大</td><td>★★★★★</td><td>上线前做</td></tr>
+  <tr><td>#5</td><td>SEO 长尾内容矩阵</td><td style="color:var(--green)">¥0</td><td>3-6月</td><td>30-300</td><td>★★★☆☆</td><td>持续做</td></tr>
+  <tr><td>#6</td><td>FB Group 社群渗透</td><td style="color:var(--green)">¥0</td><td>2-4周</td><td>15-30</td><td>★★★★☆</td><td>同步做</td></tr>
+  <tr><td>#7</td><td>Waitlist 造势</td><td style="color:var(--green)">¥0</td><td>上线前</td><td>50-100</td><td>★★★★★</td><td>上线前2周</td></tr>
+  <tr><td>#8</td><td>Google Play ASO</td><td style="color:var(--green)">¥0</td><td>4-8周</td><td>50-150</td><td>★★★☆☆</td><td>APK上架时</td></tr>
+  <tr><td>#9</td><td>交叉合作换量</td><td style="color:var(--green)">¥0</td><td>4-8周</td><td>10-30</td><td>★★☆☆☆</td><td>有用户后</td></tr>
+  <tr><td>#10</td><td>PR 媒体报道</td><td style="color:var(--green)">¥0</td><td>>6月</td><td>10-20</td><td>★★☆☆☆</td><td>有数据后</td></tr>
+</table>
+
+<!-- TOP 3 RECOMMENDATIONS -->
+<h2 style="color:var(--bright);margin:48px 0 20px;padding-bottom:10px;border-bottom:2px solid var(--border)">🏆 推荐 Top 3 及理由</h2>
+
+<div class="rec-card">
+  <h3><span class="rec-num rec-r1">1</span> WhatsApp 社群冷启动 + FB Group 渗透</h3>
+  <p class="rec-reason">"印尼人的微信就是 WhatsApp。你不需要任何预算，只需要你的时间。"</p>
+  <div class="rec-action">
+    <strong>为什么是第一</strong>：印尼 WA 渗透率 90%+，群聊是他们发现新事物、讨论购物、分享省钱信息的核心场景。你是一个中国开发者，有一个很自然的故事——"我在帮印尼人直接从中国买东西，省掉中间商差价"。<br><br>
+    <strong>具体步骤</strong>：<br>
+    ① 创建 3 个 WA Group: "AceProxy — Fashion Hemat", "AceProxy — Gadget & Elektronik", "AceProxy — Rumah Tangga"<br>
+    ② 每天发 1-2 条有价值的内容——比价截图、省钱技巧、热门商品预告（不要只发促销）<br>
+    ③ 在 FB 的 "Jastip China Indonesia" 等群组发价值帖子，文末轻描淡写 "kalo mau tau lebih bisa join group WA kita"<br>
+    ④ 每个群到 50 人后启动群裂变: "invite 3 teman → dapat voucher Rp 20K"<br>
+    ⑤ 用 AI 客服（你已有的 StewardChat）在群里自动回复常见问题<br><br>
+    <strong>目标</strong>：3个月内 3-5 个活跃群，累计 500-800 成员，转化 100-150 个首单用户。
+  </div>
+</div>
+
+<div class="rec-card">
+  <h3><span class="rec-num rec-r2">2</span> 比价工具内置病毒传播</h3>
+  <p class="rec-reason">"你的产品本身就是一个增长引擎——如果设计对的话。"</p>
+  <div class="rec-action">
+    <strong>为什么是第二</strong>：你的核心价值是"省钱"。省钱 = 社交货币 = 人们会主动分享。把比价做成一个产品功能而非营销手段，让每个用户使用你的App时都自然成为你的传播节点。<br><br>
+    <strong>具体步骤</strong>：<br>
+    ① 在产品中增加"生成比价卡"功能——用户搜索任何商品，系统自动并排显示 Shopee/Tokopedia 价格 vs AceProxy 价格<br>
+    ② 卡片设计美观，带你的 Logo + "Hemat 40%" 标签 + 一键分享 WA/TikTok 按钮<br>
+    ③ 被分享链接的用户打开后看到同样的比价体验 → 注册 → 继续分享 → 形成传播闭环<br>
+    ④ 分享者获得积分，被分享者注册首单双方奖励<br><br>
+    <strong>开发量</strong>：比价数据源 + 卡片生成 + 分享埋点 = 约 2-3 天。<br>
+    <strong>K-factor 目标</strong>：0.3-0.5（每 10 个用户带来 3-5 个新用户）。
+  </div>
+</div>
+
+<div class="rec-card">
+  <h3><span class="rec-num rec-r3">3</span> KOC 免费样品合作 (唯一需要 ¥1000 现金的)</h3>
+  <p class="rec-reason">"¥1000 换 100K 曝光 + 50 个首单 + 可复用的 UGC 素材。这是你唯一值得花钱的地方。"</p>
+  <div class="rec-action">
+    <strong>为什么是第三</strong>：印尼 TikTok 是电商内容的主战场。你不需要找大网红（他们不会免费帮你），找 1K-20K 粉的小 KOC——他们需要内容素材，你需要曝光，双赢。<br><br>
+    <strong>具体步骤</strong>：<br>
+    ① 在 TikTok 搜索 "haul" "belanja online" "review produk" 等印尼语标签<br>
+    ② 筛选 30-50 个粉丝 1K-20K、互动率高、内容真实的微型 KOC<br>
+    ③ 私信他们："Mau dapat produk gratis? Kami kirim sample, kamu bikin video unboxing aja. No fee, no pressure."<br>
+    ④ 选 10-20 个愿意合作的，寄出 3-5 款高颜值+高差价样品（Abaya、家居、饰品等）<br>
+    ⑤ 收到开箱视频后，征得同意复用为产品详情页素材<br><br>
+    <strong>总花费</strong>：样品 ¥30-80/件 × 20人 × 2件 + 运费 ¥200-400 = <strong>¥1000-1600</strong>。<br>
+    <strong>ROI 预估</strong>：100K 曝光 → 500 注册 → 50-100 首单 → 首单利润 (假设 ¥20/单 × 75 = ¥1500) → 基本打平或微赚，外加品牌曝光和 UGC 资产。
+  </div>
+</div>
+
+<!-- 4-WEEK PLAN -->
+<h2 style="color:var(--bright);margin:48px 0 20px;padding-bottom:10px;border-bottom:2px solid var(--border)">📅 未来 4 周行动计划</h2>
+<div class="calendar">
+  <div class="cal-week">
+    <h4>W1: 基础搭建</h4>
+    <ul>
+      <li>建 3 个 WA 群 + 群规 + 欢迎语</li>
+      <li>上架 Google Play(ASO 优化)</li>
+      <li>开发比价卡片功能</li>
+      <li>Waitlist Landing Page 上线</li>
+    </ul>
+  </div>
+  <div class="cal-week">
+    <h4>W2: 内容启动</h4>
+    <ul>
+      <li>WA 群每日发 2 条价值内容</li>
+      <li>加入 10 个 FB Group 开始渗透</li>
+      <li>开发老带新邀请系统</li>
+      <li>AI 生成首批 10 篇 SEO 文章</li>
+    </ul>
+  </div>
+  <div class="cal-week">
+    <h4>W3: 达人合作</h4>
+    <ul>
+      <li>筛选+联系 30-50 个 KOC</li>
+      <li>确定 10-15 人合作 → 寄样品</li>
+      <li>Waitlist 裂变启动</li>
+      <li>WA 群启动群裂变</li>
+    </ul>
+  </div>
+  <div class="cal-week">
+    <h4>W4: 正式上线</h4>
+    <ul>
+      <li>Waitlist 用户集中转化</li>
+      <li>老带新邀请功能全量开放</li>
+      <li>KOC 开箱视频陆续发布</li>
+      <li>比价卡片病毒传播上线</li>
+      <li>收集首批用户反馈 → 迭代</li>
+    </ul>
+  </div>
+</div>
+
+<!-- BOTTOM LINE -->
+<div style="text-align:center;margin-top:56px;padding:32px 24px;border:2px solid var(--border);border-radius:16px;background:linear-gradient(135deg,rgba(212,93,58,0.08),rgba(15,123,140,0.08))">
+  <p style="font-size:1.2em;font-weight:700;color:var(--bright);margin-bottom:8px">💡 核心结论</p>
+  <p style="font-size:0.95em;line-height:1.8;color:var(--text)">
+    你的情况——<strong>零预算、一人开发、印尼市场、省钱为核心价值</strong>——决定了你不需要也不可能靠砸钱获客。<br>
+    你最大的杠杆是：<strong>"省钱"天然是社交货币 + 印尼 WhatsApp 渗透率 90%+</strong>。<br><br>
+    <strong style="color:var(--orange)">前三件事马上开始</strong>：<br>
+    ① 建 WA 群开始运营（今天就能做）<br>
+    ② 把比价做成产品的内置传播功能（上线前做完）<br>
+    ③ 花 ¥1000 找 10-15 个 KOC 寄样品（唯一值得花的钱）<br><br>
+    如果这 3 件事做完，3 个月内到达 500-1000 注册、100-200 个首单用户是完全现实的。
+  </p>
+</div>
+
+<p style="color:var(--muted);font-size:0.85em;text-align:center;margin-top:40px">AceProxy 冷启动获客方案 · 2026-06-18 · 基于 零预算/未上线/目标1000付费用户 定制</p>
+
+</div>
+</body>
+</html>

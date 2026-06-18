@@ -1,5 +1,7 @@
-import { Controller, Post, Body, Logger } from '@nestjs/common';
+import { Controller, Post, Body, Logger, UseGuards } from '@nestjs/common';
 import { SmartCollectService } from './SmartCollectService';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ThrottlerGuard } from '../../common/guards/ThrottlerGuard';
 
 @Controller('smart-collect')
 export class SmartCollectController {
@@ -13,6 +15,7 @@ export class SmartCollectController {
    * 接收任意链接（Shopee/Lazada/Tokopedia/Amazon/1688等）
    * → 提取产品名 → 1688搜同款 → AI合规检查+关税计算 → 返回结果
    */
+  @UseGuards(JwtAuthGuard, ThrottlerGuard)
   @Post('search')
   async search(@Body() body: { url: string; country?: string }) {
     if (!body.url) {

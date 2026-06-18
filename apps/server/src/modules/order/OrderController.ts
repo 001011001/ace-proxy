@@ -1,6 +1,7 @@
 import { Controller, Get, Query, Param, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { PrismaService } from '../../prisma/prisma.service';
+import { escapeCsvField } from '../../common/csv-escape';
 
 /**
  * OrderController — 订单管理后台 API
@@ -46,7 +47,17 @@ export class OrderController {
     });
     const header = '订单号,用户ID,状态,总金额(IDR),采购成本(CNY),运费(CNY),服务费(CNY),国家,创建时间\n';
     const rows = orders.map(o =>
-      `${o.id},${o.userId},${o.status},${o.totalAmount},${o.sourceCost||''},${o.shippingFee||''},${o.serviceFee||''},${o.country||''},${o.createdAt.toISOString()}`
+      [
+        escapeCsvField(o.id),
+        escapeCsvField(o.userId),
+        escapeCsvField(o.status),
+        escapeCsvField(o.totalAmount),
+        escapeCsvField(o.sourceCost ?? ''),
+        escapeCsvField(o.shippingFee ?? ''),
+        escapeCsvField(o.serviceFee ?? ''),
+        escapeCsvField(o.country ?? ''),
+        escapeCsvField(o.createdAt.toISOString()),
+      ].join(','),
     ).join('\n');
     res.setHeader('Content-Type', 'text/csv; charset=utf-8');
     res.setHeader('Content-Disposition', `attachment; filename="orders-${new Date().toISOString().split('T')[0]}.csv"`);

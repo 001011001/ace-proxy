@@ -67,8 +67,20 @@ export class IntelligenceService {
     }
   }
 
-  private async scrapeAMZ123() { return ['印尼海关突击查验预警', '中英空运价格下降 5%']; }
-  private async scrapeTikTok() { return ['#RamadanOutfit 热度暴涨', '极简收纳工具点击率极高']; }
+  /**
+   * @todo P2 — 当前返回 Mock 数据，需要接入真实 AMZ123 爬虫/API
+   */
+  private async scrapeAMZ123() {
+    this.logger.warn('[MOCK] IntelligenceService.scrapeAMZ123 — 返回硬编码数据');
+    return ['印尼海关突击查验预警', '中英空运价格下降 5%'];
+  }
+  /**
+   * @todo P2 — 当前返回 Mock 数据，需要接入真实 TikTok Creative Center API
+   */
+  private async scrapeTikTok() {
+    this.logger.warn('[MOCK] IntelligenceService.scrapeTikTok — 返回硬编码数据');
+    return ['#RamadanOutfit 热度暴涨', '极简收纳工具点击率极高'];
+  }
   private async generateDailyBrief(news: string[], signals: string[]) {
     return `AceProxy 每日套利简报:\n- 物流: ${news.join('; ')}\n- 趋势: ${signals.join('; ')}`;
   }

@@ -18,6 +18,8 @@ export class ThrottlerGuard implements CanActivate {
     '/auth/login': { max: 10, windowMs: 60_000 },        // 10次/分钟
     '/payment/create-invoice': { max: 20, windowMs: 60_000 },
     '/trade/order': { max: 30, windowMs: 60_000 },
+    '/smart-collect/search': { max: 30, windowMs: 60_000 },
+    '/arbibot/analyze': { max: 20, windowMs: 60_000 },
   };
 
   private readonly DEFAULT: { max: number; windowMs: number } = { max: 100, windowMs: 60_000 };

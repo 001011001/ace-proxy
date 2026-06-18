@@ -1,0 +1,98 @@
+sequenceDiagram
+    participant PWA as PWA (index.html)
+    participant Admin as Admin (admin.html)
+    participant API as NestJS Server
+    participant DB as PostgreSQL
+
+    rect rgb(255, 248, 230)
+        Note over PWA,DB: Flow 1: 首页产品列表加载
+        PWA->>API: GET /product/list?limit=200
+        API->>DB: SELECT * FROM ace_products WHERE status='ACTIVE'
+        DB-->>API: product rows
+        API-->>PWA: {code:0, data:{items:[...], total:N}}
+        Note over PWA: Products P[] populated → Home.render()
+    end
+
+    rect rgb(230, 245, 255)
+        Note over PWA,DB: Flow 2: 优惠券查询与使用
+        PWA->>API: GET /coupon/list
+        API->>DB: SELECT * FROM ace_coupons WHERE status='ACTIVE'
+        DB-->>API: coupon rows
+        API-->>PWA: {code:0, data:[{code,type,value,minSpend,expiresAt},...]}
+        
+        PWA->>API: POST /cart/apply-coupon {code, amount}
+        API->>DB: SELECT * FROM ace_coupons WHERE code=$1
+        API->>API: validate: not found? expired? minSpend?
+        alt valid
+            API->>DB: UPDATE ace_coupons SET used_count+1
+            API-->>PWA: {code:0, data:{discount, finalAmount}}
+        else invalid
+            API-->>PWA: {code:400, message:"COUPON_EXPIRED"}
+        end
+    end
+
+    rect rgb(230, 255, 230)
+        Note over PWA,DB: Flow 3: 购物车 → 下单 → 支付
+        PWA->>API: POST /cart/add {productId, quantity}
+        API->>DB: INSERT INTO ace_cart_items
+        API-->>PWA: {code:0, data:{cartItem}}
+
+        PWA->>API: POST /trade/calculate {items, country}
+        API->>API: calculate serviceFee + shipping + coupon discount
+        API-->>PWA: {code:0, data:{subtotal, serviceFee, shipping, discount, total}}
+
+        PWA->>API: POST /trade/order {items, shippingAddress, paymentMethod, compliance}
+        API->>DB: INSERT INTO ace_orders + ace_order_items
+        API-->>PWA: {code:0, data:{orderId, status:"PENDING"}}
+
+        PWA->>API: POST /payment/create {orderId, amount, payerEmail}
+        API->>API: call Xendit createInvoice
+        API->>DB: INSERT log
+        API-->>PWA: {code:0, data:{invoice_url, payment_methods:[...]}}
+    end
+
+    rect rgb(255, 230, 245)
+        Note over PWA,DB: Flow 4: 物流追踪
+        PWA->>API: GET /logistics-tracking/:orderId
+        API->>DB: SELECT * FROM ace_logistics_nodes WHERE order_id=$1 ORDER BY timestamp
+        DB-->>API: node rows
+        API-->>PWA: {code:0, data:{orderId, nodes:[{node,timestamp,location,note},...]}}
+    end
+
+    rect rgb(245, 245, 255)
+        Note over Admin,DB: Flow 5: Admin 仪表盘加载
+        Admin->>API: GET /dashboard/kpi
+        API->>DB: Aggregate ace_orders (monthGmv, todayGmv, totalOrders)
+        API->>DB: Aggregate ace_vault_ledger (profit, cost, shipping)
+        API->>DB: Count ace_products, ace_users
+        DB-->>API: aggregated values
+        API-->>Admin: {code:0, data:{monthGmv, todayGmv, totalProfit, activeUsers, totalProducts, ...}}
+
+        Admin->>API: GET /dashboard/trend?days=7
+        API->>DB: GROUP BY date ace_orders last 7 days
+        DB-->>API: daily rows
+        API-->>Admin: {code:0, data:[{date, gmv, orders},...]}
+
+        Admin->>API: GET /dashboard/category-breakdown
+        API->>DB: GROUP BY category ace_products + ace_order_items
+        DB-->>API: category rows
+        API-->>Admin: {code:0, data:[{category, revenue, orderCount},...]}
+    end
+
+    rect rgb(255, 245, 230)
+        Note over Admin,DB: Flow 6: Admin 订单管理
+        Admin->>API: GET /order/list?page=1&limit=20&status=PAID&country=ID
+        API->>DB: SELECT * FROM ace_orders WHERE country='ID' AND status='PAID' LIMIT 20
+        API->>DB: COUNT ace_orders (for total)
+        DB-->>API: order rows + count
+        API-->>Admin: {code:0, data:{items:[...], total:N, page:1}}
+    end
+
+    rect rgb(230, 255, 250)
+        Note over Admin,DB: Flow 7: Admin 财务金库汇总
+        Admin->>API: GET /vault/summary
+        API->>DB: Aggregate ace_vault_ledger GROUP BY account
+        API->>DB: Count ace_partners WHERE status='ACTIVE'
+        DB-->>API: summary data
+        API-->>Admin: {code:0, data:{accounts:{COLLECTION:N, COMMISSION:N, ...}, pendingSettlement:N}}
+    end

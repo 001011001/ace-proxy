@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import * as crypto from 'crypto';
 import { PrismaService } from '../../prisma/prisma.service';
 import { Alibaba1688Service } from '../intelligence/Alibaba1688Service';
 import { ConfigurationError, isDevMockEnabled } from '../../common/ConfigurationError';
@@ -64,7 +65,7 @@ export class TrendingEngine {
       const gap = Math.round((1 - sourcePrice / item.shopeePrice) * 100);
 
       results.push({
-        productId: `HOT-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        productId: `HOT-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`,
         name: item.name,
         shopeePrice: item.shopeePrice,
         '1688sourcePrice': Math.round(sourcePrice),

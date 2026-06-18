@@ -32,7 +32,11 @@ export class IPFirewallService {
     return { action: 'PASS' };
   }
 
+  /**
+   * @todo P2 — 当前返回 Mock 数据 (始终 false)，需要接入真实 Vision AI 接口（GPT-4o-vision / Google Vision）
+   */
   private async detectBrandLogo(image: string): Promise<boolean> {
+    this.logger.warn('[MOCK] IPFirewallService.detectBrandLogo — 返回硬编码 false，需接入Vision AI');
     // 调用 Vision AI 接口逻辑 (如 GPT-4o-vision 或 Google Vision)
     return false; // 模拟返回
   }

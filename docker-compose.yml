@@ -4,6 +4,7 @@ services:
   db:
     image: postgres:14-alpine
     restart: always
+    # ports 5432 removed — production DB must not be exposed to host
     environment:
       POSTGRES_USER: aceproxy_admin
       POSTGRES_PASSWORD: ${DB_PASSWORD:-changeme}

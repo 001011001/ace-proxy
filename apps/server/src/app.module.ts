@@ -1,4 +1,5 @@
 import { Module, MiddlewareConsumer, NestModule } from '@nestjs/common';
+import { APP_GUARD } from '@nestjs/core';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ConfigModule } from '@nestjs/config';
 
@@ -144,6 +145,8 @@ import { OrderController } from './modules/order/OrderController';
     OrderController,
   ],
   providers: [
+    // Global guard: rate-limiting for all controllers
+    { provide: APP_GUARD, useClass: ThrottlerGuard },
     IntelligenceService,
     PatentRiskChecker,
     ArbiBotService,
@@ -174,7 +177,6 @@ import { OrderController } from './modules/order/OrderController';
     InventoryService,
     AiTranslateService,
     AiPushService,
-    ThrottlerGuard,
     WebhookVerifier,
     AiCustomerService,
     LogisticsTrackingService,

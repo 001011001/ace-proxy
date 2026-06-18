@@ -5,6 +5,7 @@ import { SmartSplitterService } from '../splitter/SmartSplitterService';
 import { NotificationService } from '../notification/NotificationService';
 import { UserLevelService } from '../membership/UserLevelService';
 import { ReferralService } from '../referral/ReferralService';
+import { generateOrderId } from '../../common/uuid';
 
 /**
  * TradeService - 核心交易协调层 (The Glue)
@@ -48,7 +49,7 @@ export class TradeService {
 
     const order = await this.prisma.aceOrder.create({
       data: {
-        id: `ORD-${Date.now()}`,
+        id: generateOrderId(),
         userId: orderData.userId,
         partnerId: orderData.partner_id || null,
         status: 'PENDING',
@@ -75,9 +76,27 @@ export class TradeService {
 
   /**
    * 计算带会员折扣的最终费用 (基于精算模型)
+   *
+   * 如果 totalSpend 为 0 或未提供，则从 DB 读取用户历史总消费。
    */
-  async calculateFinalFees(userId: string, baseOrderAmount: number, totalSpend: number) {
-    const { level, config } = await this.membership.getUserTier(totalSpend);
+  async calculateFinalFees(userId: string, baseOrderAmount: number, totalSpend: number = 0) {
+    let actualTotalSpend = totalSpend;
+
+    if (actualTotalSpend === 0) {
+      // 从 DB 聚合用户历史订单总消费额
+      try {
+        const result = await this.prisma.aceOrder.aggregate({
+          where: { userId, status: 'PAID' },
+          _sum: { totalAmount: true },
+        });
+        actualTotalSpend = Number(result._sum.totalAmount || 0);
+      } catch (error: any) {
+        this.logger.warn(`[Trade] Failed to fetch totalSpend for ${userId}: ${error.message}`);
+        actualTotalSpend = 0;
+      }
+    }
+
+    const { level, config } = await this.membership.getUserTier(actualTotalSpend);
 
     const serviceFee = baseOrderAmount * config.serviceFeePct;
     const rebateAmount = baseOrderAmount * config.rebatePct;

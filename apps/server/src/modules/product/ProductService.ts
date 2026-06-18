@@ -1,8 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+
+/**
+ * 乐观锁配置
+ */
+const MAX_RETRIES = 3;
+const RETRY_BASE_MS = 50;
 
 @Injectable()
 export class ProductService {
+  private readonly logger = new Logger(ProductService.name);
+
   constructor(private readonly prisma: PrismaService) {}
 
   async listProducts(params: {
@@ -165,5 +173,62 @@ export class ProductService {
     } catch {
       return imageUrls ? [imageUrls] : [];
     }
+  }
+
+  /**
+   * 库存扣减（乐观锁 + 重试）
+   *
+   * 使用 Prisma 条件更新实现乐观锁：
+   *   UPDATE ace_product SET stock = stock - N WHERE id = ? AND stock >= N
+   *
+   * 最多重试 MAX_RETRIES 次，退避间隔 RETRY_BASE_MS * attempt。
+   *
+   * @param productId 产品 ID
+   * @param quantity  扣减数量
+   * @returns true 扣减成功，false 库存不足或重试耗尽
+   */
+  async decrementStockWithRetry(productId: string, quantity: number): Promise<boolean> {
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+      try {
+        const result = await this.prisma.aceProduct.updateMany({
+          where: {
+            id: productId,
+            stock: { gte: quantity },
+          },
+          data: {
+            stock: { decrement: quantity },
+          },
+        });
+
+        if (result.count > 0) {
+          this.logger.log(
+            `[Product] Stock decremented: ${productId} -${quantity} (attempt ${attempt})`,
+          );
+          return true;
+        }
+
+        // 库存不足，无需重试
+        this.logger.warn(
+          `[Product] Insufficient stock for ${productId}: requested ${quantity}`,
+        );
+        return false;
+      } catch (error: any) {
+        this.logger.warn(
+          `[Product] Stock decrement attempt ${attempt}/${MAX_RETRIES} failed: ${error.message}`,
+        );
+        if (attempt < MAX_RETRIES) {
+          await this.sleep(RETRY_BASE_MS * attempt);
+        }
+      }
+    }
+
+    this.logger.error(
+      `[Product] Stock decrement exhausted retries for ${productId}, qty=${quantity}`,
+    );
+    return false;
+  }
+
+  private sleep(ms: number): Promise<void> {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 }

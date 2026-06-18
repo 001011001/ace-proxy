@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigurationError, isDevMockEnabled } from '../../common/ConfigurationError';
+import { generateMessageSid } from '../../common/uuid';
 
 /**
  * NotificationService - 实时推送与消息中心
@@ -52,6 +53,6 @@ export class NotificationService {
     };
 
     // 生产环境调用: await this.http.post(WHATSAPP_API_URL, payload);
-    return { success: true, sid: `wa_${Math.random().toString(36).substr(2, 9)}` };
+    return { success: true, sid: generateMessageSid() };
   }
 }

@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, UseGuards, Param, Query } from '@nestjs/common';
+import { Controller, Post, Body, Get, UseGuards, Param, Query, Logger } from '@nestjs/common';
 import { VaultService } from './VaultService';
 import { XenditWebhookGuard } from './XenditWebhookGuard';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -10,6 +10,8 @@ import { RecordLedgerDto } from '../../dto/vault.dto';
  */
 @Controller('vault')
 export class VaultController {
+  private readonly logger = new Logger(VaultController.name);
+
   constructor(private readonly vaultService: VaultService) {}
 
   /**
@@ -31,9 +33,11 @@ export class VaultController {
   @Post('webhooks/xendit')
   @UseGuards(XenditWebhookGuard)
   async handleXenditWebhook(@Body() payload: any) {
-    // 逻辑：解析支付状态，更新订单，触发 VaultService.handleChargeback (如果是退单)
-    console.log('[VaultController] Received verified Xendit webhook:', payload);
-    
+    // 脱敏日志：仅记录 event 和 id，不打印完整 payload (含 payer 信息)
+    this.logger.log(
+      `[VaultController] Received verified Xendit webhook: event=${payload?.event}, id=${payload?.id}`,
+    );
+
     if (payload.event === 'payment.succeeded') {
       // 触发发货流程
     } else if (payload.event === 'payment.chargeback') {

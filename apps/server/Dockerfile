@@ -20,3 +20,6 @@ ENV PORT=3001
 EXPOSE 3001
 
 CMD ["sh", "-c", "npx prisma db push --accept-data-loss && node dist/main.js"]
+
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:3000/api/v1/health || exit 1

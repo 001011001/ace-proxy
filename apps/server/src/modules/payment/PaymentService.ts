@@ -1,8 +1,8 @@
-import { Injectable, Logger, BadRequestException, ServiceUnavailableException } from '@nestjs/common';
+import { Injectable, Logger, BadRequestException, ServiceUnavailableException, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../../prisma/prisma.service';
 import { WebhookVerifier } from '../../common/WebhookVerifier';
-import { ConfigurationError, isDevMockEnabled } from '../../common/ConfigurationError';
+import { PaymentFulfillmentService } from './PaymentFulfillmentService';
 
 export interface XenditInvoice {
   id: string;
@@ -45,6 +45,7 @@ export class PaymentService {
     private readonly config: ConfigService,
     private readonly prisma: PrismaService,
     private readonly verifier: WebhookVerifier,
+    private readonly fulfillment: PaymentFulfillmentService,
   ) {
     this.apiKey = this.config.get<string>('XENDIT_API_KEY') || '';
     this.isSandbox = this.config.get<string>('XENDIT_ENV') !== 'production';
@@ -65,21 +66,11 @@ export class PaymentService {
     failureRedirectUrl?: string;
     paymentMethods?: string[];  // 限制支付方式
   }): Promise<XenditInvoice> {
-    // MVP: if no API key or is placeholder, return mock invoice for local dev testing only
+    // API Key 检查：缺失时抛 InternalServerErrorException，禁止静默降级
     if (!this.apiKey || this.apiKey.includes('your-') || this.apiKey.length < 10) {
-      if (!isDevMockEnabled()) {
-        throw new ConfigurationError('Payment/Xendit', ['XENDIT_API_KEY', 'XENDIT_CALLBACK_TOKEN']);
-      }
-      this.logger.warn('[Payment] DEV_MOCK: No valid Xendit API key — returning mock invoice');
-      return {
-        id: `mock_inv_${Date.now()}`,
-        external_id: params.orderId,
-        status: 'PENDING',
-        amount: params.amount,
-        invoice_url: `https://checkout-staging.xendit.co/web/${params.orderId}`,
-        payment_method: (params.paymentMethods && params.paymentMethods[0]) || 'OVO',
-        _mockMode: true,
-      } as any;
+      throw new InternalServerErrorException(
+        'XENDIT_API_KEY is not configured. Payment service unavailable.',
+      );
     }
 
     this.validateAmount(params.amount);
@@ -138,8 +129,8 @@ export class PaymentService {
     description: string;
     shouldSendEmail?: boolean;
   }): Promise<{ payment_link_id: string; payment_link_url: string }> {
-    if (!this.apiKey) {
-      throw new ServiceUnavailableException('Xendit API key not configured.');
+    if (!this.apiKey || this.apiKey.length < 10) {
+      throw new InternalServerErrorException('XENDIT_API_KEY is not configured. Payment service unavailable.');
     }
 
     this.validateAmount(params.amount);
@@ -177,8 +168,8 @@ export class PaymentService {
 
   // ─── 3. 查询发票状态 ──────────────────────────────────────
   async getInvoiceStatus(invoiceId: string): Promise<XenditInvoice> {
-    if (!this.apiKey) {
-      throw new ServiceUnavailableException('Xendit API key not configured.');
+    if (!this.apiKey || this.apiKey.length < 10) {
+      throw new InternalServerErrorException('XENDIT_API_KEY is not configured. Payment service unavailable.');
     }
     this.validateInvoiceId(invoiceId);
 
@@ -229,8 +220,8 @@ export class PaymentService {
     amount?: number;    // 部分退款（不传则全额）
     reason: string;
   }): Promise<any> {
-    if (!this.apiKey) {
-      throw new ServiceUnavailableException('Xendit API key not configured.');
+    if (!this.apiKey || this.apiKey.length < 10) {
+      throw new InternalServerErrorException('XENDIT_API_KEY is not configured. Payment service unavailable.');
     }
     this.validateInvoiceId(params.invoiceId);
 
@@ -298,7 +289,10 @@ export class PaymentService {
    * { id, external_id, status: 'PAID'|'EXPIRED'|'FAILED', amount, payment_method, paid_at }
    */
   async handleWebhook(payload: any, callbackToken?: string, hmacSignature?: string, rawBody?: string): Promise<{ success: boolean; message: string }> {
-    this.logger.log(`[Payment Webhook] Received: ${JSON.stringify(payload).slice(0, 200)}`);
+    // 脱敏日志：仅记录 status/external_id/id，不打印完整 payload (含 payer 敏感信息)
+    this.logger.log(
+      `[Payment Webhook] Received: status=${payload?.status}, external_id=${payload?.external_id}, id=${payload?.id}`,
+    );
 
     // Webhook 签名验证（Callback Token 或 HMAC-SHA256）
     try {
@@ -334,56 +328,17 @@ export class PaymentService {
       // 根据支付状态更新订单
       switch (status) {
         case 'PAID':
-          await this.prisma.$transaction(async (tx) => {
-            // 1. 更新订单状态
-            await tx.aceOrder.update({
-              where: { id: external_id },
-              data: {
-                status: 'PAID',
-                // 记录支付信息（可扩展 AcePaymentTransaction 表）
-              },
-            });
-
-            // 2. 写入 Vault Ledger（收款记录）
-            await tx.aceVaultLedger.create({
-              data: {
-                orderId: external_id,
-                account: 'XENDIT_COLLECTION',
-                amount: amount || order.totalAmount,
-                entryType: 'COLLECTION',
-                description: `Xendit payment ${id} via ${payment_method || 'unknown'}`,
-              },
-            });
-
-            // 3. 计算并写入佣金（如有 Partner）
-            if (order.partnerId) {
-              const partner = await tx.acePartner.findUnique({
-                where: { id: order.partnerId },
-              });
-              if (partner) {
-                const commission = (amount || order.totalAmount) * Number(partner.commissionRate);
-                await tx.aceVaultLedger.create({
-                  data: {
-                    orderId: external_id,
-                    account: 'COMMISSION_PAYABLE',
-                    amount: -commission,
-                    entryType: 'COMMISSION',
-                    description: `Commission for partner ${partner.name}`,
-                  },
-                });
-                // 更新 Partner pending settlement
-                await tx.acePartner.update({
-                  where: { id: partner.id },
-                  data: {
-                    pendingSettlement: { increment: commission },
-                  },
-                });
-              }
-            }
+          // 委托 PaymentFulfillmentService 执行完整履约链路
+          // （金额校验→幂等→订单更新→库存扣减→账本→佣金）
+          await this.fulfillment.fulfill(external_id, {
+            id,
+            amount: amount || order.totalAmount,
+            payment_method,
+            paid_at,
           });
 
-          this.logger.log(`[Payment Webhook] ✅ Order ${external_id} marked as PAID`);
-          // TODO: 发送 WhatsApp 支付成功通知（调 NotificationService）
+          this.logger.log(`[Payment Webhook] ✅ Order ${external_id} fulfilled via FulfillmentService`);
+          // 发送 WhatsApp 支付成功通知
           await this.sendPaymentSuccessNotification(external_id, amount || order.totalAmount);
           break;
 

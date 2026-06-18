@@ -1,5 +1,6 @@
 import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import * as crypto from 'crypto';
+import { ConfigurationError } from './ConfigurationError';
 
 /**
  * WebhookVerifier — Xendit Webhook 签名验证
@@ -9,6 +10,9 @@ import * as crypto from 'crypto';
  * 2. HMAC Signature（安全）：Xendit 用 webhook secret 对 body 做 HMAC-SHA256
  *
  * 本模块两种均支持，P0 先用 Callback Token，P2 升级 HMAC。
+ *
+ * 安全约束：TOKEN/SECRET 缺失时抛 ConfigurationError 而非静默跳过，
+ * 杜绝生产环境未配置验证密钥导致回调被伪造的风险。
  */
 @Injectable()
 export class WebhookVerifier {
@@ -17,14 +21,14 @@ export class WebhookVerifier {
   /**
    * 通过 Callback Token 验证（简单方式）
    * 对比请求头中的 X-Callback-Token 与环境变量 XENDIT_CALLBACK_TOKEN
+   *
+   * @throws ConfigurationError 当 XENDIT_CALLBACK_TOKEN 未配置时
    */
   verifyCallbackToken(token: string | undefined): void {
     const expected = process.env.XENDIT_CALLBACK_TOKEN;
 
-    if (!expected) {
-      // 未配置则仅做日志不阻断（dev 环境）
-      this.logger.warn('[Webhook] XENDIT_CALLBACK_TOKEN not set. Skipping verification.');
-      return;
+    if (!expected || expected.length < 10) {
+      throw new ConfigurationError('WebhookVerifier/CallbackToken', ['XENDIT_CALLBACK_TOKEN']);
     }
 
     if (!token || token !== expected) {
@@ -39,13 +43,13 @@ export class WebhookVerifier {
    *
    * @param rawBody 原始请求体（必须是 JSON string，不可用已 parse 的对象）
    * @param signatureHeader x-xendit-signature 的值
+   * @throws ConfigurationError 当 XENDIT_WEBHOOK_SECRET 未配置时
    */
   verifyHmacSignature(rawBody: string, signatureHeader: string | undefined): void {
     const secret = process.env.XENDIT_WEBHOOK_SECRET;
 
-    if (!secret) {
-      this.logger.warn('[Webhook] XENDIT_WEBHOOK_SECRET not set. Skipping HMAC verification.');
-      return;
+    if (!secret || secret.length < 10) {
+      throw new ConfigurationError('WebhookVerifier/HMAC', ['XENDIT_WEBHOOK_SECRET']);
     }
 
     if (!signatureHeader) {
@@ -71,7 +75,7 @@ export class WebhookVerifier {
   verify(rawBody: string, callbackToken?: string, hmacSignature?: string): void {
     const secret = process.env.XENDIT_WEBHOOK_SECRET;
 
-    if (secret) {
+    if (secret && secret.length >= 10) {
       this.verifyHmacSignature(rawBody, hmacSignature);
     } else {
       this.verifyCallbackToken(callbackToken);
