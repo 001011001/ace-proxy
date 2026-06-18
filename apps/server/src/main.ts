@@ -20,22 +20,17 @@ async function bootstrap() {
   const isDev = process.env.NODE_ENV !== 'production';
 
   const devWhitelist = [
-    'http://localhost',
-    'http://127.0.0.1',
-    'http://10.0.',
-    'https://app.codebuddy.work',
-    '.codebuddy.work',
-    'file://',
+    'http://localhost:3000',
+    'http://localhost:8081',
+    'http://127.0.0.1:3000',
+    'https://d019ff30096a420ca632cabf74b4c5f6.app.codebuddy.work',
   ];
 
   app.enableCors({
     origin: (origin, callback) => {
       if (isDev) {
         if (!origin || origin === 'null') { callback(null, true); return; }
-        const allowed = devWhitelist.some(h => {
-          if (h.startsWith('.') ) return origin.endsWith(h) || origin.includes(h + '.');
-          return origin === h || origin.startsWith(h);
-        });
+        const allowed = devWhitelist.some(h => origin === h);
         if (!allowed) console.warn(`[CORS][DEV] Blocked origin: ${origin}`);
         callback(null, allowed);
       } else {

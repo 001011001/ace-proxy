@@ -1,0 +1,4 @@
+[main 559812c] docs: ARCHITECTURE 507行 (>500) + DEPLOYMENT 554行 (>400) — DB schema, API design, migration strategy, 12 suites/58 tests green
+ 3 files changed, 260 insertions(+), 2 deletions(-)
+ create mode 100644 apps/server/jest_docs_v2.txt
+ create mode 100644 git_commit_docs.txt
