@@ -1,0 +1,20 @@
+[main c8334ca] feat: T05 tests+Swagger+docs — 58 tests (12 suites), Swagger @nestjs/swagger setup, 5 controllers decorated, ARCHITECTURE.md + DEPLOYMENT.md
+ 26 files changed, 2624 insertions(+), 141 deletions(-)
+ create mode 100644 apps/server/jest_t05_all.txt
+ create mode 100644 apps/server/jest_t05_final.txt
+ create mode 100644 apps/server/jest_t05_trade.txt
+ create mode 100644 apps/server/jest_t05_v2.txt
+ create mode 100644 apps/server/jest_t05_v3.txt
+ create mode 100644 apps/server/src/modules/auth/__tests__/AuthService.spec.ts
+ create mode 100644 apps/server/src/modules/cart/__tests__/CartService.spec.ts
+ create mode 100644 apps/server/src/modules/marketing/__tests__/CouponService.spec.ts
+ create mode 100644 apps/server/src/modules/order/__tests__/OrderController.spec.ts
+ create mode 100644 apps/server/src/modules/payment/__tests__/PaymentService.spec.ts
+ create mode 100644 apps/server/src/modules/shipping/__tests__/ShippingService.spec.ts
+ create mode 100644 apps/server/src/modules/trade/__tests__/TradeService.spec.ts
+ create mode 100644 apps/server/src/modules/vault/__tests__/VaultService.spec.ts
+ create mode 100644 apps/server/tsc_t05.txt
+ create mode 100644 apps/server/tsc_t05_v2.txt
+ create mode 100644 docs/ARCHITECTURE.md
+ create mode 100644 docs/DEPLOYMENT.md
+ create mode 100644 git_commit_t04.txt

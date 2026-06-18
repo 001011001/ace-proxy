@@ -69,6 +69,88 @@
 └──────────────────────────────────────────────────────┘
 ```
 
+### 模块依赖拓扑图 (Mermaid)
+
+```mermaid
+graph TD
+    subgraph "Frontend Layer"
+        PWA[PWA index.html]
+        ADMIN[Admin Console]
+    end
+
+    subgraph "API Gateway"
+        CORS[CORS Middleware]
+        THROTTLE[ThrottlerGuard]
+        VALIDATE[ValidationPipe]
+    end
+
+    subgraph "Core Modules"
+        AUTH[Auth Module]
+        PRODUCT[Product Module]
+        TRADE[Trade Module]
+        PAYMENT[Payment Module]
+        VAULT[Vault Module]
+        CART[Cart Module]
+        SHIPPING[Shipping Module]
+        CHAT[Chat Module]
+    end
+
+    subgraph "Support Modules"
+        MARKETING[Coupon/Marketing]
+        NOTIFICATION[Notification]
+        DASHBOARD[Dashboard]
+        LOGISTICS[Logistics Tracking]
+        ORDER[Order Management]
+        REGION[Region Strategy]
+        HOLIDAY[Holiday Config]
+    end
+
+    subgraph "Infrastructure"
+        PRISMA[Prisma ORM]
+        DB[(PostgreSQL)]
+        XENDIT[Xendit API]
+        OLLAMA[Ollama AI]
+    end
+
+    PWA --> CORS
+    ADMIN --> CORS
+    CORS --> THROTTLE
+    THROTTLE --> VALIDATE
+
+    VALIDATE --> AUTH
+    VALIDATE --> PRODUCT
+    VALIDATE --> TRADE
+    VALIDATE --> PAYMENT
+    VALIDATE --> CART
+    VALIDATE --> SHIPPING
+    VALIDATE --> CHAT
+
+    TRADE --> VAULT
+    TRADE --> SHIPPING
+    TRADE --> NOTIFICATION
+    TRADE --> PRODUCT
+    TRADE --> AUTH
+
+    PAYMENT --> VAULT
+    PAYMENT --> NOTIFICATION
+    PAYMENT --> ORDER
+
+    VAULT --> PRISMA
+    PRODUCT --> PRISMA
+    CART --> PRISMA
+    MARKETING --> PRISMA
+    LOGISTICS --> PRISMA
+    ORDER --> PRISMA
+
+    PRISMA --> DB
+    PAYMENT --> XENDIT
+    CHAT --> OLLAMA
+
+    REGION --> SHIPPING
+    HOLIDAY --> NOTIFICATION
+    DASHBOARD --> PRISMA
+```
+
 ---
 
 ## 2. 目录结构
@@ -129,44 +211,53 @@ ace-proxy/
 ## 3. 核心模块职责
 
 ### Auth (认证)
-- **AuthService**: 注册、登录、JWT 签发
-- **JwtStrategy**: Passport JWT 策略验证
-- **JwtAuthGuard**: 全局认证守卫
+- **AuthService**: 注册、登录、JWT 签发、密码 bcrypt 哈希
+- **JwtStrategy**: Passport JWT 策略验证，从 token 提取 userId
+- **JwtAuthGuard**: 全局认证守卫，保护需要登录的端点
 
 ### Product (商品)
-- **ProductService**: 商品 CRUD、库存扣减（乐观锁重试）
-- **ProductController**: REST API 分页/搜索/分类
+- **ProductService**: 商品 CRUD、库存扣减（乐观锁重试 3 次指数退避）、列表分页
+- **ProductController**: REST API — `/product/list`(分页/搜索/分类)、`/product/:id`
 
 ### Trade (交易)
-- **TradeService**: 创建订单、费用计算、合规检查
-- **TradeController**: 代购协议确认、订单创建、Salvage
+- **TradeService**: 创建订单、合规确认（跨境代购协议）、费用分级计算
+- **TradeController**: 代购协议确认、订单创建、Salvage 补偿操作
+- 依赖: VaultService（分账）、ProductService（库存）、NotificationService（通知）
 
 ### Vault (金库)
-- **VaultService**: 全链路零和分账、拒付、结算
-- **RiskSentryController**: 熔断器监控
-- **VaultController**: 三池余额查询
+- **VaultService**: 全链路零和分账（7 条分录）、拒付处理、结算 payout
+- 分账优先级: RiskPool(1.5%) > Cost > Shipping > Commission(2%) > Rebate > Profit
+- 零和校验: 所有分录余额偏移 < 0.01
+- **RiskSentryController**: 熔断器监控，实时风控状态
+- **VaultController**: 三池余额查询（RISK_POOL / PLATFORM_NET_PROFIT / PARTNER_COMMISSION）
 
 ### Payment (支付)
-- **PaymentService**: Xendit 发票创建、查询、退款、Webhook
-- **PaymentFulfillmentService**: 支付履约（扣库存→入账→佣金）
-- **WebhookVerifier**: Xendit HMAC/Callback Token 验证
+- **PaymentService**: Xendit 全功能集成 — 创建发票、支付链接、查询状态、退款、对账报表
+- **PaymentFulfillmentService**: 支付成功履约 — 金额校验(±1%容差) → 幂等 → 扣库存 → 入账 → 佣金
+- **WebhookVerifier**: Xendit HMAC-SHA256 + Callback Token 双重验证
 
 ### Chat (AI 助手)
-- **ChatService**: Ollama Steward 调用、本地推理、工具调用
-- 支持语音输入（Web Speech API）和 TTS 输出
+- **ChatService**: Ollama Steward 多轮对话、本地推理、function calling 工具调用
+- 工具集: searchProducts、getOrderStatus、getPaymentStatus、getExchangeRate
+- 前端: 语音输入 (Web Speech API)、TTS 输出、快捷提问按钮
 
 ### Shipping (物流)
-- **ShippingService**: 多国运费计算、时效估算
-- 集成 exchange-rate 去硬编码汇率
+- **ShippingService**: 多国运费计算编排层，委托 YuntuShippingProvider
+- **YuntuShippingProvider**: 云途物流 API 对接（成本运费、时效、地址校验）
+- 费用叠加: 成本运费 + perKg 差价 + perPiece 差价 → 汇率转换
+- 汇率来源: `exchange-rate.ts` 集中管理，去硬编码
 
 ### Marketing (营销)
-- **CouponService**: 优惠券 CRUD (Prisma)
+- **CouponService**: 优惠券 CRUD — getByCode、claimCoupon（校验状态/日期/限量）、listUserCoupons
+- 数据源: Prisma AceCoupon 表（T02 从 Mock→DB 改造）
 
 ### Cart (购物车)
-- **CartService**: 购物车增删改查 (Prisma $transaction)
+- **CartService**: 购物车增删改查 — addToCart(含库存校验)、getCart(含 product 联表)、removeCartItem、clearCart
+- 事务保护: addToCart 使用 Prisma $transaction 保证原子性
 
 ### Dashboard (仪表盘)
-- **DashboardService**: KPI、趋势、分类/国家分析
+- **DashboardService**: KPI 指标（GMV/订单数/转化率）、趋势图数据、品类/国家 breakdown
+- 全 Prisma 聚合查询: groupBy / count / aggregate
 
 ---
 
@@ -202,7 +293,52 @@ Client Request
 Client Response
 ```
 
-### 支付 Webhook 流程
+### 支付 Webhook 流程 (Mermaid 时序图)
+
+```mermaid
+sequenceDiagram
+    participant X as Xendit
+    participant PC as PaymentController
+    participant WV as WebhookVerifier
+    participant PS as PaymentService
+    participant PF as PaymentFulfillmentService
+    participant V as VaultService
+    participant DB as PostgreSQL
+    participant W as WhatsApp/Notification
+
+    X->>PC: POST /payment/webhook (PAID)
+    PC->>WV: verify(payload, token, hmac)
+    alt 签名无效
+        WV-->>PC: Unauthorized
+        PC-->>X: 401
+    else 签名有效
+        WV-->>PC: OK
+        PC->>PS: handleWebhook()
+        PS->>DB: findUnique(aceOrder)
+        alt 订单已 PAID (幂等)
+            DB-->>PS: already PAID
+            PS-->>PC: { success: true, message: "Already processed" }
+        else 新支付
+            PS->>PF: fulfill(orderId, paymentInfo)
+            PF->>PF: 金额校验 (±1%)
+            alt 金额不匹配
+                PF-->>PS: reject
+            else 金额正确
+                PF->>DB: update(aceOrder → PAID)
+                PF->>DB: updateMany(aceProduct stock--)
+                PF->>V: recordOrderLedger()
+                V->>DB: create × 7 (ledger entries)
+                V->>V: 零和校验
+                PF->>W: sendPaymentSuccessNotification()
+                PF-->>PS: success
+            end
+        end
+        PS-->>PC: { success: true }
+        PC-->>X: 200
+    end
+```
+
+### 支付 Webhook 流程（文字版）
 
 ```
 Xendit Callback
@@ -235,23 +371,118 @@ PaymentService.handleWebhook()
 ## 5. 安全设计
 
 ### JWT 认证
-- 算法: HS256 (可升级 RS256)
-- 有效期: 7 天
-- 自动刷新: 前端检测过期
+- **算法**: HS256（可升级 RS256 / ES256）
+- **有效期**: 7 天（accessToken），前端自动检测过期
+- **刷新策略**: 当前版本无 refreshToken（MVP），Token 过期后重新登录
+- **存储**: localStorage `ace_jwt`（前端），`ace_admin_jwt`（管理后台）
+- **Payload 结构**:
+  ```json
+  { "sub": "userId-uuid-v7", "email": "user@example.com", "role": "USER", "iat": 1234567890, "exp": 1234567890 }
+  ```
 
 ### Webhook 签名验证
-- Xendit Callback Token: 固定 token 比对
-- Xendit HMAC-SHA256: 密钥签名验证
-- 防重放: 基于时间窗口
+- **Xendit Callback Token**: 固定 token 字符串比对
+  - 前端传递 callback token → 后端与 `XENDIT_CALLBACK_TOKEN` 环境变量比对
+  - 不匹配 → 直接返回 `{ success: false }` 而非 401（避免 Xendit 重试风暴）
+- **Xendit HMAC-SHA256**: 基于 webhook secret 的 HMAC 签名验证
+  - 对 raw body 计算 HMAC-SHA256 → 与 `x-xendit-signature` header 比对
+- **防重放**: 基于订单状态幂等检查（PAID 订单不再重复处理）
 
-### 乐观锁
-- 库存扣减: `WHERE stock >= quantity` 条件更新
-- 匹配失败重试 3 次（指数退避）
-- 支付履约幂等: PAID 状态检查
+### 乐观锁并发控制
+- **库存扣减**: `UPDATE ace_product SET stock = stock - ? WHERE id = ? AND stock >= ?`
+  - 匹配失败（count=0）→ 重试 3 次，指数退避（50ms / 100ms / 200ms）
+  - 最终失败 → 返回 `{ success: false, reason: "INSUFFICIENT_STOCK" }`
+- **支付履约幂等**: 检查订单状态 === 'PAID' → 直接返回成功（已处理）
+- **购物车事务**: Prisma `$transaction` 包装 addToCart（读取库存 → 校验 → 创建/更新）
 
-### 全局限流
-- ThrottlerGuard: 默认 100 req/min
-- 登录/注册: 5 req/min (TODO)
+### 全局限流策略
+- **ThrottlerGuard**: 基于 NestJS Throttler 的全局限流
+  - 默认: 100 请求/分钟/客户端
+  - 登录/注册端点: 待配置 @Throttle(5/min) 装饰器
+- **限流标识**: 基于客户端 IP 或用户 ID（登录后）
+- **响应**: 429 Too Many Requests + 等待秒数 header
 
 ### CSV 注入防护
-- 导出 CSV: escapeCsvField 转义 `=` `+` `-` `@` 前缀
+- **场景**: 管理后台导出订单 CSV（`/order/export-csv`）
+- **威胁**: 用户在订单地址字段注入 `=cmd|/C calc!A0` 等公式
+- **防护**: `escapeCsvField()` 函数，对 `=` `+` `-` `@` 前缀字符添加单引号转义
+- **示例**: `=SUM(A1:A10)` → `'=SUM(A1:A10)`
+
+### 其他安全措施
+- **密码**: bcrypt (cost=10) 哈希存储，永不记录明文
+- **SQL 注入**: Prisma 参数化查询，零原始 SQL 拼接（$queryRawUnsafe 仅用于统计）
+- **CORS**: 白名单模式 — 生产环境严格限制 `aceproxy.id` / `aceproxy.co.th` / `aceproxy.ph`
+- **Helmet**: 生产环境建议添加 helmet 中间件设置安全 headers
+- **HTTPS**: 所有外部流量通过 Nginx SSL 终止
+
+---
+
+## 6. 技术选型理由
+
+### 为什么 NestJS？
+
+| 考量 | NestJS | Express (备选) |
+|------|--------|----------------|
+| 架构模式 | 模块化 (Module/Controller/Service) | 自由组织 |
+| TypeScript | 一等公民，内置装饰器 | 需手动配置 |
+| DI 容器 | 内置 IoC，可测试性强 | 需第三方 |
+| 生态 | Guards/Interceptors/Pipes 开箱即用 | 需中间件拼装 |
+| 维护性 | 约定优于配置，大型项目更清晰 | 灵活但有组织成本 |
+
+**决策**: NestJS 的模块化架构非常适合 AceProxy 的 15+ 模块场景，DI 容器使单元测试极大简化。
+
+### 为什么 Prisma？
+
+| 考量 | Prisma | TypeORM (备选) |
+|------|--------|----------------|
+| 类型安全 | 自动生成类型，编译期检查 | 装饰器 + 手动类型 |
+| Schema 管理 | 声明式 schema.prisma + 迁移 | 手动 migration 或 synchronize |
+| 查询 API | 链式 API，IDE 自动补全 | Repository/QueryBuilder |
+| 性能 | 较新的优化，支持连接池 | 成熟稳定 |
+| 学习曲线 | 低，文档优秀 | 中等 |
+
+**决策**: Prisma 的类型安全和声明式 schema 降低了 DB 层出错概率，迁移工具对 MVP 快速迭代友好。
+
+### 为什么 UUID v7？
+
+| 考量 | UUID v7 | UUID v4 (备选) | AutoIncrement |
+|------|---------|----------------|---------------|
+| 时间排序 | ✅ 前 48 位是时间戳 | ❌ 完全随机 | ✅ 递增 |
+| 唯一性 | ✅ 全局唯一 | ✅ 全局唯一 | ⚠️ 仅表级别 |
+| 分布式友好 | ✅ 无冲突 | ✅ 无冲突 | ❌ 需协调 |
+| 索引效率 | ✅ 时间有序，B-tree 友好 | ❌ 随机，索引碎片 | ✅ 最佳 |
+| URL 安全 | ✅ 不暴露记录数 | ✅ 不暴露记录数 | ❌ 暴露增长 |
+
+**决策**: UUID v7 兼顾全局唯一性（分库分表友好）和时间排序（索引效率），非常适合跨境电商的多用户/多订单场景。
+
+---
+
+## 7. 未来扩展计划
+
+### Phase 1: MVP 强化（当前阶段）
+- [x] JWT 认证 + Swagger 文档
+- [x] Xendit 支付全流程
+- [x] 全链路零和分账
+- [x] 58 个单元测试
+- [ ] Refresh Token 机制
+- [ ] 邮件验证流程
+
+### Phase 2: 性能与稳定性
+- **Redis 缓存层**: 商品列表/详情缓存（TTL 5分钟），减少数据库压力
+- **数据库读写分离**: 主库写入，只读副本用于 Dashboard 聚合查询
+- **消息队列**: RabbitMQ/Bull 处理支付 Webhook 异步任务（避免 Xendit 超时）
+- **CDN**: 静态资源（前端 HTML/JS）+ 商品图片托管到阿里云 OSS + CDN
+- **APM**: Sentry 错误追踪 + OpenTelemetry 分布式链路追踪
+
+### Phase 3: 业务扩展
+- **多国部署**: 印尼（雅加达）、泰国（曼谷）、菲律宾（马尼拉）独立实例
+- **多语言**: 当前 EN/ID/CN 三语 → 增加 TH/VI 支持
+- **卖家中心**: 团长/代购者管理后台（订单管理、收益报表、提现）
+- **社交功能**: 商品分享、社区评价、团长排行榜
+- **智能推荐**: 基于用户行为的协同过滤推荐引擎
+
+### Phase 4: 企业级
+- **微服务拆分**: Auth / Product / Trade / Payment 独立部署
+- **Kubernetes**: 容器编排 + 自动扩缩 + 滚动更新
+- **合规**: PCI-DSS 支付合规、GDPR 数据保护、ISO 27001
+- **灾备**: 跨 AZ 主从复制 + 异地冷备 + 15 分钟 RPO
