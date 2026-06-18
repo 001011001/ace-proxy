@@ -1,0 +1,3 @@
+ab5efc3 feat: T02 backend mock→DB — Coupon/Holiday Prisma, Region config, Notification skeleton, Trade/exception, Chat JSON guard, Payment validation
+2348ee9 feat: T01 infrastructure — dep cleanup, exchange rate centralization, Docker HEALTHCHECK, Prisma migration, @todo markers
+f7b361d feat: CI/CD pipeline + admin console real data + mobile-first UI + AI local model + one-click listing skills

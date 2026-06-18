@@ -1,6 +1,7 @@
-import { Controller, Get, Query, Param, Res } from '@nestjs/common';
+import { Controller, Get, Query, Param, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 import { PrismaService } from '../../prisma/prisma.service';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { escapeCsvField } from '../../common/csv-escape';
 
 /**
@@ -10,18 +11,53 @@ import { escapeCsvField } from '../../common/csv-escape';
 export class OrderController {
   constructor(private readonly prisma: PrismaService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Get('list')
-  async list(@Query('status') status?: string) {
+  async list(
+    @Query('status') status?: string,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('startDate') startDate?: string,
+    @Query('endDate') endDate?: string,
+  ) {
+    const pageNum = Math.max(1, parseInt(page || '1', 10) || 1);
+    const limitNum = Math.min(100, Math.max(1, parseInt(limit || '20', 10) || 20));
+    const skip = (pageNum - 1) * limitNum;
+
     const where: any = {};
     if (status && status !== 'ALL') where.status = status;
+
+    // 日期范围过滤
+    if (startDate || endDate) {
+      where.createdAt = {};
+      if (startDate) {
+        const sd = new Date(startDate);
+        if (!isNaN(sd.getTime())) where.createdAt.gte = sd;
+      }
+      if (endDate) {
+        const ed = new Date(endDate);
+        if (!isNaN(ed.getTime())) {
+          ed.setHours(23, 59, 59, 999);
+          where.createdAt.lte = ed;
+        }
+      }
+      if (Object.keys(where.createdAt).length === 0) delete where.createdAt;
+    }
+
     const [orders, total] = await Promise.all([
       this.prisma.aceOrder.findMany({
-        where, orderBy: { createdAt: 'desc' }, take: 100,
-        select: { id: true, status: true, totalAmount: true, createdAt: true, userId: true },
+        where, orderBy: { createdAt: 'desc' }, skip, take: limitNum,
+        select: { id: true, status: true, totalAmount: true, createdAt: true, userId: true, country: true },
       }),
       this.prisma.aceOrder.count({ where }),
     ]);
-    return { items: orders, total };
+    return {
+      items: orders,
+      total,
+      page: pageNum,
+      limit: limitNum,
+      totalPages: Math.ceil(total / limitNum),
+    };
   }
 
   @Get(':id/timeline')

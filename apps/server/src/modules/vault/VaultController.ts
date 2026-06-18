@@ -62,8 +62,9 @@ export class VaultController {
   }
 
   /**
-   * 金库三池余额汇总
+   * 金库三池余额汇总（管理后台）
    */
+  @UseGuards(JwtAuthGuard)
   @Get('summary')
   async summary() {
     const [marginPool, serviceFeePool, riskReserve] = await Promise.all([

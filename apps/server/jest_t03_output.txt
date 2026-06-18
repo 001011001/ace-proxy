@@ -1,0 +1,48 @@
+PASS src/common/__tests__/uuid.spec.ts (5.039 s)
+  uuid
+    generateUUIDv4
+      √ should return a valid UUID v4 format (25 ms)
+      √ should produce unique values across multiple calls (1 ms)
+    generateOrderId
+      √ should start with "ord_" prefix (8 ms)
+      √ should have length > 40 (UUID v7 is 36 chars + "ord_")
+    generateInviteCode
+      √ should format as ACE-{PREFIX}-{4 digits}
+      √ should uppercase the prefix (1 ms)
+    generateSessionId
+      √ should start with "sess_" prefix
+    generateMessageSid
+      √ should start with "wa_" prefix
+      √ should be 13 characters (wa_ + 10 alphanumeric)
+
+[33m[Nest] 9512  - [39m2026/06/18 14:49:50 [33m   WARN[39m [38;5;3m[WebhookVerifier] [39m[33m[Webhook] Invalid callback token. Received: wrong-to...[39m
+[33m[Nest] 9512  - [39m2026/06/18 14:49:50 [33m   WARN[39m [38;5;3m[WebhookVerifier] [39m[33m[Webhook] Invalid callback token. Received: wrong-to...[39m
+PASS src/common/__tests__/WebhookVerifier.spec.ts (5.851 s)
+  WebhookVerifier
+    verifyCallbackToken
+      √ should throw ConfigurationError when XENDIT_CALLBACK_TOKEN is not set (35 ms)
+      √ should throw UnauthorizedException when token does not match (3 ms)
+      √ should pass silently when token matches (2 ms)
+    verifyHmacSignature
+      √ should throw ConfigurationError when XENDIT_WEBHOOK_SECRET is not set (1 ms)
+      √ should throw UnauthorizedException when signature header is missing (1 ms)
+
+PASS src/modules/payment/__tests__/PaymentFulfillmentService.spec.ts (7.065 s)
+  PaymentFulfillmentService
+    fulfill
+      √ should return success for already PAID order (idempotency) (38 ms)
+      √ should reject order when amount mismatch exceeds 1% tolerance (2 ms)
+      √ should successfully fulfill a valid order (2 ms)
+
+PASS src/modules/product/__tests__/ProductService.spec.ts (7.236 s)
+  ProductService
+    decrementStockWithRetry
+      √ should return true when stock is sufficient and decrement succeeds (38 ms)
+      √ should return false when stock is insufficient (2 ms)
+      √ should retry on transient errors up to MAX_RETRIES (170 ms)
+
+Test Suites: 4 passed, 4 total
+Tests:       20 passed, 20 total
+Snapshots:   0 total
+Time:        9.047 s
+Ran all test suites.
