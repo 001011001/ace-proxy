@@ -1,7 +1,10 @@
-import { Controller, Get, Post, Query, Body } from '@nestjs/common';
+import { Controller, Get, Post, Query, Body, UseGuards } from '@nestjs/common';
 import { ShippingService } from './ShippingService';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { ThrottlerGuard } from '../../common/guards/ThrottlerGuard';
 
 @Controller('shipping')
+@UseGuards(JwtAuthGuard, ThrottlerGuard)
 export class ShippingController {
   constructor(private readonly shipping: ShippingService) {}
 

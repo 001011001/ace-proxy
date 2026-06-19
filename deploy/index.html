@@ -4,14 +4,14 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>AceProxy — Premium Global Sourcing</title>
 <meta name="description" content="Premium cross-border curated marketplace. AI quality inspection. Global factory to Jakarta.">
-<meta name="theme-color" content="#F97316">
+<meta name="theme-color" content="#d45d3a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="AceProxy">
 <link rel="manifest" href="./manifest.json">
 <script src="api-client.js"></script>
 <style>
-:root{--o:#F97316;--b:#000;--w:#fff;--g:#16A34A;--r:#EF4444;--bl:#3B82F6;--y:#EAB308;--p:#8B5CF6;
+:root{--o:#d45d3a;--oh:#c0392b;--ol:#fdf0eb;--b:#000;--w:#fff;--g:#16A34A;--r:#EF4444;--bl:#3B82F6;--y:#EAB308;--p:#8B5CF6;
 --g50:#F8FAFC;--g100:#F1F5F9;--g200:#E2E8F0;--g300:#CBD5E1;--g500:#64748B;--g700:#334155;--g900:#0F172A;--r2:12px}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:var(--g50);color:var(--g900)}
@@ -28,7 +28,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
 
 .page{display:none;padding-bottom:90px}.page.active{display:block}
 
-.countdown{background:linear-gradient(90deg,var(--o),#EA580C);text-align:center;padding:8px;font-weight:800;font-size:12px;color:var(--w);display:flex;justify-content:center;gap:8px;flex-wrap:wrap;align-items:center}
+.countdown{background:linear-gradient(90deg,var(--o),var(--oh));text-align:center;padding:8px;font-weight:800;font-size:12px;color:var(--w);display:flex;justify-content:center;gap:8px;flex-wrap:wrap;align-items:center}
 .countdown-t{background:rgba(0,0,0,.3);padding:2px 10px;border-radius:4px;font-family:monospace;font-size:13px}
 
 .hero{background:linear-gradient(135deg,#FFF7ED,#FEE2E2);text-align:center;padding:40px 16px}
@@ -245,10 +245,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
 .auth-form input{width:100%;padding:12px 14px;border:1.5px solid var(--g300);border-radius:10px;font-size:14px;outline:none;transition:.15s}
 .auth-form input:focus{border-color:var(--o)}
 .auth-submit{width:100%;padding:14px;border-radius:10px;background:var(--o);color:var(--w);font-weight:800;font-size:14px;border:none;cursor:pointer;margin-top:8px;transition:.15s}
-.auth-submit:hover{background:#EA580C}
+.auth-submit:hover{background:var(--oh)}
 .auth-switch{text-align:center;margin-top:16px;font-size:12px;color:var(--g500)}
 .auth-switch a{color:var(--o);font-weight:700;cursor:pointer;text-decoration:none}
 .auth-error{color:var(--r);font-size:12px;text-align:center;margin-top:8px;min-height:18px}
+.auth-field-err{display:block;color:var(--r);font-size:11px;margin-top:2px;min-height:16px}
 .auth-pw-hint{font-size:10px;color:var(--g500);margin-top:4px}
 
 /* RATINGS */
@@ -267,14 +268,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
 .coupon-card{background:linear-gradient(135deg,#FFF7ED,#FEE2E2);border-radius:12px;padding:16px;border:1.5px dashed var(--o);margin-bottom:10px;display:flex;gap:10px;align-items:center;cursor:pointer;transition:.15s}
 .coupon-card:hover{box-shadow:0 2px 8px rgba(249,115,22,.15);transform:translateY(-1px)}
 .coupon-card.used{opacity:.5;pointer-events:none;border-color:var(--g300);background:var(--g50)}
-.co-page{padding:24px 16px 120px}.co-title{font-size:22px;font-weight:900;margin-bottom:20px}.co-section{margin-bottom:20px}.co-section h3{font-size:14px;font-weight:700;margin-bottom:10px;color:var(--g900)}.co-input{width:100%;padding:12px 14px;border:1.5px solid var(--g300);border-radius:10px;font-size:13px;font-weight:500;outline:none;margin-bottom:10px;background:var(--w)}.co-input:focus{border-color:var(--o)}.co-row{display:flex;gap:10px}.co-payment{display:grid;grid-template-columns:1fr 1fr;gap:8px}.co-pay-opt{padding:14px 12px;border:1.5px solid var(--g200);border-radius:10px;text-align:center;cursor:pointer;font-size:13px;font-weight:600;background:var(--w);transition:.15s}.co-pay-opt.active{border-color:var(--o);background:#FFF7ED}.co-summary{background:var(--w);border-radius:12px;padding:16px;border:1px solid var(--g100)}.co-sum-line{display:flex;justify-content:space-between;font-size:12px;font-weight:500;padding:6px 0;color:var(--g700)}.co-sum-total{border-top:1.5px solid var(--g200);padding-top:10px;margin-top:6px;font-size:16px;font-weight:800;color:var(--g900)}.co-submit{width:100%;padding:16px;border-radius:12px;background:var(--o);color:var(--w);font-weight:800;font-size:15px;border:none;cursor:pointer;margin-top:16px}.co-submit:hover{background:#EA580C}
+.co-page{padding:24px 16px 120px}.co-title{font-size:22px;font-weight:900;margin-bottom:20px}.co-section{margin-bottom:20px}.co-section h3{font-size:14px;font-weight:700;margin-bottom:10px;color:var(--g900)}.co-input{width:100%;padding:12px 14px;border:1.5px solid var(--g300);border-radius:10px;font-size:13px;font-weight:500;outline:none;margin-bottom:10px;background:var(--w)}.co-input:focus{border-color:var(--o)}.co-row{display:flex;gap:10px}.co-payment{display:grid;grid-template-columns:1fr 1fr;gap:8px}.co-pay-opt{padding:14px 12px;border:1.5px solid var(--g200);border-radius:10px;text-align:center;cursor:pointer;font-size:13px;font-weight:600;background:var(--w);transition:.15s}.co-pay-opt.active{border-color:var(--o);background:#FFF7ED}.co-summary{background:var(--w);border-radius:12px;padding:16px;border:1px solid var(--g100)}.co-sum-line{display:flex;justify-content:space-between;font-size:12px;font-weight:500;padding:6px 0;color:var(--g700)}.co-sum-total{border-top:1.5px solid var(--g200);padding-top:10px;margin-top:6px;font-size:16px;font-weight:800;color:var(--g900)}.co-submit{width:100%;padding:16px;border-radius:12px;background:var(--o);color:var(--w);font-weight:800;font-size:15px;border:none;cursor:pointer;margin-top:16px}.co-submit:hover{background:var(--oh)}
 .policy-page{max-width:680px;margin:0 auto;padding:32px 20px 120px;font-size:13px;line-height:1.7;color:var(--g700)}.policy-page h2{font-size:20px;font-weight:800;color:var(--g900);margin-bottom:4px}.policy-page h3{font-size:14px;font-weight:700;color:var(--g900);margin:20px 0 8px}.policy-page p{margin-bottom:10px}.policy-page .lang-tabs{display:flex;gap:8px;margin-bottom:20px}.policy-lang-btn{padding:6px 16px;border-radius:20px;border:1.5px solid var(--g300);font-size:12px;font-weight:600;cursor:pointer;background:var(--w)}.policy-lang-btn.active{background:var(--o);color:var(--w);border-color:var(--o)}
 .coupon-icon{font-size:28px;min-width:40px;text-align:center}
 .coupon-info{flex:1}.coupon-code{font-size:15px;font-weight:800;font-family:monospace;letter-spacing:1px;color:var(--o)}.coupon-desc{font-size:11px;color:var(--g500);margin-top:2px}.coupon-exp{font-size:10px;color:var(--g500);margin-top:1px}
 .coupon-action{font-size:11px;font-weight:700;color:var(--o);white-space:nowrap}
 .fav-item{display:flex;gap:10px;align-items:center;padding:10px;background:var(--w);border-radius:10px;border:1px solid var(--g100);margin-bottom:8px;cursor:pointer;transition:.15s}
-.fav-item:hover{box-shadow:0 2px 8px rgba(0,0,0,.08)}.fav-icon{font-size:24px;min-width:36px;text-align:center}.fav-info{flex:1}.fav-name{font-size:12px;font-weight:700}.fav-price{font-size:13px;font-weight:800;color:var(--o);margin-top:2px}.fav-remove{background:none;border:1px solid var(--g300);border-radius:50%;width:28px;height:28px;cursor:pointer;font-size:14px;color:var(--g500);display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.pfav-btn{position:absolute;top:8px;right:8px;z-index:2;width:32px;height:32px;border-radius:16px;border:none;background:rgba(255,255,255,.9);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:.15s;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.fav-item:hover{box-shadow:0 2px 8px rgba(0,0,0,.08)}.fav-icon{font-size:24px;min-width:36px;text-align:center}.fav-info{flex:1}.fav-name{font-size:12px;font-weight:700}.fav-price{font-size:13px;font-weight:800;color:var(--o);margin-top:2px}.fav-remove{background:none;border:1px solid var(--g300);border-radius:50%;min-width:44px;min-height:44px;width:24px;height:24px;cursor:pointer;font-size:14px;color:var(--g500);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pfav-btn{position:absolute;top:8px;right:8px;z-index:2;min-width:44px;min-height:44px;width:32px;height:32px;border-radius:16px;border:none;background:rgba(255,255,255,.9);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:.15s;box-shadow:0 1px 3px rgba(0,0,0,.1)}
 .pfav-btn:hover{transform:scale(1.15)}.pfav-btn.liked{color:var(--r);background:rgba(255,255,255,.95)}
 .profile-section-tabs{display:flex;gap:4px;margin-bottom:12px}
 .ps-tab{flex:1;padding:8px 6px;text-align:center;font-size:11px;font-weight:600;border:none;background:var(--w);border-radius:8px;cursor:pointer;border:1px solid var(--g100);white-space:nowrap;transition:.15s}
@@ -430,6 +431,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
 .header-search-input{flex:1;border:none;padding:10px 18px;font-size:14px;outline:none;background:transparent;font-weight:500;min-width:0}
 .header-search-btn{background:none;border:none;padding:8px 16px;font-size:16px;cursor:pointer;color:var(--g500);transition:.15s}
 .header-search-btn:hover{color:var(--o)}
+.search-suggestions{position:absolute;top:100%;left:0;right:0;background:var(--w);border:1px solid var(--g200);border-radius:0 0 10px 10px;box-shadow:0 4px 12px rgba(0,0,0,.1);z-index:300;max-height:200px;overflow-y:auto}
+.search-suggestion-item{padding:10px 16px;font-size:13px;cursor:pointer;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--g100)}.search-suggestion-item:last-child{border-bottom:none}
+.search-suggestion-item:hover{background:var(--g50)}.search-suggestion-item .ss-icon{font-size:16px}
 
 /* === CENTERED LAYOUT (Desktop) === */
 /* === WEB LAYOUT (Full Width) === */
@@ -459,7 +463,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
 .sourcing-input{flex:1;min-width:200px;padding:12px 16px;border:2px solid var(--g200);border-radius:12px;font-size:13px;outline:none;background:var(--w);font-family:inherit}
 .sourcing-input:focus{border-color:var(--o)}
 .sourcing-btn{padding:12px 24px;background:var(--o);color:var(--w);border:none;border-radius:12px;font-weight:700;font-size:13px;cursor:pointer;transition:.15s}
-.sourcing-btn:hover{background:#EA580C;transform:translateY(-1px)}
+.sourcing-btn:hover{background:var(--oh);transform:translateY(-1px)}
 .sourcing-platforms{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
 .sourcing-platform-tag{background:var(--w);padding:4px 10px;border-radius:16px;font-size:10px;font-weight:600;color:var(--g500);border:1px solid var(--g200)}
 
@@ -508,7 +512,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
 .smart-collect-input{flex:1;min-width:200px;padding:12px 16px;border:2px solid var(--g200);border-radius:12px;font-size:13px;outline:none;background:var(--w);font-family:inherit}
 .smart-collect-input:focus{border-color:var(--o)}
 .smart-collect-btn{padding:12px 24px;background:var(--o);color:var(--w);border:none;border-radius:12px;font-weight:700;font-size:13px;cursor:pointer;transition:.15s;white-space:nowrap}
-.smart-collect-btn:hover{background:#EA580C;transform:translateY(-1px)}
+.smart-collect-btn:hover{background:var(--oh);transform:translateY(-1px)}
 .smart-collect-notice{margin-top:16px;background:var(--w);border-radius:12px;padding:16px;border:1px solid var(--g200);display:flex;gap:12px;align-items:flex-start}
 .smart-collect-notice .sc-notice-icon{font-size:28px;flex-shrink:0}
 .smart-collect-notice .sc-notice-text{flex:1}
@@ -645,8 +649,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
 <div class="app-header" id="appHeader">
   <div class="app-logo">🔶 ACEPROXY</div>
   <div class="header-search-wrap" id="headerSearchWrap">
-    <input class="header-search-input" id="headerSearchInput" placeholder="Search products..." onkeydown="if(event.key==='Enter'){HeaderSearch.doSearch(this.value)}">
+    <input class="header-search-input" id="headerSearchInput" placeholder="Search products..." oninput="HeaderSearch.onInput(this.value)" onkeydown="if(event.key==='Enter'){HeaderSearch.doSearch(this.value)}" autocomplete="off">
     <button class="header-search-btn" onclick="HeaderSearch.doSearch(document.getElementById('headerSearchInput').value)">🔍</button>
+    <div class="search-suggestions" id="searchSuggestions" style="display:none"></div>
   </div>
   <div class="app-actions">
     <button class="app-icon-btn" onclick="Lang.togglePicker()" title="Language">🌐</button>
@@ -932,11 +937,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
       </div>
       <div class="form-group">
         <label>邮箱</label>
-        <input type="email" id="authEmail" placeholder="you@example.com" required autocomplete="email">
+        <input type="email" id="authEmail" placeholder="you@example.com" required autocomplete="email" oninput="Auth.validateField('email')" onblur="Auth.validateField('email')">
+        <span class="auth-field-err" id="authEmailErr"></span>
       </div>
       <div class="form-group">
         <label>密码</label>
-        <input type="password" id="authPwd" placeholder="••••••••" required autocomplete="current-password">
+        <input type="password" id="authPwd" placeholder="••••••••" required autocomplete="current-password" oninput="Auth.validateField('pwd')" onblur="Auth.validateField('pwd')">
+        <span class="auth-field-err" id="authPwdErr"></span>
         <div class="auth-pw-hint" id="authPwHint" style="display:none">至少8位，含大写、小写和数字</div>
       </div>
       <button type="submit" class="auth-submit" id="authBtn">登录</button>
@@ -1031,10 +1038,10 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
   <div class="co-title">🛍️ Secure Checkout</div>
 
   <div class="co-section"><h3>📍 Delivery Address</h3>
-    <input class="co-input" placeholder="Full Name *" id="co-name">
-    <input class="co-input" placeholder="Phone Number (e.g. +62 812-3456-7890) *" id="co-phone">
-    <input class="co-input" placeholder="Street Address *" id="co-addr">
-    <div class="co-row"><input class="co-input" placeholder="City / Kabupaten *" id="co-city"><input class="co-input" placeholder="Postal Code" id="co-postal"></div>
+    <input class="co-input" placeholder="Full Name *" id="co-name" autocomplete="name">
+    <input class="co-input" placeholder="Phone Number (e.g. +62 812-3456-7890) *" id="co-phone" autocomplete="tel">
+    <input class="co-input" placeholder="Street Address *" id="co-addr" autocomplete="address-line1">
+    <div class="co-row"><input class="co-input" placeholder="City / Kabupaten *" id="co-city" autocomplete="address-level2"><input class="co-input" placeholder="Postal Code" id="co-postal" autocomplete="postal-code"></div>
     <select class="co-input" id="co-province"><option value="">Select Province</option><option>DKI Jakarta</option><option>Jawa Barat</option><option>Jawa Tengah</option><option>Jawa Timur</option><option>Banten</option><option>Bali</option></select>
     <input class="co-input" placeholder="Delivery Notes (optional)" id="co-note">
   </div>
@@ -1142,6 +1149,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Micr
 </div>
 
 <script>
+// 生产环境下屏蔽 console.log / console.warn，保留 console.error
+var DEBUG = (function(){
+  var host = typeof location !== 'undefined' ? location.hostname : '';
+  return host === 'localhost' || host === '127.0.0.1' || host === '';
+})();
+var log = function(){ if (DEBUG) { console.log.apply(console, arguments); } };
+var warn = function(){ if (DEBUG) { console.warn.apply(console, arguments); } };
+
 // API_BASE — 部署时自动检测或手动配置
 // 本地开发: http://localhost:3002/api/v1
 // 生产部署: 替换为你的后端 URL
@@ -1151,7 +1166,7 @@ const API_BASE = (()=>{
   if (host==='localhost' || host==='127.0.0.1' || host==='') return 'http://localhost:3002/api/v1';
   // CloudStudio / CodeBuddy 预览 — 后端必须单独部署
   if (host.endsWith('.codebuddy.work') || host.includes('app.codebuddy')) {
-    console.warn('[AceProxy] Cloud preview detected. Backend must be deployed separately.');
+    warn('[AceProxy] Cloud preview detected. Backend must be deployed separately.');
     return window.ACE_PROXY_API || 'http://localhost:3002/api/v1';
   }
   // 生产环境 — 标准域名 + 端口 3001
@@ -1195,12 +1210,12 @@ async function fetchProducts(){
     CATS.length=0;CATS.push('ALL',...cats);
     cats.forEach(c=>{CI[c]=CAT_EMOJI[c]||'📦'});
     const stat=document.querySelector('.hero-stat-num');if(stat)stat.textContent=P.length+'+';
-    console.log('[fetchProducts] Loaded '+P.length+' products from API');
+    log('[fetchProducts] Loaded '+P.length+' products from API');
     Home.render();Discovery.render();
     FlashSale.renderItems();
     Banner.init();
   }catch(e){
-    console.warn('[fetchProducts] API unavailable, using cache:',e.message);
+    warn('[fetchProducts] API unavailable, using cache:',e.message);
     if(P.length===0){
       if(gridEl)gridEl.innerHTML='<div class="empty-state" style="text-align:center;padding:40px;color:var(--g500)"><p style="font-size:40px;margin-bottom:8px">📡</p><p style="font-weight:700">Server not available</p><p style="font-size:12px">Showing demo data. Start backend to see real products.</p><button onclick="fetchProducts()" style="margin-top:12px;background:var(--o);color:#fff;border:none;padding:8px 20px;border-radius:20px;font-weight:700;cursor:pointer">Retry</button></div>';
     }
@@ -1282,11 +1297,11 @@ const Auth={
     const headers={'Content-Type':'application/json','Authorization':'Bearer '+this.token,...(opts.headers||{})};
     try{
       const res=await fetch(API_BASE+path,{...opts,headers});
-      if(res.status===401){this.clear();this.showLogin();return null}
+      if(res.status===401){var toast401=document.createElement('div');toast401.className='toast';toast401.textContent='Sesi login telah berakhir. Silakan login kembali.';document.body.appendChild(toast401);setTimeout(function(){toast401.remove()},3000);setTimeout(()=>{this.clear();this.showLogin()},1500);return null}
       const data=await res.json();
       if(!res.ok)throw new Error(data.message||'API Error');
       return data.data!==undefined?data.data:data;
-    }catch(e){console.warn('[Auth.api]',e);return null}
+    }catch(e){warn('[Auth.api]',e);return null}
   },
 
   init(){
@@ -1331,6 +1346,36 @@ const Auth={
     document.getElementById('authSwitchLink').textContent = isLogin ? T('auth-register-link') : T('auth-login-link');
     document.getElementById('authPwd').autocomplete = isLogin ? 'current-password' : 'new-password';
     document.getElementById('authError').textContent = '';
+    document.getElementById('authEmailErr').textContent = '';
+    document.getElementById('authPwdErr').textContent = '';
+    document.getElementById('authForm').reset();
+  },
+
+  /** 实时校验单个字段，在 input/blur 事件中调用 */
+  validateField(field){
+    if (field === 'email') {
+      const email = document.getElementById('authEmail')?.value?.trim();
+      const el = document.getElementById('authEmailErr');
+      if (!el) return;
+      if (!email) { el.textContent = ''; return; }
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      el.textContent = re.test(email) ? '' : '请输入有效的邮箱地址';
+    } else if (field === 'pwd') {
+      const pwd = document.getElementById('authPwd')?.value;
+      const isReg = this.mode === 'register';
+      const el = document.getElementById('authPwdErr');
+      if (!el) return;
+      if (!pwd) { el.textContent = ''; return; }
+      if (isReg && pwd.length < 8) {
+        el.textContent = '密码至少需要8位';
+      } else if (isReg && !(/[A-Z]/.test(pwd) && /[a-z]/.test(pwd) && /[0-9]/.test(pwd))) {
+        el.textContent = '密码需包含大写、小写和数字';
+      } else if (pwd.length < 6) {
+        el.textContent = '密码至少需要6位';
+      } else {
+        el.textContent = '';
+      }
+    }
   },
 
   renderAuthPage(){
@@ -1347,23 +1392,23 @@ const Auth={
           </div>
           <div style="margin-bottom:12px">
             <label style="font-size:12px;font-weight:600;color:#334155;display:block;margin-bottom:4px">${T('auth-email')}</label>
-            <input type="email" id="authPageEmail" placeholder="you@example.com" style="width:100%;padding:12px 14px;border:1.5px solid #E2E8F0;border-radius:10px;font-size:14px;outline:none;box-sizing:border-box" onfocus="this.style.borderColor='#F97316'" onblur="this.style.borderColor='#E2E8F0'">
+            <input type="email" id="authPageEmail" placeholder="you@example.com" style="width:100%;padding:12px 14px;border:1.5px solid #E2E8F0;border-radius:10px;font-size:14px;outline:none;box-sizing:border-box" onfocus="this.style.borderColor='#d45d3a'" onblur="this.style.borderColor='#E2E8F0'">
           </div>
           <div style="margin-bottom:${isReg?'12':'16'}px">
             <label style="font-size:12px;font-weight:600;color:#334155;display:block;margin-bottom:4px">${T('auth-password')}</label>
-            <input type="password" id="authPagePassword" placeholder="${isReg?'Min 8 chars, Aa1...':'Enter password'}" style="width:100%;padding:12px 14px;border:1.5px solid #E2E8F0;border-radius:10px;font-size:14px;outline:none;box-sizing:border-box" onfocus="this.style.borderColor='#F97316'" onblur="this.style.borderColor='#E2E8F0'">
+            <input type="password" id="authPagePassword" placeholder="${isReg?'Min 8 chars, Aa1...':'Enter password'}" style="width:100%;padding:12px 14px;border:1.5px solid #E2E8F0;border-radius:10px;font-size:14px;outline:none;box-sizing:border-box" onfocus="this.style.borderColor='#d45d3a'" onblur="this.style.borderColor='#E2E8F0'">
           </div>
           ${isReg?`
           <div style="margin-bottom:16px">
             <label style="font-size:12px;font-weight:600;color:#334155;display:block;margin-bottom:4px">${T('auth-confirm-password')}</label>
-            <input type="password" id="authPagePassword2" placeholder="Confirm password" style="width:100%;padding:12px 14px;border:1.5px solid #E2E8F0;border-radius:10px;font-size:14px;outline:none;box-sizing:border-box" onfocus="this.style.borderColor='#F97316'" onblur="this.style.borderColor='#E2E8F0'">
+            <input type="password" id="authPagePassword2" placeholder="Confirm password" style="width:100%;padding:12px 14px;border:1.5px solid #E2E8F0;border-radius:10px;font-size:14px;outline:none;box-sizing:border-box" onfocus="this.style.borderColor='#d45d3a'" onblur="this.style.borderColor='#E2E8F0'">
           </div>
           `:''}
           <div id="authPageError" style="display:none;color:#EF4444;font-size:12px;margin-bottom:12px;padding:8px;background:#FEF2F2;border-radius:8px"></div>
-          <button onclick="Auth.submitPage()" style="width:100%;padding:14px;background:#F97316;color:#fff;border:none;border-radius:10px;font-weight:800;font-size:15px;cursor:pointer;margin-bottom:12px">${isReg?T('auth-register-btn'):T('auth-login-btn')}</button>
+          <button onclick="Auth.submitPage()" style="width:100%;padding:14px;background:#d45d3a;color:#fff;border:none;border-radius:10px;font-weight:800;font-size:15px;cursor:pointer;margin-bottom:12px">${isReg?T('auth-register-btn'):T('auth-login-btn')}</button>
           <div style="text-align:center;font-size:13px;color:#64748B">
             ${isReg?T('auth-has-account'):T('auth-no-account')}
-            <a href="#" onclick="event.preventDefault();Auth.mode=Auth.mode==='register'?'login':'register';Auth.renderAuthPage()" style="color:#F97316;font-weight:700;text-decoration:none">${isReg?T('auth-login-link'):T('auth-register-link')}</a>
+            <a href="#" onclick="event.preventDefault();Auth.mode=Auth.mode==='register'?'login':'register';Auth.renderAuthPage()" style="color:#d45d3a;font-weight:700;text-decoration:none">${isReg?T('auth-login-link'):T('auth-register-link')}</a>
           </div>
         </div>
       </div>`;
@@ -1489,6 +1534,9 @@ function showToast(msg,type){var t=document.createElement('div');t.className='to
 function applyT(){document.querySelectorAll('[id]').forEach(el=>{const v=T(el.id);if(!v||el.children.length>0||el.tagName==='INPUT'||el.tagName==='SELECT'||el.tagName==='IMG')return;el.textContent=v})}
 
 function switchTab(t){
+  // Preserve scroll position before switching
+  if (!window._tabScrollPositions) window._tabScrollPositions = {};
+  window._tabScrollPositions[currentActiveTab||'home'] = window.scrollY;
   // Close overlays/panels when switching tabs
   Notif.close();Settings.close();Address.close();Share.close();Search.close();
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -1496,13 +1544,14 @@ function switchTab(t){
   document.getElementById('page-'+t)?.classList.add('active');
   const idx={home:0,discovery:1,assistant:2,resale:3,profile:4};
   document.querySelectorAll('.tab-btn')[idx[t]]?.classList.add('active');
+  currentActiveTab = t;
   if(t==='home')Home.render();if(t==='discovery')Discovery.render();
   if(t==='resale')Resale.render();
   if(t==='profile')Profile.render();if(t==='assistant')Assistant.renderQuickBtns();
   if(t==='auth')Auth.renderAuthPage();
   if(t==='help')Help.render();if(t==='invite')Invite.render();if(t==='category')Category.render();
   if(t==='checkout')RenderCheckout();if(t==='refund')RefundPolicy.show();
-  window.scrollTo({top:0,behavior:'smooth'});
+  setTimeout(function(){ window.scrollTo({top:window._tabScrollPositions[t]||0,behavior:'smooth'}); }, 0);
 }
 
 const Home={render(){
@@ -1513,6 +1562,17 @@ const Home={render(){
   else if(sort==='price-lo')items.sort((a,b)=>a.price-b.price);
   else if(sort==='price-hi')items.sort((a,b)=>b.price-a.price);
   const BADGES={hot:T('badge_hot'),new:T('badge_new'),best:T('badge_best')};
+  if(!items.length){
+    const isSearch=q&&q.length>0;
+    const searchEmptyHtml=`<div class="empty-state" style="grid-column:1/-1;padding:40px"><div class="empty-state-icon">🔍</div><div class="empty-state-title">${lang==='CN'?'未找到匹配商品':lang==='ID'?'Produk tidak ditemukan':'No matching products'}</div><div class="empty-state-desc">${lang==='CN'?'试试其他关键词，或浏览热门推荐':lang==='ID'?'Coba kata kunci lain, atau jelajahi rekomendasi populer':'Try different keywords, or browse popular picks'}</div><button onclick="filter='ALL';document.getElementById('searchInput').value='';Home.render()" class="pcart-btn" style="width:auto;padding:10px 24px;margin-top:12px">${lang==='CN'?'🔥 热门推荐':lang==='ID'?'🔥 Rekomendasi Populer':'🔥 Popular Picks'}</button></div>`;
+    document.getElementById('productGrid').innerHTML=searchEmptyHtml;
+    document.getElementById('filterRow').innerHTML='<div class="cat-scroll">'+CATS.map(c=>`<div class="cat-chip ${filter===c?'active':''}" onclick="filter='${c}';document.getElementById('searchInput').value='';Home.render()">${c==='ALL'?T('all'):(CI[c]||'📦')+' '+c}</div>`).join('')+'</div>';
+    const revs=REV[lang]||REV.EN;
+    document.getElementById('revGrid').innerHTML=revs.map(r=>`<div class="rev-card"><div class="rev-stars">${'★'.repeat(r.s)}</div><div class="rev-text">"${r.t}"</div><div class="rev-author">— ${r.a}</div></div>`).join('');
+    const faqs=FAQ[lang]||FAQ.EN;
+    document.getElementById('faqGrid').innerHTML=faqs.map(f=>`<div class="faq-item"><div class="faq-q">${f.q}</div><div class="faq-a">${f.a}</div></div>`).join('');
+    return;
+  }
   document.getElementById('productGrid').innerHTML=items.map(p=>{
     const inC=cart.find(c=>c.id===p.id);
     const bdg=p.badge&&BADGES[p.badge]?'<span class="pbadge b'+p.badge+'">'+BADGES[p.badge]+'</span>':'';
@@ -1592,7 +1652,7 @@ const Assistant={
       if(box)box.innerHTML=this.chats.map(m=>this.renderMsg(m)).join('');
       const sb=document.getElementById('chatBox');
       if(sb)sb.scrollTop=9999;
-    }catch(e){console.warn('[AI init]',e)}
+    }catch(e){warn('[AI init]',e)}
   },
   renderMsg(m){
     let bubble=m.text;
@@ -1646,7 +1706,7 @@ const Assistant={
       this.chats.push(aiMsg);this.init();
     }catch(e){
       // Backend failed mid-flight → switch to local
-      console.warn('[AI] Backend failed, switching to local mode');
+      warn('[AI] Backend failed, switching to local mode');
       this.online=false;
       await this.sendLocal(text);
     }
@@ -1726,13 +1786,46 @@ const Fav={
   },
   render:function(){
     var el=document.getElementById('favList');if(!el)return;
-    if(!this.list.length){el.innerHTML='<div class="empty-state"><div class="empty-state-icon">❤️</div><div class="empty-state-title">'+T('no-favs')+'</div><div class="empty-state-desc">'+T('no-favs-desc')+'</div></div>';return}
+    if(!this.list.length){el.innerHTML='<div class="empty-state"><div class="empty-state-icon">❤️</div><div class="empty-state-title">'+T('no-favs')+'</div><div class="empty-state-desc">'+T('no-favs-desc')+'</div><button onclick="switchTab(\'home\')" class="pcart-btn" style="width:auto;padding:8px 20px;margin-top:12px">'+ (lang==='CN'?'🔍 发现好物':lang==='ID'?'🔍 Temukan Barang':'🔍 Discover Items') +'</button></div>';return}
     var self=this;
     el.innerHTML=this.list.map(function(id){var p=P.find(function(x){return x.id===id});if(!p)return'';var fIcon=p.img?'<img src="'+p.img+'" style="width:36px;height:36px;border-radius:8px;object-fit:cover">':(CI[p.cat]||'📦');return '<div class="fav-item" onclick="Modal.open(\''+p.id+'\')"><div class="fav-icon">'+fIcon+'</div><div class="fav-info"><div class="fav-name">'+p.name+'</div><div class="fav-price">'+F(p.price)+' · '+T('margin_gain')+' '+Math.round(p.arb*100)+'%</div></div><button class="fav-remove" onclick="event.stopPropagation();Fav.toggle(\''+p.id+'\')">✕</button></div>'}).join('');
   },
   showToast:function(msg){var t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(function(){t.remove()},2300)}
 };
-var HeaderSearch={doSearch:function(q){if(!q||!q.trim())return;q=q.trim();document.getElementById('headerSearchInput').value=q;Search.open();document.getElementById('searchPageInput').value=q;Search.open();Search.doSearch(q)}};
+var HeaderSearch={
+  _timer: null,
+  doSearch: function(q){
+    if(!q||!q.trim())return;q=q.trim();
+    document.getElementById('headerSearchInput').value=q;
+    document.getElementById('searchSuggestions').style.display='none';
+    Search.open();document.getElementById('searchPageInput').value=q;
+    Search.doSearch(q);
+  },
+  /** 300ms 防抖输入建议 */
+  onInput: function(val){
+    var self = this;
+    if (self._timer) clearTimeout(self._timer);
+    var q = (val||'').trim();
+    if (!q || q.length < 2) {
+      document.getElementById('searchSuggestions').style.display = 'none';
+      return;
+    }
+    self._timer = setTimeout(function(){
+      var matches = P.filter(function(p){
+        return p.name.toLowerCase().indexOf(q.toLowerCase()) >= 0;
+      }).slice(0, 5);
+      var el = document.getElementById('searchSuggestions');
+      if (matches.length > 0) {
+        el.innerHTML = matches.map(function(p){
+          return '<div class="search-suggestion-item" onclick="HeaderSearch.doSearch(\''+p.name.replace(/'/g,"\\'")+'\')"><span class="ss-icon">🔍</span><span>'+p.name+'</span></div>';
+        }).join('');
+        el.style.display = 'block';
+      } else {
+        el.style.display = 'none';
+      }
+    }, 300);
+  }
+};
 
 // COUPONS — 优先从后端加载，fallback 为内置数据
 const Coupons={
@@ -1755,7 +1848,7 @@ const Coupons={
           exp:c.endDate?new Date(c.endDate).toLocaleDateString():'—',used:!!c.claimedAt
         }});
       }
-    }catch(e){console.warn('[Coupons] loadFromServer failed:',e.message)}
+    }catch(e){warn('[Coupons] loadFromServer failed:',e.message)}
     this.render();
   },
   available:function(){return this.list.filter(function(c){return !c.used})},
@@ -1765,7 +1858,7 @@ const Coupons={
     var used=this.list.filter(function(c){return c.used});
     var availHtml=avail.length?avail.map(function(c){return '<div class="coupon-card" onclick="Coupons.copyCode(\''+c.code+'\')"><div class="coupon-icon">'+c.icon+'</div><div class="coupon-info"><div class="coupon-code">'+c.code+'</div><div class="coupon-desc">'+c.discount+'</div><div class="coupon-exp">⏳ '+T('expires')+' '+c.exp+'</div></div><div class="coupon-action">'+T('tap-copy')+' →</div></div>'}).join(''):'';
     var usedHtml=used.length?'<div style="margin-top:12px;font-weight:700;font-size:12px;color:var(--g500)">'+T('used-coupons')+'</div>'+used.map(function(c){return '<div class="coupon-card used"><div class="coupon-icon">'+c.icon+'</div><div class="coupon-info"><div class="coupon-code">'+c.code+'</div><div class="coupon-desc">'+c.discount+'</div><div class="coupon-exp">✅ '+T('used')+' · '+c.exp+'</div></div></div>'}).join(''):'';
-    var emptyHtml='<div class="empty-state" style="margin-top:8px"><div class="empty-state-icon">🎫</div><div class="empty-state-title">'+T('no-coupons')+'</div><div class="empty-state-desc">'+T('no-coupons-desc')+'</div></div>';
+    var emptyHtml='<div class="empty-state" style="margin-top:8px"><div class="empty-state-icon">🎫</div><div class="empty-state-title">'+T('no-coupons')+'</div><div class="empty-state-desc">'+T('no-coupons-desc')+'</div><button onclick="switchTab(\'home\')" class="pcart-btn" style="width:auto;padding:8px 20px;margin-top:12px">'+ (lang==='CN'?'🛒 逛逛优惠':lang==='ID'?'🛒 Lihat Promo':'🛒 Browse Deals') +'</button></div>';
     el.innerHTML=availHtml+emptyHtml+usedHtml;
   },
   copyCode:function(code){
@@ -1824,13 +1917,13 @@ const Cart={
         this.update();
         if(typeof Home!=='undefined')Home.render();
       }
-    }catch(e){console.warn('[Cart] loadFromServer failed, using local:',e.message)}
+    }catch(e){warn('[Cart] loadFromServer failed, using local:',e.message)}
   },
   update(){
     document.getElementById('cart-badge').textContent=cart.reduce((s,c)=>s+c.qty,0);
     const total=cart.reduce((s,c)=>s+c.price*c.qty,0);
     document.getElementById('cartTotal').textContent=F(total);
-    document.getElementById('cartList').innerHTML=cart.length?cart.map(p=>`<div class="cart-item"><span>${CI[p.cat]||'📦'}</span><span class="cart-item-name">${p.name}${p.qty>1?' ×'+p.qty:''}</span><span class="cart-item-price">${F(p.price*p.qty)}</span><div style="display:flex;gap:4px;align-items:center"><button class="cart-item-rm" onclick="Cart.remove('${p.id}')" style="width:20px;height:20px;font-size:12px">−</button><span style="font-size:11px;font-weight:700">${p.qty}</span><button class="cart-item-rm" onclick="Cart.add('${p.id}')" style="width:20px;height:20px;font-size:12px">+</button></div></div>`).join(''):`<div class="cart-empty">${T('cart-empty')}</div>`},
+    document.getElementById('cartList').innerHTML=cart.length?cart.map(p=>`<div class="cart-item"><span>${CI[p.cat]||'📦'}</span><span class="cart-item-name">${p.name}${p.qty>1?' ×'+p.qty:''}</span><span class="cart-item-price">${F(p.price*p.qty)}</span><div style="display:flex;gap:4px;align-items:center"><button class="cart-item-rm" onclick="Cart.remove('${p.id}')" style="width:20px;height:20px;font-size:12px">−</button><span style="font-size:11px;font-weight:700">${p.qty}</span><button class="cart-item-rm" onclick="Cart.add('${p.id}')" style="width:20px;height:20px;font-size:12px">+</button></div></div>`).join(''):`<div class="cart-empty"><p>${T('cart-empty')}</p><p style="font-size:11px;color:var(--g500);margin-bottom:10px">${lang==='CN'?'看看我们的精选推荐吧！':lang==='ID'?'Yuk, lihat produk rekomendasi kami!':'Check out our curated picks!'}</p><button onclick="Cart.toggle();switchTab('home')" class="pcart-btn" style="width:auto;padding:8px 20px">${lang==='CN'?'🛍️ 去逛逛':lang==='ID'?'🛍️ Jelajahi Produk':'🛍️ Browse Products'}</button></div>`},
   toggle(){document.getElementById('cartOverlay').classList.toggle('open');document.getElementById('cartPanel').classList.toggle('open')},
   checkout(){if(!cart.length){this.showToast(T('cart-empty-checkout'));return}this.toggle();switchTab('checkout')},
   showToast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),2300)},
@@ -1900,7 +1993,7 @@ const Order={
     if(!list)return;
     const f=filter||'ALL';
     const filtered=f==='ALL'?orders:orders.filter(o=>o.state===f);
-    if(!filtered.length){list.innerHTML=`<div class="empty-state" style="padding:32px"><div class="empty-state-icon">📦</div><div class="empty-state-desc">${lang==='CN'?'暂无订单':lang==='ID'?'Belum ada pesanan':'No orders yet'}</div></div>`;return}
+    if(!filtered.length){list.innerHTML=`<div class="empty-state" style="padding:32px"><div class="empty-state-icon">📦</div><div class="empty-state-desc">${lang==='CN'?'暂无订单':lang==='ID'?'Belum ada pesanan':'No orders yet'}</div><p style="font-size:11px;color:var(--g500);margin-top:4px;margin-bottom:12px">${lang==='CN'?'开始探索我们的精选商品吧！':lang==='ID'?'Mulai jelajahi produk pilihan kami!':'Start exploring our curated collection!'}</p><button onclick="switchTab('home')" class="pcart-btn" style="width:auto;padding:8px 20px">${lang==='CN'?'🛒 开始购物':lang==='ID'?'🛒 Mulai Belanja':'🛒 Start Shopping'}</button></div>`;return}
     list.innerHTML=filtered.map(o=>{
       const st=Order.STATES[o.state];
       const stTxt=st[(lang==='CN'?'cn':lang==='ID'?'id':'en')];
@@ -1934,9 +2027,9 @@ const Order={
           tlContainers.forEach(function(c){c.remove();});
           // 简单刷新：关闭弹窗后让用户重新打开（避免 DOM 操作复杂度）
           // @todo P3 — 替换为 WebSocket 实时推送物流更新
-          console.log('[Order] Tracking data loaded for '+id+': '+events.length+' events');
+          log('[Order] Tracking data loaded for '+id+': '+events.length+' events');
         }
-      }catch(e){console.warn('[Order] Tracking API failed:',e.message)}
+      }catch(e){warn('[Order] Tracking API failed:',e.message)}
     })();
   },
   _shipPrice(s){
@@ -2008,7 +2101,7 @@ const Modal={
     this.selectedVariant=null;
     this.selectedShipping='standard';
     const p=P.find(x=>x.id===id);
-    if(!p){console.warn('[Modal] Product not found:',id,'P length:',P.length);showToast('Product data loading, please retry in a moment','warning');return}
+    if(!p){warn('[Modal] Product not found:',id,'P length:',P.length);showToast('Product data loading, please retry in a moment','warning');return}
     const inC=cart.find(c=>c.id===p.id);
     RecentlyViewed.add(id);
     // ---- 数据准备 ----
@@ -2257,13 +2350,45 @@ function RenderCheckout(){
   document.getElementById('co-total').textContent=F(total);
   document.getElementById('co-submit-amount').textContent=F(total);
 }
+function showOrderConfirm(orderData){
+  const totalDisplay=F(orderData.total);
+  document.getElementById('prodModalContent').innerHTML=`
+    <div class="modal-hdr"><div class="modal-hdr-bar"></div><button class="modal-close" onclick="Modal.close()">✕</button></div>
+    <div style="text-align:center;padding:20px 16px">
+      <div style="font-size:48px;margin-bottom:12px">✅</div>
+      <h2 style="font-size:18px;font-weight:800;margin-bottom:4px">Pesanan Berhasil!</h2>
+      <p style="font-size:13px;color:var(--g500);margin-bottom:16px">Order #${orderData.id}</p>
+      <div style="background:var(--g50);border-radius:12px;padding:14px;text-align:left;margin-bottom:16px">
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--g100);font-size:12px"><span style="color:var(--g500)">Total</span><span style="font-weight:700">${totalDisplay}</span></div>
+        <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--g100);font-size:12px"><span style="color:var(--g500)">Status</span><span style="display:inline-block;background:#FEF3C7;color:#92400E;padding:2px 10px;border-radius:20px;font-size:10px;font-weight:700">Menunggu Pembayaran</span></div>
+        <div style="display:flex;justify-content:space-between;padding:8px 0;font-size:12px"><span style="color:var(--g500)">Estimasi</span><span style="font-weight:600">8-12 hari</span></div>
+      </div>
+      <button onclick="switchTab('profile');Modal.close()" style="width:100%;padding:14px;border-radius:10px;background:var(--o);color:#fff;font-weight:800;font-size:14px;border:none;cursor:pointer;margin-bottom:8px">Lihat Pesanan Saya</button>
+      <button onclick="switchTab('home');Modal.close()" style="width:100%;padding:14px;border-radius:10px;border:1.5px solid var(--g300);background:var(--w);color:var(--g700);font-weight:700;font-size:14px;cursor:pointer">Lanjut Belanja</button>
+    </div>`;
+  document.getElementById('prodModal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function showOrderError(msg){
+  document.getElementById('prodModalContent').innerHTML=`
+    <div class="modal-hdr"><div class="modal-hdr-bar"></div><button class="modal-close" onclick="Modal.close()">✕</button></div>
+    <div style="text-align:center;padding:20px 16px">
+      <div style="font-size:48px;margin-bottom:12px">⚠️</div>
+      <h2 style="font-size:18px;font-weight:800;margin-bottom:4px">Pesanan Gagal</h2>
+      <p style="font-size:13px;color:var(--g500);margin-bottom:20px;line-height:1.5">${msg||'Terjadi kesalahan. Silakan coba lagi.'}</p>
+      <button onclick="Modal.close()" style="width:100%;padding:14px;border-radius:10px;background:var(--o);color:#fff;font-weight:800;font-size:14px;border:none;cursor:pointer;margin-bottom:8px">Coba Lagi</button>
+      <button onclick="switchTab('home');Modal.close()" style="width:100%;padding:14px;border-radius:10px;border:1.5px solid var(--g300);background:var(--w);color:var(--g700);font-weight:700;font-size:14px;cursor:pointer">Kembali</button>
+    </div>`;
+  document.getElementById('prodModal').classList.add('open');
+  document.body.style.overflow='hidden';
+}
 async function PlaceOrder(){
-  if(!cart.length)return alert('购物车是空的！请先添加商品。');
+  if(!cart.length){Cart.showToast('购物车是空的！请先添加商品。');return}
   const name=document.getElementById('co-name').value.trim();
   const phone=document.getElementById('co-phone').value.trim();
   const addr=document.getElementById('co-addr').value.trim();
   const city=document.getElementById('co-city').value.trim();
-  if(!name||!phone||!addr||!city){alert('请填写完整的收货地址');return}
+  if(!name||!phone||!addr||!city){Cart.showToast('请填写完整的收货地址');return}
 
   // Try real API first
   if(Auth.isLoggedIn()){
@@ -2283,13 +2408,12 @@ async function PlaceOrder(){
       if(res.ok){
         const data=await res.json();
         cart=[];Cart.update();
-        alert('✅ 订单创建成功！\n\n订单号: '+(data.id||data.orderId||'N/A')+'\n支付方式: '+selectedPayment+'\n\n正在跳转到支付页面...');
-        switchTab('home');
+        showOrderConfirm({id:data.id||data.orderId||'N/A', total:total});
         Auth.fetchOrders();
         return;
       }
-    }catch(e){console.warn('[PlaceOrder] API failed',e);
-      alert('⚠️ 后端服务器未连接。\n\n订单无法提交，请确保服务器运行中。\n\n提示: 启动后端 → npm run start:dev');
+    }catch(e){warn('[PlaceOrder] API failed',e);
+      showOrderError('后端服务器未连接。订单无法提交，请确保服务器运行中。');
       return;
     }
   }
@@ -2299,10 +2423,20 @@ const RefundPolicy={lang:'ID',switchLang(l){this.lang=l;document.querySelectorAl
 
 try{applyT();Home.render();Banner.init();FlashSale.init();fetchExchangeRate();fetchProducts();Assistant.init();Assistant.renderQuickBtns();Wallet.render();Resale.render();Profile.render();Cart.update();Coupons.loadFromServer();Onboard.init();if(Auth.isLoggedIn()&&Auth.user){Auth.onAuthSuccess();Cart.loadFromServer()}else{Auth.init()}}catch(e){console.error('[Init]',e)};
 
+/* 软键盘遮挡处理: visualViewport resize 时自动滚动到聚焦输入框 */
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', function() {
+    var el = document.activeElement;
+    if (el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA')) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  });
+}
+
 /* PWA Service Worker + Install Prompt */
 (function(){
   if('serviceWorker' in navigator){
-    navigator.serviceWorker.register('./sw.js').then(function(r){console.log('[SW] registered',r.scope)}).catch(function(e){console.warn('[SW] fail',e)});
+    navigator.serviceWorker.register('./sw.js').then(function(r){log('[SW] registered',r.scope)}).catch(function(e){warn('[SW] fail',e)});
   }
   var deferredPrompt;
   window.addEventListener('beforeinstallprompt',function(e){
@@ -2310,7 +2444,7 @@ try{applyT();Home.render();Banner.init();FlashSale.init();fetchExchangeRate();fe
     var btn=document.createElement('div');
     btn.id='pwa-install-btn';
     btn.innerHTML='📲 '+((L[lang]&&L[lang]['onb-cta'])||'Install App');
-    Object.assign(btn.style,{position:'fixed',bottom:'80px',right:'16px',zIndex:999,background:'#F97316',color:'#fff',padding:'10px 20px',borderRadius:'24px',fontSize:'13px',fontWeight:700,cursor:'pointer',boxShadow:'0 4px 12px rgba(249,115,22,.4)',border:'none',fontFamily:'inherit',transition:'transform .2s'});
+    Object.assign(btn.style,{position:'fixed',bottom:'80px',right:'16px',zIndex:999,background:'#d45d3a',color:'#fff',padding:'10px 20px',borderRadius:'24px',fontSize:'13px',fontWeight:700,cursor:'pointer',boxShadow:'0 4px 12px rgba(249,115,22,.4)',border:'none',fontFamily:'inherit',transition:'transform .2s'});
     btn.addEventListener('mouseenter',function(){btn.style.transform='scale(1.05)'});
     btn.addEventListener('mouseleave',function(){btn.style.transform='scale(1)'});
     btn.addEventListener('click',function(){
@@ -2480,7 +2614,7 @@ var SmartCollect={
           showToast('Mencoba pencarian alternatif...','info');
         }
       }
-    }catch(e){console.warn('[SmartCollect] API gagal, fallback ke lokal',e);}
+    }catch(e){warn('[SmartCollect] API gagal, fallback ke lokal',e);}
 
     // ── Fallback: keyword-based search ──
     showToast('⏳ Mencari produk serupa...','info');

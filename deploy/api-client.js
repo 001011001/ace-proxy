@@ -15,6 +15,18 @@
 (function () {
   'use strict';
 
+  // 生产环境下屏蔽 console.log / console.warn，保留 console.error
+  var DEBUG = (function () {
+    try {
+      var host = typeof location !== 'undefined' ? location.hostname : '';
+      return host === 'localhost' || host === '127.0.0.1' || host === '';
+    } catch (_) {
+      return false;
+    }
+  })();
+  var log = function () { if (DEBUG) { console.log.apply(console, arguments); } };
+  var warn = function () { if (DEBUG) { console.warn.apply(console, arguments); } };
+
   var API_BASE = (function () {
     var host = typeof location !== 'undefined' ? location.hostname : '';
     // CloudStudio / CodeBuddy 预览 → 使用 fallback
@@ -99,7 +111,7 @@
     try {
       return await api(path, options);
     } catch (e) {
-      console.warn('[AceProxy API] ' + path + ' failed:', e.message || e);
+      warn('[AceProxy API] ' + path + ' failed:', e.message || e);
       return fallbackValue;
     }
   }
@@ -120,5 +132,5 @@
     },
   };
 
-  console.log('[AceProxy] API Client initialized. Base:', API_BASE);
+  log('[AceProxy] API Client initialized. Base:', API_BASE);
 })();
