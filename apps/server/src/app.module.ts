@@ -11,6 +11,7 @@ import { LlmModule } from './modules/llm/LlmModule';
 
 // Auth
 import { AuthModule } from './modules/auth/auth.module';
+import { SupabaseModule } from './modules/supabase/supabase.module';
 
 // Intelligence
 import { IntelligenceService } from './modules/intelligence/IntelligenceService';
@@ -18,6 +19,8 @@ import { PatentRiskChecker } from './modules/intelligence/PatentRiskChecker';
 import { ArbiBotService } from './modules/intelligence/ArbiBotService';
 import { ArbiBotController } from './modules/intelligence/ArbiBotController';
 import { SentinelScraper } from './modules/intelligence/SentinelScraper';
+import { ScraplingFetcher } from './modules/intelligence/ScraplingFetcher';
+import { StationAdminService } from './modules/station/StationAdminService';
 
 // Chat
 import { ChatService } from './modules/chat/ChatService';
@@ -42,6 +45,21 @@ import { RiskSentryController } from './modules/vault/RiskSentryController';
 // Payment
 import { PaymentModule } from './modules/payment/PaymentModule';
 
+// Compliance
+import { ComplianceModule } from './modules/compliance/compliance.module';
+
+// Purchase Order (ERP)
+import { PurchaseOrderModule } from './modules/purchase-order/purchase-order.module';
+
+// Notification
+import { NotificationModule } from './modules/notification/notification.module';
+
+// Finance
+import { FinanceModule } from './modules/finance/finance.module';
+
+// Batch Operations
+import { BatchModule } from './modules/batch/batch.module';
+
 // Shipping
 import { ShippingModule } from './modules/shipping/ShippingModule';
 
@@ -55,6 +73,7 @@ import { InventoryService } from './modules/inventory/InventoryService';
 import { AiTranslateService } from './modules/ai-translate/AiTranslateService';
 import { AiPushService } from './modules/push/AiPushService';
 import { AiPushController } from './modules/push/AiPushController';
+import { AiImageModule } from './modules/ai-image/ai-image.module';
 
 // Security
 import { ThrottlerGuard } from './common/guards/ThrottlerGuard';
@@ -63,6 +82,9 @@ import { WebhookVerifier } from './common/WebhookVerifier';
 // Phase 1: AI Customer + Logistics + Profit + AutoListing
 import { AiCustomerService } from './modules/customer-service/AiCustomerService';
 import { CustomerServiceController } from './modules/customer-service/CustomerServiceController';
+import { KnowledgeBase } from './modules/customer-service/KnowledgeBase';
+import { ConversationMemory } from './modules/customer-service/ConversationMemory';
+import { CustomerServiceTools } from './modules/customer-service/CustomerServiceTools';
 import { LogisticsTrackingService } from './modules/logistics-tracking/LogisticsTrackingService';
 import { LogisticsTrackingController } from './modules/logistics-tracking/LogisticsTrackingController';
 import { ProfitDashboardService } from './modules/profit-dashboard/ProfitDashboardService';
@@ -87,6 +109,13 @@ import { UnifiedSourcingService } from './modules/intelligence/UnifiedSourcingSe
 // Others
 import { IPFirewallService } from './modules/sentinel/IPFirewallService';
 import { SmartSplitterService } from './modules/splitter/SmartSplitterService';
+import { WmsModule } from './modules/wms/wms.module';
+// ERP 控制器：与 OrderController 一致，直接注册进 controllers 数组
+// 注：SupplierModule/InventoryModule 以模块方式 imports 时路由未被映射（原因待查），
+// 故改为直接注册 Controller。其依赖的 SupplierScoreService / InventoryService
+// 已在下方 providers 中提供，无需再导入模块。
+import { SupplierController } from './modules/supplier/SupplierController';
+import { InventoryController } from './modules/inventory/InventoryController';
 import { VisionQCService } from './modules/wms/VisionQCService';
 import { ReferralService } from './modules/referral/ReferralService';
 import { RegionService } from './modules/region/RegionService';
@@ -119,8 +148,16 @@ import { OrderController } from './modules/order/OrderController';
     PrismaModule,
     LlmModule,
     AuthModule,
+    SupabaseModule,
     PaymentModule,
+    ComplianceModule,
+    PurchaseOrderModule,
+    WmsModule,
+    NotificationModule,
+    FinanceModule,
+    BatchModule,
     ShippingModule,
+    AiImageModule,
   ],
   controllers: [
     StationController,
@@ -143,6 +180,8 @@ import { OrderController } from './modules/order/OrderController';
     AiPushController,
     RiskSentryController,
     OrderController,
+    SupplierController,
+    InventoryController,
   ],
   providers: [
     // Global guard: rate-limiting for all controllers
@@ -154,7 +193,11 @@ import { OrderController } from './modules/order/OrderController';
     ChatLogService,
     HolidayService,
     SentinelScraper,
+    // SentinelScraper 的依赖，此前缺失导致最新代码无法启动（只能回退旧 dist）
+    ScraplingFetcher,
     StationService,
+    // StationService 的依赖，同样缺失导致新代码启动失败
+    StationAdminService,
     HolidayPredictorService,
     IPFirewallService,
     VaultService,
@@ -179,6 +222,9 @@ import { OrderController } from './modules/order/OrderController';
     AiPushService,
     WebhookVerifier,
     AiCustomerService,
+    KnowledgeBase,
+    ConversationMemory,
+    CustomerServiceTools,
     LogisticsTrackingService,
     ProfitDashboardService,
     AutoListingService,

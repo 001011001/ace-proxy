@@ -1,0 +1,621 @@
+- generic [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e3]:
+      - text: AceProxy
+      - generic [ref=e4]: ID
+    - navigation
+    - generic [ref=e5]:
+      - button "Language" [ref=e6] [cursor=pointer]: EN
+      - button "Search" [ref=e7] [cursor=pointer]: 🔍
+      - button "Notifications" [ref=e8] [cursor=pointer]: 🔔
+  - generic [ref=e9]:
+    - generic [ref=e10]:
+      - text: 🚀
+      - strong [ref=e11]: New Arrivals
+      - text: — Fresh drops every week. Free shipping on orders over Rp 500K.
+    - generic [ref=e12]:
+      - generic [ref=e13]: Personal Global Sourcing
+      - heading "Your Personal Global Sourcing Steward" [level=1] [ref=e14]:
+        - text: Your Personal
+        - text: Global Sourcing Steward
+      - paragraph [ref=e15]: We find, inspect, and deliver your chosen products — quality guaranteed, no surprises.
+      - button "Start Sourcing →" [ref=e16] [cursor=pointer]
+      - generic [ref=e17]:
+        - generic [ref=e18]:
+          - generic [ref=e19]: 12K+
+          - generic [ref=e20]: Products Sourced
+        - generic [ref=e21]:
+          - generic [ref=e22]: 98.5%
+          - generic [ref=e23]: QC Pass Rate
+        - generic [ref=e24]:
+          - generic [ref=e25]: 7-12
+          - generic [ref=e26]: Day Delivery
+        - generic [ref=e27]:
+          - generic [ref=e28]: 50K+
+          - generic [ref=e29]: Happy Buyers
+    - generic [ref=e30]:
+      - heading "How It Works" [level=3] [ref=e31]
+      - generic [ref=e32]:
+        - generic [ref=e33]:
+          - generic [ref=e34]: 🔗
+          - heading "1. Share Product Link" [level=4] [ref=e35]
+          - paragraph [ref=e36]: Paste any product URL from your favorite online store
+        - generic [ref=e37]:
+          - generic [ref=e38]: 🔍
+          - heading "2. We Source & Inspect" [level=4] [ref=e39]
+          - paragraph [ref=e40]: Our team finds the best supplier and runs VisionQC checks
+        - generic [ref=e41]:
+          - generic [ref=e42]: 📦
+          - heading "3. Delivered to You" [level=4] [ref=e43]
+          - paragraph [ref=e44]: Consolidated shipping with real-time tracking
+    - separator [ref=e45]
+    - generic [ref=e46]:
+      - heading "Marketplace" [level=3] [ref=e47]
+      - generic [ref=e49]:
+        - generic [ref=e50]: 0 products
+        - combobox [ref=e51] [cursor=pointer]:
+          - option "Popular" [selected]
+          - option "Newest"
+          - 'option "Price: Low→High"'
+          - 'option "Price: High→Low"'
+    - separator [ref=e52]
+    - generic [ref=e53]:
+      - heading "Why Choose AceProxy" [level=3] [ref=e54]
+      - generic [ref=e55]:
+        - generic [ref=e56]:
+          - generic [ref=e57]: 🔍
+          - text: VisionQC 2.0
+        - generic [ref=e58]:
+          - generic [ref=e59]: 📸
+          - text: Photo Verification
+        - generic [ref=e60]:
+          - generic [ref=e61]: 📦
+          - text: Consolidated Shipping
+        - generic [ref=e62]:
+          - generic [ref=e63]: 🛡️
+          - text: Buyer Protection
+        - generic [ref=e64]:
+          - generic [ref=e65]: 💬
+          - text: 24/7 Steward
+  - generic [ref=e67]:
+    - heading "Panel" [level=3] [ref=e68]
+    - button "✕" [ref=e69] [cursor=pointer]
+  - generic [ref=e71]:
+    - generic [ref=e72]:
+      - heading "🛒 Cart (0)" [level=3] [ref=e73]
+      - button "✕" [ref=e74] [cursor=pointer]
+    - generic [ref=e76]:
+      - generic [ref=e77]: 🛒
+      - generic [ref=e78]: Your cart is empty
+      - generic [ref=e79]: Start adding products from the marketplace
+  - text: "// ==================== CORE UTILITIES ==================== var DEBUG = false; var V = { currentTab: 'home', lang: localStorage.getItem('ace_lang')||'EN', cart_count: 0, user: null, token: null, favs: JSON.parse(sessionStorage.getItem('ace_favs')||'[]'), searchHistory: JSON.parse(localStorage.getItem('ace_search')||'[]') }; var T = { EN:{'sign_in':'Sign In','sign_out':'Sign Out','guest':'Guest','orders':'Orders','coupons':'Coupons','favorites':'Favorites','wallet':'Wallet','settings':'Settings','help':'Help','invite':'Invite Friends','add_cart':'Added to cart','fav_added':'Added to favorites','fav_removed':'Removed from favorites','copied':'Copied!','loading':'Loading...','no_results':'No results found','error':'Something went wrong','retry':'Retry','empty_cart':'Your cart is empty','empty_orders':'No orders yet','empty_favs':'No favorites yet','checkout':'Checkout','proceed':'Proceed to Checkout','total':'Total','subtotal':'Subtotal','shipping':'Shipping','remove':'Remove','save':'Save','cancel':'Cancel','delete':'Delete','edit':'Edit','add':'Add','search':'Search','search_placeholder':'Search products...','all_categories':'All Categories','sort_by':'Sort by','popular':'Popular','newest':'Newest','price_asc':'Price: Low\\u2192High','price_desc':'Price: High\\u2192Low','product_detail':'Product Detail','add_to_cart':'Add to Cart','buy_now':'Buy Now','specifications':'Specifications','reviews':'Reviews','related':'Related Products','lang_en':'English','lang_id':'Bahasa Indonesia','lang_cn':'\\u4e2d\\u6587','sourcing':'Smart Sourcing','how_works':'How It Works','marketplace':'Marketplace','trust':'Why Choose AceProxy','ai_steward':'AI Steward','home':'Home','discover':'Discover','assistant':'Assistant','resale':'Resale','profile':'Profile','admin':'Admin','cart':'Cart'}, CN:{'sign_in':'\\u767b\\u5f55','sign_out':'\\u9000\\u51fa','guest':'\\u6e38\\u5ba2','orders':'\\u8ba2\\u5355','coupons':'\\u4f18\\u60e0\\u5238','favorites':'\\u6536\\u85cf\\u5939','wallet':'\\u94b1\\u5305','settings':'\\u8bbe\\u7f6e','help':'\\u5e2e\\u52a9','invite':'\\u9080\\u8bf7\\u597d\\u53cb','add_cart':'\\u5df2\\u52a0\\u5165\\u8d2d\\u7269\\u8f66','fav_added':'\\u5df2\\u52a0\\u5165\\u6536\\u85cf','fav_removed':'\\u5df2\\u79fb\\u9664\\u6536\\u85cf','copied':'\\u5df2\\u590d\\u5236','loading':'\\u52a0\\u8f7d\\u4e2d...','no_results':'\\u672a\\u627e\\u5230\\u7ed3\\u679c','error':'\\u51fa\\u9519\\u4e86','retry':'\\u91cd\\u8bd5','empty_cart':'\\u8d2d\\u7269\\u8f66\\u4e3a\\u7a7a','empty_orders':'\\u6682\\u65e0\\u8ba2\\u5355','empty_favs':'\\u6682\\u65e0\\u6536\\u85cf','checkout':'\\u7ed3\\u8d26','proceed':'\\u53bb\\u7ed3\\u8d26','total':'\\u5408\\u8ba1','subtotal':'\\u5c0f\\u8ba1','shipping':'\\u8fd0\\u8d39','remove':'\\u79fb\\u9664','save':'\\u4fdd\\u5b58','cancel':'\\u53d6\\u6d88','delete':'\\u5220\\u9664','edit':'\\u7f16\\u8f91','add':'\\u6dfb\\u52a0','search':'\\u641c\\u7d22','search_placeholder':'\\u641c\\u7d22\\u5546\\u54c1...','all_categories':'\\u5168\\u90e8\\u5206\\u7c7b','sort_by':'\\u6392\\u5e8f','popular':'\\u6700\\u70ed','newest':'\\u6700\\u65b0','price_asc':'\\u4ef7\\u683c\\u2191','price_desc':'\\u4ef7\\u683c\\u2193','product_detail':'\\u5546\\u54c1\\u8be6\\u60c5','add_to_cart':'\\u52a0\\u5165\\u8d2d\\u7269\\u8f66','buy_now':'\\u7acb\\u5373\\u8d2d\\u4e70','specifications':'\\u89c4\\u683c\\u53c2\\u6570','reviews':'\\u8bc4\\u4ef7','related':'\\u76f8\\u5173\\u5546\\u54c1','lang_en':'English','lang_id':'Bahasa Indonesia','lang_cn':'\\u4e2d\\u6587','sourcing':'\\u667a\\u80fd\\u91c7\\u8d2d','how_works':'\\u5982\\u4f55\\u4f7f\\u7528','marketplace':'\\u5546\\u57ce','trust':'\\u4e3a\\u4ec0\\u4e48\\u9009\\u62e9\\u6211\\u4eec','ai_steward':'\\u201c\\u4ee3\\u8d2d\\u7ba1\\u5bb6\\u201d','home':'\\u9996\\u9875','discover':'\\u53d1\\u73b0','assistant':'\\u52a9\\u624b','resale':'\\u8f6c\\u5356','profile':'\\u6211\\u7684','admin':'\\u7ba1\\u7406','cart':'\\u8d2d\\u7269\\u8f66'}, ID:{'sign_in':'Masuk','sign_out':'Keluar','guest':'Tamu','orders':'Pesanan','coupons':'Kupon','favorites':'Favorit','wallet':'Dompet','settings':'Pengaturan','help':'Bantuan','invite':'Undang Teman','add_cart':'Ditambah ke keranjang','fav_added':'Ditambah ke favorit','fav_removed':'Dihapus dari favorit','copied':'Disalin!','loading':'Memuat...','no_results':'Tidak ada hasil','error':'Ada kesalahan','retry':'Coba lagi','empty_cart':'Keranjang kosong','empty_orders':'Belum ada pesanan','empty_favs':'Belum ada favorit','checkout':'Checkout','proceed':'Lanjut ke Checkout','total':'Total','subtotal':'Subtotal','shipping':'Pengiriman','remove':'Hapus','save':'Simpan','cancel':'Batal','delete':'Hapus','edit':'Edit','add':'Tambah','search':'Cari','search_placeholder':'Cari produk...','all_categories':'Semua Kategori','sort_by':'Urutkan','popular':'Terpopuler','newest':'Terbaru','price_asc':'Harga \\u2191','price_desc':'Harga \\u2193','product_detail':'Detail Produk','add_to_cart':'Tambah ke Keranjang','buy_now':'Beli Sekarang','specifications':'Spesifikasi','reviews':'Ulasan','related':'Produk Terkait','lang_en':'English','lang_id':'Bahasa Indonesia','lang_cn':'\\u4e2d\\u6587','sourcing':'Smart Sourcing','how_works':'Cara Kerja','marketplace':'Marketplace','trust':'Mengapa AceProxy','ai_steward':'AI Steward','home':'Beranda','discover':'Temukan','assistant':'Asisten','resale':'Jual Kembali','profile':'Profil','admin':'Admin','cart':'Keranjang'} }; function t(k){return (T[V.lang]||T.EN)[k]||k;} function $(id){return document.getElementById(id);} function qs(sel,ctx){return (ctx||document).querySelector(sel);} function qsa(sel,ctx){return (ctx||document).querySelectorAll(sel);} function fmt(n){if(typeof n==='string')n=parseFloat(n);return isNaN(n)?'0':n.toLocaleString('id-ID');} function fmtRp(n){return 'Rp '+fmt(n);} function truncate(s,max){return s&&s.length>max?s.substring(0,max-3)+'...':s||'';} // ==================== API ==================== var API_BASE = (typeof window!=='undefined'&&window.ACE_PROXY_API)||'http://localhost:3000/api/v1'; var A = { base: API_BASE, token: function(){return V.token||localStorage.getItem('ace_jwt')||''}, setToken: function(t){V.token=t;if(t)localStorage.setItem('ace_jwt',t);else localStorage.removeItem('ace_jwt')}, get: async function(path,params){var u=this.base+path;if(params){var q=new URLSearchParams(params).toString();u+='?'+q;}var h={'Accept':'application/json'};if(this.token())h['Authorization']='Bearer '+this.token();try{var r=await fetch(u,{headers:h});if(!r.ok)throw new Error(r.status);return await r.json();}catch(e){if(DEBUG)console.warn('API GET '+path,e);return null;}}, post: async function(path,body){var u=this.base+path;var h={'Content-Type':'application/json','Accept':'application/json'};if(this.token())h['Authorization']='Bearer '+this.token();try{var r=await fetch(u,{method:'POST',headers:h,body:JSON.stringify(body)});if(!r.ok)throw new Error(r.status);return await r.json();}catch(e){if(DEBUG)console.warn('API POST '+path,e);return null;}}, put: async function(path,body){var u=this.base+path;var h={'Content-Type':'application/json','Accept':'application/json'};if(this.token())h['Authorization']='Bearer '+this.token();try{var r=await fetch(u,{method:'PUT',headers:h,body:JSON.stringify(body)});if(!r.ok)throw new Error(r.status);return await r.json();}catch(e){if(DEBUG)console.warn('API PUT '+path,e);return null;}}, del: async function(path){var u=this.base+path;var h={'Accept':'application/json'};if(this.token())h['Authorization']='Bearer '+this.token();try{var r=await fetch(u,{method:'DELETE',headers:h});if(!r.ok)throw new Error(r.status);return await r.json();}catch(e){if(DEBUG)console.warn('API DELETE '+path,e);return null;}} }; function initAPI(){if(typeof window!=='undefined'&&window.API&&window.API.API_BASE){API_BASE=window.API.API_BASE;A.base=API_BASE;var t=window.API.getToken();if(t){V.token=t;A.setToken(t);}}} // ==================== MOCK DATA (fallback when API unavailable) ==================== var MOCK = { products: [ {id:'EID-JKT-001',name:'Wireless Earbuds Pro',category:'Electronics',emoji:'🎧',price:299000,origPrice:499000,rating:4.8,reviews:234,featured:true,hot:true,desc:'Premium wireless earbuds with active noise cancellation, 30hr battery life, IPX5 water resistant.'}, {id:'EID-JKT-002',name:'Slim Fit Casual Shirt',category:'Fashion',emoji:'👔',price:189000,origPrice:289000,rating:4.6,reviews:156,featured:true,desc:'Premium cotton slim fit casual shirt, available in multiple colors.'}, {id:'EID-JKT-003',name:'Smart LED Desk Lamp',category:'Home',emoji:'💡',price:249000,origPrice:359000,rating:4.7,reviews:89,featured:true,desc:'Eye-care smart LED desk lamp with wireless charging, 5 color modes, touch control.'}, {id:'EID-JKT-004',name:'Korean Skincare Set',category:'Beauty',emoji:'✨',price:159000,origPrice:239000,rating:4.9,reviews:412,featured:true,hot:true,desc:'5-step Korean skincare routine set with snail mucin and hyaluronic acid.'}, {id:'EID-JKT-005',name:'Portable Blender',category:'Home',emoji:'🥤',price:219000,rating:4.5,reviews:178,desc:'USB rechargeable portable blender, 400ml capacity, 6 blades.'}, {id:'EID-JKT-006',name:'Running Shoes Ultra',category:'Sports',emoji:'👟',price:459000,origPrice:699000,rating:4.7,reviews:523,hot:true,desc:'Lightweight running shoes with carbon fiber plate and responsive cushioning.'}, {id:'EID-JKT-007',name:'Phone Gimbal Stabilizer',category:'Electronics',emoji:'📱',price:349000,rating:4.6,reviews:98,desc:'3-axis phone gimbal stabilizer with AI tracking and gesture control.'}, {id:'EID-JKT-008',name:'Minimalist Watch',category:'Fashion',emoji:'⌚',price:289000,origPrice:429000,rating:4.8,reviews:312,featured:true,desc:'Slim minimalist watch with genuine leather strap and Japanese movement.'}, {id:'EID-JKT-009',name:'Insulated Water Bottle',category:'Lifestyle',emoji:'🧴',price:129000,rating:4.4,reviews:445,desc:'Double-wall vacuum insulated bottle, 750ml, keeps drinks cold 24hrs.'}, {id:'EID-JKT-010',name:'Yoga Mat Premium',category:'Sports',emoji:'🧘',price:179000,origPrice:259000,rating:4.6,reviews:167,desc:'6mm thick non-slip yoga mat with alignment lines and carrying strap.'}, {id:'EID-JKT-011',name:'Mechanical Keyboard RGB',category:'Electronics',emoji:'⌨️',price:399000,rating:4.7,reviews:289,hot:true,desc:'Hot-swappable mechanical keyboard with RGB backlight and PBT keycaps.'}, {id:'EID-JKT-012',name:'Canvas Backpack',category:'Lifestyle',emoji:'🎒',price:219000,origPrice:329000,rating:4.5,reviews:134,desc:'Waterproof canvas backpack with laptop compartment and USB charging port.'} ], categories: ['All','Electronics','Fashion','Home','Beauty','Sports','Lifestyle'], orders: [ {id:'ORD-20260615-001',status:'delivered',items:'Wireless Earbuds Pro',total:299000,date:'2026-06-15'}, {id:'ORD-20260618-005',status:'issue',items:'Mechanical Keyboard RGB',total:399000,date:'2026-06-18'}, {id:'ORD-20260620-002',status:'shipped',items:'Korean Skincare Set + Canvas Backpack',total:378000,date:'2026-06-20'}, {id:'ORD-20260624-003',status:'paid',items:'Running Shoes Ultra',total:459000,date:'2026-06-24'} ], coupons: [ {code:'WELCOME10',type:'PERCENT',value:10,min:200000,desc:'10% off your first order',used:false}, {code:'FREESHIP',type:'FIXED',value:30000,min:500000,desc:'Free shipping on orders over Rp 500K',used:false}, {code:'SAVE50K',type:'FIXED',value:50000,min:300000,desc:'Rp 50K off orders over Rp 300K',used:true}, {code:'BUNDLE15',type:'PERCENT',value:15,min:750000,desc:'15% off when you buy 3+ items',used:false} ], faq: [ {q:'How does AceProxy work?',a:'You share a product link → We source it from our trusted supplier network → Our team inspects with VisionQC 2.0 → We ship it to your address. Track every step in real-time.'}, {q:'How long does shipping take?',a:'Standard delivery: 7-12 business days to Jakarta. Other regions: 10-16 business days. Express options available at checkout.'}, {q:'What payment methods are accepted?',a:'We accept OVO, DANA, GoPay, QRIS, bank transfers (BCA, Mandiri, BNI, BRI), and Alfamart/Indomaret.'}, {q:'Can I return or exchange items?',a:'As a proxy purchasing service, products are non-returnable since we buy exactly what you select. Our VisionQC check ensures quality before shipping. You can resell unwanted items on our Resale Hub.'}, {q:'How do I track my order?',a:'Login to your account → Profile → Orders. Each order has a real-time timeline from sourcing to delivery.'}, {q:'Is there a minimum order?',a:'No minimum order. However, consolidated shipping starts at 0.5kg, and grouping multiple items saves on shipping costs.'} ] }; // ==================== TOAST ==================== var Toast = { show: function(msg,type){type=type||'';var el=$('toastContainer');var d=document.createElement('div');d.className='toast '+type;d.textContent=msg;el.appendChild(d);setTimeout(function(){d.style.opacity='0';d.style.transform='translateY(-10px)';d.style.transition='all .2s';setTimeout(function(){d.remove()},250)},2500)} }; // ==================== MODAL ==================== var Modal = { open: function(html){$('modalContent').innerHTML=html;$('modalOverlay').classList.add('open')}, close: function(){$('modalOverlay').classList.remove('open')} }; // ==================== PANEL (Slide Panel) ==================== var Panel = { _cb: null, open: function(title,html,cb){$('panelTitle').textContent=title;$('panelContent').innerHTML=html;$('slidePanel').classList.add('open');$('panelBackdrop').classList.add('open');this._cb=cb||null}, close: function(){$('slidePanel').classList.remove('open');$('panelBackdrop').classList.remove('open');if(this._cb)this._cb()}, replace: function(html){$('panelContent').innerHTML=html} }; // ==================== TAB NAVIGATION ==================== function switchTab(tabId){ var old=$('page-'+V.currentTab);if(old)old.classList.remove('active'); V.currentTab=tabId; var pg=$('page-'+tabId);if(pg)pg.classList.add('active'); qsa('.tab-btn').forEach(function(b){b.classList.remove('active')}); qsa('.tab-btn').forEach(function(b){if(b.textContent.toLowerCase().indexOf(tabId)>-1||b.onclick&&b.onclick.toString().indexOf(\"'\"+tabId+\"'\")>-1)b.classList.add('active')}); window.scrollTo({top:0,behavior:'smooth'}); // Lazy render if(tabId==='discovery'&&!V._discoveryRendered){Trending.render();V._discoveryRendered=true} if(tabId==='profile')Profile.render(); if(tabId==='admin'&&!V._adminRendered){Admin.render();V._adminRendered=true} if(tabId==='resale'&&!V._resaleRendered){Resale.render();V._resaleRendered=true} if(tabId==='cart')Cart.render(); } // ==================== AUTH ==================== var Auth = { showModal: function(){ Modal.open('"
+  - heading "'+t('sign_in')+'" [level=3] [ref=e80]
+  - generic [ref=e81]:
+    - generic [ref=e82]: Email
+    - textbox "you@email.com" [ref=e83]
+  - generic [ref=e84]:
+    - generic [ref=e85]: Password
+    - textbox "••••••••" [ref=e86]
+  - button "'+t('sign_in')+'" [ref=e87] [cursor=pointer]
+  - paragraph [ref=e88]:
+    - text: Don\'t have an account?
+    - link "Register" [ref=e89] [cursor=pointer]:
+      - /url: "#"
+  - text: "'); }, showRegister: function(){ Modal.open('"
+  - heading "Create Account" [level=3] [ref=e90]
+  - generic [ref=e91]:
+    - generic [ref=e92]: Email
+    - textbox "you@email.com" [ref=e93]
+  - generic [ref=e94]:
+    - generic [ref=e95]: Password
+    - textbox "Min 8 characters" [ref=e96]
+  - button "Register" [ref=e97] [cursor=pointer]
+  - paragraph [ref=e98]:
+    - text: Already have an account?
+    - link "Sign In" [ref=e99] [cursor=pointer]:
+      - /url: "#"
+  - text: "'); }, login: async function(){ var email=$('authEmail').value.trim();var pass=$('authPass').value; if(!email||!pass){$('authError').textContent='Please fill all fields';$('authError').classList.remove('hidden');return} $('authError').classList.add('hidden'); try { var res=await A.post('/auth/login',{email:email,password:pass}); if(res&&res.token){A.setToken(res.token);V.user=res.user||{email:email};Modal.close();Profile.render();Toast.show('Welcome back!','success')} else{var d=await A.post('/auth/login',{email:email,password:pass});if(d&&d.token){A.setToken(d.token);V.user=d.user||{email:email};Modal.close();Profile.render();Toast.show('Welcome!','success')}else{$('authError').textContent='Invalid credentials';$('authError').classList.remove('hidden')}} } catch(e){$('authError').textContent='Connection error';$('authError').classList.remove('hidden')} }, register: async function(){ // Try API first, fall back to mock try { var res=await A.post('/auth/register',{email:$('regEmail').value.trim(),password:$('regPass').value}); if(res&&res.token){A.setToken(res.token);V.user=res.user||{email:$('regEmail').value.trim()};Modal.close();Profile.render();Toast.show('Account created!','success');return} } catch(e){} // Mock fallback V.user={email:$('regEmail').value.trim(),level:'EXPLORER'}; A.setToken('mock_jwt_'+Date.now()); Modal.close();Profile.render();Toast.show('Account created!','success') }, logout: function(){V.user=null;A.setToken('');V.token=null;Profile.render();Toast.show('Signed out')}, skip: function(){Modal.close()} }; // ==================== PRODUCTS ==================== var Products = { _all: [], _cat: 'All', _sort: 'popular', async load(){ var data=null; try{data=await A.get('/product/list',{limit:50})}catch(e){} if(data&&data.items&&data.items.length>0){this._all=data.items.map(function(p){return{id:p.id,name:p.name,category:p.category||'Other',emoji:p.emoji||'📦',price:parseFloat(p.priceIdr)||0,origPrice:parseFloat(p.priceIdr)*1.4||0,rating:parseFloat(p.ratingAvg)||4.5,reviews:p.ratingCount||0,featured:p.status==='FEATURED',hot:false,desc:p.description||''}})}else{this._all=MOCK.products.slice()} return this._all; }, async render(){ if(!this._all.length)await this.load(); var cat=this._cat,sort=$('sortSelect')?$('sortSelect').value:'popular'; var filtered=cat==='All'?this._all.slice():this._all.filter(function(p){return p.category===cat}); if(sort==='price_asc')filtered.sort(function(a,b){return a.price-b.price}); else if(sort==='price_desc')filtered.sort(function(a,b){return b.price-a.price}); else if(sort==='newest')filtered.reverse(); else filtered.sort(function(a,b){return (b.reviews||0)-(a.reviews||0)}); if($('productCount'))$('productCount').textContent=filtered.length+' products'; var html=filtered.map(function(p){var badge='';if(p.origPrice&&p.origPrice>p.price)badge='"
+  - generic [ref=e100]: "'+(Math.round((1-p.price/p.origPrice)*100))+'% OFF"
+  - text: "';else if(p.featured)badge='"
+  - generic [ref=e101]: NEW
+  - text: "';var liked=V.favs.indexOf(p.id)>-1;return '"
+  - generic [ref=e102] [cursor=pointer]:
+    - text: "'+badge+'"
+    - generic [ref=e103]: "'+p.emoji+'"
+    - generic [ref=e104]:
+      - generic [ref=e105]: "'+p.category+'"
+      - generic [ref=e106]: "'+p.name+'"
+      - generic [ref=e107]:
+        - generic [ref=e108]: "'+'★'.repeat(Math.round(p.rating))+'"
+        - text: "'+p.rating+' ('+p.reviews+')"
+      - generic [ref=e109]: "'+fmtRp(p.price)+(p.origPrice&&p.origPrice>p.price?''+fmtRp(p.origPrice)+'':'')+'"
+    - button "'+(liked?'♥':'♡')+'" [ref=e110]
+  - text: "'}).join(''); $('productGrid').innerHTML=html||'"
+  - generic [ref=e111]:
+    - generic [ref=e112]: 📦
+    - generic [ref=e113]: "'+t('no_results')+'"
+  - text: "'; }, detail: function(id){ var p=this._all.find(function(x){return x.id===id});if(!p)return; var liked=V.favs.indexOf(id)>-1; Modal.open('"
+  - generic [ref=e114]: "'+p.emoji+'"
+  - generic [ref=e115]:
+    - heading "'+p.name+'" [level=2] [ref=e116]
+    - generic [ref=e117]: "'+fmtRp(p.price)+(p.origPrice&&p.origPrice>p.price?''+fmtRp(p.origPrice)+'':'')+'"
+    - generic [ref=e118]: "'+'★'.repeat(Math.round(p.rating))+' '+p.rating+' · '+p.reviews+' reviews"
+    - paragraph [ref=e119]: "'+(p.desc||'High-quality product sourced through our trusted supplier network.')+'"
+    - generic [ref=e120]:
+      - generic [ref=e121]:
+        - generic [ref=e122]: Category
+        - generic [ref=e123]: "'+p.category+'"
+      - generic [ref=e124]:
+        - generic [ref=e125]: Shipping
+        - generic [ref=e126]: 7-12 days
+      - generic [ref=e127]:
+        - generic [ref=e128]: Quality
+        - generic [ref=e129]: ✅ VisionQC Verified
+    - generic [ref=e130]:
+      - button "'+(liked?'♥ Saved':'♡ Save')+'" [ref=e131] [cursor=pointer]
+      - button "'+t('add_to_cart')+'" [ref=e132] [cursor=pointer]
+  - text: "'); }, filter: function(cat){this._cat=cat;this.render();var pills=qsa('.cat-pill');pills.forEach(function(p){p.classList.toggle('active',p.textContent.trim()===cat||(cat==='All'&&p.textContent.trim()==='All'))})} }; // ==================== CART ==================== var Cart = { _items: JSON.parse(sessionStorage.getItem('ace_cart')||'[]'), _save: function(){sessionStorage.setItem('ace_cart',JSON.stringify(this._items));this._updateBadge()}, add: function(productId,qty){qty=qty||1;var existing=this._items.find(function(i){return i.id===productId});if(existing){existing.qty+=qty}else{this._items.push({id:productId,qty:qty})};this._save();Toast.show(t('add_cart'),'success')}, remove: function(productId){this._items=this._items.filter(function(i){return i.id!==productId});this._save();this.render()}, updateQty: function(productId,qty){if(qty<1){this.remove(productId);return}var item=this._items.find(function(i){return i.id===productId});if(item){item.qty=qty;this._save();this.render()}}, clear: function(){this._items=[];this._save();this.close()}, _updateBadge: function(){var count=this._items.reduce(function(s,i){return s+i.qty},0);V.cart_count=count;$('cartCountHeader')&&($('cartCountHeader').textContent=count)}, open: function(){this.render();$('cartPanel').classList.add('open');$('cartBackdrop').classList.add('open')}, close: function(){$('cartPanel').classList.remove('open');$('cartBackdrop').classList.remove('open')}, render: function(){ this._updateBadge(); var total=0;var itemsHtml=''; if(this._items.length===0){$('cartContent').innerHTML='"
+  - generic [ref=e133]:
+    - generic [ref=e134]: 🛒
+    - generic [ref=e135]: "'+t('empty_cart')+'"
+  - text: "';$('cartSummary').classList.add('hidden');return} this._items.forEach(function(item){ var p=Products._all.find(function(x){return x.id===item.id});if(!p)p={id:item.id,name:'Product '+item.id,price:0,emoji:'📦'}; total+=p.price*item.qty; itemsHtml+='"
+  - generic [ref=e136]:
+    - generic [ref=e137]: "'+p.emoji+'"
+    - generic [ref=e138]:
+      - generic [ref=e139]: "'+p.name+'"
+      - generic [ref=e140]: "'+fmtRp(p.price)+'"
+      - generic [ref=e141]:
+        - button "−" [ref=e142] [cursor=pointer]
+        - generic [ref=e143]: "'+item.qty+'"
+        - button "+" [ref=e144] [cursor=pointer]
+    - generic [ref=e145] [cursor=pointer]: Remove
+  - text: "'; }); $('cartContent').innerHTML=itemsHtml; $('cartSummary').classList.remove('hidden'); $('cartSubtotal').textContent=fmtRp(total);$('cartTotal').textContent=fmtRp(total); }, checkout: function(){ if(!V.user){Toast.show('Please sign in first');Auth.showModal();return} Modal.open('"
+  - heading "'+t('checkout')+'" [level=3] [ref=e146]
+  - generic [ref=e147]:
+    - heading "Shipping Address" [level=4] [ref=e148]
+    - paragraph [ref=e149]: Select an address or add a new one in Settings.
+    - button "Manage Addresses" [ref=e150] [cursor=pointer]
+  - generic [ref=e151]:
+    - heading "Payment Method" [level=4] [ref=e152]
+    - generic [ref=e153] [cursor=pointer]:
+      - generic [ref=e154]: 📱
+      - generic [ref=e155]: QRIS / OVO / DANA / GoPay
+    - generic [ref=e156] [cursor=pointer]:
+      - generic [ref=e157]: 🏦
+      - generic [ref=e158]: Bank Transfer (BCA/Mandiri/BNI/BRI)
+  - button "Place Order" [ref=e159] [cursor=pointer]
+  - text: "'); } }; // ==================== FAVORITES ==================== var Fav = { toggle: function(id){var idx=V.favs.indexOf(id);if(idx>-1){V.favs.splice(idx,1);Toast.show(t('fav_removed'))}else{V.favs.push(id);Toast.show(t('fav_added'),'success')};sessionStorage.setItem('ace_favs',JSON.stringify(V.favs));Products.render();Profile.switchSub('favorites');Profile.renderFavs()} }; // ==================== PROFILE ==================== var Profile = { _sub: 'orders', render: function(){ if(V.user){$('profileName').textContent=V.user.email.split('@')[0];$('profileEmail').textContent=V.user.email;$('profileLevel').textContent='🏅 Explorer';$('profileAuthBtn').textContent=t('sign_out');$('profileAuthBtn').onclick=Auth.logout}else{$('profileName').textContent='Guest';$('profileEmail').textContent='Sign in to unlock features';$('profileLevel').textContent='';$('profileAuthBtn').textContent=t('sign_in');$('profileAuthBtn').onclick=Auth.showModal} this.switchSub(this._sub); }, switchSub: function(sub){this._sub=sub;qsa('.profile-tab').forEach(function(t){t.classList.toggle('active',t.textContent.toLowerCase().indexOf(sub)>-1)});if(sub==='orders')this.renderOrders();else if(sub==='coupons')this.renderCoupons();else if(sub==='favorites')this.renderFavs();else if(sub==='wallet')this.renderWallet()}, renderOrders: function(){ if(!V.user){this._empty('orders');return} var orders=MOCK.orders; var html=orders.map(function(o){var sc='pending';if(o.status==='delivered')sc='delivered';else if(o.status==='shipped')sc='shipped';else if(o.status==='paid')sc='paid';else if(o.status==='issue')sc='issue';return '"
+  - generic [ref=e160]:
+    - generic [ref=e161]:
+      - generic [ref=e162]: "'+o.id+'"
+      - generic [ref=e163]: "'+o.status+'"
+    - generic [ref=e164]: "'+o.items+'"
+    - generic [ref=e165]: "'+fmtRp(o.total)+'"
+    - generic [ref=e166]: "'+o.date+'"
+  - text: "'}).join(''); $('profileContent').innerHTML=html||'"
+  - generic [ref=e167]:
+    - generic [ref=e168]: 📋
+    - generic [ref=e169]: "'+t('empty_orders')+'"
+  - text: "'; }, renderCoupons: function(){ var html=MOCK.coupons.map(function(c){var tag=c.used?'used':'available';return '"
+  - generic [ref=e171]:
+    - generic [ref=e172]: "'+(c.type==='PERCENT'?c.value+'%':fmtRp(c.value))+'"
+    - generic [ref=e173]: "'+c.desc+'"
+    - generic [ref=e174] [cursor=pointer]: 📋 '+c.code+'
+    - generic [ref=e175]: "'+(c.used?'Used':'Available')+'"
+  - text: "'}).join(''); $('profileContent').innerHTML=html; }, renderFavs: function(){ var favProducts=Products._all.filter(function(p){return V.favs.indexOf(p.id)>-1}); if(!favProducts.length){$('profileContent').innerHTML='"
+  - generic [ref=e176]:
+    - generic [ref=e177]: ♡
+    - generic [ref=e178]: "'+t('empty_favs')+'"
+  - text: "';return} var html=favProducts.map(function(p){return '"
+  - generic [ref=e179] [cursor=pointer]:
+    - generic [ref=e180]: "'+p.emoji+'"
+    - generic [ref=e181]:
+      - generic [ref=e182]: "'+p.name+'"
+      - generic [ref=e183]: "'+fmtRp(p.price)+'"
+  - text: "'}).join(''); $('profileContent').innerHTML='"
+  - generic [ref=e184]: "'+html+'"
+  - text: "'; }, renderWallet: function(){ if(!V.user){this._empty('wallet');return} var html='"
+  - generic [ref=e185]:
+    - generic [ref=e186]: Ace Credit Balance
+    - generic [ref=e187]: Rp 150,000
+  - text: "'; html+='"
+  - generic [ref=e188]:
+    - generic [ref=e189]: 🎁
+    - generic [ref=e190]:
+      - generic [ref=e191]: Welcome Bonus
+      - generic [ref=e192]: 2026-06-01
+    - generic [ref=e193]: +Rp 50,000
+  - text: "'; html+='"
+  - generic [ref=e194]:
+    - generic [ref=e195]: ↩️
+    - generic [ref=e196]:
+      - generic [ref=e197]: Cashback - ORD-001
+      - generic [ref=e198]: 2026-06-15
+    - generic [ref=e199]: +Rp 25,000
+  - text: "'; html+='"
+  - generic [ref=e200]:
+    - generic [ref=e201]: 🛒
+    - generic [ref=e202]:
+      - generic [ref=e203]: Order Payment - ORD-003
+      - generic [ref=e204]: 2026-06-24
+    - generic [ref=e205]: "-Rp 75,000"
+  - text: "'; $('profileContent').innerHTML=html; }, _empty: function(tab){$('profileContent').innerHTML='"
+  - generic [ref=e206]:
+    - generic [ref=e207]: 🔒
+    - generic [ref=e208]: Sign in required
+    - generic [ref=e209]: Sign in to view your '+tab+'
+    - button "Sign In" [ref=e210] [cursor=pointer]
+  - text: "'} }; // ==================== SMART COLLECT ==================== var SmartCollect = { search: function(){ var url=$('scUrl').value.trim();if(!url){Toast.show('Please paste a product URL');return} $('scSpinner').classList.remove('hidden');$('scResults').innerHTML=''; var self=this; setTimeout(function(){ $('scSpinner').classList.add('hidden'); var results=[]; for(var i=0;i<4;i++){var p=MOCK.products[i];results.push({id:p.id+'-sc',name:p.name,emoji:p.emoji,price:Math.round(p.price*0.7),origPrice:p.price,sourceRating:4.3+Math.random()*0.7,logistics:'ok'})} results[2].logistics='warn'; self.showResults(results); },1200); }, showResults: function(results){ var tags={'ok':'✅ Can ship','warn':'⚠️ Extra fee','no':'🚫 Restricted'}; var html='"
+  - heading "Found '+results.length+' matching products" [level=4] [ref=e211]
+  - text: "'; html+=results.map(function(r){var lt=tags[r.logistics]||tags.ok;var lc=r.logistics;return '"
+  - generic [ref=e212]:
+    - generic [ref=e213]: "'+r.emoji+'"
+    - generic [ref=e214]:
+      - generic [ref=e215]: "'+r.name+'"
+      - generic [ref=e216]: "'+fmtRp(r.price)+'"
+      - generic [ref=e217]:
+        - text: "Source rating: '+r.sourceRating.toFixed(1)+' ★ ·"
+        - generic [ref=e218]: "'+lt+'"
+    - button "+ Add" [ref=e220] [cursor=pointer]
+  - text: "'}).join(''); $('scResults').innerHTML=html; }, addToList: function(id){Cart.add(id.replace('-sc',''));Toast.show('Added to sourcing list!','success')} }; // ==================== TRENDING ==================== var Trending = { render: function(){var trending=MOCK.products.filter(function(p){return p.hot||p.featured}).slice(0,6);$('trendingGrid').innerHTML=trending.map(function(p){var liked=V.favs.indexOf(p.id)>-1;return '"
+  - generic [ref=e221] [cursor=pointer]:
+    - generic [ref=e222]: "'+p.emoji+'"
+    - generic [ref=e223]:
+      - generic [ref=e224]: "'+p.category+'"
+      - generic [ref=e225]: "'+p.name+'"
+      - generic [ref=e226]: "'+fmtRp(p.price)+'"
+    - button "'+(liked?'♥':'♡')+'" [ref=e227]
+  - text: "'}).join('')} }; // ==================== CHAT (Assistant) ==================== var Chat = { send: function(){ var input=$('chatInput');var msg=input.value.trim();if(!msg)return; this._addMsg(msg,'user');input.value=''; var self=this; setTimeout(function(){ var reply='I can help you find products, track orders, or answer questions about AceProxy. Try asking:\\n• \"Show me electronics under Rp 500K\"\\n• \"Track my order ORD-20260624-003\"\\n• \"What payment methods do you accept?\"'; if(msg.toLowerCase().indexOf('trending')>-1||msg.toLowerCase().indexOf('popular')>-1)reply='🔥 Here are our trending products right now:\\n• Wireless Earbuds Pro — Rp 299K\\n• Korean Skincare Set — Rp 159K\\n• Running Shoes Ultra — Rp 459K\\n\\nWould you like me to add any to your cart?'; else if(msg.toLowerCase().indexOf('order')>-1||msg.toLowerCase().indexOf('track')>-1)reply='📦 Your recent orders:\\n• ORD-20260615-001: Delivered ✅\\n• ORD-20260620-002: In transit 🚚\\n• ORD-20260624-003: Being sourced 🔍\\n\\nNeed details on a specific order?'; else if(msg.toLowerCase().indexOf('payment')>-1||msg.toLowerCase().indexOf('pay')>-1)reply='💳 We accept:\\n• QRIS (recommended)\\n• OVO, DANA, GoPay\\n• Bank Transfer: BCA, Mandiri, BNI, BRI\\n• Alfamart / Indomaret\\n\\nAll payments are secure and processed by Xendit.'; self._addMsg(reply,'bot'); },800); }, quickAsk: function(q){$('chatInput').value=q;this.send()}, _addMsg: function(text,role){var el=$('chatMessages');var d=document.createElement('div');d.className='chat-msg '+role;d.textContent=text;el.appendChild(d);el.scrollTop=el.scrollHeight} }; // ==================== LANGUAGE ==================== var Lang = { _langs: ['EN','ID','CN'], _idx: 0, toggle: function(){ this._idx=(this._idx+1)%3; var l=this._langs[this._idx]; V.lang=l;localStorage.setItem('ace_lang',l); if($('langBtn'))$('langBtn').textContent=l; Products.render(); if(V._discoveryRendered)Trending.render(); if(V._adminRendered)Admin.render(); Profile.render(); Toast.show('Language: '+l); }, init: function(){ var cur=V.lang;this._idx=this._langs.indexOf(cur);if(this._idx<0)this._idx=0; if($('langBtn'))$('langBtn').textContent=cur; } }; // ==================== ADMIN (Enhanced) ==================== var Admin = { _panel: 'overview', _clockInterval: null, switchPanel: function(panel){this._panel=panel;qsa('.admin-subtab').forEach(function(t){t.classList.toggle('active',t.textContent.toLowerCase().indexOf(panel)>-1)});this.render()}, render: function(){ var html=''; if(this._panel==='overview')html=this._overview(); else if(this._panel==='orders')html=this._orders(); else if(this._panel==='alerts')html=this._alerts(); else if(this._panel==='vault')html=this._vault(); else if(this._panel==='regions')html=this._regions(); $('adminContent').innerHTML='"
+  - generic [ref=e228]:
+    - generic [ref=e229]: WIB --:--
+    - button "↻ Refresh" [ref=e230] [cursor=pointer]
+  - text: "'+html; this._startClock(); }, _startClock: function(){ var self=this;if(this._clockInterval)clearInterval(this._clockInterval); function tick(){var d=new Date();var off=d.getTimezoneOffset();var wib=new Date(d.getTime()+(off+420)*60000);var t=wib.toISOString().substr(11,5);if($('wibClock'))$('wibClock').textContent='WIB '+t+' | '+wib.toDateString().substr(4)} tick();this._clockInterval=setInterval(tick,30000); }, refresh: function(){Toast.show('Data refreshed');this.render()}, _overview: function(){ return '"
+  - generic [ref=e231]:
+    - text: "'+ '"
+    - generic [ref=e232]:
+      - generic [ref=e233]: Total Revenue
+      - generic [ref=e234]: Rp 287M
+      - generic [ref=e235]: ↑ 12.3% vs last month
+    - text: "'+ '"
+    - generic [ref=e236]:
+      - generic [ref=e237]: Active Orders
+      - generic [ref=e238]: "142"
+      - generic [ref=e239]: ↑ 8.1%
+    - text: "'+ '"
+    - generic [ref=e240]:
+      - generic [ref=e241]: Avg Margin
+      - generic [ref=e242]: 34.2%
+      - generic [ref=e243]: ↑ 2.1%
+    - text: "'+ '"
+    - generic [ref=e244]:
+      - generic [ref=e245]: Chargeback Rate
+      - generic [ref=e246]: 0.3%
+      - generic [ref=e247]: "Target: <0.5% ✓"
+    - text: "'+ '"
+  - heading "'+t('orders')+'" [level=4] [ref=e248]
+  - text: "'+ MOCK.orders.map(function(o){var sc=o.status;return ''}).join('')+ '"
+  - table [ref=e249]:
+    - rowgroup [ref=e250]:
+      - row "Order ID Items Total Status" [ref=e251]:
+        - columnheader "Order ID" [ref=e252]
+        - columnheader "Items" [ref=e253]
+        - columnheader "Total" [ref=e254]
+        - columnheader "Status" [ref=e255]
+    - rowgroup [ref=e256]:
+      - row "'+o.id+' '+o.items+' '+fmtRp(o.total)+' '+sc+'" [ref=e257]:
+        - cell "'+o.id+'" [ref=e258]
+        - cell "'+o.items+'" [ref=e259]
+        - cell "'+fmtRp(o.total)+'" [ref=e260]
+        - cell "'+sc+'" [ref=e261]
+  - text: "'; }, _orders: function(){return this._overview()}, _alerts: function(){ return '"
+  - generic [ref=e262]:
+    - generic [ref=e263]: 🚨
+    - generic [ref=e264]:
+      - generic [ref=e265]: Risk Pool at 4.7% — approaching 5% threshold
+      - generic [ref=e266]: 10 min ago · Action required
+  - text: "'+ '"
+  - generic [ref=e267]:
+    - generic [ref=e268]: 🚨
+    - generic [ref=e269]:
+      - generic [ref=e270]: Patent conflict detected — EID-JKT-011
+      - generic [ref=e271]: 25 min ago · Legal review needed
+  - text: "'+ '"
+  - generic [ref=e272]:
+    - generic [ref=e273]: ⚠️
+    - generic [ref=e274]:
+      - generic [ref=e275]: "Customs delay: Jakarta route +3 days"
+      - generic [ref=e276]: 2 hours ago
+  - text: "'+ '"
+  - generic [ref=e277]:
+    - generic [ref=e278]: ⚠️
+    - generic [ref=e279]:
+      - generic [ref=e280]: Chargeback alert — Surabaya region (2 cases)
+      - generic [ref=e281]: 4 hours ago
+  - text: "'+ '"
+  - generic [ref=e282]:
+    - generic [ref=e283]: ℹ️
+    - generic [ref=e284]:
+      - generic [ref=e285]: "TikTok trend: #TasLaptop viral in ID — stock up"
+      - generic [ref=e286]: 6 hours ago
+  - text: "'; }, _vault: function(){ return '"
+  - generic [ref=e287]:
+    - text: "'+ '"
+    - generic [ref=e288]:
+      - generic [ref=e289]: Risk Pool
+      - generic [ref=e290]: Rp 28M
+      - generic [ref=e291]: 4.7% · Approaching limit
+    - text: "'+ '"
+    - generic [ref=e292]:
+      - generic [ref=e293]: Platform Profit
+      - generic [ref=e294]: Rp 187M
+      - generic [ref=e295]: Available for settlement
+    - text: "'+ '"
+    - generic [ref=e296]:
+      - generic [ref=e297]: Chargeback Lock
+      - generic [ref=e298]: Rp 14M
+      - generic [ref=e299]: Pending disputes
+    - text: "'+ '"
+  - text: "'; }, _regions: function(){ return '"
+  - generic [ref=e300]:
+    - generic [ref=e301]:
+      - strong [ref=e302]: Jakarta
+      - generic [ref=e303]: Primary hub · 7-9 day delivery
+    - generic [ref=e304]:
+      - generic [ref=e305]: Rp 156M
+      - generic [ref=e306]: ↑ 14.2%
+  - text: "'+ '"
+  - generic [ref=e307]:
+    - generic [ref=e308]:
+      - strong [ref=e309]: Surabaya
+      - generic [ref=e310]: Secondary hub · 12-16 days
+    - generic [ref=e311]:
+      - generic [ref=e312]: Rp 62M
+      - generic [ref=e313]: ↑ 8.7%
+  - text: "'+ '"
+  - generic [ref=e314]:
+    - generic [ref=e315]:
+      - strong [ref=e316]: Bandung
+      - generic [ref=e317]: Growing market
+    - generic [ref=e318]:
+      - generic [ref=e319]: Rp 41M
+      - generic [ref=e320]: ↑ 22.1%
+  - text: "'+ '"
+  - generic [ref=e321]:
+    - generic [ref=e322]:
+      - strong [ref=e323]: Bangkok
+      - generic [ref=e324]: Expansion · Q3 target
+    - generic [ref=e325]:
+      - generic [ref=e326]: Rp 28M
+      - generic [ref=e327]: New market
+  - text: "'; } }; // ==================== RESALE ==================== var Resale = { render: function(){ var items=[{id:'RES-001',name:'Wireless Earbuds Pro',emoji:'🎧',price:199000,condition:'like-new',desc:'Used twice, perfect condition'},{id:'RES-002',name:'Slim Fit Casual Shirt',emoji:'👔',price:99000,condition:'good',desc:'Worn once, size M'}]; var labels={'like-new':'Like New','good':'Good','fair':'Fair'}; $('resaleList').innerHTML=items.map(function(r){return '"
+  - generic [ref=e328] [cursor=pointer]:
+    - generic [ref=e329]: "'+r.emoji+'"
+    - generic [ref=e330]:
+      - generic [ref=e331]: "'+r.name+'"
+      - generic [ref=e332]: "'+fmtRp(r.price)+'"
+      - generic [ref=e333]:
+        - generic [ref=e334]: "'+labels[r.condition]+'"
+        - generic [ref=e335]: "'+r.desc+'"
+  - text: "'}).join(''); } }; // ==================== SETTINGS ==================== var Settings = { open: function(){ Panel.open('Settings', '"
+  - generic [ref=e336]:
+    - generic [ref=e337]: Account
+    - text: "'+ '"
+    - generic [ref=e338] [cursor=pointer]:
+      - generic [ref=e339]: 👤
+      - generic [ref=e340]: Personal Info
+      - generic [ref=e341]: →
+    - text: "'+ '"
+    - generic [ref=e342] [cursor=pointer]:
+      - generic [ref=e343]: 🔔
+      - generic [ref=e344]: Notifications
+      - generic [ref=e345]: →
+    - text: "'+ '"
+  - text: "'+ '"
+  - generic [ref=e346]:
+    - generic [ref=e347]: Preferences
+    - text: "'+ '"
+    - generic [ref=e348] [cursor=pointer]:
+      - generic [ref=e349]: 📍
+      - generic [ref=e350]: Shipping Addresses
+      - generic [ref=e351]: →
+    - text: "'+ '"
+    - generic [ref=e352] [cursor=pointer]:
+      - generic [ref=e353]: 💳
+      - generic [ref=e354]: Payment Methods
+      - generic [ref=e355]: →
+    - text: "'+ '"
+    - generic [ref=e356] [cursor=pointer]:
+      - generic [ref=e357]: 🌐
+      - generic [ref=e358]: Language
+      - generic [ref=e359]: English
+      - generic [ref=e360]: →
+    - text: "'+ '"
+    - generic [ref=e361] [cursor=pointer]:
+      - generic [ref=e362]: 🌙
+      - generic [ref=e363]: Dark Mode
+      - generic [ref=e364]: →
+    - text: "'+ '"
+  - text: "'+ '"
+  - generic [ref=e365]:
+    - generic [ref=e366]: Support
+    - text: "'+ '"
+    - generic [ref=e367] [cursor=pointer]:
+      - generic [ref=e368]: ❓
+      - generic [ref=e369]: Help Center
+      - generic [ref=e370]: →
+    - text: "'+ '"
+    - generic [ref=e371] [cursor=pointer]:
+      - generic [ref=e372]: 🎁
+      - generic [ref=e373]: Invite Friends
+      - generic [ref=e374]: →
+    - text: "'+ '"
+  - text: "'+ '"
+  - generic [ref=e375]:
+    - generic [ref=e376]: Legal
+    - text: "'+ '"
+    - generic [ref=e377] [cursor=pointer]:
+      - generic [ref=e378]: 📄
+      - generic [ref=e379]: Terms of Service
+      - generic [ref=e380]: →
+    - text: "'+ '"
+    - generic [ref=e381] [cursor=pointer]:
+      - generic [ref=e382]: 🔒
+      - generic [ref=e383]: Privacy Policy
+      - generic [ref=e384]: →
+    - text: "'+ '"
+  - text: "'+ '"
+  - button "Sign Out" [ref=e385] [cursor=pointer]
+  - text: "' ); }, _profile: function(){return '"
+  - generic [ref=e386]:
+    - generic [ref=e387]:
+      - generic [ref=e388]: Display Name
+      - textbox [ref=e389]: "'+(V.user?V.user.email.split('@')[0]:'')+'"
+    - generic [ref=e390]:
+      - generic [ref=e391]: Email
+      - textbox [disabled] [ref=e392]: "'+(V.user?V.user.email:'')+'"
+    - button "Save Changes" [ref=e393] [cursor=pointer]
+  - text: "';}, _notif: function(){return '"
+  - generic [ref=e394] [cursor=pointer]:
+    - generic [ref=e395]: Push Notifications
+    - generic [ref=e396]: "ON"
+  - generic [ref=e397] [cursor=pointer]:
+    - generic [ref=e398]: Email Updates
+    - generic [ref=e399]: "ON"
+  - generic [ref=e400] [cursor=pointer]:
+    - generic [ref=e401]: Order Status
+    - generic [ref=e402]: "ON"
+  - generic [ref=e403] [cursor=pointer]:
+    - generic [ref=e404]: Promotions
+    - generic [ref=e405]: "OFF"
+  - button "Save" [ref=e406] [cursor=pointer]
+  - text: "';}, _toggleDark: function(){document.body.classList.toggle('dark');var isDark=document.body.classList.contains('dark');localStorage.setItem('ace_dark',isDark?'1':'0');Toast.show(isDark?'Dark mode on':'Light mode on');Panel.close()} }; // ==================== ADDRESS ==================== var Address = { open: function(){ Panel.open('Addresses', '"
+  - generic [ref=e407]:
+    - generic [ref=e408]: Default
+    - generic [ref=e409]: Home
+    - generic [ref=e410]: +62 812-3456-7890
+    - generic [ref=e411]: Jl. Sudirman No. 123, Jakarta Selatan, DKI Jakarta 12190
+    - button "Edit" [ref=e413] [cursor=pointer]
+  - text: "'+ '"
+  - generic [ref=e414]:
+    - generic [ref=e415]: Office
+    - generic [ref=e416]: +62 813-9876-5432
+    - generic [ref=e417]: Gedung Mega Plaza, Lt. 5, Jl. Thamrin, Jakarta Pusat
+    - generic [ref=e418]:
+      - button "Edit" [ref=e419] [cursor=pointer]
+      - button "Delete" [ref=e420] [cursor=pointer]
+  - text: "'+ '"
+  - button "+ Add New Address" [ref=e421] [cursor=pointer]
+  - text: "' ) }, close: function(){Panel.close()}, _form: function(){return '"
+  - heading "Add New Address" [level=4] [ref=e422]
+  - generic [ref=e423]:
+    - generic [ref=e424]:
+      - generic [ref=e425]: Label
+      - textbox "e.g. Home, Office" [ref=e426]
+    - generic [ref=e427]:
+      - generic [ref=e428]: Recipient Name *
+      - textbox "Full name" [ref=e429]
+    - generic [ref=e430]:
+      - generic [ref=e431]: Phone *
+      - textbox "+62 xxx-xxxx-xxxx" [ref=e432]
+    - generic [ref=e433]:
+      - generic [ref=e434]: Province
+      - textbox "DKI Jakarta" [ref=e435]
+    - generic [ref=e436]:
+      - generic [ref=e437]: City
+      - textbox "Jakarta Selatan" [ref=e438]
+    - generic [ref=e439]:
+      - generic [ref=e440]: District
+      - textbox [ref=e441]
+    - generic [ref=e442]:
+      - generic [ref=e443]: Postal Code
+      - textbox "12190" [ref=e444]
+    - generic [ref=e445]:
+      - generic [ref=e446]: Full Address *
+      - textbox "Street, building, unit number" [ref=e447]
+    - generic [ref=e448]:
+      - button "Cancel" [ref=e449] [cursor=pointer]
+      - button "Save Address" [ref=e450] [cursor=pointer]
+  - text: "'} }; // ==================== HELP ==================== var Help = { open: function(){ var cats='"
+  - generic [ref=e451]:
+    - generic [ref=e452] [cursor=pointer]:
+      - generic [ref=e453]: 🚚
+      - text: Shipping
+    - generic [ref=e454] [cursor=pointer]:
+      - generic [ref=e455]: 💳
+      - text: Payment
+    - generic [ref=e456] [cursor=pointer]:
+      - generic [ref=e457]: 🔄
+      - text: Returns
+    - generic [ref=e458] [cursor=pointer]:
+      - generic [ref=e459]: 👤
+      - text: Account
+  - text: "'; var faq=MOCK.faq.map(function(f,i){return '"
+  - button "'+f.q+' ▼" [ref=e461] [cursor=pointer]:
+    - text: "'+f.q+'"
+    - generic [ref=e462]: ▼
+  - text: "'}).join(''); Panel.open('Help Center',cats+faq+'"
+  - generic [ref=e463]:
+    - paragraph [ref=e464]: Still need help?
+    - button "Chat with Steward" [ref=e465] [cursor=pointer]
+  - text: "'); }, _toggle: function(i){var el=$('faqA'+i);el.classList.toggle('open');el.previousElementSibling.classList.toggle('open')} }; // ==================== INVITE ==================== var Invite = { open: function(){ Panel.open('Invite Friends', '"
+  - generic [ref=e466]:
+    - heading "🎁 Share & Earn" [level=3] [ref=e467]
+    - paragraph [ref=e468]: Invite friends to AceProxy and earn credits for every successful referral.
+  - text: "'+ '"
+  - generic [ref=e469]:
+    - generic [ref=e470]: ACE-FRIEND-2026
+    - generic [ref=e471]: Your unique referral code
+  - text: "'+ '"
+  - generic [ref=e472]:
+    - generic [ref=e473]:
+      - generic [ref=e474]: "5"
+      - generic [ref=e475]: Invited
+    - generic [ref=e476]:
+      - generic [ref=e477]: "3"
+      - generic [ref=e478]: Converted
+    - generic [ref=e479]:
+      - generic [ref=e480]: Rp 75K
+      - generic [ref=e481]: Earned
+  - text: "'+ '"
+  - generic [ref=e482]:
+    - generic [ref=e483]:
+      - generic [ref=e484]: 🎁
+      - text: Rp 25,000 credit for each friend who places their first order
+    - generic [ref=e485]:
+      - generic [ref=e486]: 🏆
+      - text: Top referrers earn exclusive AceProxy merchandise
+  - text: "'+ '"
+  - button "Copy Referral Code" [ref=e487] [cursor=pointer]
+  - text: "' ) } }; // ==================== SEARCH ==================== var Search = { open: function(){Panel.open('Search Products','"
+  - textbox "'+t('search_placeholder')+'" [active] [ref=e489]
+  - generic [ref=e492]: Recent Searches
+  - text: "');setTimeout(function(){var inp=$('searchInput');if(inp)inp.focus();this._renderTags();this._renderHistory()}.bind(this),100)}, _renderTags: function(){$('searchTags').innerHTML=MOCK.categories.slice(0,6).map(function(c){return ''+c+''}).join('')}, _renderHistory: function(){var hist=V.searchHistory.slice(0,5);$('searchHistory').innerHTML=hist.length?hist.map(function(h){return '"
+  - generic [ref=e494]: 🕐 '+h+'
+  - text: "'}).join(''):'"
+  - generic [ref=e495]: No recent searches
+  - text: "'}, _search: function(){var q=$('searchInput').value.trim();if(!q)return;var results=Products._all.filter(function(p){return p.name.toLowerCase().indexOf(q.toLowerCase())>-1||p.category.toLowerCase().indexOf(q.toLowerCase())>-1});$('searchResults').innerHTML=results.map(function(p){return '"
+  - generic [ref=e496] [cursor=pointer]:
+    - generic [ref=e497]: "'+p.emoji+'"
+    - generic [ref=e498]:
+      - generic [ref=e499]: "'+p.name+'"
+      - generic [ref=e500]: "'+fmtRp(p.price)+'"
+  - text: "'}).join('')}, _quickSearch: function(q){$('searchInput').value=q;this._search();if(V.searchHistory.indexOf(q)===-1){V.searchHistory.unshift(q);if(V.searchHistory.length>10)V.searchHistory.pop();localStorage.setItem('ace_search',JSON.stringify(V.searchHistory))}} }; // ==================== NOTIFICATIONS ==================== var Notifications = { open: function(){ var notifs=[{title:'Order Shipped',desc:'ORD-20260620-002 is on its way!',time:'2 hours ago',unread:true},{title:'Payment Confirmed',desc:'Your payment for ORD-20260624-003 has been received.',time:'1 day ago',unread:true},{title:'Flash Sale Alert',desc:'New deals just dropped — up to 40% off electronics!',time:'2 days ago',unread:false}]; Panel.open('Notifications', '"
+  - generic [ref=e502] [cursor=pointer]: Mark all read
+  - text: "'+ notifs.map(function(n){return '"
+  - generic [ref=e503]:
+    - generic [ref=e504]: 📦
+    - generic [ref=e505]:
+      - generic [ref=e506]: "'+n.title+'"
+      - generic [ref=e507]: "'+n.desc+'"
+      - generic [ref=e508]: "'+n.time+'"
+    - text: "'+(n.unread?'"
+    - text: "':'')+'"
+  - text: "'}).join('') ); }, _markRead: function(){qsa('.notif-dot').forEach(function(d){d.remove()});qsa('.notif-item.unread').forEach(function(i){i.classList.remove('unread')});Toast.show('All read')} }; // ==================== INITIALIZATION ==================== function init(){ initAPI(); Lang.init(); var body=document.body; // Build bottom tab bar var tabBar=document.createElement('nav');tabBar.className='tab-bar';tabBar.id='bottomTabBar';body.appendChild(tabBar); buildTopNav();buildBottomTab(); // Dark mode if(localStorage.getItem('ace_dark')==='1')body.classList.add('dark'); // Load products Products.load().then(function(){Products.render();var cats=MOCK.categories;$('catPills').innerHTML=cats.map(function(c){return '"
+  - button "'+c+'" [ref=e510] [cursor=pointer]
+  - text: "'}).join('')}); // Fav click handler document.addEventListener('click',function(e){if(e.target.classList.contains('pcard-fav')){e.stopPropagation();e.preventDefault()}}); // Close panels on escape document.addEventListener('keydown',function(e){if(e.key==='Escape'){Modal.close();Panel.close();Cart.close()}}); } document.addEventListener('DOMContentLoaded',init); function buildTopNav(){var el=document.getElementById('topBarNav');var tabs=[ {id:'home',icon:'🏠',label:'Home'},{id:'discovery',icon:'🔍',label:'Discover'}, {id:'assistant',icon:'🤖',label:'Assistant'},{id:'resale',icon:'🔄',label:'Resale'}, {id:'profile',icon:'👤',label:'Profile'},{id:'admin',icon:'📊',label:'Admin'} ];el.innerHTML=tabs.map(function(t){return '"
+  - button "'+t.icon+''+t.label+'" [ref=e511] [cursor=pointer]
+  - text: "'}).join('')} function buildBottomTab(){var el=document.getElementById('bottomTabBar');var tabs=[ {id:'home',icon:'🏠',label:'Home'},{id:'discovery',icon:'🔍',label:'Discover'}, {id:'assistant',icon:'🤖',label:'AI'},{id:'resale',icon:'🔄',label:'Resale'}, {id:'profile',icon:'👤',label:'Profile'},{id:'cart',icon:'🛒',label:'Cart'}, {id:'admin',icon:'📊',label:'Admin'} ];el.innerHTML=tabs.map(function(t){var cls=(t.id==='home'?'active':'')+(t.id==='cart'?' red-dot':'');return '"
+  - button "'+t.icon+' '+t.label+'" [ref=e512] [cursor=pointer]:
+    - generic [ref=e513]: "'+t.icon+'"
+    - generic [ref=e514]: "'+t.label+'"
+  - text: "'}).join('')}"

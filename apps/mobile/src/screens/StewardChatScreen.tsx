@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     backgroundColor: '#FFF',
-    ...BORDERS.brutalist,
+    ...BORDERS.card,
   },
   backBtn: { width: 40, height: 40, alignItems: 'center', justifyContent: 'center' },
   backText: { fontSize: 24, color: '#1E293B', fontWeight: '900' },
@@ -206,7 +206,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginRight: 12,
-    ...BORDERS.brutalist,
+    ...BORDERS.card,
   },
   stewardName: { fontSize: 15, fontWeight: '900', color: '#1E293B', textTransform: 'uppercase' },
   stewardStatus: { fontSize: 10, color: '#16A34A', fontWeight: '900' },
@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
   messageWrapper: { marginBottom: 20, maxWidth: '85%' },
   userWrapper: { alignSelf: 'flex-end', alignItems: 'flex-end' },
   stewardWrapper: { alignSelf: 'flex-start', alignItems: 'flex-start' },
-  messageBubble: { padding: 12, borderRadius: 12, minWidth: 80, ...BORDERS.brutalist, ...SHADOWS.brutalist },
+  messageBubble: { padding: 12, borderRadius: 12, minWidth: 80, ...BORDERS.card, ...SHADOWS.card },
   userBubble: { backgroundColor: '#F97316' },
   stewardBubble: { backgroundColor: '#FFF' },
   loadingBubble: { backgroundColor: '#F8FAFC', flexDirection: 'row', alignItems: 'center', borderStyle: 'dashed' },
@@ -229,7 +229,7 @@ const styles = StyleSheet.create({
     paddingBottom: Platform.OS === 'ios' ? 32 : 16,
     backgroundColor: '#FFF',
     alignItems: 'center',
-    ...BORDERS.brutalist,
+    ...BORDERS.card,
     borderTopWidth: 2.5,
   },
   input: {
@@ -240,7 +240,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     fontSize: 14,
     maxHeight: 100,
-    ...BORDERS.brutalist,
+    ...BORDERS.card,
     fontWeight: '700',
   },
   sendBtn: { marginLeft: 12 },
@@ -251,7 +251,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#F97316',
     alignItems: 'center',
     justifyContent: 'center',
-    ...BORDERS.brutalist,
-    ...SHADOWS.brutalist,
+    ...BORDERS.card,
+    ...SHADOWS.card,
   }
 });
+

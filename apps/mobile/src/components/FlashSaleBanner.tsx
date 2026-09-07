@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { SHADOWS, SPACING, BORDERS } from '../theme';
 
@@ -24,7 +24,7 @@ export const FlashSaleBanner = ({ festival, onPress }: { festival?: any, onPress
       activeOpacity={0.9}
       style={[
         styles.container, 
-        SHADOWS.brutalist,
+        SHADOWS.card,
         { backgroundColor: theme.primary }
       ]}
     >
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between', 
     alignItems: 'center',
     overflow: 'hidden',
-    ...BORDERS.brutalist,
+    ...BORDERS.card,
   },
   left: { flex: 1 },
   badgeContainer: { flexDirection: 'row', marginBottom: 12 },
@@ -71,6 +71,7 @@ const styles = StyleSheet.create({
   subtitle: { color: 'rgba(0,0,0,0.7)', fontSize: 12, fontWeight: '800', marginTop: 4, textTransform: 'uppercase' },
   right: { alignItems: 'flex-end' },
   timeLabel: { color: '#000', fontSize: 10, fontWeight: '900', marginBottom: 8, textTransform: 'uppercase', opacity: 0.6 },
-  timer: { backgroundColor: '#fff', paddingHorizontal: 12, paddingVertical: 8, ...BORDERS.brutalist },
+  timer: { backgroundColor: '#fff', paddingHorizontal: 12, paddingVertical: 8, ...BORDERS.card },
   timeText: { color: '#000', fontSize: 18, fontWeight: '900', fontVariant: ['tabular-nums'] }
 });
+

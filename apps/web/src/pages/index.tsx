@@ -1,744 +1,706 @@
-import React, { useState } from 'react';
+import { useState, useEffect } from 'react';
+import Head from 'next/head';
+import Link from 'next/link';
+import {
+  Search, ShoppingCart, User, Globe, Menu, Shield,
+  RefreshCw, ArrowRight, Package, Star, X, Bot
+} from 'lucide-react';
+import PersonalizedRecommendations from '@/components/PersonalizedRecommendations';
 
-export default function Home() {
-  const [activeTab, setActiveTab] = useState('dashboard');
-  const [currentRole, setCurrentRole] = useState('God Mode');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [showMoreMenu, setShowMoreMenu] = useState(false);
+// ─── Types ───
+interface Product {
+  id: string;
+  name: string;
+  category: string;
+  priceIdr: number;
+  costCny: number;
+  images: string[];
+  ratingAvg: number;
+  ratingCount: number;
+  stock: number;
+}
 
-  const menuItems = [
-    { id: 'dashboard', label: 'Overview', icon: '📊' },
-    { id: 'ai_sourcing', label: 'AI Sentinel', icon: '🤖' },
-    { id: 'hot_products', label: 'Hot List (Eid)', icon: '🔥' },
-    { id: 'vision_qc', label: 'VisionQC 2.0', icon: '👁️' },
-    { id: 'orders', label: 'Orders & Fulfillment', icon: '📦' },
+interface HomeData {
+  heroProducts?: Product[];
+  featuredProducts?: Product[];
+  categories?: { name: string; count: number }[];
+}
 
-    { id: 'sourcing', label: 'Global Sourcing', icon: '🌍' },
-    { id: 'vault', label: 'Vault & Finance', icon: '💰' },
-    { id: 'logistics', label: 'L3 Logistics', icon: '✈️' },
-    { id: 'cms', label: 'Marketing CMS', icon: '🖼️' },
-    { id: 'membership', label: 'Membership', icon: '💎' },
-    { id: 'whatsapp', label: 'WhatsApp CRM', icon: '💬' },
-    { id: 'partners', label: 'Partner Hub', icon: '🤝' },
-  ];
+// ─── Helpers ───
+function fmtRp(n: number): string {
+  return `Rp ${n.toLocaleString()}`;
+}
 
-  const roles = ['God Mode', 'Financial', 'Station Manager', 'Logistics Admin'];
-
-  const bottomTabs = [
-    { id: 'dashboard', label: 'Overview', icon: '📊' },
-    { id: 'hot_products', label: 'Products', icon: '🔥' },
-    { id: 'orders', label: 'Orders', icon: '📦' },
-    { id: 'vault', label: 'Vault', icon: '💰' },
-    { id: 'more', label: 'More', icon: '⋮' },
-  ];
-
-  const moreItems = menuItems.filter(
-    mi => !bottomTabs.slice(0, -1).some(t => t.id === mi.id)
-  );
-
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'ai_sourcing':
-        return (
-          <div style={{ padding: '24px' }}>
-            <h2 style={{ color: '#F97316' }}>AI Sourcing Sentinel (Arbitrage Ops)</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px', marginTop: '20px' }}>
-              {[
-                { name: 'Baju Koko (Ramadan Special)', jkt_price: 'Rp 450k', cn_price: 'Rp 85k', profit: '+429%', confidence: 'High' },
-                { name: 'LED Hanging Lights', jkt_price: 'Rp 120k', cn_price: 'Rp 15k', profit: '+700%', confidence: 'Medium' },
-                { name: 'Vacuum Sealer Pro', jkt_price: 'Rp 850k', cn_price: 'Rp 320k', profit: '+165%', confidence: 'High' },
-              ].map(op => (
-                <div key={op.name} style={{ background: 'white', padding: '20px', borderRadius: '16px', border: '1px solid #E2E8F0', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                    <span style={{ fontSize: '12px', fontWeight: 'bold', color: '#94A3B8' }}>{op.confidence} Confidence</span>
-                    <span style={{ background: '#F0FDF4', color: '#166534', fontSize: '11px', padding: '2px 8px', borderRadius: '4px', fontWeight: 'bold' }}>Active</span>
-                  </div>
-                  <h4 style={{ margin: '12px 0 8px' }}>{op.name}</h4>
-                  <div style={{ display: 'flex', gap: '16px', fontSize: '12px' }}>
-                    <div>
-                      <p style={{ color: '#94A3B8' }}>JKT Market</p>
-                      <p style={{ fontWeight: 'bold' }}>{op.jkt_price}</p>
-                    </div>
-                    <div>
-                      <p style={{ color: '#94A3B8' }}>Factory Cost</p>
-                      <p style={{ fontWeight: 'bold' }}>{op.cn_price}</p>
-                    </div>
-                    <div style={{ marginLeft: 'auto' }}>
-                      <p style={{ color: '#F97316', fontWeight: '900', fontSize: '16px' }}>{op.profit}</p>
-                    </div>
-                  </div>
-                  <button style={{ width: '100%', marginTop: '16px', padding: '8px', borderRadius: '8px', border: 'none', background: '#F97316', color: 'white', fontWeight: 'bold', cursor: 'pointer' }}>Unlock Sourcing Route</button>
-                </div>
-              ))}
-            </div>
-          </div>
-        );
-      case 'hot_products':
-        return (
-          <div style={{ padding: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h2 style={{ color: '#F97316' }}>Eid 2026 Hot Products</h2>
-              <div style={{ display: 'flex', gap: '12px' }}>
-                <span style={{ background: '#FEE2E2', color: '#991B1B', padding: '6px 12px', borderRadius: '8px', fontSize: '12px', fontWeight: 'bold' }}>Node: JKT-EID-2026</span>
-                <button style={{ background: '#1E293B', color: 'white', padding: '8px 16px', borderRadius: '8px', border: 'none', fontWeight: 'bold' }}>Broadcast to Partners</button>
-              </div>
-            </div>
-            <div style={{ marginTop: '24px', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
-              {[
-                { id: 'EID-001', name: 'Premium Silk Hijab', cost: '¥12', price: 'Rp 99k', gain: '+234%', stock: 5000, sentinel: 'SAFE', patent: 'CLEAN' },
-                { id: 'EID-002', name: 'Travel Mukena Pro', cost: '¥45', price: 'Rp 280k', gain: '+148%', stock: 1200, sentinel: 'ALERT', patent: 'CLEAN' },
-                { id: 'EID-003', name: 'Smart Zikr Ring Gen2', cost: '¥85', price: 'Rp 450k', gain: '+103%', stock: 800, sentinel: 'SAFE', patent: 'CLEAN' },
-                { id: 'EID-004', name: 'LED Moon Decor', cost: '¥18', price: 'Rp 150k', gain: '+180%', stock: 3000, sentinel: 'SAFE', patent: 'CLEAN' },
-                { id: 'EID-006', name: 'Modern Baju Koko', cost: '¥55', price: 'Rp 320k', gain: '+155%', stock: 2500, sentinel: 'SAFE', patent: 'CLEAN' },
-                { id: 'EID-009', name: 'Hakoba Eyelet Dress', cost: '¥85', price: 'Rp 420k', gain: '+210%', stock: 1500, sentinel: 'SAFE', patent: 'CLEAN' },
-              ].map(p => (
-                <div key={p.id} style={{ background: 'white', padding: '20px', borderRadius: '20px', border: p.sentinel === 'ALERT' ? '2px solid #EF4444' : '1px solid #E2E8F0', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)', position: 'relative' }}>
-                  <div style={{ position: 'absolute', top: 10, left: 10, display: 'flex', gap: '6px' }}>
-                    {p.patent === 'CLEAN' && (
-                      <span style={{ background: '#F0FDF4', color: '#166534', fontSize: '9px', padding: '2px 6px', borderRadius: '4px', fontWeight: '900', border: '1px solid #BBF7D0' }}>
-                        🛡️ PATENT CLEAN
-                      </span>
-                    )}
-                  </div>
-                  {p.sentinel === 'ALERT' && (
-                    <div style={{ position: 'absolute', top: -10, right: 10, background: '#EF4444', color: 'white', fontSize: '10px', padding: '4px 8px', borderRadius: '8px', fontWeight: '900', zIndex: 10 }}>
-                      ⚠️ SENTINEL ALERT
-                    </div>
-                  )}
-                  <div style={{ height: '140px', background: '#F8FAFC', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '40px' }}>
-                    {p.name.includes('Hijab') ? '👗' : p.name.includes('Mukena') ? '🕋' : p.name.includes('Ring') ? '⌚' : p.name.includes('Dress') ? '👗' : p.name.includes('Koko') ? '👔' : '🏮'}
-                  </div>
-                  <div style={{ marginTop: '16px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{ fontSize: '11px', fontWeight: '800', color: '#94A3B8' }}>{p.id}</span>
-                      <span style={{ color: '#16A34A', fontSize: '11px', fontWeight: '900' }}>{p.gain} PROFIT</span>
-                    </div>
-                    <h4 style={{ margin: '8px 0', fontSize: '15px' }}>{p.name}</h4>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
-                      <div>
-                        <p style={{ fontSize: '10px', color: '#94A3B8', margin: 0 }}>Jakarta Price</p>
-                        <p style={{ fontSize: '16px', fontWeight: '900', color: '#F97316', margin: 0 }}>{p.price}</p>
-                      </div>
-                      <div style={{ textAlign: 'right' }}>
-                        <p style={{ fontSize: '10px', color: '#94A3B8', margin: 0 }}>Stock</p>
-                        <p style={{ fontSize: '12px', fontWeight: 'bold', margin: 0 }}>{p.stock} units</p>
-                      </div>
-                    </div>
-                    {p.sentinel === 'ALERT' && (
-                      <div style={{ marginTop: '12px', padding: '8px', background: '#FEF2F2', borderRadius: '8px', border: '1px solid #FEE2E2' }}>
-                        <p style={{ fontSize: '10px', color: '#991B1B', margin: 0, fontWeight: '700' }}>Price Drift: +18.4% (1688 Alert)</p>
-                        <p style={{ fontSize: '9px', color: '#B91C1C', margin: '2px 0 0 0' }}>Hot-standby supplier engaged.</p>
-                      </div>
-                    )}
-                  </div>
-                  <div style={{ marginTop: '16px', display: 'flex', gap: '8px' }}>
-                    <button style={{ flex: 1, padding: '8px', borderRadius: '8px', border: '1px solid #E2E8F0', background: 'white', fontSize: '12px', fontWeight: 'bold' }}>Edit CMS</button>
-                    <button style={{ flex: 1, padding: '8px', borderRadius: '8px', border: 'none', background: '#F97316', color: 'white', fontSize: '12px', fontWeight: 'bold' }}>Push Live</button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        );
-      case 'vision_qc':
-        return (
-          <div style={{ padding: '24px' }}>
-            <h2 style={{ color: '#F97316' }}>VisionQC 2.0 (AI Inspection Wall)</h2>
-            <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-              {[
-                { orderId: 'ORD-1002', product: 'Silk Hijab Emerald', status: 'Flagged', diff: 'Color Mismatch (7%)', score: 0.88, cn_img: '🖼️ 1688 Spec', warehouse_img: '📸 Real Photo' },
-                { orderId: 'ORD-1005', product: 'Vacuum Sealer Pro', status: 'Passed', diff: 'None', score: 0.99, cn_img: '🖼️ 1688 Spec', warehouse_img: '📸 Real Photo' },
-              ].map(item => (
-                <div key={item.orderId} style={{ background: 'white', borderRadius: '20px', border: '1px solid #E2E8F0', overflow: 'hidden' }}>
-                  <div style={{ padding: '16px', background: '#F8FAFC', borderBottom: '1px solid #E2E8F0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div>
-                      <span style={{ fontWeight: '900', color: '#1E293B' }}>{item.orderId}</span>
-                      <span style={{ marginLeft: '12px', fontSize: '13px', color: '#64748B' }}>{item.product}</span>
-                    </div>
-                    <span style={{ background: item.status === 'Passed' ? '#DCFCE7' : '#FEE2E2', color: item.status === 'Passed' ? '#166534' : '#991B1B', padding: '4px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold' }}>
-                      {item.status} (AI Score: {(item.score * 100).toFixed(0)})
-                    </span>
-                  </div>
-                  {item.score < 0.85 && (
-                    <div style={{ background: '#FFF7ED', padding: '12px 20px', borderBottom: '1px solid #FFEDD5', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <span style={{ fontSize: '18px' }}>⚠️</span>
-                      <p style={{ fontSize: '13px', color: '#9A3412', fontWeight: 'bold' }}>
-                        Low Confidence Alert: AI score below 85. Manual verification required per Jakarta Ops Policy.
-                      </p>
-                    </div>
-                  )}
-                  <div style={{ display: 'flex', gap: '1px', background: '#E2E8F0' }}>
-                    <div style={{ flex: 1, height: '280px', background: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                      <div style={{ fontSize: '40px' }}>{item.cn_img.split(' ')[0]}</div>
-                      <p style={{ fontSize: '12px', color: '#94A3B8', marginTop: '10px' }}>1688 Reference</p>
-                    </div>
-                    <div style={{ flex: 1, height: '280px', background: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-                      <div style={{ fontSize: '40px' }}>{item.warehouse_img.split(' ')[0]}</div>
-                      <p style={{ fontSize: '12px', color: '#94A3B8', marginTop: '10px' }}>Warehouse Snapshot</p>
-                      
-                      {/* Delta E Comparison Bar */}
-                      <div style={{ position: 'absolute', bottom: '20px', width: '80%', background: 'rgba(255,255,255,0.9)', padding: '12px', borderRadius: '12px', border: '1px solid #E2E8F0' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                          <span style={{ fontSize: '10px', fontWeight: '800', color: '#64748B' }}>COLOR DELTA (ΔE)</span>
-                          <span style={{ fontSize: '10px', fontWeight: '900', color: item.status === 'Passed' ? '#16A34A' : '#EF4444' }}>
-                            ACTUAL: {item.status === 'Passed' ? '1.2' : '6.8'} / MAX: 5.0
-                          </span>
-                        </div>
-                        <div style={{ height: '6px', background: '#F1F5F9', borderRadius: '3px', overflow: 'hidden' }}>
-                          <div style={{ 
-                            width: item.status === 'Passed' ? '24%' : '85%', 
-                            height: '100%', 
-                            background: item.status === 'Passed' ? '#10B981' : '#EF4444' 
-                          }} />
-                        </div>
-                      </div>
-
-                      {item.status === 'Flagged' && (
-                        <div style={{ position: 'absolute', border: '3px solid #EF4444', width: '100px', height: '100px', borderRadius: '8px', top: '40px' }}>
-                          <span style={{ position: 'absolute', top: '-25px', left: 0, background: '#EF4444', color: 'white', fontSize: '10px', padding: '2px 6px', borderRadius: '4px' }}>DIFF: {item.diff}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  <div style={{ padding: '16px', display: 'flex', gap: '12px' }}>
-                    <button style={{ flex: 1, padding: '10px', borderRadius: '8px', border: '1px solid #E2E8F0', background: 'white', fontWeight: 'bold' }}>Manual Review</button>
-                    <button style={{ flex: 1, padding: '10px', borderRadius: '8px', border: 'none', background: item.status === 'Passed' ? '#1E293B' : '#EF4444', color: 'white', fontWeight: 'bold' }}>
-                      {item.status === 'Passed' ? 'Release to Export' : 'Initiate 1688 Return'}
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        );
-      case 'orders':
-
-        return (
-          <div style={{ padding: '24px' }}>
-            <h2 style={{ color: '#F97316' }}>Order Management Center</h2>
-            <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '20px' }}>
-              <thead>
-                <tr style={{ textAlign: 'left', borderBottom: '2px solid #F3F4F6' }}>
-                  <th style={{ padding: '12px' }}>Order ID</th>
-                  <th style={{ padding: '12px' }}>Status</th>
-                  <th style={{ padding: '12px' }}>Region</th>
-                  <th style={{ padding: '12px' }}>Sourcing Value</th>
-                  <th style={{ padding: '12px' }}>Evidence</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[
-                  { id: 'ORD-9921', status: 'In Transit', region: 'JKT', value: 'Rp 1,250k', audit: 'Verified' },
-                  { id: 'ORD-9920', status: 'Purchased', region: 'JKT', value: 'Rp 850k', audit: 'Verified' },
-                  { id: 'ORD-9919', status: 'Delivered', region: 'LDN', value: '£45.00', audit: 'Verified' },
-                ].map((order) => (
-                  <tr key={order.id} style={{ borderBottom: '1px solid #F3F4F6' }}>
-                    <td style={{ padding: '12px', fontWeight: 'bold' }}>{order.id}</td>
-                    <td style={{ padding: '12px' }}>
-                      <span style={{ padding: '4px 8px', borderRadius: '4px', background: '#FEF3C7', color: '#D97706', fontSize: '12px' }}>{order.status}</span>
-                    </td>
-                    <td style={{ padding: '12px' }}>{order.region}</td>
-                    <td style={{ padding: '12px', color: '#16A34A', fontWeight: 'bold' }}>{order.value}</td>
-                    <td style={{ padding: '12px', color: '#0EA5E9', fontSize: '12px' }}>{order.audit} ✅</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        );
-      case 'cms':
-        return (
-          <div style={{ padding: '24px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <h2 style={{ color: '#F97316' }}>Marketing CMS (Drag & Drop)</h2>
-              <button style={{ backgroundColor: '#F97316', color: 'white', padding: '8px 16px', borderRadius: '8px', border: 'none', fontWeight: 'bold' }}>+ New Banner</button>
-            </div>
-            <div style={{ marginTop: '20px', border: '2px dashed #CBD5E1', borderRadius: '16px', padding: '40px', textAlign: 'center', backgroundColor: 'white' }}>
-              <p style={{ color: '#64748B', fontSize: '14px' }}>Drag and drop banner assets here to upload to Node: JKT-01</p>
-              <button style={{ marginTop: '12px', padding: '8px 24px', borderRadius: '8px', border: '1px solid #E2E8F0', backgroundColor: 'white', fontWeight: '600' }}>Select File</button>
-            </div>
-            <div style={{ marginTop: '30px', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
-              {[
-                { id: 'B-001', station: 'JKT', title: 'Ramadan Special', active: true, img: 'https://placehold.co/600x200/F97316/white?text=Ramadan+Raya' },
-                { id: 'B-002', station: 'LDN', title: 'Summer Collection', active: false, img: 'https://placehold.co/600x200/0EA5E9/white?text=Summer+Vibes' },
-              ].map(banner => (
-                <div key={banner.id} style={{ border: '1px solid #E5E7EB', borderRadius: '16px', overflow: 'hidden', background: 'white', cursor: 'grab' }}>
-                  <img src={banner.img} style={{ width: '100%', height: '120px', objectFit: 'cover' }} />
-                  <div style={{ padding: '16px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <span style={{ fontSize: '12px', color: '#6B7280' }}>ID: {banner.id}</span>
-                      <span style={{ fontSize: '10px', padding: '2px 6px', borderRadius: '4px', background: banner.active ? '#DCFCE7' : '#F3F4F6', color: banner.active ? '#166534' : '#6B7280' }}>
-                        {banner.active ? 'Active' : 'Draft'}
-                      </span>
-                    </div>
-                    <h4 style={{ margin: '8px 0' }}>{banner.title}</h4>
-                    <p style={{ fontSize: '12px', color: '#9CA3AF' }}>Station: {banner.station}</p>
-                    <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
-                      <button style={{ flex: 1, padding: '6px', fontSize: '12px', border: '1px solid #E5E7EB', borderRadius: '6px', background: 'white' }}>Edit</button>
-                      <button style={{ padding: '6px', fontSize: '12px', border: '1px solid #FECACA', borderRadius: '6px', background: '#FEF2F2', color: '#DC2626' }}>Delete</button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        );
-      case 'whatsapp':
-        return (
-          <div style={{ padding: '24px' }}>
-            <h2 style={{ color: '#F97316' }}>WhatsApp CRM & Notifications</h2>
-            <div style={{ marginTop: '20px', backgroundColor: 'white', padding: '24px', borderRadius: '16px', border: '1px solid #E5E7EB' }}>
-              <h3>Integration Status: <span style={{ color: '#16A34A' }}>Connected</span></h3>
-              <p style={{ color: '#64748B', fontSize: '14px' }}>Webhooks active for JKT Node</p>
-              
-              <div style={{ marginTop: '24px' }}>
-                <h4 style={{ marginBottom: '12px' }}>Automated Message Templates</h4>
-                {[
-                  { name: 'Order Confirmation', status: 'Enabled' },
-                  { name: 'In Transit Alert', status: 'Enabled' },
-                  { name: 'Arrival at Hub', status: 'Enabled' },
-                ].map(t => (
-                  <div key={t.name} style={{ display: 'flex', justifyContent: 'space-between', padding: '12px 0', borderBottom: '1px solid #F3F4F6' }}>
-                    <span>{t.name}</span>
-                    <span style={{ color: '#16A34A', fontWeight: 'bold' }}>{t.status}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        );
-      case 'membership':
-        return (
-          <div style={{ padding: '24px' }}>
-            <h2 style={{ color: '#F97316' }}>Membership & Loyalty</h2>
-            <div style={{ marginTop: '20px' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
-                {[
-                  { level: 'Bronze', badge: '🥉', spend: 'Rp 0', discount: '0%', color: '#B45309' },
-                  { level: 'Silver', badge: '🥈', spend: 'Rp 10M', discount: '5%', color: '#6B7280' },
-                  { level: 'Gold', badge: '🥇', spend: 'Rp 50M', discount: '15%', color: '#D97706' },
-                  { level: 'Platinum', badge: '💎', spend: 'Rp 200M', discount: '30%', color: '#1D4ED8' },
-                ].map(l => (
-                  <div key={l.level} style={{ padding: '20px', borderRadius: '16px', background: 'white', border: '1px solid #E5E7EB', textAlign: 'center' }}>
-                    <div style={{ fontSize: '32px' }}>{l.badge}</div>
-                    <h4 style={{ margin: '10px 0 5px', color: l.color }}>{l.level}</h4>
-                    <p style={{ margin: 0, fontSize: '12px', color: '#6B7280' }}>Min. Spend: {l.spend}</p>
-                    <div style={{ marginTop: '10px', fontSize: '14px', fontWeight: 'bold', color: '#16A34A' }}>{l.discount} Off Fee</div>
-                  </div>
-                ))}
-              </div>
-              <div style={{ marginTop: '32px' }}>
-                <h3>Recent Level Upgrades</h3>
-                <div style={{ background: 'white', borderRadius: '16px', border: '1px solid #E5E7EB', marginTop: '12px' }}>
-                  {[
-                    { user: 'Budi J.', from: 'Bronze', to: 'Silver', date: '2026-06-01' },
-                    { user: 'Siti A.', from: 'Silver', to: 'Gold', date: '2026-05-30' },
-                  ].map((log, i) => (
-                    <div key={i} style={{ padding: '16px', borderBottom: i === 0 ? '1px solid #F3F4F6' : 'none', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <span style={{ fontWeight: '600' }}>{log.user}</span>
-                      <span style={{ fontSize: '12px' }}>
-                        {log.from} → <span style={{ fontWeight: 'bold', color: '#F97316' }}>{log.to}</span>
-                      </span>
-                      <span style={{ fontSize: '12px', color: '#9CA3AF' }}>{log.date}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-        return (
-          <div style={{ padding: '24px' }}>
-            <h2 style={{ color: '#F97316' }}>Vault & Treasury Management</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginTop: '20px' }}>
-              <div style={{ padding: '24px', background: '#F0FDF4', borderRadius: '16px' }}>
-                <p style={{ margin: 0, color: '#166534', fontWeight: 'bold' }}>Risk Buffer Balance</p>
-                <h1 style={{ margin: '10px 0', color: '#15803d' }}>Rp 18,450,200</h1>
-                <p style={{ margin: 0, fontSize: '12px', color: '#166534' }}>+1.5% from every transaction automatically ledgered</p>
-              </div>
-              <div style={{ padding: '24px', background: '#EFF6FF', borderRadius: '16px' }}>
-                <p style={{ margin: 0, color: '#1E40AF', fontWeight: 'bold' }}>Total Resale Commission</p>
-                <h1 style={{ margin: '10px 0', color: '#1D4ED8' }}>Rp 5,230,000</h1>
-                <p style={{ margin: 0, fontSize: '12px', color: '#1E40AF' }}>5% C2C transaction fee revenue</p>
-              </div>
-            </div>
-          </div>
-        );
-      default:
-        return (
-          <div style={{ padding: '24px' }}>
-            <h1>Global Command Center</h1>
-            <p>Welcome, Commander. Real-time sourcing insights across all stations.</p>
-            
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px', marginTop: '30px' }}>
-              <div style={{ padding: '20px', border: '1px solid #eee', borderRadius: '12px', background: 'white' }}>
-                <h3 style={{ margin: '0 0 10px 0', color: '#F97316' }}>Jakarta Pilot (JKT)</h3>
-                <p style={{ color: '#52c41a', fontWeight: 'bold' }}>● ONLINE</p>
-                <div style={{ fontSize: '12px', color: '#666' }}>
-                  <p>Active Category: Ramadan Essentials</p>
-                  <p>Throughput: 842 parcels/day</p>
-                  <p>L3 Logistics Gain: +34.2%</p>
-                </div>
-              </div>
-              <div style={{ padding: '20px', border: '1px solid #eee', borderRadius: '12px', background: 'white' }}>
-                <h3 style={{ margin: '0 0 10px 0', color: '#F97316' }}>London Hub (LDN)</h3>
-                <p style={{ color: '#52c41a', fontWeight: 'bold' }}>● ONLINE</p>
-                <div style={{ fontSize: '12px', color: '#666' }}>
-                  <p>Active Category: Daily Essentials</p>
-                  <p>Throughput: 125 parcels/day</p>
-                  <p>L3 Logistics Gain: +18.5%</p>
-                </div>
-              </div>
-              <div style={{ padding: '20px', border: '1px solid #eee', borderRadius: '12px', background: '#F8FAFC' }}>
-                <h3 style={{ margin: '0 0 10px 0', color: '#475569' }}>Vault & Security</h3>
-                <p style={{ color: '#0EA5E9', fontWeight: 'bold' }}>🛡️ SECURE</p>
-                <div style={{ fontSize: '12px', color: '#666' }}>
-                  <p>Risk Buffer: Rp 18,450,000</p>
-                  <p>Chargeback Rate: 0.12%</p>
-                  <p>Agent Sentinel: Active</p>
-                </div>
-              </div>
-            </div>
-
-            <div style={{ marginTop: '50px', padding: '30px', background: '#FFF7ED', borderRadius: '24px', border: '1px solid #FFEDD5' }}>
-              <h2 style={{ color: '#9A3412', marginTop: 0 }}>Jakarta Pilot Deployment</h2>
-              <p style={{ color: '#C2410C' }}>Field testing for the 2026 Eid Al-Fitr surge is now active. APK for local partners:</p>
-              <a 
-                href="https://expo.dev/artifacts/eas/aceproxy-pilot-jakarta.apk" 
-                style={{ 
-                  backgroundColor: '#F97316', 
-                  color: 'white', 
-                  padding: '12px 24px', 
-                  borderRadius: '12px', 
-                  textDecoration: 'none', 
-                  fontWeight: 'bold',
-                  display: 'inline-block',
-                  marginTop: '10px'
-                }}
-              >
-                Download AceProxy Mobile (APK)
-              </a>
-            </div>
-          </div>
-        );
+function getImageUrl(images: string[], fallback: string): string {
+  if (images?.length > 0) {
+    const src = images[0];
+    if (src.startsWith('http')) return src;
+    if (src.startsWith('[')) {
+      try { const arr = JSON.parse(src); return arr[0] || fallback; } catch { return fallback; }
     }
-  };
+    return src;
+  }
+  return fallback;
+}
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-  };
+// ─── Main Page ───
+export default function HomePage() {
+  const [data, setData] = useState<HomeData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [lang, setLang] = useState<'ID' | 'EN' | 'ZH'>('ID');
+  const [mobileMenu, setMobileMenu] = useState(false);
+  const [carouselIdx, setCarouselIdx] = useState(0);
+  const [pauseAuto, setPauseAuto] = useState(false);
 
-  const getActiveLabel = () => {
-    const found = menuItems.find(i => i.id === activeTab);
-    if (found) return found.label;
-    const inBottom = bottomTabs.slice(0, -1).find(t => t.id === activeTab);
-    return inBottom ? inBottom.label : 'Overview';
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  // Carousel auto-advance every 5s
+  useEffect(() => {
+    if (pauseAuto) return;
+    const t = setInterval(() => setCarouselIdx(prev => (prev + 1) % 3), 5000);
+    return () => clearInterval(t);
+  }, [pauseAuto]);
+
+  async function fetchData() {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch('/api/v1/station/jakarta/home');
+      if (res.ok) {
+        const json = await res.json();
+        setData(json.data || json);
+      } else {
+        throw new Error('API unavailable');
+      }
+    } catch {
+      try {
+        const [prodRes, catRes] = await Promise.all([
+          fetch('/api/v1/product/list?limit=12'),
+          fetch('/api/v1/product/categories'),
+        ]);
+        const prodJson = await prodRes.json();
+        const catJson = await catRes.json();
+        setData({
+          featuredProducts: prodJson.data?.items || [],
+          categories: catJson.data || [],
+        });
+      } catch {
+        setError('Backend tidak tersedia');
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  const products = data?.featuredProducts || data?.heroProducts || [];
+  const categories = data?.categories || [];
+
+  const T = {
+    ID: {
+      hero: 'Belanja Langsung dari Pabrik China',
+      subtitle: 'Harga grosir langsung 1688. Kualitas terjamin dengan pengecekan AI. Pengiriman aman ke seluruh Indonesia.',
+      cta: 'Lihat Produk',
+      trusted: 'Dipercaya 10.000+ pembeli',
+      search: 'Cari produk, brand, atau kategori...',
+      categories: 'Kategori',
+      featured: 'Produk Unggulan',
+      allProducts: 'Semua Produk',
+      admin: 'Admin',
+      loading: 'Memuat produk...',
+      error: 'Server sedang sibuk. Silakan coba lagi.',
+      retry: 'Coba Lagi',
+      nav: { home: 'Beranda', products: 'Produk', cart: 'Keranjang', orders: 'Pesanan', account: 'Akun' },
+      saveTag: 'HEMAT',
+      empty: 'Belum ada produk tersedia.',
+      emptyAction: 'Tambah Produk di Admin',
+      freeConsolidation: 'Gratis Konsolidasi',
+      aiQuality: 'AI Quality Check',
+      damageWarranty: 'Garansi Kerusakan',
+      hotProducts: 'Trending Sekarang',
+      howItWorks: 'Cara Belanja',
+      step1: 'Cari Produk',
+      step1desc: 'Telusuri katalog atau paste link 1688 langsung',
+      step2: 'ArbiBot Bandingkan',
+      step2desc: 'AI cari harga terbaik & verifikasi kualitas',
+      step3: 'Kami Belikan',
+      step3desc: 'Pembayaran escrow aman, barang sampai rumah',
+      whyUs: 'Kenapa AceProxy?',
+      why1: 'Harga Pabrik',
+      why1desc: 'Langsung dari 1688, lebih murah 50-200%',
+      why2: 'AI Cek Kualitas',
+      why2desc: 'AI verifikasi sebelum dikirim ke Indonesia',
+      why3: 'Aman & Terjamin',
+      why3desc: 'Escrow Xendit, uang aman sampai terima',
+      why4: 'Konsolidasi Gratis',
+      why4desc: 'Gabung banyak paket, kirim sekali gratis',
+      arbiBotCTA: 'Paste link produk & cari harga terbaik',
+      arbiBotAction: 'Mulai ArbiBot',
+      services: 'Layanan',
+      company: 'Perusahaan',
+      contact: 'Kontak',
+      about: 'Tentang Kami',
+      privacy: 'Kebijakan Privasi',
+    },
+    EN: {
+      hero: 'Direct from Chinese Factories',
+      subtitle: 'Wholesale prices from 1688. AI quality assurance. Safe delivery to Indonesia.',
+      cta: 'Browse Products',
+      trusted: 'Trusted by 10,000+ buyers',
+      search: 'Search products, brands, categories...',
+      categories: 'Categories',
+      featured: 'Featured Products',
+      allProducts: 'All Products',
+      admin: 'Admin',
+      loading: 'Loading products...',
+      error: 'Server busy. Please try again.',
+      retry: 'Retry',
+      nav: { home: 'Home', products: 'Products', cart: 'Cart', orders: 'Orders', account: 'Account' },
+      saveTag: 'SAVE',
+      empty: 'No products available yet.',
+      emptyAction: 'Add Products in Admin',
+      freeConsolidation: 'Free Consolidation',
+      aiQuality: 'AI Quality Check',
+      damageWarranty: 'Damage Warranty',
+      services: 'Services',
+      company: 'Company',
+      contact: 'Contact',
+      about: 'About Us',
+      privacy: 'Privacy Policy',
+      hotProducts: 'Trending Now',
+      howItWorks: 'How It Works',
+      step1: 'Find Products',
+      step1desc: 'Browse catalog or paste 1688 product link',
+      step2: 'ArbiBot Compares',
+      step2desc: 'AI finds best prices & verifies quality',
+      step3: 'We Buy For You',
+      step3desc: 'Secure escrow payment, delivered to your door',
+      whyUs: 'Why AceProxy?',
+      why1: 'Factory Prices',
+      why1desc: 'Direct from 1688, 50-200% cheaper',
+      why2: 'AI Quality Check',
+      why2desc: 'AI verifies before shipping to Indonesia',
+      why3: 'Safe & Guaranteed',
+      why3desc: 'Xendit escrow, money safe until delivery',
+      why4: 'Free Consolidation',
+      why4desc: 'Combine packages, ship together for free',
+      arbiBotCTA: 'Paste product link & find best prices',
+      arbiBotAction: 'Open ArbiBot',
+    },
+    ZH: {
+      hero: '中国工厂直供',
+      subtitle: '1688批发价直接买。AI质检保证品质。安全送达印尼。',
+      cta: '浏览商品',
+      trusted: '10,000+ 用户信赖',
+      search: '搜索商品、品牌、分类...',
+      categories: '分类',
+      featured: '精选商品',
+      allProducts: '全部商品',
+      admin: '管理后台',
+      loading: '加载商品中...',
+      error: '服务器繁忙，请重试。',
+      retry: '重试',
+      nav: { home: '首页', products: '商品', cart: '购物车', orders: '订单', account: '我的' },
+      saveTag: '省',
+      empty: '暂无商品。',
+      emptyAction: '去管理后台添加商品',
+      freeConsolidation: '免费集运',
+      aiQuality: 'AI质检',
+      damageWarranty: '破损保障',
+      services: '服务',
+      company: '公司',
+      contact: '联系我们',
+      about: '关于我们',
+      privacy: '隐私政策',
+      hotProducts: '今日爆款',
+      howItWorks: '怎么买',
+      step1: '选商品',
+      step1desc: '浏览商品或直接粘贴1688产品链接',
+      step2: 'ArbiBot比价',
+      step2desc: 'AI全网比价，验证品质',
+      step3: '我们代购',
+      step3desc: 'Xendit托管支付，安全送到家',
+      whyUs: '为什么选AceProxy？',
+      why1: '工厂价',
+      why1desc: '1688直供，便宜50-200%',
+      why2: 'AI质检',
+      why2desc: 'AI验证品质后才发往印尼',
+      why3: '安全可靠',
+      why3desc: 'Xendit托管，收货才放款',
+      why4: '免费集运',
+      why4desc: '多包裹合并，一次免费寄送',
+      arbiBotCTA: '粘贴链接，全网比价',
+      arbiBotAction: '打开ArbiBot',
+    },
   };
+  const t = T[lang];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', fontFamily: 'system-ui', backgroundColor: '#F9FAFB' }}>
-      {/* Header with Search */}
-      <header style={{ 
-        backgroundColor: 'white', 
-        borderBottom: '1px solid #E5E7EB',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
-        zIndex: 20,
-      }}>
-        {/* Top row: Logo + Status */}
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'space-between',
-          padding: '10px 20px',
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <h1 style={{ fontSize: '18px', fontWeight: '900', color: '#F97316', margin: 0 }}>AceProxy</h1>
-            <span style={{ fontSize: '10px', color: '#9CA3AF', background: '#F1F5F9', padding: '2px 8px', borderRadius: '4px' }}>COMMAND CENTER</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <span style={{ color: '#16A34A', fontSize: '12px', fontWeight: 'bold' }}>● SYSTEM_NORMAL</span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <div style={{ width: '28px', height: '28px', backgroundColor: '#F97316', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '12px', fontWeight: 'bold' }}>CB</div>
-              <span style={{ fontSize: '11px', color: '#64748B' }}>雅加达试点站 (JKT)</span>
+    <>
+      <Head>
+        <title>AceProxy — Belanja Langsung dari Pabrik China</title>
+        <meta name="description" content="Harga grosir langsung 1688. AI quality inspection. Free consolidation shipping." />
+      </Head>
+
+      <div className="min-h-screen bg-canvas-warm font-body">
+        {/* ─── Header (BRUTALISM: border-b-4, sticky) ─── */}
+        <header className="sticky top-0 z-50 bg-white border-b-4 border-black">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
+            <div className="flex items-center justify-between h-16">
+              {/* Logo — square block */}
+              <Link href="/" className="flex items-center gap-2.5 shrink-0">
+                <div className="w-9 h-9 border-3 border-black flex items-center justify-center font-display font-black text-base text-white bg-terracotta">
+                  A
+                </div>
+                <span className="font-display font-black text-lg text-ink tracking-tight hidden sm:block">
+                  ACEPROXY
+                </span>
+              </Link>
+
+              {/* Search — brutalist input (desktop) */}
+              <div className="hidden md:flex flex-1 max-w-lg mx-6">
+                <div className="relative w-full">
+                  <Search size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-ink-mute" />
+                  <input
+                    placeholder={t.search}
+                    className="w-full pl-11 pr-5 py-3 border-3 border-black bg-white
+                      text-sm font-medium text-ink placeholder:text-ink-mute/40
+                      outline-none
+                      focus:border-terracotta
+                      shadow-[3px_3px_0_#000]"
+                  />
+                </div>
+              </div>
+
+              {/* Right Action Buttons */}
+              <div className="flex items-center gap-2 sm:gap-2.5">
+                {/* Language Switcher — pill-style but square */}
+                <button
+                  onClick={() => setLang(lang === 'ID' ? 'EN' : lang === 'EN' ? 'ZH' : 'ID')}
+                  className="flex items-center gap-1 px-2.5 py-1.5 border-3 border-black
+                    text-xs font-bold hover:bg-terracotta hover:text-white hover:border-terracotta
+                    transition-all duration-100 bg-white"
+                  title="Switch Language"
+                >
+                  <Globe size={14} />
+                  <span className="hidden sm:inline font-display">{lang}</span>
+                </button>
+
+                {/* Cart Button */}
+                <Link href="/cart"
+                  className="relative p-2 border-3 border-black bg-white
+                    hover:bg-canvas-gray transition-colors"
+                  title={t.nav.cart}>
+                  <ShoppingCart size={20} className="text-ink" />
+                  <span className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-terracotta text-white text-[10px] font-display font-black flex items-center justify-center border-2 border-black">
+                    0
+                  </span>
+                </Link>
+
+                {/* Admin Button (desktop) */}
+                <Link href="/admin"
+                  className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 border-3 border-black
+                    text-xs font-bold bg-white hover:bg-ink hover:text-white hover:border-ink
+                    transition-all duration-100"
+                  title={t.admin}>
+                  <Shield size={14} />
+                  <span className="font-display text-[11px]">{t.admin}</span>
+                </Link>
+
+                {/* Account / Masuk Button — Primary Brutalist */}
+                <Link href="/account"
+                  className="btn-brutal-sm text-[13px] !px-4 !py-2 !gap-1.5">
+                  <User size={14} />
+                  <span className="hidden sm:inline">{t.nav.account}</span>
+                </Link>
+
+                {/* Mobile Menu Toggle */}
+                <button
+                  onClick={() => setMobileMenu(!mobileMenu)}
+                  className="md:hidden p-2 border-3 border-black bg-white
+                    hover:bg-canvas-gray transition-colors">
+                  {mobileMenu ? <X size={20} /> : <Menu size={20} />}
+                </button>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Search Bar */}
-        <div style={{ padding: '0 20px 12px' }}>
-          <div style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            background: '#F1F5F9', 
-            borderRadius: '12px',
-            padding: '0 16px',
-            border: '2px solid transparent',
-            transition: 'border-color 0.2s',
-          }}>
-            <span style={{ fontSize: '16px', marginRight: '10px', color: '#94A3B8' }}>🔍</span>
-            <input 
-              type="text"
-              placeholder="Search products, orders, modules..."
-              value={searchQuery}
-              onChange={handleSearch}
-              style={{
-                flex: 1,
-                padding: '12px 0',
-                border: 'none',
-                background: 'transparent',
-                fontSize: '14px',
-                color: '#1E293B',
-                outline: 'none',
-              }}
-            />
-            {searchQuery && (
-              <button 
-                onClick={() => setSearchQuery('')}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: '16px', color: '#94A3B8', padding: '4px' }}
-              >
-                ✕
-              </button>
-            )}
-          </div>
-          {searchQuery && searchQuery.length >= 2 && (
-            <div style={{ 
-              marginTop: '8px', 
-              background: 'white', 
-              borderRadius: '12px', 
-              border: '1px solid #E5E7EB',
-              boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
-              maxHeight: '280px',
-              overflowY: 'auto',
-            }}>
-              {(() => {
-                const q = searchQuery.toLowerCase();
-                const results: { label: string; icon: string; tab: string; desc: string }[] = [];
-                
-                // Search through menu items
-                menuItems.forEach(mi => {
-                  if (mi.label.toLowerCase().includes(q)) {
-                    results.push({ label: mi.label, icon: mi.icon, tab: mi.id, desc: 'Module' });
-                  }
-                });
-
-                // Search through product data
-                const products = [
-                  { name: 'Baju Koko (Ramadan Special)', tab: 'ai_sourcing' },
-                  { name: 'LED Hanging Lights', tab: 'ai_sourcing' },
-                  { name: 'Vacuum Sealer Pro', tab: 'ai_sourcing' },
-                  { name: 'Premium Silk Hijab', tab: 'hot_products' },
-                  { name: 'Travel Mukena Pro', tab: 'hot_products' },
-                  { name: 'Smart Zikr Ring Gen2', tab: 'hot_products' },
-                  { name: 'LED Moon Decor', tab: 'hot_products' },
-                  { name: 'Modern Baju Koko', tab: 'hot_products' },
-                  { name: 'Hakoba Eyelet Dress', tab: 'hot_products' },
-                ];
-                products.forEach(p => {
-                  if (p.name.toLowerCase().includes(q)) {
-                    results.push({ label: p.name, icon: '📦', tab: p.tab, desc: 'Product' });
-                  }
-                });
-
-                // Search orders
-                const orders = ['ORD-9921', 'ORD-9920', 'ORD-9919', 'ORD-1002', 'ORD-1005'];
-                orders.forEach(o => {
-                  if (o.toLowerCase().includes(q)) {
-                    results.push({ label: o, icon: '📋', tab: 'orders', desc: 'Order' });
-                  }
-                });
-
-                if (results.length === 0) {
-                  return (
-                    <div style={{ padding: '20px', textAlign: 'center', color: '#94A3B8' }}>
-                      <p style={{ margin: 0, fontSize: '14px' }}>No results for &ldquo;{searchQuery}&rdquo;</p>
-                    </div>
-                  );
-                }
-
-                return results.slice(0, 8).map((r, i) => (
-                  <div 
-                    key={i}
-                    onClick={() => { setActiveTab(r.tab); setSearchQuery(''); }}
-                    style={{ 
-                      padding: '12px 16px', 
-                      cursor: 'pointer', 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      gap: '10px',
-                      borderBottom: i < results.length - 1 ? '1px solid #F1F5F9' : 'none',
-                    }}
-                    onMouseEnter={(e) => (e.currentTarget.style.background = '#FFF7ED')}
-                    onMouseLeave={(e) => (e.currentTarget.style.background = 'white')}
-                  >
-                    <span style={{ fontSize: '18px' }}>{r.icon}</span>
-                    <div style={{ flex: 1 }}>
-                      <span style={{ fontSize: '13px', fontWeight: '600' }}>{r.label}</span>
-                      <span style={{ fontSize: '10px', color: '#94A3B8', marginLeft: '8px' }}>{r.desc}</span>
-                    </div>
-                    <span style={{ color: '#94A3B8', fontSize: '12px' }}>→</span>
-                  </div>
-                ));
-              })()}
+          {/* Mobile Menu Dropdown */}
+          {mobileMenu && (
+            <div className="md:hidden border-t-4 border-black bg-white px-4 py-4 space-y-2">
+              <div className="relative mb-3">
+                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-mute" />
+                <input
+                  placeholder={t.search}
+                  className="w-full pl-9 pr-4 py-2.5 border-3 border-black text-sm outline-none"
+                />
+              </div>
+              <Link href="/products"
+                onClick={() => setMobileMenu(false)}
+                className="block px-4 py-2.5 border-3 border-black font-bold text-sm hover:bg-terracotta hover:text-white transition-colors">
+                {t.nav.products}
+              </Link>
+              <Link href="/cart"
+                onClick={() => setMobileMenu(false)}
+                className="block px-4 py-2.5 border-3 border-black font-bold text-sm hover:bg-terracotta hover:text-white transition-colors">
+                {t.nav.cart}
+              </Link>
+              <Link href="/orders"
+                onClick={() => setMobileMenu(false)}
+                className="block px-4 py-2.5 border-3 border-black font-bold text-sm hover:bg-terracotta hover:text-white transition-colors">
+                {t.nav.orders}
+              </Link>
+              <Link href="/admin"
+                onClick={() => setMobileMenu(false)}
+                className="block px-4 py-2.5 border-3 border-black font-bold text-sm hover:bg-ink hover:text-white transition-colors">
+                {t.admin}
+              </Link>
             </div>
           )}
-        </div>
-      </header>
+        </header>
 
-      {/* Main Content */}
-      <main style={{ flex: 1, overflowY: 'auto', paddingBottom: '16px' }}>
-        {/* Sub-header: Page title + Role switcher */}
-        <div style={{ 
-          padding: '12px 20px', 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'space-between',
-          borderBottom: '1px solid #F1F5F9',
-          flexWrap: 'wrap',
-          gap: '8px',
-        }}>
-          <h3 style={{ margin: 0, fontSize: '15px', color: '#1E293B' }}>{getActiveLabel()}</h3>
-          <div style={{ background: '#F1F5F9', padding: '3px', borderRadius: '8px', display: 'flex', gap: '2px' }}>
-            {roles.map(role => (
-              <button 
-                key={role}
-                onClick={() => setCurrentRole(role)}
-                style={{ 
-                  padding: '4px 10px', 
-                  fontSize: '11px', 
-                  border: 'none', 
-                  borderRadius: '6px', 
-                  backgroundColor: currentRole === role ? 'white' : 'transparent',
-                  color: currentRole === role ? '#F97316' : '#64748B',
-                  fontWeight: currentRole === role ? 'bold' : '500',
-                  cursor: 'pointer',
-                  boxShadow: currentRole === role ? '0 2px 4px rgba(0,0,0,0.05)' : 'none'
-                }}
-              >
-                {role}
-              </button>
+        {/* ─── Hero Carousel Banner ─── */}
+        <section className="relative bg-ink border-b-4 border-black overflow-hidden"
+          onMouseEnter={() => setPauseAuto(true)}
+          onMouseLeave={() => setPauseAuto(false)}>
+          <div className="relative h-[280px] sm:h-[360px] lg:h-[420px]">
+            {[
+              {
+                gradient: 'from-terracotta via-orange-600 to-ink',
+                title: t.hero,
+                sub: t.subtitle,
+                cta: t.cta, link: '/products',
+                badge: '🏭 Pabrik Langsung',
+              },
+              {
+                gradient: 'from-ocean via-blue-700 to-ink',
+                title: lang === 'ZH' ? 'AI质检保证品质' : 'AI Verifikasi Kualitas',
+                sub: lang === 'ZH' ? '发货前AI自动检查商品质量，破损免费重发' : 'AI cek kualitas sebelum dikirim. Garansi kerusakan!',
+                cta: t.arbiBotAction, link: '/arbibot',
+                badge: '🤖 AI Powered',
+              },
+              {
+                gradient: 'from-emerald-600 via-teal-700 to-ink',
+                title: lang === 'ZH' ? '免费集运到印尼' : 'Gratis Konsolidasi',
+                sub: lang === 'ZH' ? '多包裹合并一箱，一次免费送到家门口' : 'Gabung banyak paket jadi satu. Kirim gratis ke seluruh Indonesia!',
+                cta: lang === 'ZH' ? '立即选购' : 'Belanja Sekarang', link: '/products',
+                badge: '📦 Gratis Ongkir',
+              },
+            ].map((s, i) => (
+              <div key={i}
+                className={`absolute inset-0 transition-all duration-700 ease-in-out bg-gradient-to-r ${s.gradient} flex items-center
+                  ${carouselIdx === i ? 'opacity-100 z-10 scale-100' : 'opacity-0 z-0 scale-[1.02]'}`}>
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 w-full">
+                  <div className="max-w-2xl">
+                    <span className="inline-block px-3 py-1 border-2 border-white/25 bg-white/10 text-white text-xs font-display font-bold uppercase tracking-wider mb-4 sm:mb-5">
+                      {s.badge}
+                    </span>
+                    <h1 className="font-display text-2xl sm:text-4xl lg:text-5xl text-white leading-[1.08] tracking-[-0.03em] uppercase mb-3 sm:mb-4">
+                      {s.title}
+                    </h1>
+                    <p className="text-sm sm:text-lg text-white/80 max-w-xl mb-5 sm:mb-6 leading-relaxed font-medium">
+                      {s.sub}
+                    </p>
+                    <Link href={s.link}
+                      className="inline-flex items-center gap-2 px-5 py-3 border-3 border-white bg-white text-ink font-display font-bold text-sm uppercase
+                        shadow-[4px_4px_0_rgba(255,255,255,0.3)]
+                        hover:translate-x-1 hover:-translate-y-0.5 transition-all duration-150">
+                      {s.cta} <ArrowRight size={18} />
+                    </Link>
+                  </div>
+                </div>
+              </div>
             ))}
-          </div>
-        </div>
-        {renderContent()}
-      </main>
 
-      {/* Bottom Navigation */}
-      <nav style={{ 
-        display: 'flex',
-        backgroundColor: 'white',
-        borderTop: '1px solid #E5E7EB',
-        boxShadow: '0 -4px 20px rgba(0,0,0,0.06)',
-        padding: '6px 12px 8px',
-        justifyContent: 'space-around',
-        alignItems: 'flex-start',
-        zIndex: 30,
-        position: 'relative',
-      }}>
-        {bottomTabs.map((tab) => {
-          const isActive = tab.id === 'more' ? showMoreMenu : activeTab === tab.id;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => {
-                if (tab.id === 'more') {
-                  setShowMoreMenu(!showMoreMenu);
-                } else {
-                  setActiveTab(tab.id);
-                  setShowMoreMenu(false);
-                }
-              }}
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '2px',
-                padding: '8px 16px',
-                border: 'none',
-                background: 'transparent',
-                cursor: 'pointer',
-                borderRadius: '12px',
-                color: isActive ? '#F97316' : '#94A3B8',
-                fontWeight: isActive ? '700' : '500',
-                transition: 'all 0.15s',
-                minWidth: '60px',
-                position: 'relative',
-              }}
-            >
-              <span style={{ fontSize: '22px', lineHeight: '1' }}>{tab.icon}</span>
-              <span style={{ fontSize: '10px', whiteSpace: 'nowrap' }}>{tab.label}</span>
-              {isActive && tab.id !== 'more' && (
-                <div style={{ 
-                  position: 'absolute', 
-                  top: '-6px', 
-                  width: '32px', 
-                  height: '3px', 
-                  background: '#F97316', 
-                  borderRadius: '0 0 4px 4px' 
-                }} />
-              )}
+            {/* Arrows */}
+            <button onClick={() => setCarouselIdx(prev => prev === 0 ? 2 : prev - 1)}
+              className="absolute left-2 sm:left-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-11 sm:h-11 border-2 border-white/25 bg-black/30 hover:bg-black/50 text-white flex items-center justify-center transition-all rounded-sm"
+              aria-label="Previous slide">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="15 18 9 12 15 6"/></svg>
             </button>
-          );
-        })}
-      </nav>
+            <button onClick={() => setCarouselIdx(prev => prev === 2 ? 0 : prev + 1)}
+              className="absolute right-2 sm:right-5 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-11 sm:h-11 border-2 border-white/25 bg-black/30 hover:bg-black/50 text-white flex items-center justify-center transition-all rounded-sm"
+              aria-label="Next slide">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
 
-      {/* More Menu Overlay */}
-      {showMoreMenu && (
-        <>
-          <div 
-            onClick={() => setShowMoreMenu(false)}
-            style={{ 
-              position: 'fixed', 
-              inset: 0, 
-              background: 'rgba(0,0,0,0.3)', 
-              zIndex: 40 
-            }} 
-          />
-          <div style={{ 
-            position: 'fixed',
-            bottom: '90px',
-            left: '16px',
-            right: '16px',
-            zIndex: 50,
-            background: 'white',
-            borderRadius: '20px',
-            boxShadow: '0 -8px 40px rgba(0,0,0,0.15)',
-            padding: '8px',
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, 1fr)',
-            gap: '6px',
-            maxWidth: '500px',
-            margin: '0 auto',
-          }}>
-              {moreItems.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => {
-                    setActiveTab(item.id);
-                    setShowMoreMenu(false);
-                  }}
-                  style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: '6px',
-                    padding: '16px 8px',
-                    border: 'none',
-                    background: activeTab === item.id ? '#FFF7ED' : 'transparent',
-                    borderRadius: '14px',
-                    cursor: 'pointer',
-                    color: activeTab === item.id ? '#F97316' : '#4B5563',
-                    fontWeight: activeTab === item.id ? '700' : '500',
-                    transition: 'all 0.15s',
-                  }}
-                >
-                  <span style={{ fontSize: '26px' }}>{item.icon}</span>
-                  <span style={{ fontSize: '10px', textAlign: 'center', lineHeight: '1.2' }}>{item.label.replace(/ \(.*\)/, '')}</span>
-                </button>
+            {/* Dots */}
+            <div className="absolute bottom-4 sm:bottom-5 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2.5">
+              {[0, 1, 2].map(d => (
+                <button key={d} onClick={() => setCarouselIdx(d)}
+                  className={`w-2.5 h-2.5 sm:w-3 sm:h-3 border-2 border-white transition-all duration-200 rounded-sm ${
+                    carouselIdx === d ? 'bg-white scale-125' : 'bg-transparent hover:bg-white/40'
+                  }`}
+                  aria-label={`Slide ${d + 1}`} />
               ))}
+            </div>
           </div>
-        </>
-      )}
-    </div>
+        </section>
+
+        {/* ─── ArbiBot AI Compact Entry ─── */}
+        <section className="bg-canvas-warm border-b-4 border-black">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
+            <Link href="/arbibot"
+              className="flex items-center justify-between gap-3 p-3 sm:p-4 border-3 border-black bg-white
+                hover:bg-terracotta hover:text-white hover:border-terracotta
+                group transition-all duration-150"
+              style={{ boxShadow: '3px 3px 0 #000' }}>
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-10 h-10 sm:w-11 sm:h-11 border-3 border-black bg-canvas-warm flex items-center justify-center flex-shrink-0
+                  group-hover:bg-white/20 group-hover:border-white transition-colors">
+                  <Bot size={22} className="text-terracotta group-hover:text-white transition-colors" />
+                </div>
+                <div className="min-w-0">
+                  <span className="font-display font-black text-sm sm:text-base text-ink group-hover:text-white uppercase transition-colors">
+                    ArbiBot AI
+                  </span>
+                  <p className="text-xs sm:text-sm text-ink-mute group-hover:text-white/80 truncate transition-colors font-bold">
+                    {t.arbiBotCTA}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-1.5 flex-shrink-0 px-3 py-2 border-3 border-black bg-terracotta text-white
+                group-hover:bg-white group-hover:text-terracotta group-hover:border-white
+                transition-all duration-150 font-display font-bold text-xs uppercase">
+                {t.arbiBotAction} <ArrowRight size={16} />
+              </div>
+            </Link>
+          </div>
+        </section>
+
+        {/* ─── Category Grid (金刚位 — 对标Shopee/淘宝) ─── */}
+        <section className="py-12 sm:py-16 bg-white border-b-4 border-black">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
+            <div className="flex flex-col md:flex-row md:items-end justify-between mb-9 gap-6">
+              <h2 className="font-display text-2xl sm:text-3xl font-black text-ink uppercase tracking-[-0.02em]">
+                {t.categories}
+              </h2>
+              {/* Regional Pulse (Independent Site Exclusive) */}
+              <div className="bg-ink p-4 border-3 border-black shadow-[4px_4px_0_#F97316] flex items-center gap-4">
+                <div className="relative w-3 h-3">
+                  <div className="absolute inset-0 bg-terracotta rounded-full animate-ping opacity-75"></div>
+                  <div className="relative bg-terracotta w-3 h-3 rounded-full border-2 border-black"></div>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-display font-black text-white/50 uppercase leading-none">Jakarta Logistics Pulse</span>
+                  <span className="text-xs font-display font-black text-white uppercase mt-1">North Jakarta: 89% Capacity (Last 11kg)</span>
+                </div>
+                <div className="w-24 h-2 bg-white/10 border border-white/20">
+                   <div className="h-full bg-terracotta" style={{ width: '89%' }}></div>
+                </div>
+              </div>
+            </div>
+            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3">
+              {[
+                { icon: '👗', name: lang === 'ZH' ? '穆斯林时尚' : 'Muslim Fashion', emoji: '🧕' },
+                { icon: '👚', name: lang === 'ZH' ? '女装' : 'Wanita', emoji: '👚' },
+                { icon: '👕', name: lang === 'ZH' ? '男装' : 'Pria', emoji: '👕' },
+                { icon: '📱', name: lang === 'ZH' ? '电子产品' : 'Elektronik', emoji: '📱' },
+                { icon: '🏠', name: lang === 'ZH' ? '家居生活' : 'Rumah', emoji: '🏠' },
+                { icon: '💄', name: lang === 'ZH' ? '美妆护肤' : 'Kecantikan', emoji: '💄' },
+                { icon: '🧸', name: lang === 'ZH' ? '母婴玩具' : 'Mainan', emoji: '🧸' },
+                { icon: '👜', name: lang === 'ZH' ? '箱包配饰' : 'Aksesoris', emoji: '👜' },
+              ].map(cat => (
+                <Link key={cat.name} href={`/products?category=${encodeURIComponent(cat.name)}`}
+                  className="group flex flex-col items-center justify-center gap-2 p-4
+                    border-3 border-black bg-white text-center
+                    hover:bg-terracotta hover:text-white hover:border-terracotta
+                    transition-all duration-150"
+                  style={{ boxShadow: '3px 3px 0 #000' }}
+                  onMouseEnter={(e) => { e.currentTarget.style.transform = 'translate(-1px, -1px)'; e.currentTarget.style.boxShadow = '5px 5px 0 #000'; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.transform = 'translate(0, 0)'; e.currentTarget.style.boxShadow = '3px 3px 0 #000'; }}>
+                  <span className="text-3xl group-hover:scale-110 transition-transform duration-200">{cat.icon}</span>
+                  <span className="text-xs font-display font-bold group-hover:text-white uppercase leading-tight">
+                    {cat.name}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ─── Products Grid (BRUTALISM: hard-shadow cards, square) ─── */}
+        <section className="py-14 sm:py-20">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
+            <div className="flex items-center justify-between mb-9">
+              <h2 className="font-display text-2xl sm:text-3xl font-black text-ink uppercase tracking-[-0.02em]">
+                {t.featured}
+              </h2>
+              <Link href="/products"
+                className="flex items-center gap-1.5 text-sm font-display font-bold text-terracotta uppercase
+                  hover:text-ink transition-colors tracking-wider">
+                {t.allProducts} <ArrowRight size={18} />
+              </Link>
+            </div>
+
+            {/* Loading State */}
+            {loading && (
+              <div className="text-center py-20 bg-white border-4 border-black" style={{ boxShadow: '6px 6px 0 #000' }}>
+                <RefreshCw size={36} className="animate-spin mx-auto mb-5 text-terracotta" />
+                <p className="font-bold text-ink-mute">{t.loading}</p>
+              </div>
+            )}
+
+            {/* Error State */}
+            {error && (
+              <div className="text-center py-20 bg-white border-4 border-black" style={{ boxShadow: '6px 6px 0 #000' }}>
+                <p className="font-bold text-ink-mute mb-6 text-lg">{t.error}</p>
+                <button onClick={fetchData} className="btn-brutal-sm">
+                  <RefreshCw size={16} /> {t.retry}
+                </button>
+              </div>
+            )}
+
+            {/* Product Cards */}
+            {!loading && !error && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+                {products.slice(0, 8).map(product => (
+                  <Link key={product.id} href={`/products/${product.id}`}
+                    className="card-brutal group">
+                    {/* Product Image */}
+                    <div className="aspect-square bg-canvas-gray flex items-center justify-center overflow-hidden border-b-4 border-black relative">
+                      {product.images?.length > 0 ? (
+                        <img
+                          src={getImageUrl(product.images, '')}
+                          alt={product.name}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).style.display = 'none';
+                            (e.target as HTMLImageElement).nextElementSibling?.classList.remove('hidden');
+                          }}
+                        />
+                      ) : null}
+                      <span className={`text-5xl ${product.images?.length > 0 ? 'hidden' : ''}`}>
+                        {product.category?.includes('Fashion') || product.category?.includes('Muslim') ? '👗' :
+                         product.category?.includes('Electronics') ? '📱' :
+                         product.category?.includes('Home') ? '🏠' :
+                         product.category?.includes('Gift') ? '🎁' : '📦'}
+                      </span>
+                      {/* Stock badge */}
+                      {product.stock > 0 && product.stock <= 5 && (
+                        <span className="absolute top-2 left-2 bg-white border-2 border-black px-2 py-0.5 text-[10px] font-display font-bold text-error uppercase">
+                          Only {product.stock} left
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Product Info */}
+                    <div className="p-4">
+                      <span className="inline-block px-2.5 py-0.5 border-2 border-black bg-canvas-gray text-[10px] font-display font-bold uppercase tracking-widest mb-3">
+                        1688 Source
+                      </span>
+                      <h3 className="font-display font-bold text-sm text-ink mb-3 line-clamp-2 leading-snug
+                        group-hover:text-terracotta transition-colors">
+                        {product.name}
+                      </h3>
+                      <div className="flex items-end justify-between">
+                        <div>
+                          <div className="text-xl font-display font-black text-terracotta">
+                            {fmtRp(product.priceIdr)}
+                          </div>
+                        </div>
+                        {product.ratingAvg > 0 && (
+                          <div className="flex items-center gap-1 text-xs font-bold text-ink-mute">
+                            <Star size={12} className="text-warning fill-warning" />
+                            {product.ratingAvg.toFixed(1)}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
+
+            {/* Empty State */}
+            {!loading && !error && products.length === 0 && (
+              <div className="text-center py-20 bg-white border-4 border-black" style={{ boxShadow: '6px 6px 0 #000' }}>
+                <Package size={52} className="mx-auto mb-5 text-ink-mute" />
+                <p className="font-bold text-ink-mute mb-6 text-lg">{t.empty}</p>
+                <Link href="/admin/products" className="btn-brutal-sm">
+                  <ArrowRight size={16} /> {t.emptyAction}
+                </Link>
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* ─── Personalized Recommendations ─── */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <PersonalizedRecommendations
+            title={lang === 'ZH' ? '猜你喜欢' : lang === 'EN' ? 'Recommended For You' : 'Rekomendasi Untukmu'}
+            variant="home"
+            limit={4}
+          />
+        </div>
+
+        {/* ─── Footer (BRUTALISM: black background, thick top border) ─── */}
+        <footer className="bg-ink text-white border-t-4 border-black">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 py-14">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+              {/* Brand */}
+              <div>
+                <div className="flex items-center gap-2.5 mb-5">
+                  <div className="w-8 h-8 border-2 border-white flex items-center justify-center font-display font-black text-sm bg-terracotta text-white">
+                    A
+                  </div>
+                  <span className="font-display font-black text-lg tracking-tight">ACEPROXY</span>
+                </div>
+                <p className="text-sm text-white/60 leading-relaxed">
+                  Belanja langsung dari pabrik China. Harga grosir, kualitas terjamin.
+                </p>
+              </div>
+
+              {/* Services */}
+              <div>
+                <h4 className="font-display font-black text-sm text-terracotta uppercase tracking-wider mb-4">
+                  {t.services}
+                </h4>
+                <ul className="space-y-2.5">
+                  <li><Link href="/arbibot" className="text-sm text-white/70 hover:text-terracotta transition-colors font-bold">ArbiBot</Link></li>
+                  <li><Link href="/products" className="text-sm text-white/70 hover:text-terracotta transition-colors font-bold">{t.allProducts}</Link></li>
+                  <li><Link href="/orders" className="text-sm text-white/70 hover:text-terracotta transition-colors font-bold">{t.nav.orders}</Link></li>
+                  <li><Link href="/cart" className="text-sm text-white/70 hover:text-terracotta transition-colors font-bold">{t.nav.cart}</Link></li>
+                  <li><Link href="/account" className="text-sm text-white/70 hover:text-terracotta transition-colors font-bold">{t.nav.account}</Link></li>
+                </ul>
+              </div>
+
+              {/* Company */}
+              <div>
+                <h4 className="font-display font-black text-sm text-terracotta uppercase tracking-wider mb-4">
+                  {t.company}
+                </h4>
+                <ul className="space-y-2.5">
+                  <li><span className="text-sm text-white/70 hover:text-white transition-colors cursor-pointer font-bold">{t.about}</span></li>
+                  <li><span className="text-sm text-white/70 hover:text-white transition-colors cursor-pointer font-bold">{t.privacy}</span></li>
+                  <li><Link href="/admin" className="text-sm text-white/70 hover:text-terracotta transition-colors font-bold">Admin Panel</Link></li>
+                </ul>
+              </div>
+
+              {/* Contact */}
+              <div>
+                <h4 className="font-display font-black text-sm text-terracotta uppercase tracking-wider mb-4">
+                  {t.contact}
+                </h4>
+                <ul className="space-y-2.5 text-sm text-white/70">
+                  <li className="font-bold">WhatsApp: +62 812-xxxx-xxxx</li>
+                  <li className="font-bold">Email: support@aceproxy.id</li>
+                  <li className="font-bold">Jakarta, Indonesia</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Copyright */}
+            <div className="mt-12 pt-6 border-t-2 border-white/10 text-center">
+              <p className="text-xs text-white/40 font-bold tracking-wider uppercase">
+                © 2026 AceProxy. All rights reserved.
+              </p>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </>
   );
 }

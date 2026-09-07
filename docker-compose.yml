@@ -18,7 +18,7 @@ services:
       dockerfile: Dockerfile
     restart: always
     ports:
-      - "3000:3000"
+      - "3001:3001"
     environment:
       DATABASE_URL: postgresql://aceproxy_admin:${DB_PASSWORD:-changeme}@db:5432/aceproxy_vault
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET is required}

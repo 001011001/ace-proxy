@@ -15,7 +15,12 @@ export class ChatLogService {
     metadata?: any;
   }) {
     try {
-      return await this.prisma.chatLog.create({ data: params });
+      return await this.prisma.chatLog.create({
+        data: {
+          ...params,
+          metadata: params.metadata ? JSON.stringify(params.metadata) : null,
+        },
+      });
     } catch (e: any) {
       this.logger.warn(`Failed to log chat: ${e.message}`);
     }

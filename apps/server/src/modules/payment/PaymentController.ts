@@ -68,6 +68,18 @@ export class PaymentController {
     return this.paymentService.getAvailablePaymentMethods();
   }
 
+  // ─── 3.1 发票列表（管理后台支付页使用）─────────────────
+  @ApiBearerAuth()
+  @ApiOperation({ summary: '发票列表', description: '从 Xendit 拉取近期发票，供管理后台展示' })
+  @UseGuards(JwtAuthGuard)
+  @Get('invoices')
+  async listInvoices(@Query('limit') limit?: string) {
+    const parsed = limit ? parseInt(limit, 10) : 50;
+    const items = await this.paymentService.listInvoices(Number.isFinite(parsed) ? parsed : 50);
+    // 统一返回 { items } 结构，与管理后台其他列表接口保持一致
+    return { items, total: items.length };
+  }
+
   // ─── 4. 查询发票状态 ──────────────────────────────────
   @UseGuards(JwtAuthGuard)
   @Get('invoice/:invoiceId/status')

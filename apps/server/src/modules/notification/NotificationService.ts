@@ -43,7 +43,7 @@ export class NotificationService {
             role: 'system',
             content: `[${payload.type}] ${payload.title}: ${payload.body}`,
             intent: 'notification',
-            metadata: payload.data || {},
+            metadata: JSON.stringify(payload.data || {}),
           },
         });
       }

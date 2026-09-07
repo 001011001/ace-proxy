@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { HolidayPredictorService } from '../holiday/HolidayPredictorService';
 import { IPFirewallService } from '../sentinel/IPFirewallService';
+import { StationAdminService } from './StationAdminService';
 
 @Injectable()
 export class StationService {
@@ -9,6 +10,7 @@ export class StationService {
     private readonly prisma: PrismaService,
     private readonly holiday: HolidayPredictorService,
     private readonly sentinel: IPFirewallService,
+    private readonly stationAdmin: StationAdminService,
   ) {}
 
   async getStationHome(stationId: string) {
@@ -20,13 +22,8 @@ export class StationService {
       orderBy: { arbitrageGapPct: 'desc' },
     });
 
-    const stationConfigs: Record<string, any> = {
-      'JKT': { name: 'Jakarta', region: 'IDN', currency: 'IDR', lang: 'id' },
-      'LDN': { name: 'London', region: 'GBR', currency: 'GBP', lang: 'en' },
-      'TYO': { name: 'Tokyo', region: 'JPN', currency: 'JPY', lang: 'ja' },
-    };
-
-    const config = stationConfigs[stationId] || stationConfigs['JKT'];
+    // Dynamic lookup from DB, fallback to defaults
+    const config = await this.stationAdmin.getByCode(stationId);
 
     // Fetch active holiday for this station
     const holiday = await this.prisma.aceHolidayConfig.findFirst({
@@ -37,7 +34,8 @@ export class StationService {
       stationName: `AceProxy ${config.name} (${stationId})`,
       regionCode: config.region,
       currency: config.currency,
-      language: config.lang,
+      language: config.language,
+      timezone: config.timezone,
       activeHoliday: holiday || null,
       announcement: `Global Sourcing Engine is live in ${config.name}!`,
       products,
@@ -52,7 +50,6 @@ export class StationService {
 
   /** @deprecated Kept for backward compatibility with SentinelScraper */
   async updateTrendingProducts(products: any[]) {
-    // No-op: products are now read from DB directly
     return { success: true };
   }
 

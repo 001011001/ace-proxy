@@ -68,20 +68,39 @@ export class IntelligenceService {
   }
 
   /**
-   * @todo P2 — 当前返回 Mock 数据，需要接入真实 AMZ123 爬虫/API
+   * AMZ123 物流/政策情报爬取。
+   * @note P2 — 需要接入真实 AMZ123/Feedly API 后才有数据返回
    */
-  private async scrapeAMZ123() {
-    this.logger.warn('[MOCK] IntelligenceService.scrapeAMZ123 — 返回硬编码数据');
-    return ['印尼海关突击查验预警', '中英空运价格下降 5%'];
+  private async scrapeAMZ123(): Promise<string[]> {
+    const enabled = process.env.AMZ123_API_ENABLED === 'true';
+    if (!enabled) {
+      this.logger.debug('[Intelligence] AMZ123 scraper disabled (set AMZ123_API_ENABLED=true to enable)');
+      return [];
+    }
+    // TODO: 接入真实 AMZ123 RSS/API
+    this.logger.warn('[Intelligence] AMZ123 API not yet integrated');
+    return [];
   }
+
   /**
-   * @todo P2 — 当前返回 Mock 数据，需要接入真实 TikTok Creative Center API
+   * TikTok Creative Center 爆款趋势抓取。
+   * @note P2 — 需要接入真实 TikTok Creative Center API 后才有数据返回
    */
-  private async scrapeTikTok() {
-    this.logger.warn('[MOCK] IntelligenceService.scrapeTikTok — 返回硬编码数据');
-    return ['#RamadanOutfit 热度暴涨', '极简收纳工具点击率极高'];
+  private async scrapeTikTok(): Promise<string[]> {
+    const enabled = process.env.TIKTOK_CC_API_ENABLED === 'true';
+    if (!enabled) {
+      this.logger.debug('[Intelligence] TikTok scraper disabled (set TIKTOK_CC_API_ENABLED=true to enable)');
+      return [];
+    }
+    // TODO: 接入真实 TikTok Creative Center API
+    this.logger.warn('[Intelligence] TikTok CC API not yet integrated');
+    return [];
   }
   private async generateDailyBrief(news: string[], signals: string[]) {
-    return `AceProxy 每日套利简报:\n- 物流: ${news.join('; ')}\n- 趋势: ${signals.join('; ')}`;
+    if (news.length === 0 && signals.length === 0) {
+      this.logger.debug('[Intelligence] No external intelligence available (scrapers disabled or empty)');
+      return 'AceProxy 每日简报: 暂无外部情报更新。可在管理后台配置 AMZ123 和 TikTok API 以启用自动抓取。';
+    }
+    return `AceProxy 每日套利简报:\n- 物流: ${news.join('; ') || '无更新'}\n- 趋势: ${signals.join('; ') || '无更新'}`;
   }
 }

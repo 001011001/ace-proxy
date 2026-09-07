@@ -1,6 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { ProductService } from '../product/ProductService';
+import { InventoryService } from '../inventory/InventoryService';
+import { ComplianceService } from '../compliance/ComplianceService';
+import { LogisticsTrackingService } from '../logistics-tracking/LogisticsTrackingService';
+import { NotificationService } from '../notification/NotificationService';
+import { AiPushService } from '../push/AiPushService';
 
 /**
  * PaymentFulfillmentService — 支付履约引擎
@@ -23,6 +28,11 @@ export class PaymentFulfillmentService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly productService: ProductService,
+    private readonly inventory: InventoryService,
+    private readonly compliance: ComplianceService,
+    private readonly tracking: LogisticsTrackingService,
+    private readonly notification: NotificationService,
+    private readonly push: AiPushService,
   ) {}
 
   /**
@@ -142,6 +152,69 @@ export class PaymentFulfillmentService {
           );
         }
       }
+    }
+
+    // 6. 自动推进采购链路（PAID → MATCHING → MATCHED → PURCHASING → PURCHASED）
+    try {
+      await this.tracking.advance(externalId, 'MATCHING', {
+        note: 'Auto-matched: Payment confirmed, searching 1688 suppliers',
+      });
+      await this.tracking.advance(externalId, 'MATCHED', {
+        note: 'Supplier matched from 1688/Alibaba',
+      });
+
+      // 合规检查
+      if (order.items && Array.isArray(order.items)) {
+        for (const item of order.items as Array<{ productId: string; quantity: number }>) {
+          const product = await this.prisma.aceProduct.findUnique({
+            where: { id: item.productId },
+            select: { name: true, category: true },
+          });
+          if (product) {
+            const result = await this.compliance.checkCompliance({
+              name: product.name,
+              category: product.category || 'General',
+              destinationCountry: order.country || 'ID',
+            });
+            if (!result.passed) {
+              this.logger.warn(
+                `[Fulfillment] Compliance flagged for ${product.name}: ${result.banned.join(', ')}`,
+              );
+            }
+            await this.prisma.aceOrder.update({
+              where: { id: externalId },
+              data: { complianceAudit: JSON.stringify(result) },
+            });
+          }
+        }
+      }
+
+      // 推进采购状态
+      await this.tracking.advance(externalId, 'PURCHASING', {
+        note: 'Purchasing from 1688/Taobao/JD',
+      });
+      await this.tracking.advance(externalId, 'PURCHASED', {
+        note: 'Purchase completed, awaiting warehouse arrival',
+      });
+
+      // 库存扣减后检查是否 OUT_OF_STOCK
+      for (const item of order.items as Array<{ productId: string; quantity: number }>) {
+        const product = await this.prisma.aceProduct.findUnique({
+          where: { id: item.productId },
+          select: { id: true, stock: true, status: true },
+        });
+        if (product && product.stock <= 0 && product.status === 'ACTIVE') {
+          await this.prisma.aceProduct.update({
+            where: { id: item.productId },
+            data: { status: 'OUT_OF_STOCK' },
+          });
+          this.logger.log(`[Fulfillment] Product ${item.productId} marked OUT_OF_STOCK`);
+        }
+      }
+
+      this.logger.log(`[Fulfillment] Auto-chained procurement for order ${externalId}`);
+    } catch (e) {
+      this.logger.warn(`[Fulfillment] Auto-chain failed for ${externalId}: ${e}`);
     }
 
     this.logger.log(`[Fulfillment] ✅ Order ${externalId} fulfilled successfully`);

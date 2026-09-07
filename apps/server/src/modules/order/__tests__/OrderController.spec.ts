@@ -17,6 +17,12 @@ const mockPrisma = {
   aceLogisticsNode: { findMany: mockLogisticsFindMany },
 };
 
+/**
+ * 模拟已登录的普通用户（非管理员角色）
+ * 用于验证：数据隔离（list 按 userId 过滤）+ 归属校验（timeline 拒绝他人订单）
+ */
+const mockReq = { user: { userId: 'u1', role: 'USER' } } as any;
+
 describe('OrderController', () => {
   let controller: OrderController;
 
@@ -38,7 +44,7 @@ describe('OrderController', () => {
 
   describe('list', () => {
     it('should paginate orders', async () => {
-      const result = await controller.list('ALL', '1', '20');
+      const result = await controller.list(mockReq, 'ALL', '1', '20');
       expect(result.items).toHaveLength(1);
       expect(result).toHaveProperty('total');
       expect(result).toHaveProperty('page');
@@ -47,14 +53,14 @@ describe('OrderController', () => {
     it('should filter by status', async () => {
       mockOrderFindMany.mockResolvedValue([]);
       mockOrderCount.mockResolvedValue(0);
-      const result = await controller.list('PAID', '1', '10');
+      const result = await controller.list(mockReq, 'PAID', '1', '10');
       expect(result.total).toBe(0);
     });
   });
 
   describe('timeline', () => {
     it('should return logistics nodes', async () => {
-      const result = await controller.timeline('ORD-001');
+      const result = await controller.timeline(mockReq, 'ORD-001');
       expect(result).toBeDefined();
       expect(mockLogisticsFindMany).toHaveBeenCalledWith({
         where: { orderId: 'ORD-001' },

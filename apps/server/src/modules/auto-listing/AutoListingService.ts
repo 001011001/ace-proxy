@@ -3,6 +3,7 @@ import { PrismaService } from '../../prisma/prisma.service';
 import { AiTranslateService } from '../ai-translate/AiTranslateService';
 import { ShippingService } from '../shipping/ShippingService';
 import { Alibaba1688Service } from '../intelligence/Alibaba1688Service';
+import { ImagePipelineService } from '../ai-image/ImagePipelineService';
 
 interface SourceLink {
   url: string;
@@ -25,6 +26,15 @@ export interface ListingResult {
   shippingEstimate: number;
   estimatedDelivery: string;
   profitMarginPct: number;
+  /** 修图管线结果 */
+  imageResult?: {
+    originalCount: number;
+    processedCount: number;
+    cutoutUrls: string[];
+    sceneUrls: string[];
+    finalUrls: string[];
+    summary: { total: number; success: number; failed: number; totalDurationMs: number };
+  };
   steps: string[];
 }
 
@@ -64,6 +74,7 @@ export class AutoListingService {
     private readonly translator: AiTranslateService,
     private readonly shipping: ShippingService,
     private readonly alibaba1688: Alibaba1688Service,
+    private readonly imagePipeline: ImagePipelineService,
   ) {}
 
   /**
@@ -108,6 +119,19 @@ export class AutoListingService {
     });
     steps.push(`✅ Translated to ${targetCountry}`);
 
+    // Step 4.5: AI 智能修图（三层管线：抠图→换场景→加文字）
+    const category = this.guessCategory(source.title);
+    const imageResult = await this.imagePipeline.processProductImages(
+      source.images,
+      category,
+      targetCountry,
+      translated.marketingLine,
+    );
+    const processedImageUrls = imageResult.finalUrls.length > 0 ? imageResult.finalUrls : source.images;
+    steps.push(
+      `✅ Images processed: ${imageResult.summary.success}/${imageResult.summary.total} steps OK (${imageResult.summary.totalDurationMs}ms)`,
+    );
+
     // Step 5: 计算运费
     let shippingEstimate = 95;
     let estimatedDelivery = '12-16 days';
@@ -144,11 +168,11 @@ export class AutoListingService {
       data: {
         name: translated.title,
         description: translated.description + '\n\n' + translated.marketingLine,
-        category: this.guessCategory(source.title),
+        category: category,
         sourceUrl: url,
         priceIdr: priceLocal,
         costCny: priceFinal,
-        imageUrls: JSON.stringify(source.images),
+        imageUrls: JSON.stringify(processedImageUrls),
         stock: 999,
       },
     });
@@ -180,6 +204,14 @@ export class AutoListingService {
       shippingEstimate,
       estimatedDelivery,
       profitMarginPct,
+      imageResult: {
+        originalCount: source.images.length,
+        processedCount: processedImageUrls.length,
+        cutoutUrls: imageResult.cutoutUrls,
+        sceneUrls: imageResult.sceneUrls,
+        finalUrls: imageResult.finalUrls,
+        summary: imageResult.summary,
+      },
       steps,
     };
   }

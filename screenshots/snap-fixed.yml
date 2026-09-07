@@ -1,0 +1,267 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e3]:
+      - text: AceProxy
+      - generic [ref=e4]: ID
+    - navigation [ref=e5]:
+      - button "🏠 Home" [ref=e6] [cursor=pointer]:
+        - generic [ref=e7]: 🏠
+        - generic [ref=e8]: Home
+      - button "🔍 Discover" [ref=e9] [cursor=pointer]:
+        - generic [ref=e10]: 🔍
+        - generic [ref=e11]: Discover
+      - button "🤖 Assistant" [ref=e12] [cursor=pointer]:
+        - generic [ref=e13]: 🤖
+        - generic [ref=e14]: Assistant
+      - button "🔄 Resale" [ref=e15] [cursor=pointer]:
+        - generic [ref=e16]: 🔄
+        - generic [ref=e17]: Resale
+      - button "👤 Profile" [ref=e18] [cursor=pointer]:
+        - generic [ref=e19]: 👤
+        - generic [ref=e20]: Profile
+      - button "📊 Admin" [ref=e21] [cursor=pointer]:
+        - generic [ref=e22]: 📊
+        - generic [ref=e23]: Admin
+    - generic [ref=e24]:
+      - button "Language" [ref=e25] [cursor=pointer]: EN
+      - button "Search" [ref=e26] [cursor=pointer]: 🔍
+      - button "Notifications" [ref=e27] [cursor=pointer]: 🔔
+  - generic [ref=e28]:
+    - generic [ref=e29]:
+      - text: 🚀
+      - strong [ref=e30]: New Arrivals
+      - text: — Fresh drops every week. Free shipping on orders over Rp 500K.
+    - generic [ref=e31]:
+      - generic [ref=e32]: Personal Global Sourcing
+      - heading "Your Personal Global Sourcing Steward" [level=1] [ref=e33]:
+        - text: Your Personal
+        - text: Global Sourcing Steward
+      - paragraph [ref=e34]: We find, inspect, and deliver your chosen products — quality guaranteed, no surprises.
+      - button "Start Sourcing →" [ref=e35] [cursor=pointer]
+      - generic [ref=e36]:
+        - generic [ref=e37]:
+          - generic [ref=e38]: 12K+
+          - generic [ref=e39]: Products Sourced
+        - generic [ref=e40]:
+          - generic [ref=e41]: 98.5%
+          - generic [ref=e42]: QC Pass Rate
+        - generic [ref=e43]:
+          - generic [ref=e44]: 7-12
+          - generic [ref=e45]: Day Delivery
+        - generic [ref=e46]:
+          - generic [ref=e47]: 50K+
+          - generic [ref=e48]: Happy Buyers
+    - generic [ref=e49]:
+      - heading "How It Works" [level=3] [ref=e50]
+      - generic [ref=e51]:
+        - generic [ref=e52]:
+          - generic [ref=e53]: 🔗
+          - heading "1. Share Product Link" [level=4] [ref=e54]
+          - paragraph [ref=e55]: Paste any product URL from your favorite online store
+        - generic [ref=e56]:
+          - generic [ref=e57]: 🔍
+          - heading "2. We Source & Inspect" [level=4] [ref=e58]
+          - paragraph [ref=e59]: Our team finds the best supplier and runs VisionQC checks
+        - generic [ref=e60]:
+          - generic [ref=e61]: 📦
+          - heading "3. Delivered to You" [level=4] [ref=e62]
+          - paragraph [ref=e63]: Consolidated shipping with real-time tracking
+    - separator [ref=e64]
+    - generic [ref=e65]:
+      - heading "Marketplace" [level=3] [ref=e66]
+      - generic [ref=e67]:
+        - button "All" [ref=e121] [cursor=pointer]
+        - button "Electronics" [ref=e122] [cursor=pointer]
+        - button "Fashion" [ref=e123] [cursor=pointer]
+        - button "Home" [ref=e124] [cursor=pointer]
+        - button "Beauty" [ref=e125] [cursor=pointer]
+        - button "Sports" [ref=e126] [cursor=pointer]
+        - button "Lifestyle" [ref=e127] [cursor=pointer]
+      - generic [ref=e68]:
+        - generic [ref=e69]: 12 products
+        - combobox [ref=e70] [cursor=pointer]:
+          - option "Popular" [selected]
+          - option "Newest"
+          - 'option "Price: Low→High"'
+          - 'option "Price: High→Low"'
+      - generic [ref=e128]:
+        - generic [ref=e129] [cursor=pointer]:
+          - generic [ref=e130]: 34% OFF
+          - generic [ref=e131]: 👟
+          - generic [ref=e132]:
+            - generic [ref=e133]: Sports
+            - generic [ref=e134]: Running Shoes Ultra
+            - generic [ref=e135]:
+              - generic [ref=e136]: ★★★★★
+              - text: 4.7 (523)
+            - generic [ref=e137]: Rp 459.000Rp 699.000
+          - button "♡" [ref=e138]
+        - generic [ref=e139] [cursor=pointer]:
+          - generic [ref=e140]: 🧴
+          - generic [ref=e141]:
+            - generic [ref=e142]: Lifestyle
+            - generic [ref=e143]: Insulated Water Bottle
+            - generic [ref=e144]:
+              - generic [ref=e145]: ★★★★
+              - text: 4.4 (445)
+            - generic [ref=e146]: Rp 129.000
+          - button "♡" [ref=e147]
+        - generic [ref=e148] [cursor=pointer]:
+          - generic [ref=e149]: 33% OFF
+          - generic [ref=e150]: ✨
+          - generic [ref=e151]:
+            - generic [ref=e152]: Beauty
+            - generic [ref=e153]: Korean Skincare Set
+            - generic [ref=e154]:
+              - generic [ref=e155]: ★★★★★
+              - text: 4.9 (412)
+            - generic [ref=e156]: Rp 159.000Rp 239.000
+          - button "♡" [ref=e157]
+        - generic [ref=e158] [cursor=pointer]:
+          - generic [ref=e159]: 33% OFF
+          - generic [ref=e160]: ⌚
+          - generic [ref=e161]:
+            - generic [ref=e162]: Fashion
+            - generic [ref=e163]: Minimalist Watch
+            - generic [ref=e164]:
+              - generic [ref=e165]: ★★★★★
+              - text: 4.8 (312)
+            - generic [ref=e166]: Rp 289.000Rp 429.000
+          - button "♡" [ref=e167]
+        - generic [ref=e168] [cursor=pointer]:
+          - generic [ref=e169]: ⌨️
+          - generic [ref=e170]:
+            - generic [ref=e171]: Electronics
+            - generic [ref=e172]: Mechanical Keyboard RGB
+            - generic [ref=e173]:
+              - generic [ref=e174]: ★★★★★
+              - text: 4.7 (289)
+            - generic [ref=e175]: Rp 399.000
+          - button "♡" [ref=e176]
+        - generic [ref=e177] [cursor=pointer]:
+          - generic [ref=e178]: 40% OFF
+          - generic [ref=e179]: 🎧
+          - generic [ref=e180]:
+            - generic [ref=e181]: Electronics
+            - generic [ref=e182]: Wireless Earbuds Pro
+            - generic [ref=e183]:
+              - generic [ref=e184]: ★★★★★
+              - text: 4.8 (234)
+            - generic [ref=e185]: Rp 299.000Rp 499.000
+          - button "♡" [ref=e186]
+        - generic [ref=e187] [cursor=pointer]:
+          - generic [ref=e188]: 🥤
+          - generic [ref=e189]:
+            - generic [ref=e190]: Home
+            - generic [ref=e191]: Portable Blender
+            - generic [ref=e192]:
+              - generic [ref=e193]: ★★★★★
+              - text: 4.5 (178)
+            - generic [ref=e194]: Rp 219.000
+          - button "♡" [ref=e195]
+        - generic [ref=e196] [cursor=pointer]:
+          - generic [ref=e197]: 31% OFF
+          - generic [ref=e198]: 🧘
+          - generic [ref=e199]:
+            - generic [ref=e200]: Sports
+            - generic [ref=e201]: Yoga Mat Premium
+            - generic [ref=e202]:
+              - generic [ref=e203]: ★★★★★
+              - text: 4.6 (167)
+            - generic [ref=e204]: Rp 179.000Rp 259.000
+          - button "♡" [ref=e205]
+        - generic [ref=e206] [cursor=pointer]:
+          - generic [ref=e207]: 35% OFF
+          - generic [ref=e208]: 👔
+          - generic [ref=e209]:
+            - generic [ref=e210]: Fashion
+            - generic [ref=e211]: Slim Fit Casual Shirt
+            - generic [ref=e212]:
+              - generic [ref=e213]: ★★★★★
+              - text: 4.6 (156)
+            - generic [ref=e214]: Rp 189.000Rp 289.000
+          - button "♡" [ref=e215]
+        - generic [ref=e216] [cursor=pointer]:
+          - generic [ref=e217]: 33% OFF
+          - generic [ref=e218]: 🎒
+          - generic [ref=e219]:
+            - generic [ref=e220]: Lifestyle
+            - generic [ref=e221]: Canvas Backpack
+            - generic [ref=e222]:
+              - generic [ref=e223]: ★★★★★
+              - text: 4.5 (134)
+            - generic [ref=e224]: Rp 219.000Rp 329.000
+          - button "♡" [ref=e225]
+        - generic [ref=e226] [cursor=pointer]:
+          - generic [ref=e227]: 📱
+          - generic [ref=e228]:
+            - generic [ref=e229]: Electronics
+            - generic [ref=e230]: Phone Gimbal Stabilizer
+            - generic [ref=e231]:
+              - generic [ref=e232]: ★★★★★
+              - text: 4.6 (98)
+            - generic [ref=e233]: Rp 349.000
+          - button "♡" [ref=e234]
+        - generic [ref=e235] [cursor=pointer]:
+          - generic [ref=e236]: 31% OFF
+          - generic [ref=e237]: 💡
+          - generic [ref=e238]:
+            - generic [ref=e239]: Home
+            - generic [ref=e240]: Smart LED Desk Lamp
+            - generic [ref=e241]:
+              - generic [ref=e242]: ★★★★★
+              - text: 4.7 (89)
+            - generic [ref=e243]: Rp 249.000Rp 359.000
+          - button "♡" [ref=e244]
+    - separator [ref=e71]
+    - generic [ref=e72]:
+      - heading "Why Choose AceProxy" [level=3] [ref=e73]
+      - generic [ref=e74]:
+        - generic [ref=e75]:
+          - generic [ref=e76]: 🔍
+          - text: VisionQC 2.0
+        - generic [ref=e77]:
+          - generic [ref=e78]: 📸
+          - text: Photo Verification
+        - generic [ref=e79]:
+          - generic [ref=e80]: 📦
+          - text: Consolidated Shipping
+        - generic [ref=e81]:
+          - generic [ref=e82]: 🛡️
+          - text: Buyer Protection
+        - generic [ref=e83]:
+          - generic [ref=e84]: 💬
+          - text: 24/7 Steward
+  - generic [ref=e86]:
+    - heading "Panel" [level=3] [ref=e87]
+    - button "✕" [ref=e88] [cursor=pointer]
+  - generic [ref=e90]:
+    - generic [ref=e91]:
+      - heading "🛒 Cart (0)" [level=3] [ref=e92]
+      - button "✕" [ref=e93] [cursor=pointer]
+    - generic [ref=e95]:
+      - generic [ref=e96]: 🛒
+      - generic [ref=e97]: Your cart is empty
+      - generic [ref=e98]: Start adding products from the marketplace
+  - navigation [ref=e99]:
+    - button "🏠 Home" [ref=e100] [cursor=pointer]:
+      - generic [ref=e101]: 🏠
+      - generic [ref=e102]: Home
+    - button "🔍 Discover" [ref=e103] [cursor=pointer]:
+      - generic [ref=e104]: 🔍
+      - generic [ref=e105]: Discover
+    - button "🤖 AI" [ref=e106] [cursor=pointer]:
+      - generic [ref=e107]: 🤖
+      - generic [ref=e108]: AI
+    - button "🔄 Resale" [ref=e109] [cursor=pointer]:
+      - generic [ref=e110]: 🔄
+      - generic [ref=e111]: Resale
+    - button "👤 Profile" [ref=e112] [cursor=pointer]:
+      - generic [ref=e113]: 👤
+      - generic [ref=e114]: Profile
+    - button "🛒 Cart" [ref=e115] [cursor=pointer]:
+      - generic [ref=e116]: 🛒
+      - generic [ref=e117]: Cart
+    - button "📊 Admin" [ref=e118] [cursor=pointer]:
+      - generic [ref=e119]: 📊
+      - generic [ref=e120]: Admin

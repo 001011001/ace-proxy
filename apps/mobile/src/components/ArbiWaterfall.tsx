@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+﻿import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { useRole } from '../context/RoleContext';
 import { COLORS, SPACING, TYPOGRAPHY, SHADOWS, BORDERS } from '../theme';
 
@@ -27,7 +27,7 @@ export const ArbiWaterfall = () => {
         contentContainerStyle={styles.list}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={[styles.card, SHADOWS.brutalist]}>
+          <View style={[styles.card, SHADOWS.card]}>
             <View style={[styles.tagBadge, { backgroundColor: COLORS.black }]}>
               <Text style={[styles.tagText, { color: COLORS.white }]}>{item.tag}</Text>
             </View>
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     marginRight: SPACING.md,
     width: 180,
-    ...BORDERS.brutalist,
+    ...BORDERS.card,
   },
   tagBadge: {
     alignSelf: 'flex-start',
@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
     paddingVertical: 2,
     borderRadius: 4,
     fontWeight: '900',
-    ...BORDERS.brutalist,
+    ...BORDERS.card,
     borderWidth: 1,
   },
   footerRow: {
@@ -140,10 +140,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF7ED',
     alignItems: 'center',
     justifyContent: 'center',
-    ...BORDERS.brutalist,
+    ...BORDERS.card,
     borderWidth: 1.5,
   },
   selectionIcon: {
     fontSize: 12,
   }
 });
+

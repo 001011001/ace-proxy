@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { 
   View, 
   Text, 
@@ -119,7 +119,7 @@ const styles = StyleSheet.create({
   headerTitle: { fontSize: 24, fontWeight: '900', color: '#000' },
   headerSub: { fontSize: 12, fontWeight: '700', color: COLORS.gray[400], textTransform: 'uppercase' },
   scrollContent: { padding: SPACING.md },
-  card: { backgroundColor: COLORS.white, padding: SPACING.md, ...BORDERS.brutalist, ...SHADOWS.brutalist, marginBottom: 40 },
+  card: { backgroundColor: COLORS.white, padding: SPACING.md, ...BORDERS.card, ...SHADOWS.card, marginBottom: 40 },
   inputLabel: { fontSize: 11, fontWeight: '900', color: '#000', marginBottom: 6, textTransform: 'uppercase' },
   input: { 
     height: 50, 
@@ -148,8 +148,9 @@ const styles = StyleSheet.create({
     height: 60, 
     justifyContent: 'center', 
     alignItems: 'center', 
-    ...BORDERS.brutalist, 
-    ...SHADOWS.brutalist 
+    ...BORDERS.card, 
+    ...SHADOWS.card 
   },
   saveBtnText: { color: '#fff', fontSize: 18, fontWeight: '900' }
 });
+

@@ -264,6 +264,19 @@ async function main() {
   }
 
   console.log('✅ Payment configs seeded');
+
+  // 8. 创建 AceProduct 表数据（前端商品列表/详情的数据源）
+  console.log('\n📦 Seeding AceProduct catalog...');
+  const { seedAceProducts } = await import('./seed-products');
+  const productCount = await seedAceProducts(prisma);
+  console.log(`✅ ${productCount} AceProduct records seeded`);
+
+  // 9. 创建 AI 客服对话数据（ChatLog 表种子）
+  console.log('\n💬 Seeding customer service chat logs...');
+  const { seedCustomerServiceChats } = await import('./seed-customer-service');
+  await seedCustomerServiceChats(prisma);
+  console.log('✅ Customer service chats seeded');
+
   console.log('🎉 Seed completed!');
 }
 

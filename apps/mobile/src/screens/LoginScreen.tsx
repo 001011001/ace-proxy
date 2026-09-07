@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -109,8 +109,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     padding: SPACING.xl,
     borderRadius: 4,
-    ...BORDERS.brutalist,
-    ...SHADOWS.brutalist,
+    ...BORDERS.card,
+    ...SHADOWS.card,
   },
   header: {
     alignItems: 'center',
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     fontSize: 16,
     fontWeight: '700',
-    ...BORDERS.brutalist,
+    ...BORDERS.card,
     borderWidth: 2,
   },
   primaryBtn: {
@@ -155,8 +155,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 8,
-    ...BORDERS.brutalist,
-    ...SHADOWS.brutalist,
+    ...BORDERS.card,
+    ...SHADOWS.card,
     shadowOffset: { width: 4, height: 4 },
   },
   primaryBtnText: {
@@ -182,3 +182,4 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
 });
+

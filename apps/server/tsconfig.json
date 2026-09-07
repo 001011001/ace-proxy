@@ -12,10 +12,13 @@
     "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
+    "strict": false,
     "strictNullChecks": false,
-    "noImplicitAny": false,
-    "strictBindCallApply": false,
-    "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "@ace-proxy/shared": ["../../packages/shared/src"],
+      "@ace-proxy/shared/*": ["../../packages/shared/src/*"]
+    }
   }
 }

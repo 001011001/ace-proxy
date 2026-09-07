@@ -1,0 +1,350 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e2] [cursor=pointer]:
+    - generic [ref=e3]: 📱
+    - generic [ref=e4]: Download AceProxy App -- faster sourcing
+    - generic [ref=e5]: BETA
+  - generic [ref=e6]:
+    - generic [ref=e7]: 🔶 ACEPROXY
+    - generic [ref=e8]:
+      - textbox "Search products..." [ref=e9]
+      - button "🔍" [ref=e10] [cursor=pointer]
+    - generic [ref=e11]:
+      - button "🌐" [ref=e12] [cursor=pointer]
+      - button "🔔" [ref=e13] [cursor=pointer]
+  - generic [ref=e14]:
+    - button "🏠 Home" [ref=e15] [cursor=pointer]:
+      - generic [ref=e16]: 🏠
+      - generic [ref=e17]: Home
+    - button "🔥 Discovery" [ref=e18] [cursor=pointer]:
+      - generic [ref=e19]: 🔥
+      - generic [ref=e20]: Discovery
+    - button "🤖 Assistant" [ref=e21] [cursor=pointer]:
+      - generic [ref=e22]: 🤖
+      - generic [ref=e23]: Assistant
+    - button "🔄 Resale" [ref=e24] [cursor=pointer]:
+      - generic [ref=e25]: 🔄
+      - generic [ref=e26]: Resale
+    - button "👤 Profile" [ref=e27] [cursor=pointer]:
+      - generic [ref=e28]: 👤
+      - generic [ref=e29]: Profile
+    - button "🛒 0 Cart" [ref=e30] [cursor=pointer]:
+      - generic [ref=e31]: 🛒
+      - generic [ref=e32]: "0"
+      - generic [ref=e33]: Cart
+  - generic [ref=e35]:
+    - generic [ref=e36]:
+      - generic [ref=e37]: ⏳ Lebaran 2026
+      - generic [ref=e38]: 🎉 EID MUBARAK!
+      - generic [ref=e39]: Order now for delivery before Eid!
+    - generic [ref=e41]:
+      - generic [ref=e43] [cursor=pointer]:
+        - generic [ref=e44]: ⚡ Flash Sale Lebaran
+        - generic [ref=e45]: Up to 60% savings — limited time only!
+        - generic [ref=e46]: Shop Now →
+      - generic [ref=e48] [cursor=pointer]:
+        - generic [ref=e49]: 🆕 First Time Here?
+        - generic [ref=e50]: Learn how AceProxy saves you money
+        - generic [ref=e51]: Take a Tour →
+      - generic [ref=e53] [cursor=pointer]:
+        - generic [ref=e54]: 🔍 Smart Sourcing
+        - generic [ref=e55]: Paste any link — we find the best deal
+        - generic [ref=e56]: Try Now →
+    - generic [ref=e61]:
+      - generic [ref=e62]: JAKARTA PREMIUM PILOT
+      - heading "Your Global Sourcing Store" [level=1] [ref=e63]:
+        - text: Your Global
+        - text: Sourcing Store
+      - paragraph [ref=e64]: Premium products from world-class factories, AI-inspected, vacuum-packed to Jakarta.
+      - generic [ref=e65]:
+        - generic [ref=e66]:
+          - generic [ref=e67]: 10+
+          - generic [ref=e68]: Products
+        - generic [ref=e69]:
+          - generic [ref=e70]: 60%+
+          - generic [ref=e71]: Avg Savings
+        - generic [ref=e72]:
+          - generic [ref=e73]: 7-10D
+          - generic [ref=e74]: Delivery
+        - generic [ref=e75]:
+          - generic [ref=e76]: AI
+          - generic [ref=e77]: Inspected
+    - generic [ref=e78]:
+      - generic [ref=e79]:
+        - generic [ref=e80]: 🔍
+        - generic [ref=e81]: AI Quality
+        - generic [ref=e82]: VisionQC 2.0
+      - generic [ref=e83]:
+        - generic [ref=e84]: 📦
+        - generic [ref=e85]: Packaging
+        - generic [ref=e86]: Vacuum Sealed
+      - generic [ref=e87]:
+        - generic [ref=e88]: 💳
+        - generic [ref=e89]: Payment
+        - generic [ref=e90]: Xendit · WorldFirst
+      - generic [ref=e91]:
+        - generic [ref=e92]: 🚚
+        - generic [ref=e93]: Delivery
+        - generic [ref=e94]: 7-10 Days
+    - generic [ref=e95]:
+      - generic [ref=e96]:
+        - generic [ref=e97]:
+          - generic [ref=e98]: ⚡
+          - generic [ref=e99]: FLASH SALE
+        - generic [ref=e100]:
+          - generic [ref=e101]: flashH
+          - generic [ref=e102]: ":"
+          - generic [ref=e103]: flashM
+          - generic [ref=e104]: ":"
+          - generic [ref=e105]: flashS
+        - generic [ref=e106] [cursor=pointer]: More →
+      - generic [ref=e107]:
+        - generic [ref=e108] [cursor=pointer]:
+          - generic [ref=e109]: 📦
+          - generic [ref=e112]:
+            - generic [ref=e113]: Rp 280.000Rp 378.000
+            - generic [ref=e114]: Travel Mukena Pro
+            - generic [ref=e115]: 🔥 89 sold
+        - generic [ref=e116] [cursor=pointer]:
+          - generic [ref=e117]: 📦
+          - generic [ref=e120]:
+            - generic [ref=e121]: Rp 150.000Rp 202.500
+            - generic [ref=e122]: Geometric Prayer Mat
+            - generic [ref=e123]: 🔥 116 sold
+        - generic [ref=e124] [cursor=pointer]:
+          - generic [ref=e125]: 📦
+          - generic [ref=e128]:
+            - generic [ref=e129]: Rp 99.000Rp 133.650
+            - generic [ref=e130]: Premium Silk Hijab
+            - generic [ref=e131]: 🔥 63 sold
+        - generic [ref=e132] [cursor=pointer]:
+          - generic [ref=e133]: 📦
+          - generic [ref=e136]:
+            - generic [ref=e137]: Rp 320.000Rp 432.000
+            - generic [ref=e138]: Modern Baju Koko
+            - generic [ref=e139]: 🔥 115 sold
+        - generic [ref=e140] [cursor=pointer]:
+          - generic [ref=e141]: 📦
+          - generic [ref=e144]:
+            - generic [ref=e145]: Rp 150.000Rp 202.500
+            - generic [ref=e146]: 3D LED Islamic Decor
+            - generic [ref=e147]: 🔥 129 sold
+        - generic [ref=e148] [cursor=pointer]:
+          - generic [ref=e149]: 📦
+          - generic [ref=e152]:
+            - generic [ref=e153]: Rp 220.000Rp 297.000
+            - generic [ref=e154]: Luxury Gift Set
+            - generic [ref=e155]: 🔥 96 sold
+        - generic [ref=e156] [cursor=pointer]:
+          - generic [ref=e157]: 📦
+          - generic [ref=e160]:
+            - generic [ref=e161]: Rp 120.000Rp 162.000
+            - generic [ref=e162]: Minimalist Cookie Jar
+            - generic [ref=e163]: 🔥 102 sold
+        - generic [ref=e164] [cursor=pointer]:
+          - generic [ref=e165]: 📦
+          - generic [ref=e168]:
+            - generic [ref=e169]: Rp 450.000Rp 607.500
+            - generic [ref=e170]: Smart Zikr Ring Gen2
+            - generic [ref=e171]: 🔥 121 sold
+    - generic [ref=e172]:
+      - generic [ref=e173] [cursor=pointer]:
+        - generic [ref=e174]: 5% OFF
+        - generic [ref=e175]: First Order
+        - generic [ref=e176]: →
+      - generic [ref=e177] [cursor=pointer]:
+        - generic [ref=e178]: 10K IDR
+        - generic [ref=e179]: Min 100K
+        - generic [ref=e180]: →
+      - generic [ref=e181] [cursor=pointer]:
+        - generic [ref=e182]: FREE SHIP
+        - generic [ref=e183]: Jakarta Only
+        - generic [ref=e184]: →
+    - generic [ref=e185]:
+      - generic [ref=e186]: Lebaran 2026 Collection
+      - generic [ref=e187]: Hand-picked premium items -- factory direct to doorstep
+      - combobox [ref=e189]:
+        - option "Best Value" [selected]
+        - option "Price ↑"
+        - option "Price ↓"
+      - button "browse-cat" [ref=e191] [cursor=pointer]
+      - generic [ref=e194] [cursor=pointer]: ALL
+    - generic [ref=e196]:
+      - generic [ref=e197]: 🎉 Lebaran Special
+      - generic [ref=e198]: First order 5% off -- use code LEBARAN2026 at checkout
+      - generic [ref=e199]: LEBARAN2026
+    - generic [ref=e200]:
+      - generic [ref=e201]: Customer Reviews
+      - generic [ref=e202]: Trusted by Jakarta early adopters
+      - generic [ref=e203]:
+        - generic [ref=e204]:
+          - generic [ref=e205]: ★★★★★
+          - generic [ref=e206]: "\"The Travel Mukena Pro is amazing! Compact, quality fabric. 8 days to Jakarta.\""
+          - generic [ref=e207]: — Putri S., North Jakarta
+        - generic [ref=e208]:
+          - generic [ref=e209]: ★★★★★
+          - generic [ref=e210]: "\"Ordered 3 Baju Koko, embroidery is beautiful. Will order again!\""
+          - generic [ref=e211]: — Ahmad R., South Jakarta
+        - generic [ref=e212]:
+          - generic [ref=e213]: ★★★★
+          - generic [ref=e214]: "\"Prayer mat exceeded expectations. Thick, comfortable, great patterns.\""
+          - generic [ref=e215]: — Siti N., Bekasi
+    - generic [ref=e216]:
+      - generic [ref=e217]: FAQ
+      - generic [ref=e218]:
+        - generic [ref=e219]:
+          - generic [ref=e220]: How long is delivery?
+          - generic [ref=e221]: 7-10 business days to Jakarta with full tracking.
+        - generic [ref=e222]:
+          - generic [ref=e223]: Can I return items?
+          - generic [ref=e224]: Items are non-returnable. Use our Resale Hub to resell.
+        - generic [ref=e225]:
+          - generic [ref=e226]: What payments?
+          - generic [ref=e227]: GoPay, OVO, DANA, BCA, Mandiri, BNI. Secured by Xendit & WorldFirst.
+        - generic [ref=e228]:
+          - generic [ref=e229]: Quality check?
+          - generic [ref=e230]: VisionQC 2.0 AI inspects every item before shipping.
+    - generic [ref=e231]:
+      - generic [ref=e232]: 🤔 Why AceProxy?
+      - generic [ref=e233]: We're not a regular store -- here's the difference
+      - generic [ref=e234]:
+        - generic [ref=e235]:
+          - generic [ref=e236]: 🏭
+          - generic [ref=e237]: Factory Direct
+          - generic [ref=e238]: No middlemen, save 30-60%
+        - generic [ref=e239]:
+          - generic [ref=e240]: 🔍
+          - generic [ref=e241]: AI Inspected
+          - generic [ref=e242]: VisionQC checks every item
+        - generic [ref=e243]:
+          - generic [ref=e244]: 📦
+          - generic [ref=e245]: Vacuum Packed
+          - generic [ref=e246]: Save up to 60% on shipping
+        - generic [ref=e247]:
+          - generic [ref=e248]: 🔄
+          - generic [ref=e249]: Resale Guarantee
+          - generic [ref=e250]: Not satisfied? Resell easily
+        - generic [ref=e251]:
+          - generic [ref=e252]: 🚚
+          - generic [ref=e253]: 7-10 Day Delivery
+          - generic [ref=e254]: Priority logistics to Jakarta
+        - generic [ref=e255]:
+          - generic [ref=e256]: 💳
+          - generic [ref=e257]: Secure Payment
+          - generic [ref=e258]: Xendit & WorldFirst backed
+  - generic [ref=e260]:
+    - button "←" [ref=e261] [cursor=pointer]
+    - generic [ref=e262]: 🔔 Notifications
+    - button "Mark all read" [ref=e263] [cursor=pointer]
+  - generic [ref=e265]:
+    - generic [ref=e266]:
+      - button "←" [ref=e267] [cursor=pointer]
+      - generic [ref=e268]: ⚙️ Settings
+    - generic [ref=e269]:
+      - generic [ref=e270]: Account
+      - generic [ref=e271] [cursor=pointer]:
+        - generic [ref=e272]: 👤
+        - generic [ref=e273]:
+          - generic [ref=e274]: Edit Profile
+          - generic [ref=e275]: Name, avatar, phone
+        - generic [ref=e276]: ›
+      - generic [ref=e277] [cursor=pointer]:
+        - generic [ref=e278]: 📍
+        - generic [ref=e279]:
+          - generic [ref=e280]: Shipping Addresses
+          - generic [ref=e281]: Manage delivery addresses
+        - generic [ref=e282]: ›
+      - generic [ref=e283] [cursor=pointer]:
+        - generic [ref=e284]: 💳
+        - generic [ref=e285]:
+          - generic [ref=e286]: Payment Methods
+          - generic [ref=e287]: GoPay, OVO, DANA, banks
+        - generic [ref=e288]: ›
+    - generic [ref=e289]:
+      - generic [ref=e290]: Preferences
+      - generic [ref=e291] [cursor=pointer]:
+        - generic [ref=e292]: 🌐
+        - generic [ref=e294]: Language
+        - generic [ref=e295]: English
+      - generic [ref=e296] [cursor=pointer]:
+        - generic [ref=e297]: 🔔
+        - generic [ref=e298]:
+          - generic [ref=e299]: Notifications
+          - generic [ref=e300]: Order updates & promotions
+        - generic [ref=e301]: "On"
+      - generic [ref=e302] [cursor=pointer]:
+        - generic [ref=e303]: 🌙
+        - generic [ref=e305]: Dark Mode
+        - generic [ref=e306]: "Off"
+    - generic [ref=e307]:
+      - generic [ref=e308]: Support
+      - generic [ref=e309] [cursor=pointer]:
+        - generic [ref=e310]: ❓
+        - generic [ref=e311]:
+          - generic [ref=e312]: Help Center
+          - generic [ref=e313]: FAQ, shipping, returns
+        - generic [ref=e314]: ›
+      - generic [ref=e315] [cursor=pointer]:
+        - generic [ref=e316]: 🎁
+        - generic [ref=e317]:
+          - generic [ref=e318]: Invite Friends
+          - generic [ref=e319]: Earn Rp 25K per referral
+        - generic [ref=e320]: ›
+      - generic [ref=e321] [cursor=pointer]:
+        - generic [ref=e322]: ℹ️
+        - generic [ref=e324]: About AceProxy
+        - generic [ref=e325]: ›
+    - generic [ref=e326]:
+      - generic [ref=e327]: Legal
+      - generic [ref=e328] [cursor=pointer]:
+        - generic [ref=e329]: 🛡️
+        - generic [ref=e331]: Privacy Policy
+        - generic [ref=e332]: ›
+      - generic [ref=e333] [cursor=pointer]:
+        - generic [ref=e334]: 📄
+        - generic [ref=e336]: Terms of Service
+        - generic [ref=e337]: ›
+    - button "🚪 登录 / 注册" [ref=e339] [cursor=pointer]
+  - generic [ref=e340]:
+    - generic [ref=e341]:
+      - generic [ref=e342]: 📍 Shipping Addresses
+      - button "✕" [ref=e343] [cursor=pointer]
+    - button "+ Add New Address" [ref=e344] [cursor=pointer]
+  - generic [ref=e345]:
+    - generic [ref=e346]: 🔗 Share Product
+    - generic [ref=e347]:
+      - button "📋 Copy Link" [ref=e348]:
+        - generic [ref=e349]: 📋
+        - generic [ref=e350]: Copy Link
+      - button "📧 Email" [ref=e351]:
+        - generic [ref=e352]: 📧
+        - generic [ref=e353]: Email
+      - button "📘 Facebook" [ref=e354]:
+        - generic [ref=e355]: 📘
+        - generic [ref=e356]: Facebook
+      - button "✈️ Telegram" [ref=e357]:
+        - generic [ref=e358]: ✈️
+        - generic [ref=e359]: Telegram
+    - generic [ref=e360]:
+      - textbox [ref=e361]: https://aceproxy.id/p/...
+      - button "Copy" [ref=e362]
+    - button "Close" [ref=e363] [cursor=pointer]
+  - generic [ref=e364]:
+    - generic [ref=e365]:
+      - generic [ref=e366]:
+        - generic [ref=e367]: 🔍
+        - textbox "Search products..." [ref=e368]
+        - button "✕" [ref=e369] [cursor=pointer]
+      - button "Cancel" [ref=e370] [cursor=pointer]
+    - generic [ref=e371]:
+      - generic [ref=e372]:
+        - generic [ref=e374]: 🔥 Hot Search
+        - generic [ref=e375]:
+          - button "Mukena" [ref=e376] [cursor=pointer]
+          - button "Baju Koko" [ref=e377] [cursor=pointer]
+          - button "Hijab" [ref=e378] [cursor=pointer]
+          - button "Prayer Mat" [ref=e379] [cursor=pointer]
+          - button "Gift Set" [ref=e380] [cursor=pointer]
+          - button "Bluetooth" [ref=e381] [cursor=pointer]
+      - generic [ref=e383]:
+        - generic [ref=e384]: 🕐 Search History
+        - button "Clear All" [ref=e385] [cursor=pointer]

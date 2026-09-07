@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   View, 
   Text, 
@@ -12,206 +12,658 @@ import {
   Alert,
   ActivityIndicator
 } from 'react-native';
-import { COLORS, SPACING, TYPOGRAPHY, BORDERS, SHADOWS } from '../theme';
-import { api } from '../services/APIService';
+import Animated, { FadeInDown, Layout } from 'react-native-reanimated';
+import { useProduct } from '../hooks/useProducts';
+import { COLORS, SPACING, TYPOGRAPHY, BORDERS, ROUNDED, SHADOWS, COMPONENTS, SURFACE, TEXT, SEMANTIC, BRAND } from '../theme';
 
 const { width } = Dimensions.get('window');
 
+const formatIdr = (n: number) => `Rp ${n.toLocaleString('id-ID')}`;
+
+const parseImages = (imageUrls: string | null): string[] => {
+  if (!imageUrls) return [];
+  try {
+    const arr = JSON.parse(imageUrls);
+    return Array.isArray(arr) ? arr : [];
+  } catch {
+    return [];
+  }
+};
+
 export const ProductDetailScreen = ({ route, navigation }: any) => {
   const { productId } = route?.params || {};
-  const [product, setProduct] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [selectedSku, setSelectedSku] = useState('XL');
+  const { product, isLoading, error } = useProduct(productId);
+  const [selectedImageIdx, setSelectedImageIdx] = useState(0);
   const [quantity, setQuantity] = useState(1);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
 
-  useEffect(() => {
-    if (productId) {
-      loadProduct();
-    } else {
-      setLoading(false);
-    }
-  }, [productId]);
-
-  const loadProduct = async () => {
-    try {
-      setLoading(true);
-      const data = await api.getProduct(productId);
-      setProduct(data);
-    } catch (error) {
-      console.error('Failed to load product:', error);
-      setProduct(null);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const images = parseImages(product?.imageUrls || null);
 
   const handleAddToCart = async () => {
     if (!product) return;
+    setIsAddingToCart(true);
     try {
-      // TODO: Call actual addToCart API when available
-      Alert.alert('Added', `${product.name || 'Item'} x${quantity} added to cart`);
-    } catch (error) {
-      Alert.alert('Error', 'Failed to add to cart');
+      // TODO: Call actual addToCart API
+      await new Promise(r => setTimeout(r, 500)); // simulate
+      Alert.alert('Berhasil!', `${product.name} x${quantity} ditambahkan ke keranjang`);
+    } catch (err) {
+      Alert.alert('Error', 'Gagal menambahkan ke keranjang');
+    } finally {
+      setIsAddingToCart(false);
     }
   };
 
-  if (loading) {
+  const handleBuyNow = async () => {
+    if (!product) return;
+    Alert.alert('Checkout', `Memproses pesanan: ${product.name} x${quantity}`);
+  };
+
+  // ─── Loading state ───────────────────────────────────────
+  if (isLoading) {
     return (
       <SafeAreaView style={styles.container}>
         <StatusBar barStyle="dark-content" />
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <ActivityIndicator size="large" color="#F97316" />
+        <View style={styles.center}>
+          <ActivityIndicator size="large" color={COLORS.consumer.primary} />
+          <Text style={styles.loadingText}>Memuat produk...</Text>
         </View>
       </SafeAreaView>
     );
   }
 
-  if (!product) {
+  // ─── Error / Not Found ───────────────────────────────────
+  if (error || !product) {
     return (
       <SafeAreaView style={styles.container}>
         <StatusBar barStyle="dark-content" />
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 40 }}>
-          <Text style={{ fontSize: 16, fontWeight: '900', color: COLORS.gray[400], marginBottom: 8 }}>
-            Product not found
+        <View style={styles.center}>
+          <Text style={styles.notFoundIcon}>▦</Text>
+          <Text style={styles.notFoundTitle}>Produk tidak ditemukan</Text>
+          <Text style={styles.notFoundSub}>
+            {error || 'Produk ini mungkin sudah tidak tersedia'}
           </Text>
-          <Text style={{ fontSize: 13, color: COLORS.gray[300] }}>
-            This product may no longer be available
-          </Text>
+          <TouchableOpacity
+            style={styles.backBtn}
+            onPress={() => navigation.goBack()}
+          >
+            <Text style={styles.backBtnText}>← Kembali</Text>
+          </TouchableOpacity>
         </View>
       </SafeAreaView>
     );
   }
+
+  const marginPct = product.costCny && product.priceIdr
+    ? Math.round(((product.priceIdr - product.costCny * 2200) / product.priceIdr) * 100)
+    : null;
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" />
-      <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Product Image Gallery */}
-        <View style={styles.imageGallery}>
-          <View style={styles.imagePlaceholder}>
-            <Text style={styles.placeholderText}>PREMIUM_ABAYA_IMAGE</Text>
-          </View>
+      <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
+        {/* ─── Image Gallery ─────────────────────────────── */}
+        <View style={styles.gallery}>
+          {images.length > 0 ? (
+            <>
+              <Image
+                source={{ uri: images[selectedImageIdx] }}
+                style={styles.mainImage}
+                resizeMode="cover"
+              />
+              {/* Thumbnail strip */}
+              {images.length > 1 && (
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                  style={styles.thumbnailStrip}
+                  contentContainerStyle={styles.thumbnailContent}
+                >
+                  {images.map((url, idx) => (
+                    <TouchableOpacity
+                      key={idx}
+                      onPress={() => setSelectedImageIdx(idx)}
+                      style={[
+                        styles.thumbnail,
+                        selectedImageIdx === idx && styles.thumbnailActive,
+                      ]}
+                    >
+                      <Image
+                        source={{ uri: url }}
+                        style={styles.thumbnailImage}
+                        resizeMode="cover"
+                      />
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+              )}
+            </>
+          ) : (
+            <View style={styles.imagePlaceholder}>
+              <Text style={styles.placeholderIcon}>▦</Text>
+              <Text style={styles.placeholderText}>Foto produk sedang diunggah</Text>
+            </View>
+          )}
         </View>
 
-        <View style={styles.content}>
+        {/* ─── Product Info ──────────────────────────────── */}
+        <Animated.View entering={FadeInDown.duration(400)} style={styles.content}>
+          {/* Category + Share */}
           <View style={styles.headerRow}>
-            <View>
-              <Text style={styles.category}>{product.category?.toUpperCase() || 'PRODUCT'}</Text>
-              <Text style={styles.productName}>{product.name || 'Product Details'}</Text>
-            </View>
-            <TouchableOpacity style={styles.shareBtn}>
-              <Text>🔗</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.priceContainer}>
-            <Text style={styles.priceLabel}>HARGA JAKARTA (IDR)</Text>
-            <Text style={styles.price}>Rp {(product.localPriceIdr || 0).toLocaleString()}</Text>
-            <View style={styles.priceComparison}>
-              <Text style={styles.comparisonText}>≈ ¥ {(product.sourcePriceCny || 0).toFixed(2)} (Source: 1688)</Text>
+            <View style={{ flex: 1 }}>
+              {product.category && (
+                <View style={styles.categoryPill}>
+                  <Text style={styles.categoryPillText}>
+                    {product.category.replace(/_/g, ' ').toUpperCase()}
+                  </Text>
+                </View>
+              )}
+              <Text style={styles.productName}>{product.name}</Text>
             </View>
           </View>
 
-          <Text style={styles.sectionTitle}>PILIH UKURAN (SIZE)</Text>
-          <View style={styles.skuRow}>
-            {['M', 'L', 'XL', 'XXL'].map(size => (
-              <TouchableOpacity 
-                key={size}
-                style={[styles.skuItem, selectedSku === size && styles.skuItemSelected]}
-                onPress={() => setSelectedSku(size)}
-              >
-                <Text style={[styles.skuText, selectedSku === size && styles.skuTextSelected]}>{size}</Text>
-              </TouchableOpacity>
-            ))}
+          {/* ─── Price Stack (DESIGN.md signature) ────────── */}
+          <View style={styles.priceCard}>
+            {/* Original price strikethrough */}
+            {product.costCny && (
+              <View style={styles.priceRow}>
+                <Text style={styles.priceLabel}>Harga Pasar Lokal</Text>
+                <Text style={styles.originalPrice}>
+                  ≈ Rp {(product.costCny * 2800).toLocaleString('id-ID')}
+                </Text>
+              </View>
+            )}
+
+            {/* AceProxy price */}
+            <View style={styles.priceRow}>
+              <Text style={styles.priceLabel}>HARGA ACEPROXY</Text>
+              <Text style={styles.currentPrice}>{formatIdr(product.priceIdr)}</Text>
+            </View>
+
+            {/* CNY cost */}
+            {product.costCny && (
+              <View style={styles.priceRow}>
+                <Text style={styles.priceLabel}>Biaya Sumber (1688)</Text>
+                <Text style={styles.cnyCost}>¥ {product.costCny.toFixed(0)}</Text>
+              </View>
+            )}
+
+            {/* Save badge */}
+            {marginPct !== null && marginPct > 0 && (
+              <View style={styles.saveRow}>
+                <View style={styles.saveBadge}>
+                  <Text style={styles.saveBadgeText}>
+                    Hemat {marginPct}% vs Harga Pasar
+                  </Text>
+                </View>
+              </View>
+            )}
           </View>
 
-          <Text style={styles.sectionTitle}>DESKRIPSI PRODUK</Text>
-          <Text style={styles.description}>
-            {product.description || 'Product description not available.'}
-          </Text>
+          {/* ─── Stock & Rating ──────────────────────────── */}
+          <View style={styles.metaRow}>
+            <View style={styles.metaItem}>
+              <Text style={styles.metaLabel}>Stok</Text>
+              <Text style={[
+                styles.metaValue,
+                product.stock <= 5 && { color: SEMANTIC.error }
+              ]}>
+                {product.stock > 0 ? `${product.stock} unit` : 'Habis'}
+              </Text>
+            </View>
+            {product.ratingAvg > 0 && (
+              <View style={styles.metaItem}>
+                <Text style={styles.metaLabel}>Rating</Text>
+                <Text style={styles.metaValue}>
+                  ★ {product.ratingAvg.toFixed(1)} ({product.ratingCount})
+                </Text>
+              </View>
+            )}
+          </View>
 
+          {/* ─── Description ─────────────────────────────── */}
+          {product.description && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>DESKRIPSI PRODUK</Text>
+              <Text style={styles.description}>{product.description}</Text>
+            </View>
+          )}
+
+          {/* ─── Trust Card (DESIGN.md: card-trust) ──────── */}
           <View style={styles.trustCard}>
-            <Text style={styles.trustTitle}>🛡️ JAMINAN ACEPROXY</Text>
-            <Text style={styles.trustContent}>
-              • QC Visual oleh Agent kami di China.{"\n"}
-              • Harga sudah termasuk pajak impor.{"\n"}
-              • Pengiriman Cluster Logistics (Cepat & Murah).
-            </Text>
+            <View style={styles.trustHeader}>
+              <Text style={styles.trustIcon}>🛡</Text>
+              <Text style={styles.trustTitle}>JAMINAN ACEPROXY</Text>
+            </View>
+            <View style={styles.trustList}>
+              <Text style={styles.trustItem}>✓ QC Visual oleh Agent kami di China</Text>
+              <Text style={styles.trustItem}>✓ Harga sudah termasuk pajak impor</Text>
+              <Text style={styles.trustItem}>✓ Pengiriman Cluster Logistics (Cepat & Murah)</Text>
+              <Text style={styles.trustItem}>✓ Garansi kerusakan — kami ganti atau refund</Text>
+            </View>
           </View>
-        </View>
+
+          {/* ─── Price Comparison Bar ────────────────────── */}
+          {marginPct !== null && marginPct > 0 && (
+            <View style={styles.comparisonBar}>
+              <View style={styles.comparisonRow}>
+                <Text style={styles.comparisonLabel}>Harga Pasar</Text>
+                <Text style={styles.comparisonValue}>
+                  Rp {(product.costCny! * 2800).toLocaleString('id-ID')}
+                </Text>
+              </View>
+              <View style={styles.comparisonDivider}>
+                <View style={styles.comparisonBadge}>
+                  <Text style={styles.comparisonBadgeText}>-{marginPct}%</Text>
+                </View>
+              </View>
+              <View style={styles.comparisonRow}>
+                <Text style={styles.comparisonLabel}>AceProxy</Text>
+                <Text style={styles.comparisonValueAce}>
+                  {formatIdr(product.priceIdr)}
+                </Text>
+              </View>
+            </View>
+          )}
+        </Animated.View>
       </ScrollView>
 
-      {/* Action Bar */}
+      {/* ─── Fixed Bottom Action Bar ─────────────────────── */}
       <View style={styles.actionBar}>
-        <TouchableOpacity style={styles.cartIcon}>
-          <Text style={{ fontSize: 24 }}>🛒</Text>
-          <View style={styles.badge}><Text style={styles.badgeText}>3</Text></View>
+        {/* Quantity selector */}
+        <View style={styles.qtyRow}>
+          <TouchableOpacity
+            style={styles.qtyBtn}
+            onPress={() => setQuantity(Math.max(1, quantity - 1))}
+          >
+            <Text style={styles.qtyBtnText}>−</Text>
+          </TouchableOpacity>
+          <Text style={styles.qtyValue}>{quantity}</Text>
+          <TouchableOpacity
+            style={styles.qtyBtn}
+            onPress={() => setQuantity(Math.min(product.stock, quantity + 1))}
+          >
+            <Text style={styles.qtyBtnText}>+</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Add to Cart */}
+        <TouchableOpacity
+          style={styles.addToCartBtn}
+          onPress={handleAddToCart}
+          disabled={isAddingToCart || product.stock <= 0}
+        >
+          {isAddingToCart ? (
+            <ActivityIndicator size="small" color={COLORS.consumer.primary} />
+          ) : (
+            <Text style={styles.addToCartText}>+ Keranjang</Text>
+          )}
         </TouchableOpacity>
-        <TouchableOpacity style={styles.addToCartBtn} onPress={handleAddToCart}>
-          <Text style={styles.btnText}>TAMBAH KE KERANJANG</Text>
+
+        {/* Buy Now */}
+        <TouchableOpacity
+          style={[styles.buyBtn, product.stock <= 0 && styles.btnDisabled]}
+          onPress={handleBuyNow}
+          disabled={product.stock <= 0}
+        >
+          <Text style={styles.buyBtnText}>
+            {product.stock <= 0 ? 'HABIS' : 'Beli Sekarang'}
+          </Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
 };
 
+// ─── Styles ────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
-  imageGallery: { width: width, height: width, backgroundColor: COLORS.gray[50] },
-  imagePlaceholder: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  placeholderText: { fontSize: 18, fontWeight: '900', color: COLORS.gray[300] },
-  content: { padding: SPACING.lg },
-  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20 },
-  category: { fontSize: 10, fontWeight: '900', color: '#F97316', marginBottom: 4 },
-  productName: { fontSize: 24, fontWeight: '900', color: '#000', flex: 1, marginRight: 16 },
-  shareBtn: { width: 44, height: 44, ...BORDERS.brutalist, justifyContent: 'center', alignItems: 'center' },
-  priceContainer: { marginBottom: 24, padding: 16, backgroundColor: '#F8FAFC', ...BORDERS.brutalist },
-  priceLabel: { fontSize: 10, fontWeight: '900', color: COLORS.gray[400], marginBottom: 4 },
-  price: { fontSize: 32, fontWeight: '900', color: '#000' },
-  priceComparison: { marginTop: 4 },
-  comparisonText: { fontSize: 11, color: '#10B981', fontWeight: '700' },
-  sectionTitle: { fontSize: 13, fontWeight: '900', color: '#000', marginTop: 20, marginBottom: 12, textTransform: 'uppercase' },
-  skuRow: { flexDirection: 'row', gap: 10 },
-  skuItem: { paddingHorizontal: 20, paddingVertical: 10, ...BORDERS.brutalist, backgroundColor: '#fff' },
-  skuItemSelected: { backgroundColor: '#000' },
-  skuText: { fontSize: 14, fontWeight: '900', color: '#000' },
-  skuTextSelected: { color: '#fff' },
-  description: { fontSize: 14, lineHeight: 22, color: COLORS.gray[600], fontWeight: '500' },
-  trustCard: { marginTop: 30, padding: 20, backgroundColor: '#F0FDFA', borderLeftWidth: 8, borderColor: '#10B981' },
-  trustTitle: { fontSize: 14, fontWeight: '900', color: '#0F766E', marginBottom: 8 },
-  trustContent: { fontSize: 13, color: '#115E59', lineHeight: 20, fontWeight: '500' },
-  actionBar: { 
-    flexDirection: 'row', 
-    padding: 16, 
-    borderTopWidth: 4, 
-    borderColor: '#000', 
-    backgroundColor: '#fff', 
-    alignItems: 'center',
-    gap: 16
+  container: {
+    flex: 1,
+    backgroundColor: SURFACE.canvas,
   },
-  cartIcon: { width: 60, height: 60, ...BORDERS.brutalist, justifyContent: 'center', alignItems: 'center' },
-  badge: { 
-    position: 'absolute', 
-    top: -5, 
-    right: -5, 
-    backgroundColor: '#F97316', 
-    width: 24, 
-    height: 24, 
-    borderRadius: 12, 
-    justifyContent: 'center', 
+  center: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
+    padding: 40,
+  },
+  loadingText: {
+    ...TYPOGRAPHY.bodySm,
+    color: COLORS.consumer.textMute,
+    marginTop: SPACING.md,
+  },
+  notFoundIcon: {
+    fontSize: 48,
+    color: COLORS.consumer.textMute,
+    marginBottom: SPACING.md,
+  },
+  notFoundTitle: {
+    ...TYPOGRAPHY.headingSm,
+    color: COLORS.consumer.text,
+    marginBottom: SPACING.xs,
+  },
+  notFoundSub: {
+    ...TYPOGRAPHY.bodySm,
+    color: COLORS.consumer.textMute,
+    textAlign: 'center',
+    marginBottom: SPACING.lg,
+  },
+  backBtn: {
+    paddingVertical: 10,
+    paddingHorizontal: 24,
+    borderRadius: ROUNDED.pill,
+    backgroundColor: COLORS.consumer.primarySoft,
+  },
+  backBtnText: {
+    ...TYPOGRAPHY.buttonMd,
+    color: COLORS.consumer.primary,
+  },
+
+  // ─── Gallery ───────────────────────────────────────────────
+  gallery: {
+    width: width,
+    aspectRatio: 1,
+    backgroundColor: SURFACE.canvasGray,
+  },
+  mainImage: {
+    width: '100%',
+    height: '100%',
+  },
+  thumbnailStrip: {
+    position: 'absolute',
+    bottom: SPACING.sm,
+    left: 0,
+    right: 0,
+  },
+  thumbnailContent: {
+    paddingHorizontal: SPACING.md,
+    gap: SPACING.sm,
+  },
+  thumbnail: {
+    width: 52,
+    height: 52,
+    borderRadius: ROUNDED.sm,
     borderWidth: 2,
-    borderColor: '#000'
+    borderColor: 'transparent',
+    overflow: 'hidden',
   },
-  badgeText: { color: '#fff', fontSize: 10, fontWeight: '900' },
-  addToCartBtn: { 
-    flex: 1, 
-    height: 60, 
-    backgroundColor: '#F97316', 
-    justifyContent: 'center', 
-    alignItems: 'center', 
-    ...BORDERS.brutalist,
-    ...SHADOWS.brutalist
+  thumbnailActive: {
+    borderColor: COLORS.consumer.primary,
   },
-  btnText: { color: '#fff', fontSize: 16, fontWeight: '900' }
+  thumbnailImage: {
+    width: '100%',
+    height: '100%',
+  },
+  imagePlaceholder: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  placeholderIcon: {
+    fontSize: 64,
+    color: COLORS.consumer.textMute,
+    marginBottom: SPACING.sm,
+  },
+  placeholderText: {
+    ...TYPOGRAPHY.bodySm,
+    color: COLORS.consumer.textMute,
+  },
+
+  // ─── Content ───────────────────────────────────────────────
+  content: {
+    padding: SPACING.lg,
+  },
+
+  // Header
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: SPACING.lg,
+  },
+  categoryPill: {
+    alignSelf: 'flex-start',
+    backgroundColor: BRAND.terracottaSoft,
+    borderRadius: ROUNDED.pill,
+    paddingVertical: 4,
+    paddingHorizontal: 12,
+    marginBottom: SPACING.sm,
+  },
+  categoryPillText: {
+    ...TYPOGRAPHY.badge,
+    color: BRAND.terracotta,
+  },
+  productName: {
+    ...TYPOGRAPHY.headingXl,
+    color: COLORS.consumer.text,
+    lineHeight: 32,
+  },
+
+  // ─── Price Card ────────────────────────────────────────────
+  priceCard: {
+    backgroundColor: SURFACE.canvasWarm,
+    borderRadius: ROUNDED.lg,
+    padding: SPACING.lg,
+    marginBottom: SPACING.lg,
+    ...BORDERS.hairline,
+  },
+  priceRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: SPACING.xs,
+  },
+  priceLabel: {
+    ...TYPOGRAPHY.caption,
+    color: COLORS.consumer.textMute,
+    fontWeight: '600',
+  },
+  originalPrice: {
+    ...TYPOGRAPHY.bodyMd,
+    color: COLORS.consumer.textMute,
+    textDecorationLine: 'line-through',
+  },
+  currentPrice: {
+    ...TYPOGRAPHY.priceXxl,
+    color: COLORS.consumer.text,
+  },
+  cnyCost: {
+    ...TYPOGRAPHY.bodyMd,
+    color: SEMANTIC.success,
+    fontWeight: '600',
+  },
+  saveRow: {
+    marginTop: SPACING.sm,
+  },
+  saveBadge: {
+    alignSelf: 'flex-start',
+    backgroundColor: SEMANTIC.error,
+    borderRadius: ROUNDED.pill,
+    paddingVertical: 6,
+    paddingHorizontal: 16,
+  },
+  saveBadgeText: {
+    ...TYPOGRAPHY.badge,
+    color: TEXT.onPrimary,
+  },
+
+  // ─── Meta Row ──────────────────────────────────────────────
+  metaRow: {
+    flexDirection: 'row',
+    gap: SPACING.xl,
+    marginBottom: SPACING.lg,
+    paddingVertical: SPACING.md,
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: SURFACE.hairline,
+  },
+  metaItem: {},
+  metaLabel: {
+    ...TYPOGRAPHY.caption,
+    color: COLORS.consumer.textMute,
+    marginBottom: 2,
+  },
+  metaValue: {
+    ...TYPOGRAPHY.bodyMd,
+    fontWeight: '600',
+    color: COLORS.consumer.text,
+  },
+
+  // ─── Description ───────────────────────────────────────────
+  section: {
+    marginBottom: SPACING.lg,
+  },
+  sectionTitle: {
+    ...TYPOGRAPHY.headingSm,
+    color: COLORS.consumer.text,
+    marginBottom: SPACING.sm,
+    textTransform: 'uppercase',
+  },
+  description: {
+    ...TYPOGRAPHY.bodyMd,
+    color: COLORS.consumer.textSecondary,
+    lineHeight: 24,
+  },
+
+  // ─── Trust Card ────────────────────────────────────────────
+  trustCard: {
+    backgroundColor: BRAND.oceanSoft,
+    borderRadius: ROUNDED.md,
+    padding: SPACING.lg,
+    marginBottom: SPACING.lg,
+  },
+  trustHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.sm,
+    marginBottom: SPACING.md,
+  },
+  trustIcon: {
+    fontSize: 20,
+  },
+  trustTitle: {
+    ...TYPOGRAPHY.headingSm,
+    color: BRAND.ocean,
+    fontWeight: '700',
+  },
+  trustList: {
+    gap: SPACING.xs,
+  },
+  trustItem: {
+    ...TYPOGRAPHY.bodySm,
+    color: BRAND.ocean,
+    lineHeight: 22,
+    fontWeight: '500',
+  },
+
+  // ─── Comparison Bar ────────────────────────────────────────
+  comparisonBar: {
+    backgroundColor: SEMANTIC.warningSoft,
+    borderRadius: ROUNDED.md,
+    padding: SPACING.lg,
+    marginBottom: SPACING.xxl,
+  },
+  comparisonRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: SPACING.xs,
+  },
+  comparisonLabel: {
+    ...TYPOGRAPHY.bodySm,
+    color: COLORS.consumer.textSecondary,
+    fontWeight: '600',
+  },
+  comparisonValue: {
+    ...TYPOGRAPHY.priceMd,
+    color: COLORS.consumer.textMute,
+    textDecorationLine: 'line-through',
+  },
+  comparisonDivider: {
+    alignItems: 'center',
+    paddingVertical: SPACING.sm,
+  },
+  comparisonBadge: {
+    backgroundColor: SEMANTIC.error,
+    borderRadius: ROUNDED.pill,
+    paddingVertical: 4,
+    paddingHorizontal: 16,
+  },
+  comparisonBadgeText: {
+    ...TYPOGRAPHY.badge,
+    color: TEXT.onPrimary,
+  },
+  comparisonValueAce: {
+    ...TYPOGRAPHY.priceLg,
+    color: COLORS.consumer.primary,
+  },
+
+  // ─── Bottom Action Bar ─────────────────────────────────────
+  actionBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: SPACING.md,
+    paddingBottom: SPACING.xxl,
+    borderTopWidth: 1,
+    borderColor: SURFACE.hairline,
+    backgroundColor: SURFACE.canvas,
+    gap: SPACING.sm,
+  },
+  qtyRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: SPACING.xs,
+  },
+  qtyBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: ROUNDED.pill,
+    borderWidth: 1,
+    borderColor: SURFACE.hairline,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: SURFACE.canvas,
+  },
+  qtyBtnText: {
+    fontSize: 18,
+    color: COLORS.consumer.text,
+    fontWeight: '600',
+  },
+  qtyValue: {
+    ...TYPOGRAPHY.bodyMd,
+    fontWeight: '700',
+    color: COLORS.consumer.text,
+    minWidth: 24,
+    textAlign: 'center',
+  },
+  addToCartBtn: {
+    flex: 1,
+    height: 48,
+    borderRadius: ROUNDED.pill,
+    borderWidth: 1.5,
+    borderColor: COLORS.consumer.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'transparent',
+  },
+  addToCartText: {
+    ...TYPOGRAPHY.buttonMd,
+    color: COLORS.consumer.primary,
+  },
+  buyBtn: {
+    flex: 1,
+    height: 48,
+    borderRadius: ROUNDED.pill,
+    backgroundColor: COLORS.consumer.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buyBtnText: {
+    ...TYPOGRAPHY.buttonMd,
+    color: COLORS.consumer.textOnPrimary,
+  },
+  btnDisabled: {
+    opacity: 0.4,
+  },
 });
+
+export default ProductDetailScreen;

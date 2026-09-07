@@ -10,7 +10,7 @@ import {
   Alert,
   ActivityIndicator
 } from 'react-native';
-import { COLORS, SPACING, TYPOGRAPHY, BORDERS, SHADOWS } from '../theme';
+import { COLORS, SPACING, TYPOGRAPHY, BORDERS, ROUNDED, SHADOWS } from '../theme';
 import { HubProgressBar } from '../components/HubProgressBar';
 import { api } from '../services/APIService';
 
@@ -47,31 +47,31 @@ export const CartScreen = ({ navigation }: any) => {
   const total = cartItems.reduce((sum, item) => sum + item.price * item.qty, 0);
 
   const handleCheckout = () => {
-    Alert.alert('Konfirmasi Checkout', 'Lanjut ke pembayaran via WorldFirst?');
+    Alert.alert('Konfirmasi Checkout', 'Lanjut ke pembayaran?');
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" />
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>KERANJANG (CART)</Text>
-        <Text style={styles.headerSub}>{cartItems.length} ITEMS READY FOR SHIPPING</Text>
+        <Text style={styles.headerTitle}>Keranjang (Cart)</Text>
+        <Text style={styles.headerSub}>{cartItems.length} ITEMS</Text>
       </View>
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Logistics Strategy Banner */}
         <HubProgressBar 
-          hubName="Jakarta Utara (北区)" 
+          hubName="Jakarta Utara" 
           current={44} 
           target={50} 
         />
 
         <View style={styles.cartList}>
           {loading ? (
-            <ActivityIndicator size="large" color="#F97316" style={{ marginTop: 40 }} />
+            <ActivityIndicator size="large" color={COLORS.consumer.primary} style={{ marginTop: 40 }} />
           ) : cartItems.length === 0 ? (
             <View style={styles.emptyCart}>
-              <Text style={styles.emptyCartText}>Keranjang kosong (Cart is empty)</Text>
+              <Text style={styles.emptyCartText}>Keranjang kosong</Text>
               <Text style={styles.emptyCartSub}>Start shopping to add items here</Text>
             </View>
           ) : (
@@ -84,9 +84,13 @@ export const CartScreen = ({ navigation }: any) => {
                   <Text style={styles.itemPrice}>Rp {(item.price * item.qty).toLocaleString()}</Text>
                 </View>
                 <View style={styles.qtyControls}>
-                  <TouchableOpacity style={styles.qtyBtn} onPress={() => updateQuantity(item.id, -1)}><Text>-</Text></TouchableOpacity>
+                  <TouchableOpacity style={styles.qtyBtn} onPress={() => updateQuantity(item.id, -1)}>
+                    <Text style={styles.qtyBtnText}>−</Text>
+                  </TouchableOpacity>
                   <Text style={styles.qtyText}>{item.qty}</Text>
-                  <TouchableOpacity style={styles.qtyBtn} onPress={() => updateQuantity(item.id, 1)}><Text>+</Text></TouchableOpacity>
+                  <TouchableOpacity style={styles.qtyBtn} onPress={() => updateQuantity(item.id, 1)}>
+                    <Text style={styles.qtyBtnText}>+</Text>
+                  </TouchableOpacity>
                 </View>
               </View>
             ))
@@ -102,14 +106,14 @@ export const CartScreen = ({ navigation }: any) => {
             <Text style={styles.summaryLabel}>Estimasi Pajak & QC</Text>
             <Text style={styles.summaryVal}>Rp 150,000</Text>
           </View>
-          <View style={[styles.summaryRow, { marginTop: 12, borderTopWidth: 2, paddingTop: 12 }]}>
+          <View style={[styles.summaryRow, { marginTop: 12, borderTopWidth: 1, borderTopColor: COLORS.consumer.primarySoft, paddingTop: 12 }]}>
             <Text style={styles.totalLabel}>TOTAL ESTIMASI</Text>
             <Text style={styles.totalVal}>Rp {(total + 150000).toLocaleString()}</Text>
           </View>
         </View>
 
         <View style={styles.promoCard}>
-          <Text style={styles.promoText}>💡 Tips: Tambah 6kg lagi untuk aktifkan "Prioritas Udara" (Priority Air Express)!</Text>
+          <Text style={styles.promoText}>Tambahkan 6kg lagi untuk mengaktifkan "Prioritas Udara" (Priority Air Express)!</Text>
         </View>
       </ScrollView>
 
@@ -123,47 +127,72 @@ export const CartScreen = ({ navigation }: any) => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: COLORS.gray[50] },
-  header: { padding: SPACING.lg, backgroundColor: '#fff', borderBottomWidth: 4, borderColor: '#000' },
-  headerTitle: { fontSize: 24, fontWeight: '900', color: '#000' },
-  headerSub: { fontSize: 11, fontWeight: '800', color: COLORS.gray[400], marginTop: 4 },
+  container: { flex: 1, backgroundColor: COLORS.consumer.background },
+  header: { padding: SPACING.lg, backgroundColor: '#fff', borderBottomWidth: 1, borderBottomColor: COLORS.consumer.primarySoft },
+  headerTitle: { ...TYPOGRAPHY.headingXl, color: COLORS.consumer.text },
+  headerSub: { ...TYPOGRAPHY.caption, color: COLORS.consumer.textMute, marginTop: 4 },
   scrollContent: { padding: SPACING.md },
-  cartList: { marginVertical: 20 },
+  cartList: { marginVertical: 16 },
   cartItem: { 
     flexDirection: 'row', 
     backgroundColor: '#fff', 
     padding: 16, 
-    ...BORDERS.brutalist, 
+    borderRadius: ROUNDED.lg,
+    ...BORDERS.hairline, 
     marginBottom: 12,
     alignItems: 'center'
   },
-  itemImage: { width: 60, height: 60, backgroundColor: COLORS.gray[100], marginRight: 16 },
+  itemImage: { width: 60, height: 60, backgroundColor: COLORS.gray[100], borderRadius: ROUNDED.sm, marginRight: 16 },
   itemInfo: { flex: 1 },
-  itemName: { fontSize: 15, fontWeight: '900', color: '#000' },
-  itemMeta: { fontSize: 12, color: COLORS.gray[400], fontWeight: '600', marginVertical: 4 },
-  itemPrice: { fontSize: 14, fontWeight: '900', color: '#F97316' },
+  itemName: { ...TYPOGRAPHY.headingSm, color: COLORS.consumer.text },
+  itemMeta: { ...TYPOGRAPHY.caption, color: COLORS.consumer.textMute, marginVertical: 4 },
+  itemPrice: { ...TYPOGRAPHY.priceMd, color: COLORS.consumer.primary },
   qtyControls: { alignItems: 'center', gap: 4 },
-  qtyBtn: { width: 28, height: 28, ...BORDERS.brutalist, justifyContent: 'center', alignItems: 'center', backgroundColor: '#fff' },
-  qtyText: { fontSize: 14, fontWeight: '900' },
-  summaryCard: { backgroundColor: '#fff', padding: 20, ...BORDERS.brutalist, ...SHADOWS.brutalist },
-  summaryRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 },
-  summaryLabel: { fontSize: 13, color: COLORS.gray[500], fontWeight: '600' },
-  summaryVal: { fontSize: 13, color: '#000', fontWeight: '800' },
-  totalLabel: { fontSize: 15, fontWeight: '900', color: '#000' },
-  totalVal: { fontSize: 20, fontWeight: '900', color: '#F97316' },
-  promoCard: { marginTop: 20, padding: 16, backgroundColor: '#FFF7ED', borderLeftWidth: 6, borderColor: '#F97316' },
-  promoText: { fontSize: 13, fontWeight: '800', color: '#9A3412', lineHeight: 20 },
-  footer: { padding: 16, backgroundColor: '#fff', borderTopWidth: 4, borderColor: '#000' },
-  checkoutBtn: { 
-    height: 64, 
-    backgroundColor: '#F97316', 
+  qtyBtn: { 
+    width: 32, 
+    height: 32, 
+    borderRadius: ROUNDED.pill, 
     justifyContent: 'center', 
     alignItems: 'center', 
-    ...BORDERS.brutalist,
-    ...SHADOWS.brutalist
+    backgroundColor: COLORS.consumer.primarySoft,
   },
-  checkoutText: { color: '#fff', fontSize: 18, fontWeight: '900' },
+  qtyBtnText: { fontSize: 16, fontWeight: '700', color: COLORS.consumer.primary },
+  qtyText: { ...TYPOGRAPHY.bodyMd, fontWeight: '700', color: COLORS.consumer.text },
+  summaryCard: { 
+    backgroundColor: '#fff', 
+    padding: 20, 
+    borderRadius: ROUNDED.lg,
+    ...BORDERS.hairline,
+  },
+  summaryRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 },
+  summaryLabel: { ...TYPOGRAPHY.bodySm, color: COLORS.consumer.textMute },
+  summaryVal: { ...TYPOGRAPHY.bodySm, color: COLORS.consumer.text, fontWeight: '700' },
+  totalLabel: { ...TYPOGRAPHY.headingSm, color: COLORS.consumer.text },
+  totalVal: { ...TYPOGRAPHY.priceLg, color: COLORS.consumer.primary },
+  promoCard: { 
+    marginTop: 20, 
+    padding: 16, 
+    backgroundColor: COLORS.consumer.primarySoft, 
+    borderRadius: ROUNDED.md,
+    borderLeftWidth: 4, 
+    borderLeftColor: COLORS.consumer.primary,
+  },
+  promoText: { ...TYPOGRAPHY.bodySm, color: COLORS.consumer.primary, lineHeight: 20, fontWeight: '600' },
+  footer: { 
+    padding: 16, 
+    backgroundColor: '#fff', 
+    borderTopWidth: 1, 
+    borderTopColor: COLORS.consumer.primarySoft,
+  },
+  checkoutBtn: { 
+    height: 56, 
+    backgroundColor: COLORS.consumer.primary, 
+    justifyContent: 'center', 
+    alignItems: 'center', 
+    borderRadius: ROUNDED.pill,
+  },
+  checkoutText: { color: COLORS.white, fontSize: 16, fontWeight: '700' },
   emptyCart: { padding: 40, alignItems: 'center' },
-  emptyCartText: { fontSize: 16, fontWeight: '900', color: COLORS.gray[400], marginBottom: 8 },
-  emptyCartSub: { fontSize: 13, color: COLORS.gray[300], fontWeight: '600' }
+  emptyCartText: { ...TYPOGRAPHY.headingMd, color: COLORS.consumer.textMute, marginBottom: 8 },
+  emptyCartSub: { ...TYPOGRAPHY.bodySm, color: COLORS.consumer.textMute }
 });

@@ -5,11 +5,12 @@ import { SmartSplitterService } from '../splitter/SmartSplitterService';
 import { NotificationService } from '../notification/NotificationService';
 import { UserLevelService } from '../membership/UserLevelService';
 import { ReferralService } from '../referral/ReferralService';
+import { PurchaseOrderService } from '../purchase-order/PurchaseOrderService';
 import { generateOrderId } from '../../common/uuid';
 
 /**
  * TradeService - 核心交易协调层 (The Glue)
- * 串联支付、账本、拆单和通知。现已接入 Prisma。
+ * 串联支付、账本、拆单、采购单创建和通知。现已接入 Prisma。
  */
 @Injectable()
 export class TradeService {
@@ -22,6 +23,7 @@ export class TradeService {
     private readonly notification: NotificationService,
     private readonly membership: UserLevelService,
     private readonly referral: ReferralService,
+    private readonly purchaseOrder: PurchaseOrderService,
   ) {}
 
   /**
@@ -117,6 +119,26 @@ export class TradeService {
   async handlePaymentSuccess(orderId: string, payload: any) {
     this.logger.log(`[Trade] Payment success for order ${orderId}. Initializing fulfillment...`);
 
+    // ─── 幂等保护 ───
+    // 支付网关 webhook 可能重复推送同一笔成功通知。若无此保护，
+    // 同一订单的 Vault 分账会被重复写入 —— 属财务事故，必须拦截。
+    const existing = await this.prisma.aceOrder.findUnique({
+      where: { id: orderId },
+      select: { status: true },
+    });
+
+    if (!existing) {
+      this.logger.warn(`[Trade] Order ${orderId} not found — skip payment success handling`);
+      return { success: false, orderId, reason: 'ORDER_NOT_FOUND' };
+    }
+
+    if (existing.status === 'PAID') {
+      this.logger.warn(
+        `[Trade] Order ${orderId} already PAID — skip to avoid double ledger entry`,
+      );
+      return { success: true, orderId, skipped: true, reason: 'ALREADY_PAID' };
+    }
+
     // 1. 记账 (Vault Ledger)
     let partnerCommission = 0;
     if (payload.partnerId) {
@@ -131,22 +153,44 @@ export class TradeService {
     });
 
     // 2. 自动拆单
-    const result = await this.splitter.splitOrder(payload.items, payload.destination || 'JKT');
-    this.logger.log(`[Trade] Order ${orderId} split into ${result.parcels.length} parcels.`);
+    // 容错：拆单失败不应阻塞订单置为 PAID —— 否则会出现"钱已收、订单却卡在 PENDING"。
+    // 拆单可后续人工补偿，支付状态必须及时落定。
+    let parcelsCount = 0;
+    try {
+      const result = await this.splitter.splitOrder(payload.items, payload.destination || 'JKT');
+      parcelsCount = result.parcels.length;
+      this.logger.log(`[Trade] Order ${orderId} split into ${parcelsCount} parcels.`);
+    } catch (splitError: any) {
+      this.logger.error(
+        `[Trade] Split failed for order ${orderId}: ${splitError.message} — ` +
+        `order still marked PAID, retry split manually`,
+      );
+    }
 
-    // 3. 更新订单状态
+    // 3. 更新订单状态为 PAID
     await this.prisma.aceOrder.update({
       where: { id: orderId },
       data: { status: 'PAID' },
     });
 
-    // 4. 推送通知
+    // 4. 自动创建采购单（打通代付链路）
+    let purchaseOrder: any = null;
+    try {
+      purchaseOrder = await this.purchaseOrder.createFromOrder(orderId);
+      this.logger.log(`[Trade] Auto-created PO ${purchaseOrder?.id} for order ${orderId}`);
+    } catch (poError: any) {
+      this.logger.error(`[Trade] Failed to auto-create PO for order ${orderId}: ${poError.message}`);
+      // 不阻塞支付流程 — PO 创建失败可后续手动补建
+    }
+
+    // 5. 推送通知
     await this.notification.sendLogisticUpdate(payload.userId, 'PAID_READY_TO_SHIP', orderId);
 
     return {
       success: true,
       orderId,
-      parcelsCount: result.parcels.length,
+      parcelsCount,
+      purchaseOrderId: purchaseOrder?.id || null,
     };
   }
 

@@ -60,9 +60,9 @@ export class DashboardService {
 
     // ── Refund Rate ──
     const refundResult = await this.prisma.aceRefund.aggregate({
-      _sum: { refundAmount: true },
+      _sum: { amount: true },
     });
-    const totalRefund = Number(refundResult._sum.refundAmount || 0);
+    const totalRefund = Number(refundResult._sum.amount || 0);
     const refundRate = totalGmv > 0 ? (totalRefund / totalGmv) * 100 : 0;
 
     // ── Today orders ──
@@ -71,11 +71,12 @@ export class DashboardService {
     });
 
     // ── Top products ──
-    const topProducts = await this.prisma.aceOrderItem.groupBy({
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const topProducts: any[] = await (this.prisma.aceOrderItem as any).groupBy({
       by: ['productId'],
       _sum: { quantity: true },
-      _count: true,
-      orderBy: { _count: { _count: 'desc' } },
+      _count: { productId: true },
+      orderBy: { _count: { productId: 'desc' } },
       take: 5,
     });
     const topProductIds = topProducts.map(p => p.productId);
@@ -86,14 +87,14 @@ export class DashboardService {
           select: { id: true, name: true, category: true, priceIdr: true },
         })
       : [];
-    const topProductsEnriched = topProducts.map(tp => {
+    const topProductsEnriched = topProducts.map((tp: any) => {
       const detail = topProductDetails.find(d => d.id === tp.productId);
       return {
         productId: tp.productId,
         name: detail?.name || 'Unknown',
         category: detail?.category || 'General',
-        orderCount: tp._count._count,
-        totalQty: tp._sum.quantity || 0,
+        orderCount: tp._count?.productId || 0,
+        totalQty: tp._sum?.quantity || 0,
       };
     });
 
@@ -132,29 +133,26 @@ export class DashboardService {
   // ═══════════════════════════════════════════
 
   async getTrend(days: number) {
-    const results = [];
-    for (let i = days - 1; i >= 0; i--) {
-      const d = new Date(); d.setDate(d.getDate() - i);
-      const start = new Date(d); start.setHours(0, 0, 0, 0);
-      const end = new Date(d); end.setHours(23, 59, 59, 999);
-
-      const [orders, gmvResult] = await Promise.all([
-        this.prisma.aceOrder.count({
-          where: { createdAt: { gte: start, lte: end }, status: { not: 'CANCELLED' } },
-        }),
-        this.prisma.aceOrder.aggregate({
-          _sum: { totalAmount: true },
-          where: { createdAt: { gte: start, lte: end }, status: { not: 'CANCELLED' } },
-        }),
-      ]);
-
-      results.push({
-        date: d.toISOString().split('T')[0],
-        gmv: Math.round(Number(gmvResult._sum.totalAmount || 0)),
-        orders,
-      });
+    const startDate = new Date(Date.now() - days * 86400000);
+    const results: any[] = await this.prisma.$queryRaw`
+      SELECT DATE(created_at) as day,
+             COUNT(*) as orders,
+             COALESCE(SUM(total_amount), 0) as revenue
+      FROM ace_orders
+      WHERE created_at >= ${startDate}
+        AND status != 'CANCELLED'
+      GROUP BY DATE(created_at)
+      ORDER BY day ASC
+    `;
+    // Fill in missing dates
+    const map = new Map<string, any>(results.map((r: any) => [r.day.toISOString().split('T')[0], r]));
+    const trend: { date: string; gmv: number; orders: number }[] = [];
+    for (let i = 0; i < days; i++) {
+      const d = new Date(startDate.getTime() + i * 86400000).toISOString().split('T')[0];
+      const r = map.get(d);
+      trend.push({ date: d, gmv: r ? Math.round(Number(r.revenue)) : 0, orders: r ? Number(r.orders) : 0 });
     }
-    return results;
+    return trend;
   }
 
   // ═══════════════════════════════════════════
@@ -162,21 +160,32 @@ export class DashboardService {
   // ═══════════════════════════════════════════
 
   async getCategoryBreakdown() {
-    const items = await this.prisma.aceOrderItem.findMany({
-      include: {
-        order: { select: { status: true } },
-        product: { select: { category: true } },
-      },
-      where: { order: { status: { not: 'CANCELLED' } } },
+    // Use database-level aggregation instead of loading all items into memory
+    const grouped = await this.prisma.aceOrderItem.groupBy({
+      by: ['productId'],
+      _sum: { quantity: true, unitPrice: true },
+      orderBy: { _sum: { quantity: 'desc' } },
+      take: 50,
     });
 
+    if (!grouped.length) return [];
+
+    // Fetch product categories for the grouped product IDs
+    const productIds = grouped.map((g) => g.productId);
+    const products = await this.prisma.aceProduct.findMany({
+      where: { id: { in: productIds } },
+      select: { id: true, category: true },
+    });
+    const catLookup = new Map(products.map((p) => [p.id, p.category || 'General']));
+
+    // Aggregate by category
     const catMap: Record<string, { orders: number; qty: number; revenue: number }> = {};
-    for (const item of items) {
-      const cat = item.product?.category || 'General';
+    for (const g of grouped) {
+      const cat = catLookup.get(g.productId) || 'General';
       if (!catMap[cat]) catMap[cat] = { orders: 0, qty: 0, revenue: 0 };
       catMap[cat].orders += 1;
-      catMap[cat].qty += item.quantity;
-      catMap[cat].revenue += Number(item.unitPrice) * item.quantity;
+      catMap[cat].qty += g._sum.quantity || 0;
+      catMap[cat].revenue += Number(g._sum.unitPrice || 0) * (g._sum.quantity || 0);
     }
 
     return Object.entries(catMap)

@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { 
   View, 
   Text, 
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     width: 100, 
     height: 100, 
     backgroundColor: '#F97316', 
-    ...BORDERS.brutalist, 
+    ...BORDERS.card, 
     justifyContent: 'center', 
     alignItems: 'center' 
   },
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff', 
     width: 32, 
     height: 32, 
-    ...BORDERS.brutalist, 
+    ...BORDERS.card, 
     justifyContent: 'center', 
     alignItems: 'center' 
   },
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#000', 
     paddingHorizontal: 12, 
     paddingVertical: 6, 
-    ...BORDERS.brutalist 
+    ...BORDERS.card 
   },
   tierText: { color: '#fff', fontSize: 11, fontWeight: '900' },
   content: { padding: SPACING.md },
@@ -134,7 +134,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row', 
     backgroundColor: '#fff', 
     padding: 20, 
-    ...BORDERS.brutalist, 
+    ...BORDERS.card, 
     alignItems: 'center', 
     marginBottom: 12 
   },
@@ -144,3 +144,4 @@ const styles = StyleSheet.create({
   menuSub: { fontSize: 12, fontWeight: '600', color: COLORS.gray[400], marginTop: 2 },
   arrow: { fontSize: 20, fontWeight: '900', color: '#000' }
 });
+

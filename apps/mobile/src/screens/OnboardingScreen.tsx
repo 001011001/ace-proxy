@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { 
   View, 
   Text, 
@@ -47,7 +47,7 @@ export const OnboardingScreen = ({ onConfirm }) => {
 
         <Animated.View entering={FadeInUp.delay(600).duration(800)} style={styles.footer}>
           <TouchableOpacity 
-            style={[styles.btn, SHADOWS.brutalist]} 
+            style={[styles.btn, SHADOWS.card]} 
             onPress={onConfirm}
           >
             <Text style={styles.btnText}>我已了解代购模式</Text>
@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.white },
   content: { flex: 1, padding: SPACING.xl, justifyContent: 'center' },
   imageContainer: { alignItems: 'center', marginBottom: 40 },
-  iconBox: { width: 120, height: 120, borderRadius: 12, alignItems: 'center', justifyContent: 'center', ...BORDERS.brutalist },
+  iconBox: { width: 120, height: 120, borderRadius: 12, alignItems: 'center', justifyContent: 'center', ...BORDERS.card },
   textContainer: { alignItems: 'center' },
   title: { fontSize: 32, fontWeight: '900', color: COLORS.gray[900], textTransform: 'uppercase' },
   subtitle: { fontSize: 16, color: COLORS.gray[500], marginTop: 8, fontWeight: '900', textTransform: 'uppercase' },
@@ -72,8 +72,8 @@ const styles = StyleSheet.create({
     borderRadius: 8, 
     marginTop: 32, 
     width: '100%',
-    ...BORDERS.brutalist,
-    ...SHADOWS.brutalist,
+    ...BORDERS.card,
+    ...SHADOWS.card,
   },
   infoPara: { fontSize: 14, color: COLORS.gray[700], lineHeight: 22, textAlign: 'center', fontWeight: '800' },
   divider: { height: 2, backgroundColor: '#000', marginVertical: 16 },
@@ -81,7 +81,8 @@ const styles = StyleSheet.create({
   boldText: { fontWeight: '900', color: '#DC2626' },
   brandText: { fontWeight: '900', color: '#F97316' },
   footer: { marginTop: 48 },
-  btn: { backgroundColor: '#F97316', paddingVertical: 18, borderRadius: 8, alignItems: 'center', ...BORDERS.brutalist },
+  btn: { backgroundColor: '#F97316', paddingVertical: 18, borderRadius: 8, alignItems: 'center', ...BORDERS.card },
   btnText: { color: '#000', fontSize: 16, fontWeight: '900' }
 });
+
 

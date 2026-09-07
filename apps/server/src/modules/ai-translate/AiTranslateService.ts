@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { LocalLlmService } from '../llm/LocalLlmService';
+import { CloudLlmService } from '../llm/CloudLlmService';
 
 interface TranslateRequest {
   sourceText: string;
@@ -35,7 +36,10 @@ export class AiTranslateService {
     BR: 'Portuguese',
   };
 
-  constructor(private readonly localLlm: LocalLlmService) {}
+  constructor(
+    private readonly localLlm: LocalLlmService,
+    private readonly cloudLlm: CloudLlmService,
+  ) {}
 
   /**
    * 翻译单条文本
@@ -120,12 +124,24 @@ export class AiTranslateService {
    * Call LLM — dispatches to Ollama (if configured) or LocalLlmService.
    */
   private async callLlm(prompt: string): Promise<string | null> {
-    // Prefer Ollama if OLLAMA_URL is explicitly configured (backward compat)
+    // ① 云端 LLM（需在 .env 配置真实 LLM_API_URL + LLM_API_KEY）
+    //    优先云端：省去本地 ~3.1GB 模型，且翻译质量优于 4B 量化模型。
+    //    CloudLlmService 内部失败会返回 null，此处自动降级，不阻断业务。
+    if (this.cloudLlm.isConfigured()) {
+      const cloud = await this.cloudLlm.completion(prompt, {
+        temperature: 0.3,
+        maxTokens: 512,
+      });
+      if (cloud) return cloud;
+      // 云端返回空 → 继续走下方降级链路
+    }
+
+    // ② Ollama (HTTP) — 若显式配置了 OLLAMA_URL
     if (this.OLLAMA_URL) {
       return this.callOllama(prompt);
     }
 
-    // Use in-process LocalLlmService
+    // ③ 本地模型 node-llama-cpp（进程内推理，作为最后手段）
     return this.callLocalLlm(prompt);
   }
 

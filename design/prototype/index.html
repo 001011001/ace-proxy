@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AceProxy Design System — Figma 设计交付</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,450;14..32,500;14..32,600;14..32,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #d45d3a; --primary-soft: #fce8e2; --ocean: #0f7b8c; --ocean-soft: #e0f4f7;
+  --ink: #1a1a2e; --ink-secondary: #3d3d5c; --ink-mute: #6b6b80;
+  --canvas: #ffffff; --canvas-warm: #fefaf7; --canvas-gray: #f5f5f8; --hairline: #e8e8ef;
+  --font-display: 'Plus Jakarta Sans', sans-serif; --font-body: 'Inter', sans-serif;
+  --r-pill: 9999px; --r-lg: 16px; --r-xl: 24px;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-body); background: var(--canvas-warm); color: var(--ink); line-height: 1.6; }
+.container { max-width: 1200px; margin: 0 auto; padding: 48px 24px; }
+
+.hero { text-align: center; padding: 80px 24px 64px; }
+.hero .tag { display: inline-block; font-family: var(--font-display); font-size: 11px; font-weight: 700; letter-spacing: 0.44px; background: var(--primary-soft); color: var(--primary); padding: 6px 16px; border-radius: var(--r-pill); margin-bottom: 24px; }
+.hero h1 { font-family: var(--font-display); font-size: clamp(32px, 5vw, 56px); font-weight: 700; line-height: 1.1; letter-spacing: -1.12px; margin-bottom: 20px; }
+.hero h1 span { color: var(--primary); }
+.hero p { font-size: 18px; color: var(--ink-mute); max-width: 640px; margin: 0 auto 40px; }
+
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 24px; margin-bottom: 48px; }
+.card {
+  background: var(--canvas); border: 1px solid var(--hairline); border-radius: var(--r-lg);
+  padding: 32px; transition: border-color 200ms, box-shadow 200ms;
+}
+.card:hover { border-color: var(--primary-soft); box-shadow: 0 4px 20px rgba(212,93,58,0.08); }
+.card .card-icon { width: 48px; height: 48px; border-radius: var(--r-pill); display: flex; align-items: center; justify-content: center; font-size: 24px; margin-bottom: 20px; }
+.card .card-icon.warm { background: var(--primary-soft); }
+.card .card-icon.cool { background: var(--ocean-soft); }
+.card .card-icon.neutral { background: var(--canvas-gray); }
+.card h3 { font-family: var(--font-display); font-size: 20px; font-weight: 600; line-height: 1.3; margin-bottom: 8px; }
+.card p { font-size: 14px; color: var(--ink-mute); margin-bottom: 20px; line-height: 1.5; }
+.card .btn-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-display); font-size: 14px; font-weight: 600;
+  color: var(--primary); text-decoration: none;
+  padding: 8px 16px; border-radius: var(--r-pill);
+  transition: background 200ms;
+}
+.card .btn-link:hover { background: var(--primary-soft); }
+.card .btn-link.secondary { color: var(--ocean); }
+.card .btn-link.secondary:hover { background: var(--ocean-soft); }
+
+.section-title { font-family: var(--font-display); font-size: 28px; font-weight: 700; letter-spacing: -0.56px; margin-bottom: 8px; }
+.section-sub { font-size: 15px; color: var(--ink-mute); margin-bottom: 32px; }
+
+.color-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px; }
+.color-swatch { width: 64px; height: 64px; border-radius: var(--r-lg); position: relative; overflow: hidden; }
+.color-swatch .color-label { position: absolute; bottom: 6px; left: 8px; right: 8px; font-size: 10px; color: rgba(255,255,255,0.9); font-weight: 600; }
+.color-swatch .color-hex { font-size: 9px; opacity: 0.7; }
+
+.docs-list { list-style: none; }
+.docs-list li { padding: 16px 0; border-bottom: 1px solid var(--hairline); display: flex; align-items: center; gap: 16px; }
+.docs-list li:last-child { border-bottom: none; }
+.docs-list .doc-icon { width: 40px; height: 40px; border-radius: var(--r-pill); background: var(--canvas-gray); display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.docs-list .doc-info { flex: 1; }
+.docs-list .doc-name { font-weight: 600; font-size: 15px; }
+.docs-list .doc-desc { font-size: 13px; color: var(--ink-mute); }
+.docs-list .doc-action { font-size: 13px; color: var(--primary); font-weight: 600; }
+
+.footer { text-align: center; padding: 48px 24px; color: var(--ink-mute); font-size: 13px; border-top: 1px solid var(--hairline); margin-top: 48px; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <span class="tag">Design System v2.0 · Figma 就绪</span>
+  <h1>AceProxy <span>设计交付包</span></h1>
+  <p>
+    包含完整的 Figma 设计规范、双轨制交互原型（消费者商城 + 管理后台指挥中心）、
+    用户流程图及组件库规范。可直接导入 Figma 开始高保真设计。
+  </p>
+</div>
+
+<div class="container">
+  <div class="section-title">🎯 核心交付物</div>
+  <div class="section-sub">所有文档和原型均已适配 AceProxy DESIGN.md 设计令牌</div>
+
+  <div class="card-grid">
+
+    <!-- Figma Design Spec -->
+    <div class="card">
+      <div class="card-icon warm">📐</div>
+      <h3>Figma 设计规范文档</h3>
+      <p>完整的设计令牌、组件库规范、22 个页面高层级设计、响应式策略、动效规范及可访问性清单。可直接作为 Figma 设计系统的唯一真相来源。</p>
+      <a href="#" class="btn-link" onclick="alert('请查看: ace-proxy/design/AceProxy_Figma_Design_Specification.md')">
+        查看规范文档 ↗
+      </a>
+    </div>
+
+    <!-- Consumer Prototype -->
+    <div class="card">
+      <div class="card-icon warm">🛍️</div>
+      <h3>消费者商城原型 (Track 1)</h3>
+      <p>完整交互原型：首页（Hero + 产品网格 + 分类筛选）、产品详情（Price Stack + 比价 + 信任卡片）、购物车、物流追踪。移动端优先，支持桌面响应式。</p>
+      <a href="consumer-marketplace.html" class="btn-link">
+        打开交互原型 →
+      </a>
+    </div>
+
+    <!-- Admin Prototype -->
+    <div class="card">
+      <div class="card-icon cool">📊</div>
+      <h3>管理后台原型 (Track 2)</h3>
+      <p>BI 指挥看板（KPI 卡片 + 走势图 + 风险预警）、数据表格、VisionQC 质检墙、资金回流进度。深色侧边栏，数据密集布局。</p>
+      <a href="admin-console.html" class="btn-link secondary">
+        打开交互原型 →
+      </a>
+    </div>
+
+    <!-- User Flows -->
+    <div class="card">
+      <div class="card-icon neutral">🔀</div>
+      <h3>用户交互流程 & 导航体系</h3>
+      <p>全部核心流程：主购买流程（Happy Path）、AI 套利助手、团长协作、异常处理。含 Figma 原型连线指南和 Smart Animate 配置建议。</p>
+      <a href="#" class="btn-link" onclick="alert('请查看: ace-proxy/design/AceProxy_User_Flows_与导航体系.md')">
+        查看流程文档 ↗
+      </a>
+    </div>
+
+    <!-- DESIGN.md -->
+    <div class="card">
+      <div class="card-icon neutral">🎨</div>
+      <h3>原始设计令牌 (DESIGN.md)</h3>
+      <p>AceProxy 设计系统的权威定义文件，包含颜色、字体、间距、圆角、阴影、组件等全部令牌。所有原型和规范均基于此文件构建。</p>
+      <a href="#" class="btn-link" onclick="alert('位于: ace-proxy/DESIGN.md')">
+        查看原始令牌 ↗
+      </a>
+    </div>
+
+    <!-- Color Palette -->
+    <div class="card">
+      <div class="card-icon warm">🎯</div>
+      <h3>设计系统预览</h3>
+      <div style="margin-bottom:12px;">
+        <div style="font-size:12px;font-weight:600;color:var(--ink-mute);margin-bottom:8px;">品牌色</div>
+        <div class="color-row">
+          <div class="color-swatch" style="background:#d45d3a;"><span class="color-label">primary</span><span class="color-hex">#d45d3a</span></div>
+          <div class="color-swatch" style="background:#b8492a;"><span class="color-label">press</span><span class="color-hex">#b8492a</span></div>
+          <div class="color-swatch" style="background:#fce8e2;"><span class="color-label" style="color:#d45d3a;">soft</span><span class="color-hex" style="color:#d45d3a;">#fce8e2</span></div>
+          <div class="color-swatch" style="background:#0f7b8c;"><span class="color-label">ocean</span><span class="color-hex">#0f7b8c</span></div>
+          <div class="color-swatch" style="background:#e0f4f7;"><span class="color-label" style="color:#0f7b8c;">ocean-soft</span><span class="color-hex" style="color:#0f7b8c;">#e0f4f7</span></div>
+        </div>
+        <div style="font-size:12px;font-weight:600;color:var(--ink-mute);margin-bottom:8px;">文本色</div>
+        <div class="color-row">
+          <div class="color-swatch" style="background:#1a1a2e;"><span class="color-label">ink</span><span class="color-hex">#1a1a2e</span></div>
+          <div class="color-swatch" style="background:#3d3d5c;"><span class="color-label">ink-2</span><span class="color-hex">#3d3d5c</span></div>
+          <div class="color-swatch" style="background:#6b6b80;"><span class="color-label">mute</span><span class="color-hex">#6b6b80</span></div>
+        </div>
+      </div>
+      <span class="btn-link" style="font-size:13px;">Pill Mandate · 所有可交互元素均使用 pill 圆角 · Plus Jakarta Sans + Inter 双字体系统</span>
+    </div>
+  </div>
+
+  <!-- Document Index -->
+  <div class="card" style="margin-bottom:32px;">
+    <h3 style="font-family:var(--font-display);font-size:18px;font-weight:600;margin-bottom:16px;">📁 设计文件目录</h3>
+    <ul class="docs-list">
+      <li>
+        <div class="doc-icon">📐</div>
+        <div class="doc-info">
+          <div class="doc-name">AceProxy_Figma_Design_Specification.md</div>
+          <div class="doc-desc">完整 Figma 设计规范 · 设计令牌 · 组件库 · 页面规格 · 响应式策略</div>
+        </div>
+        <span class="doc-action">→ 设计规范</span>
+      </li>
+      <li>
+        <div class="doc-icon">🔀</div>
+        <div class="doc-info">
+          <div class="doc-name">AceProxy_User_Flows_与导航体系.md</div>
+          <div class="doc-desc">用户交互流程 · 导航架构 · Figma 原型连线指南 · Smart Animate 配置</div>
+        </div>
+        <span class="doc-action">→ 交互流程</span>
+      </li>
+      <li>
+        <div class="doc-icon">🛍️</div>
+        <div class="doc-info">
+          <div class="doc-name">prototype/consumer-marketplace.html</div>
+          <div class="doc-desc">消费者商城交互原型 · 首页 / 详情 / 购物车 / 物流 · 响应式</div>
+        </div>
+        <span class="doc-action" style="color:var(--ocean);">→ 已打开</span>
+      </li>
+      <li>
+        <div class="doc-icon">📊</div>
+        <div class="doc-info">
+          <div class="doc-name">prototype/admin-console.html</div>
+          <div class="doc-desc">管理后台指挥中心原型 · BI看板 / 数据表 / 风险监控</div>
+        </div>
+        <span class="doc-action" style="color:var(--ocean);">→ 已打开</span>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Figma Import Steps -->
+  <div class="card">
+    <h3 style="font-family:var(--font-display);font-size:18px;font-weight:600;margin-bottom:16px;">🔧 如何导入 Figma</h3>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:16px;">
+      <div style="padding:16px;background:var(--canvas-gray);border-radius:12px;">
+        <div style="font-size:24px;margin-bottom:8px;">1️⃣</div>
+        <strong>创建设计令牌</strong>
+        <p style="font-size:13px;color:var(--ink-mute);margin-top:4px;">在 Figma 中创建 Color Styles 和 Text Styles，使用 <code>AceProxy_Figma_Design_Specification.md</code> 中的 HEX 值和字体参数</p>
+      </div>
+      <div style="padding:16px;background:var(--canvas-gray);border-radius:12px;">
+        <div style="font-size:24px;margin-bottom:8px;">2️⃣</div>
+        <strong>构建组件库</strong>
+        <p style="font-size:13px;color:var(--ink-mute);margin-top:4px;">按规范文档创建 Auto Layout 组件，设置 Variants 覆盖所有交互状态（Default/Hover/Active/Focus/Disabled）</p>
+      </div>
+      <div style="padding:16px;background:var(--canvas-gray);border-radius:12px;">
+        <div style="font-size:24px;margin-bottom:8px;">3️⃣</div>
+        <strong>设计页面</strong>
+        <p style="font-size:13px;color:var(--ink-mute);margin-top:4px;">参照 HTML 原型和页面规范，在 Figma 中搭建高保真页面。每个页面至少设计 Desktop + Mobile 两个断点</p>
+      </div>
+      <div style="padding:16px;background:var(--canvas-gray);border-radius:12px;">
+        <div style="font-size:24px;margin-bottom:8px;">4️⃣</div>
+        <strong>创建原型连线</strong>
+        <p style="font-size:13px;color:var(--ink-mute);margin-top:4px;">按照用户流程文档配置 Prototype connections，添加 Smart Animate 过渡效果</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  AceProxy Design System v2.0 · 最后更新 2026-06-26 · 基于 IMPECCABLE 设计原则构建
+</div>
+
+</body>
+</html>

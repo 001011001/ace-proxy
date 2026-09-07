@@ -228,6 +228,39 @@ export class PaymentService {
     }
   }
 
+  /**
+   * 列出全部发票（管理后台「支付管理 → 发票」使用）
+   *
+   * 数据来源：Xendit /v2/invoices（发票不落本地库，见 getInvoicesByOrderId）。
+   * 未配置 XENDIT_API_KEY 时返回空数组，保证页面优雅降级而非 500。
+   */
+  async listInvoices(limit = 50): Promise<XenditInvoice[]> {
+    if (!this.apiKey) {
+      this.logger.warn('[Payment] listInvoices skipped: XENDIT_API_KEY not configured');
+      return [];
+    }
+
+    // Xendit 单页上限 100，超出按上限截断
+    const safeLimit = Math.min(Math.max(1, limit), 100);
+
+    try {
+      const auth = Buffer.from(`${this.apiKey}:`).toString('base64');
+      const response = await fetch(`${this.baseUrl}/invoices?limit=${safeLimit}`, {
+        headers: { Authorization: `Basic ${auth}` },
+        signal: AbortSignal.timeout(10_000),
+      });
+      if (!response.ok) {
+        this.logger.warn(`[Payment] listInvoices Xendit returned ${response.status}`);
+        return [];
+      }
+      const data = await response.json();
+      return data.data || [];
+    } catch (error) {
+      this.logger.warn(`[Payment] listInvoices failed: ${error}`);
+      return [];
+    }
+  }
+
   // ─── 5. 退款 ────────────────────────────────────────────────
   async refundInvoice(params: {
     invoiceId: string;

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { 
   View, 
   Text, 
@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
   inputContainer: { marginBottom: 32 },
   inputWrapper: {
     backgroundColor: COLORS.white,
-    ...BORDERS.brutalist,
+    ...BORDERS.card,
     padding: 16,
     marginBottom: 20,
     boxShadow: '4px 4px 0px #000'
@@ -119,14 +119,14 @@ const styles = StyleSheet.create({
   searchBtn: {
     padding: 18,
     alignItems: 'center',
-    ...BORDERS.brutalist,
+    ...BORDERS.card,
     boxShadow: '6px 6px 0px #000'
   },
   searchBtnText: { color: COLORS.white, fontWeight: '900', fontSize: 18, textTransform: 'uppercase' },
   quickTips: {
     padding: 20,
     backgroundColor: '#FFFBEB',
-    ...BORDERS.brutalist,
+    ...BORDERS.card,
     borderColor: '#FEF3C7',
     marginBottom: 40
   },
@@ -141,3 +141,4 @@ const styles = StyleSheet.create({
   footer: { padding: 20, alignItems: 'center' },
   footerText: { color: COLORS.gray[300], fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 1.5 }
 });
+

@@ -9,7 +9,7 @@ async function runRamadanStressTest() {
   const mockPrisma = { aceOrder: { create: async (data: any) => data.data }, aceUser: { update: async (data: any) => data } } as any;
   const vault = new VaultService(mockPrisma);
   // Mock services for TradeService
-  const trade = new TradeService(mockPrisma, vault, {} as any, {} as any, {} as any, {} as any);
+  const trade = new TradeService(mockPrisma, vault, {} as any, {} as any, {} as any, {} as any, {} as any);
   
   let totalVolume = 0;
   let successCount = 0;

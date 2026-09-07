@@ -1,9 +1,16 @@
-import { Controller, Get, Query, Param, Res, UseGuards } from '@nestjs/common';
+import { Controller, Get, Query, Param, Res, Req, UseGuards, ForbiddenException } from '@nestjs/common';
 import { Response } from 'express';
 import { ApiTags, ApiOperation, ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 import { PrismaService } from '../../prisma/prisma.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { escapeCsvField } from '../../common/csv-escape';
+
+/** 具备跨用户数据访问权限的角色（管理后台运营需要全量视图） */
+const PRIVILEGED_ROLES = ['GOD_MODE', 'ADMIN', 'SUPER_ADMIN', 'OPERATIONS'];
+
+function isPrivilegedRole(role?: string): boolean {
+  return !!role && PRIVILEGED_ROLES.includes(role.toUpperCase());
+}
 
 /**
  * OrderController — 订单管理后台 API
@@ -19,6 +26,7 @@ export class OrderController {
   @UseGuards(JwtAuthGuard)
   @Get('list')
   async list(
+    @Req() req: any,
     @Query('status') status?: string,
     @Query('page') page?: string,
     @Query('limit') limit?: string,
@@ -30,6 +38,14 @@ export class OrderController {
     const skip = (pageNum - 1) * limitNum;
 
     const where: any = {};
+
+    // ─── 数据隔离：普通用户仅能查看自己的订单 ───
+    // 管理员角色可跨用户查看（管理后台运营需要），其余强制按 userId 过滤，
+    // 否则任何已登录用户都能读取全平台订单（越权/数据泄露）。
+    if (!isPrivilegedRole(req.user?.role) && req.user?.userId) {
+      where.userId = req.user.userId;
+    }
+
     if (status && status !== 'ALL') where.status = status;
 
     // 日期范围过滤
@@ -65,8 +81,24 @@ export class OrderController {
     };
   }
 
+  @ApiBearerAuth()
+  @ApiOperation({ summary: '订单物流时间线', description: '返回订单的 15 节点物流轨迹' })
+  @UseGuards(JwtAuthGuard)
   @Get(':id/timeline')
-  async timeline(@Param('id') id: string) {
+  async timeline(@Req() req: any, @Param('id') id: string) {
+    // ─── 归属校验：非管理员仅可查看自己订单的物流轨迹 ───
+    // 否则任何人拿到订单号即可枚举全平台物流信息。
+    if (!isPrivilegedRole(req.user?.role)) {
+      const order = await this.prisma.aceOrder.findUnique({
+        where: { id },
+        select: { userId: true },
+      });
+      if (!order) throw new ForbiddenException('Order not found');
+      if (order.userId !== req.user?.userId) {
+        throw new ForbiddenException('You can only view your own orders');
+      }
+    }
+
     const nodes = await this.prisma.aceLogisticsNode.findMany({
       where: { orderId: id }, orderBy: { timestamp: 'asc' },
     });

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+﻿import React, { useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import Animated, { 
   FadeInDown, 
@@ -88,8 +88,8 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
     padding: 24,
-    ...BORDERS.brutalist,
-    ...SHADOWS.brutalist,
+    ...BORDERS.card,
+    ...SHADOWS.card,
     marginVertical: 12,
   },
   header: {
@@ -103,14 +103,14 @@ const styles = StyleSheet.create({
   badge: {
     paddingHorizontal: 10,
     paddingVertical: 4,
-    ...BORDERS.brutalist,
+    ...BORDERS.card,
   },
   urgentBadge: { borderColor: '#000' },
   badgeText: { color: '#fff', fontSize: 11, fontWeight: '900' },
   progressContainer: {
     height: 40,
     backgroundColor: '#F1F5F9',
-    ...BORDERS.brutalist,
+    ...BORDERS.card,
     overflow: 'hidden',
     justifyContent: 'center',
     marginBottom: 12,
@@ -140,3 +140,4 @@ const styles = StyleSheet.create({
   bold: { fontWeight: '900' },
   etaText: { fontSize: 11, fontWeight: '900', color: '#64748B', textTransform: 'uppercase' },
 });
+

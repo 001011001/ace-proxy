@@ -9,35 +9,63 @@ datasource db {
 
 // 1. 用户表
 model AceUser {
-  id         String         @id @default(uuid())
-  email      String         @unique
-  password   String         @map("password_hash")
-  role       String         @default("USER")
-  totalSpend Decimal        @default(0) @map("total_spend")
-  credits    Decimal        @default(0)
-  level      String         @default("EXPLORER")
-  lastLoginAt DateTime?     @map("last_login_at")
-  referredBy  String?       @map("referred_by")
-  createdAt  DateTime       @default(now()) @map("created_at")
-  orders     AceOrder[]
-  partners   AcePartner[]
-  chats      AceOrderChat[]
-  cartItems  AceCartItem[]
-  addresses  AceUserAddress[]
-  reviews    AceProductReview[]
+  id          String         @id @default(uuid())
+  email       String         @unique
+  password    String?        @map("password_hash")  // nullable — social-only users have no password
+  phone       String?        // +62, +66, +7 etc
+  displayName String?        @map("display_name")
+  avatar      String?
+  role        String         @default("USER")
+  totalSpend  Decimal        @default(0) @map("total_spend")
+  credits     Decimal        @default(0)
+  level       String         @default("EXPLORER")
+  lastLoginAt DateTime?      @map("last_login_at")
+  referredBy  String?        @map("referred_by")
+  createdAt   DateTime       @default(now()) @map("created_at")
+  orders      AceOrder[]
+  partners    AcePartner[]
+  chats       AceOrderChat[]
+  cartItems   AceCartItem[]
+  addresses   AceUserAddress[]
+  reviews     AceProductReview[]
+  socialAccounts AceSocialAccount[]
 
   @@map("ace_users")
+}
+
+// 23. 社交账号关联表
+model AceSocialAccount {
+  id         String   @id @default(uuid())
+  userId     String   @map("user_id")
+  provider   String   // "GOOGLE" | "APPLE" | "VK" | "YANDEX" | "MAILRU"
+  providerId String   @map("provider_id")
+  email      String?
+  name       String?
+  avatar     String?
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user       AceUser  @relation(fields: [userId], references: [id])
+
+  @@unique([provider, providerId])
+  @@index([userId])
+  @@map("ace_social_accounts")
 }
 
 // 2. 供应商表
 model AceSupplier {
   id          String   @id
   name        String
-  avgLeadTime Float?   @map("avg_lead_time_hrs")
-  defectRate  Float?   @map("defect_rate")
+  avgLeadTime Decimal? @map("avg_lead_time_hrs")
+  defectRate  Decimal? @map("defect_rate")
+  /// 转卖拒收率（Resale Rejection Rate）— 供应商评分第三维度
+  /// 由 Resale Hub 转卖失败时回写，用于黑名单红线判定（阈值 8%）
+  resaleRejectionRate Decimal? @map("resale_rejection_rate")
   status      String   @default("ACTIVE")
   updatedAt   DateTime @default(now()) @map("updated_at")
 
+  purchaseOrders AcePurchaseOrder[]
+
+  @@index([status])
   @@map("ace_suppliers")
 }
 
@@ -60,6 +88,7 @@ model AceOrder {
   createdAt        DateTime         @default(now()) @map("created_at")
   user             AceUser          @relation(fields: [userId], references: [id])
   partner          AcePartner?      @relation(fields: [partnerId], references: [id])
+  warehouse        AceWarehouse?    @relation(fields: [warehouseId], references: [id])
   ledger           AceVaultLedger[]
   chats            AceOrderChat[]
   items            AceOrderItem[]
@@ -70,6 +99,8 @@ model AceOrder {
   @@index([userId])
   @@index([status])
   @@index([partnerId])
+  @@index([createdAt])
+  @@index([country])
   @@map("ace_orders")
 }
 
@@ -95,7 +126,7 @@ model AceVaultLedger {
   id          String   @id @default(uuid())
   orderId     String   @map("order_id")
   account     String
-  amount      Decimal
+  amount      Decimal  
   entryType   String   @map("entry_type")
   lossType    String?  @map("loss_type")
   description String?
@@ -103,6 +134,8 @@ model AceVaultLedger {
   order       AceOrder @relation(fields: [orderId], references: [id])
 
   @@index([account])
+  @@index([account, createdAt])
+  @@index([orderId])
   @@map("ace_vault_ledger")
 }
 
@@ -198,6 +231,7 @@ model AceProduct {
 
   @@index([status])
   @@index([category])
+  @@index([status, category])
   @@index([heroProductId])
   @@map("ace_products")
 }
@@ -306,7 +340,7 @@ model AceProductLocalization {
   currency     String
   shippingCost Decimal  @map("shipping_cost")
   orderCount   Int      @default(0) @map("order_count")
-  ratingAvg    Float    @default(0) @map("rating_avg")
+  ratingAvg    Decimal  @default(0) @map("rating_avg")
   isActive     Boolean  @default(false) @map("is_active")
 
   product      AceProduct @relation(fields: [productId], references: [id])
@@ -333,7 +367,7 @@ model AceParcel {
   id              String    @id @default(uuid())
   orderId         String    @map("order_id")
   orderItemId     String?   @map("order_item_id")
-  weight          Float
+  weight          Decimal? 
   status          String    @default("IN_TRANSIT_TO_WAREHOUSE")
   arrivedAt       DateTime? @map("arrived_at")
   qcStatus        String?   @map("qc_status")
@@ -366,7 +400,7 @@ model AceQcReport {
 model AceRefund {
   id         String   @id @default(uuid())
   orderId    String   @map("order_id")
-  amount     Decimal
+  amount     Decimal  
   reason     String?
   status     String   @default("PENDING")
   approverId String?  @map("approver_id")
@@ -385,8 +419,8 @@ model AceConsolidationOrder {
   destination   String
   routeId       String?  @map("route_id")
   boxNumber     String   @unique @map("box_number")
-  totalWeight   Float?   @map("total_weight")
-  totalVolume   Float?   @map("total_volume")
+  totalWeight   Decimal? @map("total_weight")
+  totalVolume   Decimal? @map("total_volume")
   status        String   @default("CREATED")
   createdAt     DateTime @default(now()) @map("created_at")
 
@@ -400,9 +434,9 @@ model ChatLog {
   userId    String?
   sessionId String
   role      String   // "user" | "assistant" | "tool"
-  content   String   @db.Text
+  content   String
   intent    String?  // "search" | "buy" | "recommend" | "qa" | "translate"
-  metadata  Json?
+  metadata  String?
   rating    Int?
   createdAt DateTime @default(now())
 
@@ -410,4 +444,192 @@ model ChatLog {
   @@index([sessionId])
   @@index([intent])
   @@index([createdAt])
+}
+
+// 23. 采购单主表（ERP 最小化）
+model AcePurchaseOrder {
+  id           String   @id @default(uuid())
+  orderId      String?  @map("order_id")            // 关联消费订单（可为空，支持手动建采购单）
+  supplierId   String?  @map("supplier_id")
+  status       String   @default("DRAFT")            // DRAFT → SUBMITTED → IN_TRANSIT → RECEIVED → CANCELLED
+  totalCostCny Decimal? @map("total_cost_cny")
+  currency     String   @default("CNY")
+  notes        String?
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  supplier     AceSupplier?             @relation(fields: [supplierId], references: [id])
+  items        AcePurchaseOrderItem[]
+  inboundOrders AceInboundOrder[]
+
+  @@index([orderId])
+  @@index([supplierId])
+  @@index([status])
+  @@map("ace_purchase_orders")
+}
+
+// 24. 采购单明细
+model AcePurchaseOrderItem {
+  id              String   @id @default(uuid())
+  purchaseOrderId String   @map("purchase_order_id")
+  productId       String?  @map("product_id")
+  sourceUrl       String?  @map("source_url")       // 1688/淘宝商品链接
+  productName     String   @map("product_name")
+  quantity        Int      @default(1)
+  unitCostCny     Decimal? @map("unit_cost_cny")
+  status          String   @default("PENDING")       // PENDING → ORDERED → RECEIVED
+  notes           String?
+
+  purchaseOrder   AcePurchaseOrder @relation(fields: [purchaseOrderId], references: [id])
+
+  @@index([purchaseOrderId])
+  @@map("ace_purchase_order_items")
+}
+
+// 25. 仓库表
+model AceWarehouse {
+  id        String   @id @default(uuid())
+  name      String
+  country   String   @default("ID")
+  address   String?
+  status    String   @default("ACTIVE")             // ACTIVE | INACTIVE
+  createdAt DateTime @default(now()) @map("created_at")
+
+  locations     AceWarehouseLocation[]
+  inboundOrders AceInboundOrder[]
+  outboundOrders AceOutboundOrder[]
+  orders        AceOrder[]
+
+  @@index([country])
+  @@index([status])
+  @@map("ace_warehouses")
+}
+
+// 26. 仓库库位
+model AceWarehouseLocation {
+  id          String   @id @default(uuid())
+  warehouseId String   @map("warehouse_id")
+  label       String                                 // 如 "A-01-01" (货架A-层01-位01)
+  type        String   @default("SHELF")             // SHELF | PALLET | COLD | LOCKED
+  capacity    Int      @default(100)
+  usedCount   Int      @default(0) @map("used_count")
+  status      String   @default("AVAILABLE")         // AVAILABLE | FULL | MAINTENANCE
+
+  warehouse   AceWarehouse @relation(fields: [warehouseId], references: [id])
+
+  @@index([warehouseId])
+  @@index([label])
+  @@map("ace_warehouse_locations")
+}
+
+// 27. 入库单
+model AceInboundOrder {
+  id              String   @id @default(uuid())
+  warehouseId     String   @map("warehouse_id")
+  purchaseOrderId String?  @map("purchase_order_id") // 关联采购单
+  supplierId      String?  @map("supplier_id")
+  trackingNumber  String?  @map("tracking_number")
+  status          String   @default("PENDING")        // PENDING → RECEIVING → QC_CHECK → PUT_AWAY → COMPLETED
+  totalItems      Int      @default(0) @map("total_items")
+  receivedItems   Int      @default(0) @map("received_items")
+  notes           String?
+  receivedAt      DateTime? @map("received_at")
+  completedAt     DateTime? @map("completed_at")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  warehouse       AceWarehouse      @relation(fields: [warehouseId], references: [id])
+  purchaseOrder   AcePurchaseOrder? @relation(fields: [purchaseOrderId], references: [id])
+
+  @@index([warehouseId])
+  @@index([purchaseOrderId])
+  @@index([status])
+  @@map("ace_inbound_orders")
+}
+
+// 28. 出库单
+model AceOutboundOrder {
+  id                   String   @id @default(uuid())
+  warehouseId          String   @map("warehouse_id")
+  orderId              String?  @map("order_id")               // 关联消费订单
+  consolidationOrderId String?  @map("consolidation_order_id") // 关联集运单
+  status               String   @default("PENDING")             // PENDING → PICKING → PACKED → SHIPPED → DELIVERED
+  destination          String?
+  trackingNumber       String?  @map("tracking_number")
+  shippingProvider     String?  @map("shipping_provider")
+  totalItems           Int      @default(0) @map("total_items")
+  pickedItems          Int      @default(0) @map("picked_items")
+  notes                String?
+  shippedAt            DateTime? @map("shipped_at")
+  deliveredAt          DateTime? @map("delivered_at")
+  createdAt            DateTime @default(now()) @map("created_at")
+
+  warehouse   AceWarehouse @relation(fields: [warehouseId], references: [id])
+
+  @@index([warehouseId])
+  @@index([orderId])
+  @@index([status])
+  @@map("ace_outbound_orders")
+}
+
+// 29. 站点配置表（多站点管理）
+model AceStation {
+  id        String   @id @default(uuid())
+  code      String   @unique                          // 如 "JKT", "LDN", "TYO"
+  name      String                                     // 如 "Jakarta"
+  region    String                                     // 如 "IDN", "GBR", "JPN"
+  currency  String   @default("IDR")
+  language  String   @default("id")
+  timezone  String   @default("Asia/Jakarta")
+  domain    String?                                    // 可绑自定义域名
+  logoUrl   String?  @map("logo_url")
+  status    String   @default("ACTIVE")                // ACTIVE | INACTIVE | MAINTENANCE
+  sortOrder Int      @default(0) @map("sort_order")
+  config    String?                                     // JSON: 附加配置
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([code])
+  @@index([status])
+  @@map("ace_stations")
+}
+
+// 30. 物流运费缓存表
+model AceShippingRate {
+  id              String   @id @default(uuid())
+  carrier         String                                 // "YUNTU" | "JNT" | "JNE" | "CAINIAO"
+  originCountry   String   @map("origin_country")       // "CN"
+  destCountry     String   @map("dest_country")          // "ID", "TH", etc.
+  weightRangeMin Decimal  @map("weight_range_min")      // kg
+  weightRangeMax Decimal  @map("weight_range_max")      // kg
+  baseRateCny     Decimal  @map("base_rate_cny")         // 基础运费 ¥
+  perKgRateCny    Decimal? @map("per_kg_rate_cny")       // 每公斤附加费
+  batteryFeeCny   Decimal? @map("battery_fee_cny")       // 电池附加费
+  estimatedDays   Int      @default(7) @map("estimated_days")
+  channelName     String   @map("channel_name")
+  isActive        Boolean  @default(true) @map("is_active")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  @@index([carrier, destCountry])
+  @@index([destCountry])
+  @@map("ace_shipping_rates")
+}
+
+// 31. 通知记录表
+model AceNotification {
+  id        String   @id @default(uuid())
+  userId    String?  @map("user_id")
+  type      String                                    // LOGISTIC | MARKETING | ALERT | SYSTEM
+  channel   String   @default("IN_APP")               // IN_APP | WHATSAPP | TELEGRAM | PUSH
+  title     String
+  body      String
+  metadata  String?                                    // JSON
+  sentAt    DateTime? @map("sent_at")
+  readAt    DateTime? @map("read_at")
+  status    String   @default("PENDING")              // PENDING | SENT | FAILED | READ
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@index([type])
+  @@index([status])
+  @@map("ace_notifications")
 }

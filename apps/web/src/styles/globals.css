@@ -1,0 +1,346 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-canvas-warm text-ink font-body antialiased;
+  }
+
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: #FFF7ED; }
+  ::-webkit-scrollbar-thumb {
+    background: #111;
+    border: 2px solid #FFF7ED;
+  }
+}
+
+/* ─── Brutalism Typography Utilities ─── */
+@layer utilities {
+  .font-display { font-family: 'Archivo Black', 'Arial Black', Impact, Gadget, sans-serif; }
+  .font-body    { font-family: Inter, system-ui, -apple-system, sans-serif; }
+  .tabular-nums { font-feature-settings: 'tnum'; }
+  .price        { @apply font-bold tabular-nums; }
+
+  /* Brutalism uppercase headline */
+  .headline-upper {
+    @apply font-display uppercase tracking-[-0.04em];
+  }
+}
+
+/* ─── Brutalism Components ─── */
+@layer components {
+
+  /* ===== BUTTONS ===== */
+
+  /* Primary Brutalist Button — big, square, hard shadow, press animation */
+  .btn-brutal {
+    @apply inline-flex items-center justify-center gap-2
+           px-8 py-4 border-4 border-black
+           bg-terracotta text-white font-display font-bold text-lg uppercase tracking-[-0.02em]
+           transition-all duration-100 ease-out cursor-pointer;
+    box-shadow: 6px 6px 0 #000;
+  }
+  .btn-brutal:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 4px 4px 0 #000;
+  }
+  .btn-brutal:active {
+    transform: translate(4px, 4px);
+    box-shadow: 2px 2px 0 #000;
+  }
+
+  /* Secondary / Outline Brutalist Button */
+  .btn-brutal-outline {
+    @apply inline-flex items-center justify-center gap-2
+           px-8 py-4 border-4 border-black
+           bg-white text-ink font-display font-bold text-lg uppercase tracking-[-0.02em]
+           transition-all duration-100 ease-out cursor-pointer;
+    box-shadow: 6px 6px 0 #000;
+  }
+  .btn-brutal-outline:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 4px 4px 0 #000;
+    @apply bg-canvas-gray;
+  }
+  .btn-brutal-outline:active {
+    transform: translate(4px, 4px);
+    box-shadow: 2px 2px 0 #000;
+  }
+
+  /* Small Brutalist Button */
+  .btn-brutal-sm {
+    @apply inline-flex items-center justify-center gap-1.5
+           px-5 py-2.5 border-3 border-black
+           bg-terracotta text-white font-display font-bold text-sm uppercase tracking-[-0.01em]
+           transition-all duration-100 ease-out cursor-pointer;
+    box-shadow: 3px 3px 0 #000;
+  }
+  .btn-brutal-sm:hover {
+    transform: translate(1px, 1px);
+    box-shadow: 2px 2px 0 #000;
+  }
+  .btn-brutal-sm:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 #000;
+  }
+
+  /* Small Outline */
+  .btn-brutal-sm-outline {
+    @apply inline-flex items-center justify-center gap-1.5
+           px-5 py-2.5 border-3 border-black
+           bg-white text-ink font-display font-bold text-sm tracking-[-0.01em]
+           transition-all duration-100 ease-out cursor-pointer;
+    box-shadow: 3px 3px 0 #000;
+  }
+  .btn-brutal-sm-outline:hover {
+    transform: translate(1px, 1px);
+    box-shadow: 2px 2px 0 #000;
+    @apply bg-canvas-gray;
+  }
+  .btn-brutal-sm-outline:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 #000;
+  }
+
+  /* Dark button variant */
+  .btn-brutal-dark {
+    @apply inline-flex items-center justify-center gap-2
+           px-6 py-3 border-4 border-black
+           bg-ink text-white font-display font-bold text-sm uppercase tracking-[-0.01em]
+           transition-all duration-100 ease-out cursor-pointer;
+    box-shadow: 4px 4px 0 #000;
+  }
+  .btn-brutal-dark:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 #000;
+    @apply bg-ink-secondary;
+  }
+  .btn-brutal-dark:active {
+    transform: translate(3px, 3px);
+    box-shadow: none;
+  }
+
+  /* ===== CARDS ===== */
+
+  /* Brutalist Product Card */
+  .card-brutal {
+    @apply bg-white border-4 border-black overflow-hidden
+           transition-all duration-150 ease-out cursor-pointer;
+    box-shadow: 6px 6px 0 #000;
+  }
+  .card-brutal:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 8px 8px 0 #000;
+  }
+
+  /* Category Card — smaller */
+  .card-category {
+    @apply flex flex-col items-center justify-center gap-1.5 p-3
+           border-4 border-black bg-white
+           transition-all duration-100 ease-out cursor-pointer;
+    box-shadow: 4px 4px 0 #000;
+  }
+  .card-category:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 6px 6px 0 #000;
+    @apply bg-terracotta text-white border-terracotta;
+  }
+
+  /* ===== INPUTS ===== */
+
+  /* Brutalist Search Input */
+  .input-brutal {
+    @apply w-full px-5 py-3 border-4 border-black
+           bg-white text-ink font-body text-base
+           placeholder:text-ink-mute/50
+           outline-none transition-all duration-100;
+    box-shadow: 3px 3px 0 #000;
+  }
+  .input-brutal:focus {
+    box-shadow: 4px 4px 0 #F97316;
+    border-color: #F97316;
+  }
+
+  /* ===== PILL / TAG ===== */
+
+  .tag-brutal {
+    @apply inline-flex items-center px-3 py-1 border-3 border-black
+           font-display font-bold text-xs uppercase tracking-wider;
+  }
+  .tag-brutal-primary { @apply tag-brutal bg-terracotta text-white border-terracotta; }
+  .tag-brutal-dark    { @apply tag-brutal bg-ink text-white border-ink; }
+
+  /* ===== MISC ===== */
+
+  /* Brutalist Divider / Section Border */
+  .section-divider {
+    @apply border-t-4 border-black;
+  }
+
+  /* Brutalist dropdown-style popover */
+  .popover-brutal {
+    @apply bg-white border-4 border-black;
+    box-shadow: 6px 6px 0 #000;
+  }
+
+  /* Pulse dot for status */
+  .pulse-dot {
+    @apply relative flex h-2 w-2;
+  }
+  .pulse-dot::before {
+    content: '';
+    @apply absolute inline-flex h-full w-full rounded-full bg-success opacity-75;
+    animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  .pulse-dot::after {
+    content: '';
+    @apply relative inline-flex rounded-full h-2 w-2 bg-success;
+  }
+
+  /* ═══════════════════════════════════════════════
+     ADMIN NEO-BRUTALISM DESIGN SYSTEM
+     ═══════════════════════════════════════════════ */
+
+  /* ── Admin Card: hard border + shadow, no round ── */
+  .card-brutal-admin {
+    @apply bg-white border-4 border-black p-6;
+    box-shadow: 4px 4px 0 #000;
+  }
+
+  /* ── KPI Card ── */
+  .kpi-brutal {
+    @apply bg-white border-4 border-black p-5;
+    box-shadow: 4px 4px 0 #000;
+  }
+  .kpi-brutal-highlight {
+    @apply kpi-brutal bg-[#FFF7ED] border-terracotta;
+    box-shadow: 4px 4px 0 #F97316;
+  }
+
+  /* ── Table Header: black background ── */
+  .table-brutal-header {
+    @apply bg-black text-white text-xs font-display uppercase tracking-wider font-bold;
+  }
+
+  /* ── Admin Status Tags (hard square, no round) ── */
+  .tag-brutal-ocean   { @apply tag-brutal bg-ocean text-white border-ocean; }
+  .tag-brutal-success { @apply tag-brutal bg-success text-white border-success; }
+  .tag-brutal-warning { @apply tag-brutal bg-warning text-black border-warning; }
+  .tag-brutal-error   { @apply tag-brutal bg-error text-white border-error; }
+  .tag-brutal-country { @apply tag-brutal bg-[#555] text-white border-[#555]; }
+
+  /* ── Ghost button for table rows ── */
+  .btn-brutal-ghost {
+    @apply inline-flex items-center justify-center px-2.5 py-1
+           text-ink-secondary text-xs font-display font-bold
+           transition-all duration-100 cursor-pointer;
+  }
+  .btn-brutal-ghost:hover {
+    @apply bg-black text-white;
+  }
+
+  /* ── Danger button ── */
+  .btn-brutal-danger {
+    @apply inline-flex items-center justify-center gap-1
+           px-3 py-1.5 border-3 border-black
+           bg-error text-white font-display font-bold text-xs uppercase
+           transition-all duration-100 ease-out cursor-pointer;
+    box-shadow: 3px 3px 0 #000;
+  }
+  .btn-brutal-danger:hover {
+    transform: translate(1px, 1px);
+    box-shadow: 2px 2px 0 #000;
+  }
+  .btn-brutal-danger:active {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0 #000;
+  }
+
+  /* ── Extra-small brutal button for inline table actions ── */
+  .btn-brutal-xs {
+    @apply inline-flex items-center justify-center gap-1
+           px-2.5 py-1 border-2 border-black
+           bg-black text-white font-display font-bold text-[10px] uppercase
+           transition-all duration-100 ease-out cursor-pointer;
+    box-shadow: 2px 2px 0 #000;
+  }
+  .btn-brutal-xs:hover {
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0 #000;
+  }
+  .btn-brutal-xs-outline {
+    @apply btn-brutal-xs bg-white text-ink;
+  }
+
+  /* ── Ocean button in brutal style ── */
+  .btn-brutal-ocean {
+    @apply btn-brutal-dark;
+    @apply bg-ocean border-ocean;
+    box-shadow: 4px 4px 0 #0D47A1;
+  }
+  .btn-brutal-ocean:hover { @apply opacity-90; }
+
+  /* ── Top nav bar: hard bottom border ── */
+  .nav-bar-brutal {
+    @apply bg-white px-6 py-3 border-b-4 border-black flex items-center;
+  }
+
+  /* ── Search input in admin context ── */
+  .input-brutal-sm {
+    @apply w-full px-4 py-2 border-3 border-black
+           bg-white text-ink font-body text-sm
+           outline-none transition-all duration-100;
+    box-shadow: 2px 2px 0 #000;
+  }
+  .input-brutal-sm:focus {
+    box-shadow: 3px 3px 0 #F97316;
+    border-color: #F97316;
+  }
+
+  /* ── Pill tag alias (for backward compat during migration) ── */
+  .pill-tag { @apply tag-brutal; }
+  .pill-tag-primary  { @apply tag-brutal-primary; }
+  .pill-tag-ocean    { @apply tag-brutal-ocean; }
+  .pill-tag-success  { @apply tag-brutal-success; }
+  .pill-tag-warning  { @apply tag-brutal-warning; }
+  .pill-tag-error    { @apply tag-brutal-error; }
+  .pill-tag-country  { @apply tag-brutal-country; }
+
+  /* ── Legacy button aliases → brutal equivalents ── */
+  .btn-primary  { @apply btn-brutal-sm; }
+  .btn-outline  { @apply btn-brutal-sm-outline; }
+  .btn-ocean    { @apply btn-brutal-ocean; }
+  .btn-ghost    { @apply btn-brutal-ghost; }
+  .btn-danger   { @apply btn-brutal-danger; }
+
+  /* ── Legacy card aliases → brutal equivalents ── */
+  .card-feature  { @apply card-brutal-admin; }
+  .kpi-card      { @apply kpi-brutal; }
+  .kpi-card-highlight { @apply kpi-brutal-highlight; }
+  .table-header  { @apply table-brutal-header; }
+  .card          { @apply card-brutal-admin; }
+  .card-header   { @apply px-6 pt-6 pb-3 border-b-4 border-black; }
+
+  /* ── Legacy input aliases ── */
+  .search-bar   { @apply input-brutal-sm; }
+  .text-input   { @apply input-brutal-sm; }
+  .input-field  { @apply input-brutal-sm; }
+  .nav-bar-main { @apply nav-bar-brutal; }
+}
+
+@keyframes pulse-ring {
+  0%   { transform: scale(0.8); opacity: 1; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+
+/* ─── Toast entrance animation (brutalist, no fade — hard slide) ─── */
+@keyframes toast-in {
+  0%   { transform: translateX(110%); opacity: 0; }
+  100% { transform: translateX(0);    opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .animate-\[toast-in_0\.18s_ease-out\] { animation: none !important; }
+}

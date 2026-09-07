@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { 
   View, 
   Text, 
@@ -27,7 +27,7 @@ export const EidViralPopup = ({ visible, onClose }: { visible: boolean, onClose:
       <View style={styles.overlay}>
         <Animated.View 
           entering={ZoomIn.duration(400)}
-          style={[styles.modalBox, SHADOWS.brutalist]}
+          style={[styles.modalBox, SHADOWS.card]}
         >
           {/* Header Image/Icon */}
           <View style={styles.header}>
@@ -166,7 +166,7 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: 20,
     alignItems: 'center',
-    ...BORDERS.brutalist,
+    ...BORDERS.card,
     shadowColor: '#000'
   },
   btnText: {
@@ -184,3 +184,4 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline'
   }
 });
+

@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+import { ProductStatus } from './dto/product.dto';
 
 /**
  * 乐观锁配置
@@ -12,6 +13,38 @@ export class ProductService {
   private readonly logger = new Logger(ProductService.name);
 
   constructor(private readonly prisma: PrismaService) {}
+
+  /**
+   * 创建商品 — 支持合规检查 + 自动本地化
+   */
+  async createProduct(params: {
+    name: string;
+    category: string;
+    description?: string;
+    costCny: number;
+    priceIdr: number;
+    stock?: number;
+    supplierId?: string;
+    imageUrls?: string[];
+    country?: string;
+  }) {
+    const product = await this.prisma.aceProduct.create({
+      data: {
+        id: `PROD-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+        name: params.name,
+        category: params.category,
+        description: params.description || '',
+        costCny: params.costCny,
+        priceIdr: params.priceIdr,
+        stock: params.stock || 100,
+        imageUrls: params.imageUrls ? JSON.stringify(params.imageUrls) : '[]',
+        status: 'ACTIVE',
+      },
+    });
+
+    this.logger.log(`[Product] Created product ${product.id}: ${product.name}`);
+    return product;
+  }
 
   async listProducts(params: {
     page?: number;
@@ -26,7 +59,7 @@ export class ProductService {
     const limit = Math.min(params.limit || 20, 100);
     const skip = (page - 1) * limit;
 
-    const where: any = { status: 'ACTIVE' };
+    const where: any = {};
 
     if (params.category) {
       where.category = params.category;
@@ -204,6 +237,20 @@ export class ProductService {
           this.logger.log(
             `[Product] Stock decremented: ${productId} -${quantity} (attempt ${attempt})`,
           );
+
+          // 库存归零 → 自动标记缺货，避免前端继续展示为可购买
+          const remaining = await this.prisma.aceProduct.findUnique({
+            where: { id: productId },
+            select: { stock: true, status: true },
+          });
+          if (remaining && remaining.stock <= 0 && remaining.status === ProductStatus.ACTIVE) {
+            await this.prisma.aceProduct.update({
+              where: { id: productId },
+              data: { status: ProductStatus.OUT_OF_STOCK },
+            });
+            this.logger.warn(`[Product] ${productId} stock depleted → marked OUT_OF_STOCK`);
+          }
+
           return true;
         }
 

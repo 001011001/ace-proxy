@@ -2,7 +2,12 @@ node_modules/
 dist/
 .expo/
 *.log
+# 环境变量：真实密钥一律不入库
 .env
+.env.local
+.env.*.local
+# 注：.env.example / .env.production 为模板（仅占位值，如 [YOUR-PASSWORD]），
+#     需提交以便团队知道所需配置项；切勿在其中填写真实密钥。
 .DS_Store
 apps/server/NUL
 deploy/nul

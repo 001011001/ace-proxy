@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { LocalLlmService } from '../llm/LocalLlmService';
+import { CloudLlmService } from '../llm/CloudLlmService';
 import type { ChatResult as LlmChatResult } from '../llm/LocalLlmService';
 import { ChatLogService } from './ChatLogService';
 import { ProductService } from '../product/ProductService';
@@ -47,6 +48,7 @@ export class ChatService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly localLlm: LocalLlmService,
+    private readonly cloudLlm: CloudLlmService,
     private readonly chatLogService: ChatLogService,
     private readonly productService: ProductService,
     private readonly cartService: CartService,
@@ -511,12 +513,23 @@ IMPORTANT: When a user wants to buy something, first use [ACTION:search] to find
     messages: Array<{ role: string; content?: string; tool_calls?: any[]; name?: string }>,
     tools: any[],
   ): Promise<{ content: string; toolCalls: any[] } | null> {
-    // Prefer Ollama if OLLAMA_URL is explicitly configured (backward compat)
+    // ① 云端 LLM：仅在"无需工具调用"时启用。
+    //    云端接口此处未透传 tools（各厂商格式不一），因此涉及工具的场景
+    //    自动跳过云端、走 Ollama/本地，保证 function calling 能力不丢失。
+    if (this.cloudLlm.isConfigured() && (!tools || tools.length === 0)) {
+      const cloud = await this.cloudLlm.chat(messages as any, {
+        temperature: 0.7,
+        maxTokens: 512,
+      });
+      if (cloud) return { content: cloud, toolCalls: [] };
+    }
+
+    // ② Ollama (HTTP) — 若显式配置了 OLLAMA_URL
     if (this.OLLAMA_URL) {
       return this.callOllama(messages, tools);
     }
 
-    // Use in-process LocalLlmService
+    // ③ 本地模型 node-llama-cpp
     return this.callLocalLlm(messages, tools);
   }
 
